@@ -1,4 +1,8 @@
-# meik
+# MEIK
+
+## Einrichtung
+
+https://linuxcapable.com/how-to-install-php-on-linux-mint/
 
 ## Tech-Stack
 
