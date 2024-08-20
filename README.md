@@ -24,6 +24,7 @@
 - main ist der einzige Haupt-Branch
 - davon zieht sich jeder eigenen Entwicklungs-Branch
 - in den main-Branch wird zunächst nur per vorherigem Rebase
+- Git-Tags für funktionierende Versionen
 
 - Quellcode in Englisch
   - Kommentare egal
