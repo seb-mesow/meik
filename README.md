@@ -17,7 +17,7 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
   - Node ???
   - npm ???
   - Bootstrap?
-  - Angular?
+  - vue.js
 
 - Figma für GUI-Mockups
 
