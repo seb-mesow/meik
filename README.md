@@ -82,9 +82,11 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
   - PrimeVue
   - Vue.js
 
-- Figma für GUI-Mockups
+### Gui-Mockup
+- Figma
 
-- Docker für Virtualisierung
+### Virtualisierung
+- Docker
 
 - Ubuntu für Produktiv-Umgebung
 
