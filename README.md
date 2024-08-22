@@ -21,6 +21,9 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 
 - Figma für GUI-Mockups
 
+- Docker für Virtualisierung
+
+
 ## Konventionen
 
 ### Variablen und Klassenschreibweisen
