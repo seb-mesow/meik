@@ -7,18 +7,16 @@ services:
   app:
     build:
       context: app
-      args:
-        UBUNTU_VERSION: 22.04
-        PHP_VERSION: 8.3
     restart: unless-stopped
     volumes:
       - sock:/sock
       - ../:/var/www
-
+      - ./app:/var/cache/getcomposer
+  
   web:
     build:
       context: web
-      args:
-        NGINX_VERSION: 1.26.2
+    ports:
+      - 8080:80
     volumes:
       - sock:/sock
