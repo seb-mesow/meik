@@ -39,5 +39,5 @@ RUN --mount=source=.,target=/build_context \
 
 # ENTRYPOINT [ "/docker-entrypoint-override.bash" ]
 # CMD [ "/opt/couchdb/bin/couchdb" ]
-ENTRYPOINT [ "tail", "-f", "/dev/null" ]
-CMD []
+# ENTRYPOINT [ "tail", "-f", "/dev/null" ]
+# CMD []

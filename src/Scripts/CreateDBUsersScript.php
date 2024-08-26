@@ -19,12 +19,12 @@ final class CreateDBUsersScript {
     private const string DOMAIN_NAME = 'couchdb';
     private const int PORT = 5984;
     
-    private const string SYS_ADMIN_USER = 'H-j6d)5<\*3m1!p_Rq}8';
-    private const string SYS_ADMIN_PASSWORD = '1e~0XAy(L.|6-fUj+Kw2V>f,';
-    private const string DB_ADMIN_USER = 'nf65gh-98j4qW1K43-J2L89j0h1n2bV-H875N-mnJGj-hGHV2af3sdg-iuaz3hq2nbB-fcf';
-    private const string DB_ADMIN_PASSWORD = 'n(4jzh_8g*769#N/n=87hbdf"-_,7%4"5v79)';
-    private const string DB_USER = 'n2if-hwui9vbw4-kvbi6v98gyyx7-0ygn7veq-wvey9sogv5we-24r3jycyc';
-    private const string DB_PASSWORD = 'Oy,3YmM!62+DB4q#cE7b_9rp';
+    private const string SYS_ADMIN_USER = 'nJgHb8j3yN4BgdG46N8dnddzhy7523Hd3gAsfY10jw7Vk9wkQyp3Pdb2el6vfopy1gfF789J5GvcdS68Tf6VGcvG6ghDF4d3Dx6F';
+    private const string SYS_ADMIN_PASSWORD = '7cFcFdVsHV2Gs65o7CgKNdH15pLH7tH2zBxDQxS4syPfVj6Ytp4qCfDv4CgEhZhb65TFvcjoBHvg654DFcxgh654Cd49yAQPMnK5';
+    private const string DB_ADMIN_USER = 'f65gh98j4qW1K43J2l89j0h1n2byH875NmnJGjhGhV2af3sdgiUaz3hq2nbfcfz5Mh8TysW25PmnGqad90dcgTwpkhYfrQgv67Pq';
+    private const string DB_ADMIN_PASSWORD = '4jzh8g769Nn87hbd745v79jnHvby627hv7ghVFH78HkMB4vfCFh0LcXRFgtPQweVCX47hVXbxcyl87vgbBVfS46Sj8vVcdEy1DUy';
+    private const string DB_USER = 'ifyKhwui9vbIw3kvQbi6v98gyyEx70Zgn7veqDw4vey9sLv5weY2C4r3jcyEcZT654yqMm4knbc8Vt56vDq0678Kc45Ygf494Bsv';
+    private const string DB_PASSWORD = 'Oy3YmM62DB4cE7b9rphx4hbgv6g65vgCcf68H546hvBvjuZzTz87hyGvoppnBHG646vVjC5gVuhfgO0OpOjqcCr57GVBy842Bsda';
     
     private const string DATABASE = 'meik';
     
@@ -51,20 +51,24 @@ final class CreateDBUsersScript {
     }
     
     public function execute(): void {
-        // $status_code = -1;
+        $status_code = -1;
+        $response = null;
         try {
             $response = $this->http_client->put('/' . self::DATABASE, [
                 'auth' => [ self::SYS_ADMIN_USER, self::SYS_ADMIN_PASSWORD ],
             ]);
-            // $status_code = $response->getStatusCode();
         } catch (ClientException $e) {
             if (!str_contains($e->getMessage(), 'The database could not be created, the file already exists.')) {
                 throw $e;
             }
+        } finally {
+            if ($response) {
+                $status_code = $response->getStatusCode();
+            }
         }
-        // if ($status_code !== 201 && $status_code !== 412) {
-        //     throw new Exception('Error creating database. Http response code ' . $status_code);
-        // }
+        if ($status_code !== 201 && $status_code !== 412) {
+            throw new Exception('Error creating database. Http response code ' . $status_code);
+        }
         
         $all_users = $this->admin->getAllUsers(true);
         foreach($all_users as $user) {
