@@ -1,0 +1,11 @@
+services:
+  db:
+    build:
+      args:
+        # Passwörter und Benutzernamen dürfen nur die Buchstaben a-z, sowie A-Z, die Ziffern 0-9 enthalten
+        SYS_ADMIN_USER: nJgHb8j3yN4BgdG46N8dnddzhy7523Hd3gAsfY10jw7Vk9wkQyp3Pdb2el6vfopy1gfF789J5GvcdS68Tf6VGcvG6ghDF4d3Dx6F
+        SYS_ADMIN_PASSWORD: 7cFcFdVsHV2Gs65o7CgKNdH15pLH7tH2zBxDQxS4syPfVj6Ytp4qCfDv4CgEhZhb65TFvcjoBHvg654DFcxgh654Cd49yAQPMnK5
+        DB_ADMIN_USER: f65gh98j4qW1K43J2l89j0h1n2byH875NmnJGjhGhV2af3sdgiUaz3hq2nbfcfz5Mh8TysW25PmnGqad90dcgTwpkhYfrQgv67Pq
+        DB_ADMIN_PASSWORD: 4jzh8g769Nn87hbd745v79jnHvby627hv7ghVFH78HkMB4vfCFh0LcXRFgtPQweVCX47hVXbxcyl87vgbBVfS46Sj8vVcdEy1DUy
+        DB_USER: ifyKhwui9vbIw3kvQbi6v98gyyEx70Zgn7veqDw4vey9sLv5weY2C4r3jcyEcZT654yqMm4knbc8Vt56vDq0678Kc45Ygf494Bsv
+        DB_PASSWORD: Oy3YmM62DB4cE7b9rphx4hbgv6g65vgCcf68H546hvBvjuZzTz87hyGvoppnBHG646vVjC5gVuhfgO0OpOjqcCr57GVBy842Bsda
