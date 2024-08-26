@@ -7,11 +7,10 @@ services:
   app:
     build:
       context: app
-    restart: unless-stopped
     volumes:
       - sock:/sock
       - ../:/var/www
-      - ./app:/var/cache/getcomposer
+    restart: on-failure:5
   
   web:
     build:
@@ -20,3 +19,23 @@ services:
       - 8080:80
     volumes:
       - sock:/sock
+    restart: on-failure:5
+  
+  db:
+    build:
+      context: db
+      args:
+       # darf keinen Doppelpunkt oder ? & = % # oder / oder " ' oder ; oder [ ] oder { } ° enthalten
+        SYS_ADMIN_USER: H-j6d)5<\*3m1!p_Rq}8
+        SYS_ADMIN_PASSWORD: 1e~0XAy(L.|6-fUj+Kw2V>f,
+        # COUCHDB_USER: 5J-Fd3~B*!Vga7<9o|eW
+        DB_ADMIN_USER: nf65gh-98j4qW1K43-J2L89j0h1n2bV-H875N-mnJGj-hGHV2af3sdg-iuaz3hq2nbB-fcf
+        DB_ADMIN_PASSWORD: n(4jzh_8g*769#N/n=87hbdf"-_,7%4"5v79)
+        DB_USER: n2if-hwui9vbw4-kvbi6v98gyyx7-0ygn7veq-wvey9sogv5we-24r3jycyc
+        DB_PASSWORD: Oy,3YmM!62+DB4q#cE7b_9rp
+    hostname: couchdb
+    volumes:
+      - ./db:/build_context
+    ports:
+      - 5984:5984
+    restart: on-failure:1

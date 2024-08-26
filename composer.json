@@ -1,0 +1,18 @@
+{
+    "name": "meik/meik",
+    "type": "project",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "MEIK\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": "~8.3.10",
+        "composer": "~2.7.8",
+        "php-on-couch/php-on-couch": "~4.0.2",
+        "guzzlehttp/guzzle": "~7.9.2"
+    }
+}

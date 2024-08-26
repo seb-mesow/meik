@@ -24,21 +24,26 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     --mount=type=cache,target=/var/lib/apt,sharing=private \
     apt-get update --quiet --quiet; \
     apt-get install --no-install-recommends --quiet --quiet \
+        unzip \
         php${PHP_VERSION} \
         php${PHP_VERSION}-cli \
-        php${PHP_VERSION}-fpm;
-        # php${PHP_VERSION}-xdebug;
+        php${PHP_VERSION}-fpm \
+        php${PHP_VERSION}-xdebug \
+        php${PHP_VERSION}-zip;
 
-# RUN --mount=source=.,target=/build_context \
-#     --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
-#     cd /var/cache/getcomposer; \
-#     if test -f composer.phar; then \
-#         echo "aus Cache von RUN --mount=cache wiedergeladen" > ~/getcomposer_cache.log; \
-#     else \
-#         curl -L -o composer.phar https://getcomposer.org/download/2.7.8/composer.phar; \
-#         echo "neu heruntergeladen" > ~/getcomposer_cache.log; \
-#         sha256sum -c /build_context/composer.phar.sha256sum;
-    
+RUN --mount=source=.,target=/build_context \
+    --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
+    cd /var/cache/getcomposer; \
+    if test -f composer.phar; then \
+        echo "aus Cache von RUN --mount=cache wiedergeladen" > ~/getcomposer_cache.log; \
+    else \
+        curl -L -o composer.phar https://getcomposer.org/download/2.7.8/composer.phar; \
+        echo "neu heruntergeladen" > ~/getcomposer_cache.log; \
+    fi; \
+    sha256sum -c /build_context/composer.phar.sha256sum; \
+    cp composer.phar /usr/local/bin/composer; \
+    chmod 0111 /usr/local/bin/composer;
+
 RUN mkdir -p /run/php; \
     chown -hR www-data:www-data /run/php; \
     ln -s "/usr/sbin/php-fpm${PHP_VERSION}" /usr/local/sbin/php-fpm;
@@ -48,6 +53,7 @@ RUN mkdir -p /run/php; \
 
 RUN --mount=source=.,target=/build_context \
     cp /build_context/30-settings.ini ${PHP_FPM_INI_DIR}/conf.d; \
+    cp /build_context/30-settings.ini ${PHP_CLI_INI_DIR}/conf.d; \
     cp /build_context/php-fpm.conf ${PHP_FPM_INI_DIR}; \
     cp /build_context/www.conf ${PHP_FPM_INI_DIR}/pool.d;
 
