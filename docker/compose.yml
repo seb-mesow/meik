@@ -9,7 +9,7 @@ services:
       context: app
     volumes:
       - sock:/sock
-      - ../:/var/www
+      - ../../:/var/www
     restart: on-failure:5
   
   web:

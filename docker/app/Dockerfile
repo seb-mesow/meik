@@ -29,7 +29,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
         php${PHP_VERSION}-cli \
         php${PHP_VERSION}-fpm \
         php${PHP_VERSION}-xdebug \
-        php${PHP_VERSION}-zip;
+        php${PHP_VERSION}-zip \
+        php${PHP_VERSION}-dom \
+        php${PHP_VERSION}-xml;
 
 RUN --mount=source=.,target=/build_context \
     --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
@@ -39,9 +41,17 @@ RUN --mount=source=.,target=/build_context \
     else \
         curl -L -o composer.phar https://getcomposer.org/download/2.7.8/composer.phar; \
         echo "neu heruntergeladen" > ~/getcomposer_cache.log; \
-    fi; \
-    sha256sum -c /build_context/composer.phar.sha256sum; \
-    cp composer.phar /usr/local/bin/composer; \
+    fi;
+RUN --mount=source=.,target=/build_context \
+    --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
+    cd /var/cache/getcomposer; \
+    sha256sum -c /build_context/composer.phar.sha256sum;
+RUN --mount=source=.,target=/build_context \
+    --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
+    cd /var/cache/getcomposer; \
+    cp composer.phar /usr/local/bin/composer;
+RUN --mount=source=.,target=/build_context \
+    --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
     chmod 0111 /usr/local/bin/composer;
 
 RUN mkdir -p /run/php; \
@@ -57,7 +67,7 @@ RUN --mount=source=.,target=/build_context \
     cp /build_context/php-fpm.conf ${PHP_FPM_INI_DIR}; \
     cp /build_context/www.conf ${PHP_FPM_INI_DIR}/pool.d;
 
-WORKDIR /var/www
+WORKDIR /var/www/meik2
 
 # CMD [ "bash", "-c", "php-fpm & tail -f /dev/null & wait" ]
 CMD ["php-fpm"]
