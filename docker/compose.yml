@@ -7,7 +7,6 @@ services:
   app:
     build:
       context: app
-    restart: unless-stopped
     volumes:
       - sock:/sock
       - ../:/var/www
