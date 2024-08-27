@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e8c3c14ff33b199b4a0838993eb8423",
+    "content-hash": "91e55da9f3fafa546c3733591659331b",
     "packages": [
         {
             "name": "brick/math",
@@ -2317,6 +2317,75 @@
                 }
             ],
             "time": "2024-03-06T16:17:14+00:00"
+        },
+        {
+            "name": "php-on-couch/php-on-couch",
+            "version": "4.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHP-on-Couch/PHP-on-Couch.git",
+                "reference": "7d74d73d5b587ee2b384095309b4f480d7b95460"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHP-on-Couch/PHP-on-Couch/zipball/7d74d73d5b587ee2b384095309b4f480d7b95460",
+                "reference": "7d74d73d5b587ee2b384095309b4f480d7b95460",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpcheckstyle/phpcheckstyle": "*",
+                "phpunit/phpunit": "5.5.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPOnCouch\\": "src/",
+                    "PHPOnCouch\\Adapter\\": "src/Adapter/",
+                    "PHPOnCouch\\Exceptions\\": "src/Exceptions/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Bailly",
+                    "email": "mickael.bailly@free.fr",
+                    "homepage": "https://github.com/dready92/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Clemens Sahs",
+                    "email": "clemens.sahs@slides-worker.org",
+                    "homepage": "https://github.com/ClemensSahs",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Alexis Côté",
+                    "email": "alexiscote19@hotmail.com",
+                    "homepage": "https://popojargo.github.io/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "CouchDB NoSQL database access in PHP",
+            "homepage": "https://github.com/PHP-on-Couch/PHP-on-Couch",
+            "keywords": [
+                "apache",
+                "couch",
+                "couchdb",
+                "db",
+                "driver",
+                "nosql"
+            ],
+            "support": {
+                "issues": "https://github.com/PHP-on-Couch/PHP-on-Couch/issues",
+                "source": "https://github.com/PHP-on-Couch/PHP-on-Couch/tree/4.0.2"
+            },
+            "time": "2023-09-12T01:03:30+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -5866,6 +5935,66 @@
             "time": "2020-07-09T08:09:16+00:00"
         },
         {
+            "name": "laravel/breeze",
+            "version": "v2.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/breeze.git",
+                "reference": "ef237081cc9b87c858e9de8e35b523f93ac74fd3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/breeze/zipball/ef237081cc9b87c858e9de8e35b523f93ac74fd3",
+                "reference": "ef237081cc9b87c858e9de8e35b523f93ac74fd3",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^11.0",
+                "illuminate/filesystem": "^11.0",
+                "illuminate/support": "^11.0",
+                "illuminate/validation": "^11.0",
+                "php": "^8.2.0",
+                "symfony/console": "^7.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^9.0",
+                "phpstan/phpstan": "^1.10"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Breeze\\BreezeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Breeze\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Minimal Laravel authentication scaffolding with Blade and Tailwind.",
+            "keywords": [
+                "auth",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/breeze/issues",
+                "source": "https://github.com/laravel/breeze"
+            },
+            "time": "2024-08-12T22:06:50+00:00"
+        },
+        {
             "name": "laravel/pint",
             "version": "v1.17.2",
             "source": {
@@ -7826,7 +7955,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2"
+        "php": "~8.3.10",
+        "composer": "~2.7.8"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
