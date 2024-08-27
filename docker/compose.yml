@@ -2,15 +2,22 @@ name: meik
 
 volumes:
   sock:
-
+  meik:
+  
 services:
   app:
     build:
       context: app
     volumes:
       - sock:/sock
-      - ../../:/var/www
+      - ../:/var/www
     restart: on-failure:5
+  
+  node:
+    image: node:20.17.0-alpine3.20
+    volumes:
+      - ../:/var/www
+    working_dir: /var/www
   
   web:
     build:
@@ -19,14 +26,13 @@ services:
       - 8080:80
     volumes:
       - sock:/sock
+      - ../:/var/www
     restart: on-failure:5
   
   db:
     build:
       context: db
     hostname: couchdb
-    volumes:
-      - ./db:/build_context
     ports:
       - 5984:5984
     restart: on-failure:1

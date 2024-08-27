@@ -28,10 +28,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
         php${PHP_VERSION} \
         php${PHP_VERSION}-cli \
         php${PHP_VERSION}-fpm \
-        php${PHP_VERSION}-xdebug \
         php${PHP_VERSION}-zip \
         php${PHP_VERSION}-dom \
-        php${PHP_VERSION}-xml;
+        php${PHP_VERSION}-xml \
+        php${PHP_VERSION}-opcache \
+        php${PHP_VERSION}-xdebug;
 
 RUN --mount=source=.,target=/build_context \
     --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
@@ -49,25 +50,28 @@ RUN --mount=source=.,target=/build_context \
 RUN --mount=source=.,target=/build_context \
     --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
     cd /var/cache/getcomposer; \
-    cp composer.phar /usr/local/bin/composer;
+    cp composer.phar /usr/local/sbin/composer;
 RUN --mount=source=.,target=/build_context \
     --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
-    chmod 0111 /usr/local/bin/composer;
+    chmod 0111 /usr/local/sbin/composer;
 
 RUN mkdir -p /run/php; \
     chown -hR www-data:www-data /run/php; \
     ln -s "/usr/sbin/php-fpm${PHP_VERSION}" /usr/local/sbin/php-fpm;
 
-# RUN groupadd -g 101 nginx; \
-#     useradd -g nginx -u 101 nginx;
+# TODO nur temporär
+RUN usermod -aG root www-data
 
 RUN --mount=source=.,target=/build_context \
-    cp /build_context/30-settings.ini ${PHP_FPM_INI_DIR}/conf.d; \
-    cp /build_context/30-settings.ini ${PHP_CLI_INI_DIR}/conf.d; \
+    cp /build_context/30-settings-fpm.ini ${PHP_FPM_INI_DIR}/conf.d; \
+    cp /build_context/30-settings-cli.ini ${PHP_CLI_INI_DIR}/conf.d; \
     cp /build_context/php-fpm.conf ${PHP_FPM_INI_DIR}; \
     cp /build_context/www.conf ${PHP_FPM_INI_DIR}/pool.d;
 
-WORKDIR /var/www/meik2
+# RUN --mount=source=./../../../,target=/meik \
+#     cp -r /meik /var/www;
+
+WORKDIR /var/www
 
 # CMD [ "bash", "-c", "php-fpm & tail -f /dev/null & wait" ]
 CMD ["php-fpm"]
