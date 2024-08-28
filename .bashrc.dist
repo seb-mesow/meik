@@ -1,0 +1,61 @@
+REPO_DIR_WIN='__VOLLSTAENDIGEN_PFAD_HIER_EINTRAGEN__'
+alias docker_compose="MSYS_NO_PATHCONV=1 docker compose -f '${REPO_DIR_WIN}\docker\compose.yml' -f '${REPO_DIR_WIN}\docker\compose.override.yml'"
+# MSYS_NO_PATHCONV=1 braucht es in Git-Bash, aber nicht auf Linux-Hosts
+
+export HISTFILE="${REPO_DIR_WIN}\.bash_history"
+shopt -s histappend
+PROMPT_COMMAND="history -a"
+
+alias dr='docker_compose restart'
+alias drb='docker_compose up --build -d'
+alias ddown='docker_compose down'
+alias dps='docker_compose ps'
+alias bashapp='docker_compose exec app bash -i'
+alias php-fpm='docker_compose exec app php-fpm'
+alias php='docker_compose exec app php'
+alias phpd='php -dxdebug.mode=debug -dxdebug.start_with_request'
+alias artisan='php artisan'
+alias composer='docker_compose exec app composer'
+alias ci='composer install'
+alias cda='composer dump-autoload'
+alias nodesh='docker_compose run --rm -it --entrypoint sh node'
+alias node='docker_compose run --rm -it node'
+alias npm='docker_compose run --rm -it node npm'
+alias npx='docker_compose run --rm -it node npx'
+alias bashdb='docker_compose exec -w /opt/couchdb db bash -i'
+# $1 - user - "admin" or "normal"
+# $2 - HTTP method like PUT GET POST DELETE
+# $3 - path, must start with /
+# [$4] - JSON
+function curl_db() {
+    local user="$1";
+    local method="$2";
+    local path="$3";
+    if [[ "$user" == "admin" ]] ; then
+        # Trennung User und Passwort durch Doppelpunkt
+        local auth='H-j6d)5<\*3m1!p_Rq}8:1e~0XAy(L.|6-fUj+Kw2V>f,'
+    else
+        local auth='H-j6d)5<\*3m1!p_Rq}8:1e~0XAy(L.|6-fUj+Kw2V>f,'
+    fi
+    local -a opts;
+    if [[ "$#" -ge 4 ]] ; then
+        opts=("-d" "$4");
+    fi
+    docker_compose exec db curl \
+        -u "$auth" \
+        -H 'Content-Type: application/json' \
+        -H 'Accept: application/json' \
+        -X "$method" \
+        "${opts[@]}" \
+        "localhost:5984$path";
+}
+alias curldb_admin="curl_db admin"
+alias curldb_normal="curl_db normal"
+alias dbadminput="curldb_admin PUT"
+alias dbadminget="curldb_admin GET"
+alias dbadminpost="curldb_admin POST"
+alias dbadmindelete="curldb_admin DELETE"
+alias dbput="curldb_normal PUT"
+alias dbget="curldb_normal GET"
+alias dbpost="curldb_normal POST"
+alias dbdelete="curldb_normal DELETE"
