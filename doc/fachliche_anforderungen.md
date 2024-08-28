@@ -1,11 +1,25 @@
 # Inhaltliche Anforderungen an das Projekt
 
 Die Gruppe 2 und die Gruppe 3 erstellen in enger Abstimmung Software für das Verwaltungen und Präsentieren der Exponate des Museums zur Entwicklung der Informations- und Kommunikationstechnik – kurz MEIK.
-Die Gruppe 2 erstellt die Software zur öffentlichen Präsentation der Exponate, insb auf Tablets.
+Die Gruppe 2 erstellt die Software zur öffentlichen Präsentation der Exponate, insb. auf Tablets.
 
 **Wir – die Gruppe 3 – erstellen die interne Verwaltungssoftware zum Pflegen der Exponate.**
 
 Dazu sind wir im engen Austausch mit der Gruppe 2.
+
+- [Inhaltliche Anforderungen an das Projekt](#inhaltliche-anforderungen-an-das-projekt)
+  - [Benutzerverwaltung](#benutzerverwaltung)
+  - [Exponante](#exponante)
+  - [Standorte und Plätze](#standorte-und-plätze)
+  - [REST-API für die Präsentations-Software](#rest-api-für-die-präsentations-software)
+  - [QR-Codes erstellen](#qr-codes-erstellen)
+  - [Logging (nur intern)](#logging-nur-intern)
+  - [internes Datenblatt erstellen (niedrige Priorität)](#internes-datenblatt-erstellen-niedrige-priorität)
+  - [Barcodes erstellen (niedrige Priorität)](#barcodes-erstellen-niedrige-priorität)
+  - [Barcodes einscannen (optional)](#barcodes-einscannen-optional)
+  - [Frontend / Design](#frontend--design)
+  - [Nicht-Funktonale Anforderungen](#nicht-funktonale-anforderungen)
+
 
 ## Benutzerverwaltung
 
@@ -30,6 +44,7 @@ Dazu sind wir im engen Austausch mit der Gruppe 2.
 Die Exponate sind die zentralen Entitäten der Anwendung.
 Zu Exponanten _müssen stets_ die folgenden Einzelinformationen erfasst werden (Stammdaten)
 - _intern:_ eineindeutige Inventar-Nummer
+  - Die Inventarnummer ist unabhängig von der Rubrik.
 - _öffentlich:_ eineindeutige Bezeichnung
 - _öffentlich:_ Rubrik (bestimmt auch die Kategorie)
 - _öffentlich oder intern:_ Standort (bestimmt den Status der öffentlichen Zugänglichkeit)
@@ -39,7 +54,7 @@ Zu Exponanten _müssen stets_ die folgenden Einzelinformationen erfasst werden (
 - _öffentlich:_ Verlag (bei Büchern)
 - _öffentlich:_ Autor(en) (bei Büchern)
 - _intern:_ Zugangsdatum
-- _öffentlich:_Art des Besitzes (Eigentum, Leihgabe, Miete, _intern:_ nicht mehr im Besitz)
+- _öffentlich:_ Art des Besitzes (Eigentum, Leihgabe, Miete, _intern:_ nicht mehr im Besitz)
 - _intern:_ Eigentümer (Name, Anschrift, ggf. Geburtsdatum) (nur bei Leihgabe oder Miete)
 - _intern:_ Verbleib (nur wenn Art des Besitzes = nicht mehr im Besitz)
 - _intern:_ Zeitwert (Zudem wird das Änderungsdatum automatisch erfasst.)
@@ -57,6 +72,7 @@ Zu den Exponaten _können_ darüber hinaus folgende Einzelinformationen erfasst 
 - _intern:_ zur Zeit zur Restauration bei ...
 
 Die meisten Informationen zu den Exponaten werden in Freitextfeldern erfasst. Ein Nutzer kann beliebige und beliebig viele Freitextfelder zu einem Exponat anlegen. Neben dem Titel muss für jedes Freitextfeld angegeben werden, ob dieses öffentlich sichtbar sein soll.
+
 Zum Beispiel sind folgende _öffentliche_ Freitextfelder denkbar:
 - Kurzbeschreibung
 - Beschreibung
@@ -67,6 +83,7 @@ Zum Beispiel sind folgende _öffentliche_ Freitextfelder denkbar:
 - Provienz
 - Handhabung
 - Literatur
+
 Zum Beispiel sind folgende _interne_ Freitextfelder denkbar:
 - Defekte
 - Aufgaben (erledigte und zu erledigende)
@@ -85,10 +102,6 @@ Ein Standord kann öffentlich zugänglich sein oder ein Depot sein.
 _Wenn es der Standort des Exponates öffentlich zugänglich ist,
 dann gilt auch das Exponat als öffentlich zugänglich._
 
-## Logging (nur intern)
-
-Zur Nachvollziehbarkeit wird automatisch erfasst, welcher Benutzer an welchem Tag eine bestimmte Information hinzugefügt, gelöscht oder geändert hat.
-
 ## REST-API für die Präsentations-Software
 
 Der unidirektionale Datenaustausch von der Verwaltungssoftware zur Präsentationssoftware erfolgt über eine REST-API.
@@ -98,15 +111,45 @@ Die genaue Schnittstellen-Beschreibung der REST-API wird direkt mit der Gruppe 2
 Über die REST-API können nur _öffentlich zugängliche_ Exponate abgerufen werden.
 Zu diesen können auch nur _allgemein öffentliche oder als öffentlich markierte_ Informationen übergeben werden.
 
-## Datenblatt erstellen
+## QR-Codes erstellen
+
+Besuchende des Museums können mittels Präsentations-Software (entwickelt von der anderen Gruppe)
+bei den Exponaten beiliegende QR-Codes einscannen.
+Die QR-Codes enthalten einfach die Inventar-Nummer.
+Über die Rest-API kann die Präsentationssoftware dann unter Angabe der (Inventar-)Nummer
+Informationen zu dem Exponat abrufen.
+
+Dazu ist es erforderlich, dass mit dieser Verwaltungs-Software ein QR-Code,
+welcher die Inventarnummer enthält, erstellt werden kann.
+Der QR-Code soll in einem handelsüblichen Format exportiert werden – vorzugsweise SVG, sonst PNG.
+
+## Logging (nur intern)
+
+Zur Nachvollziehbarkeit wird automatisch erfasst, welcher Benutzer an welchem Tag eine bestimmte Information hinzugefügt, gelöscht oder geändert hat.
+
+## internes Datenblatt erstellen (niedrige Priorität)
 
 Für Restaurierungs- und Reparaturaufträge kann ein internes Datenblatt mit den relevanten Informationen erstellt werden. Es enthält vorwiegend die Angabe zum Hersteller und technische/physikalische Angaben
 
-## Barcode scannen (optional)
+## Barcodes erstellen (niedrige Priorität)
 
-Mittels eines Barcode-Scanners können physisch vorliegende Exemplare gescannt werden und anhand dessen Informationen zu den Exponaten angezeigt werden.
+Zum Zwecke der Inventarisierung sollen Exponate mit einem Barcode versehen werden.
+Der Barcode enthält eine Kennung für die Rubrik und die Inventarnummer.
+Zur Wiederholung: Die Inventarnummer ist unabhängig von der Rubrik.
 
-Beim Einpflegen neuer Exponate kann der Barcode-Scanner verwendet werden, um die Inventar-Nummer automatisch zu erfassen.
+Die Software des Barcode-Scanners kann mehrere Barcodes am Stück drucken.
+Dazu gibt man in die Software des Barcode-Scanners eine CSV-Datei ein.
+Diese CSV-Datei enthält pro Exponat zwei Felder:
+- die eineindeutige Bezeichnung
+- die Nummer des Barcodes = Kennung der Rubrik + Inventarnummer
+
+**Hier zu sind noch weitere Abstimmungen mit dem Auftraggeber erforderlich.**
+
+## Barcodes einscannen (optional)
+
+Für die Inventur ist es sinnvoll physisch vorliegende Exponate mittels eines Barcode-Scanners teil-automatisiert zu erfassen.
+
+**Hier zu sind weitere Abstimmungen mit dem Auftraggeber erforderlich.**
 
 ## Frontend / Design
 
