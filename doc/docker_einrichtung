@@ -67,3 +67,25 @@ debugConsole=true
 # [experimental]
 # sparseVhd=true
 ```
+
+# Docker - Hilfe
+
+## Größe Festplattenspeicher Docker-VM verringern
+
+- gilt für Windows-8
+- alles als Administrator
+
+1. einige Windows-Features aktivieren
+    - Hyper-V Module for Windows Powershell
+    - Hyper-V Services (nur wenn es nicht ohne funktioniert)
+2. neustarten
+3. eine Powershell öffnen
+4. `Optimize-VHD -Path $ENV:LOCALAPPDATA\Docker\wsl\disk\docker_data.vhdx -Mode Full`
+
+## Beobachtungen
+- Die Performance von PHP steht und fällt mit der Performance Festplatte zu Docker-VM.<br>
+da bei jeder Request die Metadaten der nötigen PHP-Dateien (je nach Einstellung des OpCache)
+alle x Sekunden abgefragt werden.<br>
+(Beweis: Repo in ein Docker-Volume kopieren. Das ist wesentlich schneller.)
+- Die Performance von PHP steht und fällt mit der SSD-Performance<br>
+(Beweis: Auf meinem Arbeits-Laptop sind unsere Docker-Anwendungen bei gleichen Einstellungen schneller.)
