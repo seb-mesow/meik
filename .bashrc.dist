@@ -6,10 +6,25 @@ export HISTFILE="${REPO_DIR_WIN}\.bash_history"
 shopt -s histappend
 PROMPT_COMMAND="history -a"
 
+alias gs='git status'
+alias gilrm="rm -f '$REPO_DIR/.git/index.lock'"
+alias rmgil='gilrm'
+alias gl='git log --oneline'
+alias gf='git fetch --all'
+function git_backup_branch() {
+    local cur_branch="$(git rev-parse --abbrev-ref HEAD)";
+    git checkout -b "${cur_branch}_backup_$(date +%+4Y-%m-%d_%H-%M-%S)";
+    git checkout "${cur_branch}";
+}
+alias gb='git_backup_branch'
+alias gp='git push --force-with-lease'
+
+alias docker_compose_run='docker_compose run --rm'
 alias dr='docker_compose restart'
 alias drb='docker_compose up --build -d'
 alias ddown='docker_compose down'
 alias dps='docker_compose ps'
+
 alias bashapp='docker_compose exec app bash -i'
 alias php-fpm='docker_compose exec app php-fpm'
 alias php='docker_compose exec app php'
@@ -18,10 +33,12 @@ alias artisan='php artisan'
 alias composer='docker_compose exec app composer'
 alias ci='composer install'
 alias cda='composer dump-autoload'
+
 alias nodesh='docker_compose run --rm -it --entrypoint sh node'
 alias node='docker_compose run --rm -it node'
 alias npm='docker_compose run --rm -it node npm'
 alias npx='docker_compose run --rm -it node npx'
+
 alias bashdb='docker_compose exec -w /opt/couchdb db bash -i'
 # $1 - user - "admin" or "normal"
 # $2 - HTTP method like PUT GET POST DELETE
