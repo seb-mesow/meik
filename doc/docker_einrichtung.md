@@ -61,11 +61,12 @@ swap=3GB
 # nestedVirtualization=false
 
 # Turns on output console showing contents of dmesg when opening a WSL 2 distro for debugging
-debugConsole=true
+# debugConsole=true
 
 # Enable experimental features
-# [experimental]
-# sparseVhd=true
+[experimental]
+sparseVhd=true
+autoMemoryReclaim=gradual
 ```
 
 # Docker - Hilfe
@@ -81,6 +82,21 @@ debugConsole=true
 2. neustarten
 3. eine Powershell öffnen
 4. `Optimize-VHD -Path $ENV:LOCALAPPDATA\Docker\wsl\disk\docker_data.vhdx -Mode Full`
+
+## nicht mehr Adminpasswort eingeben müssen
+
+siehe [dockeraccesshelper](https://github.com/tfenster/dockeraccesshelper)
+
+0. als normaler Benutzer abmelden
+1. als Administrator anmelden
+2. Powershell
+```powershell
+Install-Module -Name dockeraccesshelper
+# Fragen mit "Y" bestätigen 
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+Import-Module dockeraccesshelper
+Add-AccountToDockerAccess "COMPUTERNAME\Benutzername"
+```
 
 ## Beobachtungen
 - Die Performance von PHP steht und fällt mit der Performance Festplatte zu Docker-VM.<br>

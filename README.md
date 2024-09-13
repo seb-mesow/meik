@@ -31,13 +31,27 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
    2. Firefox schließen und neustarten
 4. `git clone https://github.com/seb-mesow/meik.git`
 5. `cd meik`
-6. `.bashrc.dist` zu `.bashrc` umkopieren
-7. mit den Aliasen in `.bashrc` vertraut machen. Sie beschleunigen das Arbeiten in der Kommandozeile enorm.
-8. `.bashrc` anpassen
-9. `drb` ("docker restart build")
-10. `ci` ("composer install")
-11. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
-12. `php src/Scripts/CreateDBUsersScript.php`
+6. Git-Repo
+   1. checken, ob nicht schon gesetzt: `git config user.name`
+   2. dann ggf: `git config user.name 'GITHUB_USERNAME'`
+   3. checken, ob nicht schon gesetzt: `git config user.email`
+   4. dann ggf: `git config user.email 'GITHUB_MAIL_ADRESSE'`
+      - siehe GitHub -> Account -> Settings -> Emails -> Primary email address
+      - sieht z.B. so aus `12345678+username@users.noreply.github.com` 
+7. `.bashrc`
+   1. `.bashrc.dist` zu `.bashrc` umkopieren
+   2. mit den Aliasen in `.bashrc` vertraut machen. Sie beschleunigen das Arbeiten in der Kommandozeile enorm.
+   3. `.bashrc` anpassen
+8. `.env`
+   1. `.env.example` zu `.env` umkopieren
+9. `laravel.log`
+   1. `rm -f storage/logs/laravel.log`
+   2. `touch storage/logs/laravel.log`
+   3. `chmod 0666 storage/logs/laravel.log`
+10. `drb` ("docker restart build")
+11. `ci` ("composer install")
+12. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
+13. `php src/Scripts/CreateDBUsersScript.php`
 
 **Es ist _zur Zeit_ nicht möglich mit Windows von VS Code in einem Docker-Container ein PHP-Skript zu starten.**<br>Dies geht nur über die Kommandozeile.
 
