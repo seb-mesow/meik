@@ -7,6 +7,8 @@ Weg:
 - in dieser oder einer zweiten Linux WSL VM läuft Docker
 - VS Code auf dem Windows Host kommuniziert mit dem VS Code Server in der Linux VM
 
+Ergebnis: Ziel erfüllt
+
 ## 1. Ubuntu-Distribution in WSL installieren
 
 1. Powershell oder Windows CMD:

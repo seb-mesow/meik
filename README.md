@@ -11,6 +11,7 @@ starten mit
 https://linuxcapable.com/how-to-install-php-on-linux-mint/
 
 **[Einrichtung von Docker auf Windows](doc/docker_einrichtung)**
+- **[Performance-Verbesserung durch Projekt in Ubuntu-VM](doc/vs_code_in_wsl.md)**
 
 ### Empfehlungen für Windows
 1. Windows-Terminal installieren
