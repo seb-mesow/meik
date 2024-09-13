@@ -38,14 +38,39 @@ darin
 apt-get update
 ```
 
-## 3. Projekt in Ubuntu-VM clonen oder kopieren
-
-1. Windows Explorer öffnen
-2. Projekt-Ordner kopieren
-2. In der Adress-zeile `\\wsl$\Ubuntu-24.04\home\sebastian` eingeben und Enter
-
 ## 3. In VS Code WSL Extension installieren und aktivieren
 
 1. WSL Extension installieren und aktivieren<br>
 2. WSL Extension aktivieren
 3. VS Code neustarten
+
+## 4. Projekt in Ubuntu-VM clonen oder kopieren
+
+In Powershell oder Windows CMD
+```powershell
+wsl
+```
+darin
+```bash
+cd
+git clone https://github.com/seb-mesow/meik.git
+```
+
+## 5. VS Code starten
+
+1. Vs Code in Windows Host öffnen
+2. Sidebar -> WSL Extension
+3. bei _Ubuntu-24.04_ den Pfeil _->_ klicken
+4. (VS Code startet sich neu)
+
+## 6. Projekt in Ubuntu-VM konfigurieren
+
+siehe [normale Einrichtung](../README.md)
+- wichtig dabei das Kopieren und Anpassen der `.bashrc`
+
+## 7. Windows Terminal Profil einrichten
+
+- Befehlszeile: `wsl -d Ubuntu-24.04 -u sebastian --cd ~/meik --exec bash --init-file .bashrc`
+- Icon: `https://assets.ubuntu.com/v1/49a1a858-favicon-32x32.png`
+- Startverzeichnis: nicht angeben
+
