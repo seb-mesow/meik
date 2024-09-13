@@ -37,6 +37,7 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 9. `drb` ("docker restart build")
 10. `ci` ("composer install")
 11. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
+12. `php src/Scripts/CreateDBUsersScript.php`
 
 **Es ist _zur Zeit_ nicht möglich mit Windows von VS Code in einem Docker-Container ein PHP-Skript zu starten.**<br>Dies geht nur über die Kommandozeile.
 
@@ -82,3 +83,4 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 - Nicht-Quellcode-Dokumentation in Deutsch
 
 - Tabs statt Spaces
+- LF als Zeilenende

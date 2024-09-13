@@ -126,6 +126,10 @@ Der QR-Code soll in einem handelsüblichen Format exportiert werden – vorzugsw
 ## Logging (nur intern)
 
 Zur Nachvollziehbarkeit wird automatisch erfasst, welcher Benutzer an welchem Tag eine bestimmte Information hinzugefügt, gelöscht oder geändert hat.
+- Benutzer
+- Datum
+- Art der Änderung
+- welche Teil-Information wurde geändert
 
 ## internes Datenblatt erstellen (niedrige Priorität)
 
@@ -154,6 +158,20 @@ Für die Inventur ist es sinnvoll physisch vorliegende Exponate mittels eines Ba
 ## Frontend / Design
 
 - Optimierung für die Größe eines Laptop-Monitores und größere Bildschirme
+- Informationen für Kacheln
+  - Bilder
+  - Bezeichnung
+  - Inventar-Nummer
+  - Hersteller
+  - Baujahr
+  - "Raum - Platz"
+
+- links oben Museums-Logo
+- links unten Förderverein-Logo
+
+- Detail-Seite
+  - erster Tab "Informationen"
+  - zweiter Tab "Änderungen"
 
 ## Nicht-Funktonale Anforderungen
 
