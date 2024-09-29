@@ -9,21 +9,23 @@ Weg:
 
 Ergebnis: Ziel erfüllt
 
+**`USERNAME` durch einen eigenen Namen ersetzen, z.B. `sebastian`**
+
 ## 1. Ubuntu-Distribution in WSL installieren
 
-1. Powershell oder Windows CMD:
+1. in Powershell oder Windows CMD:
 ```powershell
 wsl --install -d Ubuntu-24.04
 ...
-Enter new UNIX username: sebastian
-New passwort: sebastian
+Enter new UNIX username: USERNAME
+New passwort: USERNAME
 ...
 exit
 
 wsl --set-default Ubuntu-24.04
 ```
 2. neustarten
-3. Powershell oder Windows CMD:
+3. in Powershell oder Windows CMD:
 ```powershell
 wsl --manage Ubuntu-24.04 --set-sparse true
 wsl --manage docker-desktop --set-sparse true
@@ -31,7 +33,8 @@ wsl --manage docker-desktop --set-sparse true
 
 ## 2. Ubuntu-VM konfigurieren
 
-In Powershell oder Windows CMD
+### 2.1 updaten
+in Powershell oder Windows CMD
 ```powershell
 wsl -u root
 ```
@@ -39,6 +42,31 @@ darin
 ```bash
 apt-get update
 ```
+
+### 2.2 Default User einstellen
+in Powershell oder Windows CMD
+```powershell
+wsl -u root
+```
+darin
+```bash
+nano /etc/wsl.conf
+```
+Es öffnet sich der Editor nano.
+Dort folgendes _ergänzen_:
+```
+[user]
+default = USERNAME
+```
+Dies ist der Default-User mit dem der VS Code Server in der VM läuft. (wichtig für Dateirechte)
+
+### 2.3 Ubuntu-VM neustarten
+in Powershell oder Windows CMD
+```powershell
+wsl --terminate Ubuntu-24.04
+```
+
+mind. 10 Sekunden warten
 
 ## 3. In VS Code WSL Extension installieren und aktivieren
 
@@ -69,10 +97,11 @@ git clone https://github.com/seb-mesow/meik.git
 
 siehe [normale Einrichtung](../README.md)
 - wichtig dabei das Kopieren und Anpassen der `.bashrc`
+- wichtig dabei das Kopieren und Anpassen der `docker/compose.override.yml`
 
 ## 7. Windows Terminal Profil einrichten
 
-- Befehlszeile: `wsl -d Ubuntu-24.04 -u sebastian --cd ~/meik --exec bash --init-file .bashrc`
+- Befehlszeile: `wsl -d Ubuntu-24.04 --cd ~/meik --exec bash --init-file .bashrc`
 - Icon: `https://assets.ubuntu.com/v1/49a1a858-favicon-32x32.png`
 - Startverzeichnis: nicht angeben
 

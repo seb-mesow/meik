@@ -28,32 +28,13 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
         php${PHP_VERSION} \
         php${PHP_VERSION}-cli \
         php${PHP_VERSION}-fpm \
+        php${PHP_VERSION}-mbstring \
+        php${PHP_VERSION}-curl \
         php${PHP_VERSION}-zip \
         php${PHP_VERSION}-dom \
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-opcache \
         php${PHP_VERSION}-xdebug;
-
-RUN --mount=source=.,target=/build_context \
-    --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
-    cd /var/cache/getcomposer; \
-    if test -f composer.phar; then \
-        echo "aus Cache von RUN --mount=cache wiedergeladen" > ~/getcomposer_cache.log; \
-    else \
-        curl -L -o composer.phar https://getcomposer.org/download/2.7.8/composer.phar; \
-        echo "neu heruntergeladen" > ~/getcomposer_cache.log; \
-    fi;
-RUN --mount=source=.,target=/build_context \
-    --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
-    cd /var/cache/getcomposer; \
-    sha256sum -c /build_context/composer.phar.sha256sum;
-RUN --mount=source=.,target=/build_context \
-    --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
-    cd /var/cache/getcomposer; \
-    cp composer.phar /usr/local/sbin/composer;
-RUN --mount=source=.,target=/build_context \
-    --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
-    chmod 0111 /usr/local/sbin/composer;
 
 RUN mkdir -p /run/php; \
     chown -hR www-data:www-data /run/php; \
@@ -63,13 +44,28 @@ RUN mkdir -p /run/php; \
 RUN usermod -aG root www-data
 
 RUN --mount=source=.,target=/build_context \
+    --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
+    cd /var/cache/getcomposer; \
+    if test -f composer.phar; then \
+        echo "aus Cache von RUN --mount=cache wiedergeladen" > ~/getcomposer_cache.log; \
+    else \
+        curl -L -o composer.phar https://getcomposer.org/download/2.7.8/composer.phar; \
+        echo "neu heruntergeladen" > ~/getcomposer_cache.log; \
+    fi; \
+    cd /var/cache/getcomposer; \
+    sha256sum -c /build_context/composer.phar.sha256sum; \
+    cd /var/cache/getcomposer; \
+    cp composer.phar /usr/local/sbin/composer; \
+    chmod 0111 /usr/local/sbin/composer;
+
+RUN --mount=source=.,target=/build_context \
     cp /build_context/30-settings-fpm.ini ${PHP_FPM_INI_DIR}/conf.d; \
     cp /build_context/30-settings-cli.ini ${PHP_CLI_INI_DIR}/conf.d; \
     cp /build_context/php-fpm.conf ${PHP_FPM_INI_DIR}; \
     cp /build_context/www.conf ${PHP_FPM_INI_DIR}/pool.d;
 
-# RUN --mount=source=./../../../,target=/meik \
-#     cp -r /meik /var/www;
+ARG NORMAL_UID_GID
+RUN useradd -u ${NORMAL_UID_GID} -U normal
 
 WORKDIR /var/www
 

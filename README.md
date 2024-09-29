@@ -1,8 +1,11 @@
 # MEIK
 
 starten mit
+  0. Docker starten
   1. `drb` ("docker restart build")
   2. `npm run dev` (Vite Autoupdater/Hot Module Replacement starten)
+
+[Web-App öffnen](http://localhost:8080)
 
 [CouchDB-GUI](http://localhost:5984/_utils)
 
@@ -38,21 +41,25 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
    3. checken, ob nicht schon gesetzt: `git config user.email`
    4. dann ggf: `git config user.email 'GITHUB_MAIL_ADRESSE'`
       - siehe GitHub -> Account -> Settings -> Emails -> Primary email address
-      - sieht z.B. so aus `12345678+username@users.noreply.github.com` 
+      - sieht z.B. so aus `12345678+username@users.noreply.github.com`
 7. `.bashrc`
-   1. `.bashrc.dist` zu `.bashrc` umkopieren
+   1. `.bashrc.dist` zu `.bashrc` kopieren
    2. mit den Aliasen in `.bashrc` vertraut machen. Sie beschleunigen das Arbeiten in der Kommandozeile enorm.
    3. `.bashrc` anpassen
-8. `.env`
-   1. `.env.example` zu `.env` umkopieren
-9. `laravel.log`
+8. `compose.override.yml`
+   0. im Unterordner `docker`
+   1. `compose.override.dist.yml` zu `compose.overide.yml` kopieren
+   2. `compose.override.yml` anpassen
+9. `.env`
+   1. `.env.example` zu `.env` kopieren
+10. `laravel.log`
    1. `rm -f storage/logs/laravel.log`
    2. `touch storage/logs/laravel.log`
    3. `chmod 0666 storage/logs/laravel.log`
-10. `drb` ("docker restart build")
-11. `ci` ("composer install")
-12. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
-13. `php src/Scripts/CreateDBUsersScript.php`
+11. `drb` ("docker restart build")
+12. `ci` ("composer install")
+13. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
+14. `php src/Scripts/CreateDBUsersScript.php`
 
 **Es ist _zur Zeit_ nicht möglich mit Windows von VS Code in einem Docker-Container ein PHP-Skript zu starten.**<br>Dies geht nur über die Kommandozeile.
 
