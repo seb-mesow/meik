@@ -2,22 +2,26 @@ name: meik
 
 volumes:
   sock:
-  meik:
-
+  mariadb_data_persistent:
+  
 services:
   app:
     build:
       context: app
+      args:
+        NORMAL_UID_GID: ${NORMAL_UID_GID}
     volumes:
-      - sock:/sock
+      - sock:/run/php/fpm/sock
       - ../:/var/www
-    restart: on-failure:5
+    restart: on-failure:2
   
   node:
-    image: node:20.17.0-alpine3.20
+    build:
+      context: node
+      args:
+        NORMAL_UID_GID: ${NORMAL_UID_GID}
     volumes:
       - ../:/var/www
-    working_dir: /var/www
   
   web:
     build:
@@ -25,9 +29,9 @@ services:
     ports:
       - 8080:80
     volumes:
-      - sock:/sock
+      - sock:/run/php/fpm/sock
       - ../:/var/www
-    restart: on-failure:5
+    restart: on-failure:2
   
   db:
     build:
@@ -35,4 +39,13 @@ services:
     hostname: couchdb
     ports:
       - 5984:5984
-    restart: on-failure:1
+    restart: on-failure:2
+
+  mariadb:
+    image: mariadb:11.5.2-noble
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 0
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - mariadb_data_persistent:/var/lib/mysql
+    restart: on-failure:2

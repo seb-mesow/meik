@@ -1,10 +1,4 @@
 services:
-  app:
-    build:
-      args:
-        # in Ubuntu-VM als normaler Nutzer anmelden und den Befehl id ausführen
-        NORMAL_UID_GID: 1002
-  
   db:
     build:
       args:

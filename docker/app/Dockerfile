@@ -33,15 +33,16 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
         php${PHP_VERSION}-zip \
         php${PHP_VERSION}-dom \
         php${PHP_VERSION}-xml \
+        php${PHP_VERSION}-mysql \
         php${PHP_VERSION}-opcache \
         php${PHP_VERSION}-xdebug;
 
-RUN mkdir -p /run/php; \
-    chown -hR www-data:www-data /run/php; \
+RUN mkdir -p /run/php/fpm/sock; \
+    chown -h -R www-data:www-data /run/php; \
     ln -s "/usr/sbin/php-fpm${PHP_VERSION}" /usr/local/sbin/php-fpm;
 
 # TODO nur temporär
-RUN usermod -aG root www-data
+# RUN usermod -aG root www-data
 
 RUN --mount=source=.,target=/build_context \
     --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
@@ -52,11 +53,9 @@ RUN --mount=source=.,target=/build_context \
         curl -L -o composer.phar https://getcomposer.org/download/2.7.8/composer.phar; \
         echo "neu heruntergeladen" > ~/getcomposer_cache.log; \
     fi; \
-    cd /var/cache/getcomposer; \
     sha256sum -c /build_context/composer.phar.sha256sum; \
-    cd /var/cache/getcomposer; \
     cp composer.phar /usr/local/sbin/composer; \
-    chmod 0111 /usr/local/sbin/composer;
+    chmod 0555 /usr/local/sbin/composer;
 
 RUN --mount=source=.,target=/build_context \
     cp /build_context/30-settings-fpm.ini ${PHP_FPM_INI_DIR}/conf.d; \
@@ -65,10 +64,11 @@ RUN --mount=source=.,target=/build_context \
     cp /build_context/www.conf ${PHP_FPM_INI_DIR}/pool.d;
 
 ARG NORMAL_UID_GID
-RUN useradd -u ${NORMAL_UID_GID} -U normal
+RUN useradd -m -U -u ${NORMAL_UID_GID} normal; \
+    usermod -a -G www-data normal;
 
+USER www-data
 WORKDIR /var/www
-
 # CMD [ "bash", "-c", "php-fpm & tail -f /dev/null & wait" ]
 CMD ["php-fpm"]
 # CMD ["tail", "-f", "/dev/null"]
