@@ -1,8 +1,17 @@
-REPO_DIR_WIN='__VOLLSTAENDIGEN_PFAD_HIER_EINTRAGEN__'
-alias docker_compose="MSYS_NO_PATHCONV=1 docker compose -f '${REPO_DIR_WIN}\docker\compose.yml' -f '${REPO_DIR_WIN}\docker\compose.override.yml'"
+# Windows ohne Ubuntu-VM mit VS Code Server
+# REPO_DIR_WIN='__VOLLSTAENDIGEN_PFAD_HIER_EINTRAGEN__'
+# alias docker_compose="MSYS_NO_PATHCONV=1 docker compose -f '${REPO_DIR_WIN}\docker\compose.yml' -f '${REPO_DIR_WIN}\docker\compose.override.yml'"
 # MSYS_NO_PATHCONV=1 braucht es in Git-Bash, aber nicht auf Linux-Hosts
+# export HISTFILE="${REPO_DIR_WIN}\.bash_history"
 
-export HISTFILE="${REPO_DIR_WIN}\.bash_history"
+# Windows mit Ubuntu-VM mit VS Code Server
+REPO_DIR_WSL='/home/USERNAME/meik'
+alias docker_compose="docker compose -f '${REPO_DIR_WSL}/docker/compose.yml' -f '${REPO_DIR_WSL}/docker/compose.override.yml'"
+export HISTFILE="${REPO_DIR_WSL}/.bash_history"
+
+# Linux
+# TODO
+
 shopt -s histappend
 PROMPT_COMMAND="history -a"
 
@@ -20,17 +29,23 @@ alias gb='git_backup_branch'
 alias gp='git push --force-with-lease'
 
 alias docker_compose_run='docker_compose run --rm'
+alias docker_compose_exec='docker_compose exec'
 alias dr='docker_compose restart'
 alias drb='docker_compose up --build -d'
 alias ddown='docker_compose down'
 alias dps='docker_compose ps'
 
-alias bashapp='docker_compose exec app bash -i'
-alias php-fpm='docker_compose exec app php-fpm'
-alias php='docker_compose exec app php'
+alias docker_compose_run_normal='docker_compose run --user normal --rm'
+alias docker_compose_run_root='docker_compose run --user root --rm'
+alias docker_compose_exec_normal='docker_compose exec --user normal'
+alias docker_compose_exec_root='docker_compose exec --user root'
+alias bashapp='docker_compose_exec_normal app bash -i'
+alias bashapproot='docker_compose_exec_root app bash -i'
+alias php-fpm='docker_compose_exec_root app php-fpm'
+alias php='docker_compose_exec_normal app php'
 alias phpd='php -dxdebug.mode=debug -dxdebug.start_with_request'
 alias artisan='php artisan'
-alias composer='docker_compose exec app composer'
+alias composer='docker_compose_exec_normal app composer'
 alias ci='composer install'
 alias cda='composer dump-autoload'
 
@@ -39,7 +54,7 @@ alias node='docker_compose run --rm -it node'
 alias npm='docker_compose run --rm -it node npm'
 alias npx='docker_compose run --rm -it node npx'
 
-alias bashdb='docker_compose exec -w /opt/couchdb db bash -i'
+alias bashdb='docker_compose_exec -w /opt/couchdb db bash -i'
 # $1 - user - "admin" or "normal"
 # $2 - HTTP method like PUT GET POST DELETE
 # $3 - path, must start with /
@@ -58,7 +73,7 @@ function curl_db() {
     if [[ "$#" -ge 4 ]] ; then
         opts=("-d" "$4");
     fi
-    docker_compose exec db curl \
+    docker_compose_exec db curl \
         -u "$auth" \
         -H 'Content-Type: application/json' \
         -H 'Accept: application/json' \
