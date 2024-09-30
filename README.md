@@ -59,6 +59,13 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
     1. `bashapproot` (in den `app`-Container als `root` einloggen), darin
         1. `chown -R www-data:www-data storage`
         2. `chown -R www-data:www-data bootstrap/cache`
+	    3. `chmod -R 0770 storage`
+	    4. `chmod -R 0770 bootstrap/cache`
+	2. im Host == Ubuntu (nicht in einem Docker-Container)
+        1. `id www-data`, sollte u.A. `gid=33` ausgeben (sonst eine weitere Gruppe mit der GID `33` anlegen)
+		2. `sudo usermod -a -G www-data USERNAME` (`USERNAME` durch Benutzernamen im Host ersetzen)
+		3. Terminal schließen und neuöffnen
+        4. VS Code schließen und neustarten
 14. `artisan key:generate`
 15. `php src/Scripts/CreateDBUsersScript.php`
 
