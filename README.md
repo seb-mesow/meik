@@ -1,7 +1,8 @@
 # MEIK
 
-starten mit
-  0. Docker starten
+## Starten der Web-App
+
+  0. Docker (Engine) im Host starten
   1. `drb` ("docker restart build")
   2. `npm run dev` (Vite Autoupdater/Hot Module Replacement starten)
   3. `npm run start-ssr`
@@ -16,12 +17,6 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 
 **[Einrichtung von Docker auf Windows](doc/docker_einrichtung)**
 - **[Performance-Verbesserung durch Projekt in Ubuntu-VM](doc/vs_code_in_wsl.md)**
-
-### Empfehlungen für Windows
-1. Windows-Terminal installieren
-2. Git für Windows (erneut) installieren
-   - Dabei unbedingt auch Git-Bash installieren
-3. MEIK-spezifisches Git-Bash-Profil in Windows-Terminal einrichten
 
 ### Einrichtung für alle
 1. VS Code einrichten:
@@ -48,58 +43,58 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
     1. `.bashrc.dist` zu `.bashrc` kopieren
     2. mit den Aliasen in `.bashrc` vertraut machen. Sie beschleunigen das Arbeiten in der Kommandozeile enorm.
     3. `.bashrc` anpassen
+	4. Eigenes Terminal so einstellen, dass _diese_ `.bashrc` geladen wird.<br>
+	   Dafür am besten ein separates Profil anlegen.
 8. im Unterordner `docker`
     1. `.env.dist` zu `.env` kopieren
     2. `compose.override.dist.yml` zu `compose.overide.yml` kopieren
     3. `.env` anpassen
     4. `compose.override.yml` anpassen
-9. `.env`
+9. `.env` (in der Wurzel des Repos)
     1. `.env.example` zu `.env` kopieren
 11. `drb` ("docker restart build")
 12. `ci` ("composer install")
 13. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
 10. `storage`-Verzeichnis
-    1. `bashapproot`, darin
+    1. `bashapproot` (in den `app`-Container als `root` einloggen), darin
         1. `chown -R www-data:www-data storage`
+        2. `chown -R www-data:www-data bootstrap/cache`
 14. `artisan key:generate`
 15. `php src/Scripts/CreateDBUsersScript.php`
 
 **Es ist _zur Zeit_ nicht möglich mit Windows von VS Code in einem Docker-Container ein PHP-Skript zu starten.**<br>Dies geht nur über die Kommandozeile.
 
+### Empfehlungen für Windows
+1. Windows-Terminal installieren
+2. Git für Windows (erneut) installieren
+   - Dabei unbedingt auch Git-Bash installieren
+3. MEIK-spezifisches Git-Bash-Profil in Windows-Terminal einrichten
+
 ## Tech-Stack
-- VS Code zur Entwicklung
-- Bash als Shell
 - Backend:
-  - CouchDB 3
-  - [PHPOnCouch](https://php-on-couch.readthedocs.io)
-  - Laravel 11
-  - PHP 8.3
-  - composer
+  - [CouchDB 3](https://docs.couchdb.org/en/stable/)
+  - [PHPOnCouch 4.0](https://php-on-couch.readthedocs.io)
+  - [Laravel 11](https://laravel.com/docs/11.x)
+  - [PHP 8.3](https://www.php.net/manual/en/)
+  - [Composer 2.7](https://getcomposer.org/doc/)
 - Frontend
-  - TypeScript (mit ES Modules -> `import` und `export`)
-  - Node ?
-  - npm
-  - PrimeVue
-  - Vue.js
-
-### Gui-Mockup
-- Figma
-
-### Virtualisierung
-- Docker
-- Ubuntu für Produktiv-Umgebung
+  - [TypeScript](https://www.typescriptlang.org/docs/) (mit ES Modules -> `import` und `export`)
+  - [Node 20.17](https://nodejs.org/docs/latest-v20.x/api/index.html)
+  - [npm 10.8](https://docs.npmjs.com/)
+  - [Vue.js](https://vuejs.org/)
+  - [PrimeVue](https://primevue.org/)
+- Environment
+  - [Visual Studio Code](https://code.visualstudio.com/docs) als IDE
+  - [Bash](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html) als Shell
+  - [Docker](https://docs.docker.com/) für die lokale Entwicklungs-Umgebung
+  - Ubuntu-VM (mit Docker?) als Produktiv-Umgebung
+- Figma für GUI-Mockups
 
 ## Konventionen
 
 ### Variablen und Klassenschreibweisen
 - `snake_case` für Variablen und Funktionen
 - `PascalCase` für Klassen und Interfaces
-
-### Branch-Konzept
-- `main` ist der einzige Haupt-Branch
-- davon zieht sich jeder eigenen Entwicklungs-Branch
-- in den `main`-Branch wird zunächst nur per vorherigem Rebase
-- Git-Tags für funktionierende Versionen
 
 ### Quelltext
 
@@ -110,3 +105,17 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 
 - Tabs statt Spaces
 - LF als Zeilenende
+
+### Branch-Konzept
+- `main` ist der einzige Haupt-Branch.
+- Davon zieht sich jeder seinen eigenen Entwicklungs-Branch.
+- Iin den `main`-Branch wird zunächst nur per vorherigem Rebase "gemergt".
+- Git-Tags für funktionierende Versionen
+
+#### Rebasen
+Empfehlung: jeden Tag einmal machen
+
+1. alle zwischenzeitlichen Änderungen commiten
+2. `gb` (eigenen Feature-Branch backupen)
+3. `gf` (Alle Branches aktualisieren)
+4. in VS Code: rebasen und zwar auf `origin/main` (nicht `main`!)
