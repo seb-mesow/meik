@@ -22,7 +22,6 @@ yarn-error.log
 /.vscode
 
 # Custom
-/bootstrap/cache
 *.bashrc
 *.bash_history
 

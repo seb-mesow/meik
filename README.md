@@ -4,8 +4,9 @@
 
   0. Docker (Engine) im Host starten
   1. `drb` ("docker restart build")
-  2. `npm run dev` (Vite Autoupdater/Hot Module Replacement starten)
-  3. `npm run start-ssr`
+  2. `npm run build` (Frontend bauen)
+  3. **TODO** `npm run dev` (Vite Autoupdater/Hot Module Replacement starten)
+  4. **TODO** `npm run start-ssr`
 
 [Web-App öffnen](http://localhost:8080)
 
