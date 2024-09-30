@@ -78,7 +78,7 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 - Frontend
   - TypeScript (mit ES Modules -> `import` und `export`)
   - Node ???
-  - npm ???
+  - npm
   - PrimeVue
   - Vue.js
 
