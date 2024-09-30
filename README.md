@@ -120,10 +120,13 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 - Iin den `main`-Branch wird zunächst nur per vorherigem Rebase "gemergt".
 - Git-Tags für funktionierende Versionen
 
+- **Es gibt keinen Grund jemals ein `git pull` zu machen!**
+
 #### Rebasen
 Empfehlung: jeden Tag einmal machen
 
-1. alle zwischenzeitlichen Änderungen commiten
+1. alle zwischenzeitlichen Änderungen commiten oder stashen
 2. `gb` (eigenen Feature-Branch backupen)
-3. `gf` (Alle Branches aktualisieren)
+3. `gf` (alle Branches aktualisieren)
 4. in VS Code: rebasen und zwar auf `origin/main` (nicht `main`!)
+5. (`gp`)
