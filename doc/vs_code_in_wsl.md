@@ -105,3 +105,36 @@ siehe [normale Einrichtung](../README.md)
 - Icon: `https://assets.ubuntu.com/v1/49a1a858-favicon-32x32.png`
 - Startverzeichnis: nicht angeben
 
+## 8. Git Credential Manager installieren
+
+siehe [dessen Installations-Anleitung](https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/install.md)
+
+0. Terminal in Ubuntu-VM öffnen
+1. `cd ~`
+2. `sudo apt update`
+3. `sudo apt install gpg pass`
+4. Passphrase (Password) bestehend aus mind. 20 ASCII-Zeichen ohne Leerzeichen überlegen und notieren
+5. `gpg --full-generate-key`
+    - _Please select what kind of key you want:_ [Enter] (default _ECC (sign and encrypt)_ bestätigen)
+    - _Please select which elliptic curve you want:_ [Enter] (default _Curve 25519_ bestätigen)
+    - _Please specify how long the key should be valid._ `2y` [Enter] (Das Keypair wird nach 2 Jahren ungültig.)
+      - _Is this correct?_ `y`
+    - _Real name:_ `VORNAME NACHNAME (GitHub)` [Enter]
+    - _Email address:_ `GITHUB-EMAIL-ADRESSE` [Enter]
+    	- siehe GitHub -> Account -> Settings -> Emails -> Primary email address
+    - _Comment:_ [Enter] (leer lassen)
+    - _Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit?_ `O` [Enter]
+    - _Please enter the passphrase to protect your new key_ `PASSPHRASE` [Enter]
+    - _Please re-enter this passphrase_: `PASSPHRASE` [Enter]
+    - (Maus schnell hin- und her wischen — Entropie erzeugen)
+    - Die User-ID (UID) des Keys steht nun in der vorletzten, mit `uid` beginnenden Zeile.<br>
+      Diese kopieren.
+6. `pass init "USER-ID DES KEYS"` (Die Anführungszeichen sind wichtig.)
+7. `wget https://github.com/git-ecosystem/git-credential-manager/releases/download/v2.5.1/gcm-linux_amd64.2.5.1.deb`<br>
+   (nicht `curl`)
+8. `sudo dpkg -i gcm-linux_amd64.2.5.1.deb`
+9. `git-credential-manager configure`
+10. `git config --global credential.credentialStore gpg`
+11. `git config --global credential.gitHubAuthModes device`
+
+Nun sollte ein `git pull` einfacher funktionieren.
