@@ -87,7 +87,6 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 
 ### Virtualisierung
 - Docker
-
 - Ubuntu für Produktiv-Umgebung
 
 ## Konventionen
