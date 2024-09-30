@@ -26,7 +26,7 @@ function git_backup_branch() {
     git checkout "${cur_branch}";
 }
 alias gb='git_backup_branch'
-alias gp='git push --force-with-lease'
+alias gp='git push --force-with-lease --set-upstream origin "$(git rev-parse --abbrev-ref HEAD)"'
 
 alias docker_compose_run='docker_compose run --rm'
 alias docker_compose_exec='docker_compose exec'
