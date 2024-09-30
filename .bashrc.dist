@@ -91,3 +91,5 @@ alias dbput="curldb_normal PUT"
 alias dbget="curldb_normal GET"
 alias dbpost="curldb_normal POST"
 alias dbdelete="curldb_normal DELETE"
+
+# export GPG_TTY=$(tty)
