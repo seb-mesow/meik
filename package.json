@@ -20,5 +20,8 @@
         "vite": "^5.0",
         "vue": "^3.4.0",
         "vue-tsc": "^2.0.24"
+    },
+    "dependencies": {
+        "primevue": "^4.0.7"
     }
 }
