@@ -8,6 +8,7 @@
 	},
     "scripts": {
         "dev": "vite",
+        "dev-debug": "vite -d -l info",
         "build": "vue-tsc && vite build --ssr",
         "start-ssr": "node bootstrap/ssr/ssr.js"
     },
