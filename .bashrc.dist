@@ -49,10 +49,11 @@ alias composer='docker_compose_exec_normal app composer'
 alias ci='composer install'
 alias cda='composer dump-autoload'
 
-alias nodesh='docker_compose run --rm -it --entrypoint sh node'
-alias node='docker_compose run --rm -it node'
-alias npm='docker_compose run --rm -it node npm'
-alias npx='docker_compose run --rm -it node npx'
+alias shnode='docker_compose_exec_normal -it --entrypoint sh node -i'
+alias shnoderoot='docker_compose_exec_root -it --entrypoint sh node -i'
+alias node='docker_compose_exec_normal node'
+alias npm='docker_compose_exec_normal node npm'
+alias npx='docker_compose_exec_normal node npx'
 
 alias bashdb='docker_compose_exec -w /opt/couchdb db bash -i'
 # $1 - user - "admin" or "normal"
@@ -92,4 +93,5 @@ alias dbget="curldb_normal GET"
 alias dbpost="curldb_normal POST"
 alias dbdelete="curldb_normal DELETE"
 
+# für signierte Commits
 # export GPG_TTY=$(tty)
