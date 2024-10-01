@@ -1,11 +1,9 @@
 # MEIK
 
 ## Starten der Web-App
-
-  0. Docker (Engine) im Host starten
-  1. `drb` ("docker restart build")
-  2. `npm run dev` (Hot Module Replacement)
-  4. **TODO** `npm run start-ssr`
+0. Docker (Engine) im Host starten
+1. `drb` ("docker restart build")
+2. `npm run dev` (Hot Module Replacement)
 
 [Web-App öffnen (HTTP)](http://meik.localhost:8080)
 <!-- [Web-App öffnen (HTTPS)](https://meik.localhost:444) -->
@@ -24,12 +22,13 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
     1. _Git: Allow Force Push_ aktivieren<br>
        Restliche Einstellungen zu Force-Pushing auf default belassen.
 2. folgende VS Code Extensions installieren:
-    1. PHP von DEVSENSE
-    2. PHP Debug von Xdebug
-	3. Vue - Offical von Vue
-    4. _optional:_ [Docker von Microsoft](https://code.visualstudio.com/docs/containers/overview)
+    1. _PHP_ von _DEVSENSE_
+    2. _PHP Debug von _Xdebug_
+	3. _Vue - Offical_ von _Vue_
+    4. _optional:_ _GitLens — Git supercharged_ von _GitKraken_
+    4. _optional:_ [_Docker_ von _Microsoft_](https://code.visualstudio.com/docs/containers/overview)
 3. folgendes Firefox-Addon installieren:
-    1. Xdebug Helper for Firefox von BrianGilbert
+    1. _Xdebug Helper for Firefox_ von _BrianGilbert_
     2. Firefox schließen und neustarten
 4. `git clone https://github.com/seb-mesow/meik.git`
 5. `cd meik`
@@ -131,3 +130,13 @@ Empfehlung: jeden Tag einmal machen
 3. `gf` (alle Branches aktualisieren)
 4. in VS Code: rebasen und zwar auf `origin/main` (nicht `main`!)
 5. (`gp`)
+
+
+## Docker-Tipps
+
+### Speicherplatz freigeben
+1. `docker system --volumes`
+2. bei WSL zusätzlich:
+   1. _Quit Docker Desktop_ (ca. 1 Minute warten)
+   2. Powershell-Terminal mit Administrator-Rechten starten
+   3. `Optimize-VHD -Path "C:\Users\USERNAME\AppData\Local\Docker\wsl\disk\docker_data.vhdx" -Mode Full`

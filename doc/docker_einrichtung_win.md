@@ -72,16 +72,18 @@ autoMemoryReclaim=gradual
 # Docker - Hilfe
 
 ## Größe Festplattenspeicher Docker-VM verringern
+- gilt für Windows 10
 
-- gilt für Windows-8
-- alles als Administrator
-
+**Einrichtung**
+1. als Administrator einloggen
 1. einige Windows-Features aktivieren
     - Hyper-V Module for Windows Powershell
     - Hyper-V Services (nur wenn es nicht ohne funktioniert)
 2. neustarten
-3. eine Powershell öffnen
-4. `Optimize-VHD -Path $ENV:LOCALAPPDATA\Docker\wsl\disk\docker_data.vhdx -Mode Full`
+
+**Verkleinern (immer wieder)**
+1. eine Powershell als Administrator öffnen
+2. `Optimize-VHD -Path $ENV:LOCALAPPDATA\Docker\wsl\disk\docker_data.vhdx -Mode Full`
 
 ## nicht mehr Adminpasswort eingeben müssen
 
@@ -92,7 +94,7 @@ siehe [dockeraccesshelper](https://github.com/tfenster/dockeraccesshelper)
 2. Powershell
 ```powershell
 Install-Module -Name dockeraccesshelper
-# Fragen mit "Y" bestätigen 
+# Fragen mit "Y" bestätigen
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 Import-Module dockeraccesshelper
 Add-AccountToDockerAccess "COMPUTERNAME\Benutzername"
