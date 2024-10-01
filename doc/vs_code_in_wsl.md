@@ -105,7 +105,7 @@ siehe [normale Einrichtung](../README.md)
 - Icon: `https://assets.ubuntu.com/v1/49a1a858-favicon-32x32.png`
 - Startverzeichnis: nicht angeben
 
-## 8. Git Credential Manager installieren
+## 8. _optional:_ Git Credential Manager installieren
 
 siehe [dessen Installations-Anleitung](https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/install.md)
 
