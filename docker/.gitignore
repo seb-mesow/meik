@@ -1,0 +1,4 @@
+*.env*
+!.env.dist
+*compose*.yml
+!compose.override.dist.yml
