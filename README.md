@@ -10,6 +10,8 @@
 
 [CouchDB-GUI](http://couchdb.localhost:5984/_utils)
 
+3. Im Freifox Cache deaktivieren !
+
 ## Einrichtung
 
 https://linuxcapable.com/how-to-install-php-on-linux-mint/
