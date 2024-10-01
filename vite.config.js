@@ -18,6 +18,9 @@ export default defineConfig({
             },
         }),
     ],
+	// esbuild: {
+	// 	sourcemap: "external"
+	// },
 	build: {
         watch: { // https://rollupjs.org/configuration-options/#watch
             include: [
