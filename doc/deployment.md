@@ -2,6 +2,11 @@
 
 Hier werden Einstellungen zur Produktiv-Umgebung notiert.
 
+## TODO
+
+- für Deployment Image, welches Node und PHP vereint.<br>
+  siehe [Hinweisbox auf der Inertia-Seite](https://inertiajs.com/server-side-rendering)
+
 ## Notizen
 
 - Server-Side Rendering (SSR) ist nur für die Produktiv-Umgebung sinnvoll.
