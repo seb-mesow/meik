@@ -22,12 +22,15 @@ services:
         NORMAL_UID_GID: ${NORMAL_UID_GID}
     volumes:
       - ../:/var/www
-  
+    entrypoint: []
+    command: ["tail", "-f", "/dev/null"]
+    
   web:
     build:
       context: web
     ports:
-      - 8080:80
+      - 8080:80 # HTTP
+      - 444:443 # HTTPS
     volumes:
       - sock:/run/php/fpm/sock
       - ../:/var/www

@@ -4,13 +4,13 @@
 
   0. Docker (Engine) im Host starten
   1. `drb` ("docker restart build")
-  2. `npm run build` (Frontend bauen)
-  3. **TODO** `npm run dev` (Vite Autoupdater/Hot Module Replacement starten)
+  2. `npm run dev` (Hot Module Replacement)
   4. **TODO** `npm run start-ssr`
 
-[Web-App öffnen](http://localhost:8080)
+[Web-App öffnen (HTTP)](http://meik.localhost:8080)
+<!-- [Web-App öffnen (HTTPS)](https://meik.localhost:444) -->
 
-[CouchDB-GUI](http://localhost:5984/_utils)
+[CouchDB-GUI](http://couchdb.localhost:5984/_utils)
 
 ## Einrichtung
 
@@ -95,6 +95,7 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
   - [Visual Studio Code](https://code.visualstudio.com/docs) als IDE
   - [Bash](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html) als Shell
   - [Docker](https://docs.docker.com/) für die lokale Entwicklungs-Umgebung
+    - [Nginx](https://nginx.org/en/docs/) — Abschnitt _Modules reference_
   - Ubuntu-VM (mit Docker?) als Produktiv-Umgebung
 - Figma für GUI-Mockups
 
