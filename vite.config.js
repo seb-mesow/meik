@@ -22,6 +22,7 @@ export default defineConfig({
         watch: { // https://rollupjs.org/configuration-options/#watch
             include: [
                 '(^|/)storage/framework/views/.*', // normal regex
+                '(^|/)bootstrap/ssr/.*',
                 '(^|/)resources/.*',
                 '(^|/)public/.*',
                 '(^|/)node_modules/.*',
