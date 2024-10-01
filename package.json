@@ -9,8 +9,9 @@
     "scripts": {
         "dev": "vite",
         "dev-debug": "vite -d -l info",
-        "build": "vue-tsc && vite build --ssr",
-        "start-ssr": "node bootstrap/ssr/ssr.js"
+        "build-prod": "vue-tsc && vite build --ssr",
+        "build-prod-recommended": "vue-tsc && vite build && vite build --ssr",
+        "start-ssr-prod": "node bootstrap/ssr/ssr.js"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
