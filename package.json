@@ -7,8 +7,8 @@
 		"npm": ">=10.8.2 <11.0.0"
 	},
     "scripts": {
-        "dev": "vite",
-        "dev-debug": "vite -d -l info",
+        "dev": "vue-tsc && vite",
+        "dev-debug": "vue-tsc && vite -d -l info",
         "build-prod": "vite build && vite build --ssr",
         "build-prod-recommended": "vue-tsc && vite build && vite build --ssr",
         "start-ssr-prod": "node bootstrap/ssr/ssr.js"
