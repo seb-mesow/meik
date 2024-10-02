@@ -56,7 +56,7 @@ final class CreateDBUsersScript {
         try {
             $response = $this->http_client->put('/' . self::DATABASE, [
                 'auth' => [ self::SYS_ADMIN_USER, self::SYS_ADMIN_PASSWORD ],
-                'http_errors' => false
+				'http_errors' => false,
             ]);
         } catch (ClientException $e) {
             if (!str_contains($e->getMessage(), 'The database could not be created, the file already exists.')) {
@@ -91,6 +91,7 @@ try {
     (new CreateDBUsersScript)->execute();
 	print("successful" . PHP_EOL);
 } catch (Throwable $e) {
-    print($e);
+	print("Error:" . PHP_EOL);
+	print($e . PHP_EOL);
     exit(1);
 }
