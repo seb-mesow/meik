@@ -55,6 +55,9 @@ alias node='docker_compose_exec_normal node'
 alias npm='docker_compose_exec_normal node npm'
 alias npx='docker_compose_exec_normal node npx'
 
+SYS_ADMIN_USER=nJgHb8j3yN4BgdG46N8dnddzhy7523Hd3gAsfY10jw7Vk9wkQyp3Pdb2el6vfopy1gfF789J5GvcdS68Tf6VGcvG6ghDF4d3Dx6F
+SYS_ADMIN_PASSWORD=7cFcFdVsHV2Gs65o7CgKNdH15pLH7tH2zBxDQxS4syPfVj6Ytp4qCfDv4CgEhZhb65TFvcjoBHvg654DFcxgh654Cd49yAQPMnK5
+
 alias bashdb='docker_compose_exec -w /opt/couchdb db bash -i'
 # $1 - user - "admin" or "normal"
 # $2 - HTTP method like PUT GET POST DELETE
@@ -66,7 +69,7 @@ function curl_db() {
     local path="$3";
     if [[ "$user" == "admin" ]] ; then
         # Trennung User und Passwort durch Doppelpunkt
-        local auth='H-j6d)5<\*3m1!p_Rq}8:1e~0XAy(L.|6-fUj+Kw2V>f,'
+        local auth="$SYS_ADMIN_USER:$SYS_ADMIN_PASSWORD"
     else
         local auth='H-j6d)5<\*3m1!p_Rq}8:1e~0XAy(L.|6-fUj+Kw2V>f,'
     fi
