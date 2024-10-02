@@ -10,10 +10,10 @@ services:
         DB_USER: ifyKhwui9vbIw3kvQbi6v98gyyEx70Zgn7veqDw4vey9sLv5weY2C4r3jcyEcZT654yqMm4knbc8Vt56vDq0678Kc45Ygf494Bsv
         DB_PASSWORD: Oy3YmM62DB4cE7b9rphx4hbgv6g65vgCcf68H546hvBvjuZzTz87hyGvoppnBHG646vVjC5gVuhfgO0OpOjqcCr57GVBy842Bsda
   
-  # phpmyadmin:
-  #   image: phpmyadmin
-  #   environment:
-  #     PMA_HOST: mariadb
-  #   ports:
-  #     - 8081:80
-  #   restart: on-failure:2
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+    ports:
+      - 8081:80
+    restart: on-failure:2
