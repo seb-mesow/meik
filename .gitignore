@@ -24,3 +24,4 @@ yarn-error.log
 # Custom
 *.bashrc
 *.bash_history
+/log
