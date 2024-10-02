@@ -18,6 +18,7 @@ Hier werden Einstellungen zur Produktiv-Umgebung notiert.
 **`APP_DEBUG=false` !!!**
 
 0. siehe [README](../README.md) — Einrichtung für alle
-1. `artisan optimize` (Config, Event-Listener-Mapping, Routes cachen)
-2. `npm run build-prod`
-3. `npm run start-ssr-prod`
+1. `resources/js/app.ts` anpassen
+2. `artisan optimize` (Config, Event-Listener-Mapping, Routes cachen)
+3. `npm run build-prod`
+4. `npm run start-ssr-prod`
