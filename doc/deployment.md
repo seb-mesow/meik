@@ -13,10 +13,11 @@ Hier werden Einstellungen zur Produktiv-Umgebung notiert.
 - Für die lokale Development-Umgebung verwenden wir Hot Module Replacement,
   welches für SSR hinderlich ist.
 
+## Einrichtung
+- **`APP_DEBUG=false` !!!**
+- PHP-Einstellungen anpassen
+
 ## Workflow
-
-**`APP_DEBUG=false` !!!**
-
 0. siehe [README](../README.md) — Einrichtung für alle
 1. `resources/js/app.ts` anpassen
 2. `artisan optimize` (Config, Event-Listener-Mapping, Routes cachen)

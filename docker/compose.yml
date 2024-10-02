@@ -14,6 +14,7 @@ services:
     volumes:
       - sock:/run/php/fpm/sock
       - ../:/var/www
+      - ../log/app:/var/log
     restart: on-failure:2
   
   node:
@@ -35,6 +36,7 @@ services:
     volumes:
       - sock:/run/php/fpm/sock
       - ../:/var/www
+      - ../log/web:/var/log
     restart: on-failure:2
   
   db:
