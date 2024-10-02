@@ -12,6 +12,7 @@
 
 3. Im Freifox Cache deaktivieren !
 
+
 ## Einrichtung
 
 https://linuxcapable.com/how-to-install-php-on-linux-mint/
