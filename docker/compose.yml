@@ -2,6 +2,7 @@ name: meik
 
 volumes:
   sock:
+  couchdb_data_persistent:
   mariadb_data_persistent:
   
 services:
@@ -43,6 +44,8 @@ services:
     ports:
       - 5984:5984
     restart: on-failure:2
+    volumes:
+      - couchdb_data_persistent:/opt/couchdb/data
 
   mariadb:
     image: mariadb:11.5.2-noble
