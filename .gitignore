@@ -24,4 +24,5 @@ yarn-error.log
 # Custom
 *.bashrc
 *.bash_history
+ToDos.md
 
