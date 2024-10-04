@@ -20,7 +20,7 @@ class TextBlock
 	/**
 	 * Get the value of title
 	 */ 
-	public function getTitle()
+	public function get_title()
 	{
 		return $this->title;
 	}
@@ -30,7 +30,7 @@ class TextBlock
 	 *
 	 * @return  self
 	 */ 
-	public function setTitle($title)
+	public function set_title($title)
 	{
 		$this->title = $title;
 
@@ -40,7 +40,7 @@ class TextBlock
 	/**
 	 * Get the value of content
 	 */ 
-	public function getContent()
+	public function get_content()
 	{
 		return $this->content;
 	}
@@ -50,7 +50,7 @@ class TextBlock
 	 *
 	 * @return  self
 	 */ 
-	public function setContent($content)
+	public function set_content($content)
 	{
 		$this->content = $content;
 
@@ -60,7 +60,7 @@ class TextBlock
 	/**
 	 * Get the value of is_private
 	 */ 
-	public function getIs_private()
+	public function get_is_private()
 	{
 		return $this->is_private;
 	}
@@ -70,7 +70,7 @@ class TextBlock
 	 *
 	 * @return  self
 	 */ 
-	public function setIs_private($is_private)
+	public function set_is_private($is_private)
 	{
 		$this->is_private = $is_private;
 
