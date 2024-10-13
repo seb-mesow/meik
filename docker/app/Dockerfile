@@ -16,6 +16,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     apt-get install --no-install-recommends --quiet --quiet \
         ca-certificates \
         curl \
+		unzip \
+		gosu \
         gpg-agent \
         software-properties-common; \
     add-apt-repository ppa:ondrej/php;
@@ -24,8 +26,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     --mount=type=cache,target=/var/lib/apt,sharing=private \
     apt-get update --quiet --quiet; \
     apt-get install --no-install-recommends --quiet --quiet \
-        sudo \
-		unzip \
         php${PHP_VERSION} \
         php${PHP_VERSION}-cli \
         php${PHP_VERSION}-fpm \
@@ -42,9 +42,6 @@ RUN mkdir -p /run/php/fpm/sock; \
     chown -h -R www-data:www-data /run/php; \
     ln -s "/usr/sbin/php-fpm${PHP_VERSION}" /usr/local/sbin/php-fpm;
 
-# TODO nur temporär
-# RUN usermod -aG root www-data
-
 RUN --mount=source=composer,target=/build_context \
     --mount=type=cache,target=/var/cache/getcomposer,sharing=private \
     cd /var/cache/getcomposer; \
@@ -60,24 +57,17 @@ RUN --mount=source=composer,target=/build_context \
 
 ARG NORMAL_UID_GID
 RUN useradd -m -U -u ${NORMAL_UID_GID} normal; \
-	# usermod -a -G www-data normal; \
-	gpasswd -a normal www-data; \
-	echo -ne 'www-data\nwww-data\n' | passwd www-data; \
-	# usermod -a -G sudo www-data;
-	gpasswd -a www-data sudo;
-	# echo "www-data ALL=(ALL) ALL" > /etc/sudoers.d/www-data;
+	gpasswd -a normal www-data; 
 	
-	# echo "normal ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/normal;
-
 RUN --mount=source=settings,target=/build_context \
-    cp /build_context/30-settings-fpm.ini ${PHP_FPM_INI_DIR}/conf.d; \
-    cp /build_context/30-settings-cli.ini ${PHP_CLI_INI_DIR}/conf.d; \
-    cp /build_context/php-fpm.conf ${PHP_FPM_INI_DIR}; \
-    cp /build_context/www.conf ${PHP_FPM_INI_DIR}/pool.d; \
+	cp /build_context/30-settings-fpm.ini ${PHP_FPM_INI_DIR}/conf.d; \
+	cp /build_context/30-settings-cli.ini ${PHP_CLI_INI_DIR}/conf.d; \
+	cp /build_context/php-fpm.conf ${PHP_FPM_INI_DIR}; \
+	cp /build_context/www.conf ${PHP_FPM_INI_DIR}/pool.d; \
 	cp /build_context/docker-entrypoint.bash /; \
 	chmod 0755 /docker-entrypoint.bash;
 
-USER www-data
+# USER muss noch root sein
 WORKDIR /var/www
 ENTRYPOINT ["/docker-entrypoint.bash"]
 CMD ["php-fpm"]
