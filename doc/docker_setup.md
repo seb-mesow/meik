@@ -8,3 +8,5 @@
 | HTTPS | meik.local | 444 | web | web | 443 | "HTML der Webseiten auf Anfrage (URL) bereitstellen" |
 | Vite Dev Server | meik.local | 8080 | node | node | 5173 | Frontend-Assets (vorallem JS, CSS) bereitstellen, nginx als Proxy |
 | Vite Dev Server | meik.local | 444 | node | node | 5174 | Frontend-Assets (vorallem JS, CSS) bereitstellen, nginx als Proxy |
+
+https://sysdig.com/blog/dockerfile-best-practices/

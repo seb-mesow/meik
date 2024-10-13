@@ -7,7 +7,8 @@
 		"npm": ">=10.8.2 <11.0.0"
 	},
     "scripts": {
-        "dev": "vue-tsc && vite",
+        "dev-slow": "vue-tsc && vite",
+        "dev": "vite",
         "dev-debug": "vue-tsc && vite -d -l info",
         "build-prod": "vite build && vite build --ssr",
         "build-prod-recommended": "vue-tsc && vite build && vite build --ssr",
