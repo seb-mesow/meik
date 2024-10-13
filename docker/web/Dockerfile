@@ -31,14 +31,21 @@ RUN --mount=type=cache,target=/var/cache/apk,sharing=private \
 	gosu nobody true;
 
 RUN --mount=source=.,target=/build_context \
+	cp /build_context/nginx.conf /etc/nginx; \
 	cp /build_context/default.conf /etc/nginx/conf.d; \
 	chown -hR root:nginx /etc/nginx; \
 	find /etc/nginx -type d -exec chmod u=rx,g=rx,o= '{}' +; \
 	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +; \
+	\
+	mkdir /run/nginx; \
+	chown -hR root:nginx /run/nginx; \
+	chmod u=rwx,g=rwx,o= /run/nginx; \
+	\
 	cp -T /build_context/entrypoint-extension.sh /docker-entrypoint.d/99-entrypoint-extension.sh; \
 	sed -i 's/exec "$@"/exec gosu nginx "$@";/' /docker-entrypoint.sh; \
 	chown -hR root:nginx /docker-entrypoint.d; \
 	find /docker-entrypoint.d -type d -exec chmod u=rx,g=rx,o= '{}' +; \
 	find /docker-entrypoint.d -type f -exec chmod u=rx,g=rx,o= '{}' +; \
+	\
 	addgroup -g 33 www-data-from-app; \
 	addgroup nginx www-data-from-app;
