@@ -4,13 +4,13 @@
 0. Docker (Engine) im Host starten
 1. `drb` ("docker restart build")
 2. `npm run dev` (Hot Module Replacement)
-
-[Web-App öffnen (HTTP)](http://meik.localhost:8080)
+3. [Web-App öffnen (HTTP)](http://meik.localhost:8080)
 <!-- [Web-App öffnen (HTTPS)](https://meik.localhost:444) -->
+4. Im Freifox Cache deaktivieren !
 
 [CouchDB-GUI](http://couchdb.localhost:5984/_utils)
 
-3. Im Freifox Cache deaktivieren !
+[PhpMyAdmin](http://phpmyadmin.localhost:8081)
 
 
 ## Einrichtung
