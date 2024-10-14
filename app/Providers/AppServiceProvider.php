@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\CouchDBUserProvider;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
@@ -25,8 +26,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-		Auth::provider('couchdb', callback: static function(Application $app, array $config): UserProvider {
+		Auth::provider('couchdb', static function(Application $app, array $config): UserProvider {
 			return $app->make(CouchDBUserProvider::class);
+		});
+		Auth::extend('couchdb', static function(Application $app, string $guard_name, array $config) {
+			return new SessionGuard(
+				'session',
+				Auth::createUserProvider($config['provider']),
+				$app->make('session.store'),
+				$app->make('request')
+			);
 		});
 		
         Vite::prefetch(concurrency: 3);
