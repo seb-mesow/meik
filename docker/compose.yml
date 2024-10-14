@@ -25,8 +25,8 @@ services:
     volumes:
       - ../:/var/www
     entrypoint: []
-    command: ["tail", "-f", "/dev/null"]
-    
+    command: ["npm", "run", "dev"]
+  
   web:
     build:
       context: web
