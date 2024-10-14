@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App;
+namespace App\Repository;
 
 use App\Models\User;
 use App\Repository\UserRepository;
@@ -20,7 +20,7 @@ use PHPOnCouch\CouchClient;
  * }
  */
 final class CouchDBUserProvider implements UserProvider {
-	private const string ID_PREFIX = UserRepository::ID_PREFIX;
+	private const string ID_PREFIX = 'user:';
 	
 	public function __construct(
 		private readonly CouchClient $client

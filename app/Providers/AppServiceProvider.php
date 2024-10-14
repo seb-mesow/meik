@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\CouchDBUserProvider;
+use App\Repository\CouchDBUserProvider;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Foundation\Application;
