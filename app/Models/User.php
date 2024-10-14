@@ -50,7 +50,7 @@ class User implements Authenticatable
 	 * @return void
 	 */
     public function setRememberToken($value) {
-		// TODO implementieren
+		return;
 	}
 	
 	/**
