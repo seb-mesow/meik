@@ -3,9 +3,11 @@
 ## Starten der Web-App
 0. Docker (Engine) im Host starten
 1. `drb` ("docker restart build")
-2. ggf. `artisan migrate --seed` (Schema für Tabellen in MariaDB aktualisieren)
-3. [Web-App öffnen (HTTP)](http://meik.localhost:8080)
-4. Im Freifox Cache deaktivieren !
+2. `npm run dev` (Hot Module Replacement)
+3. ggf. `artisan migrate --seed` (Schema für Tabellen in MariaDB aktualisieren)
+4. [Web-App öffnen (HTTP)](http://meik.localhost:8080)
+<!-- [Web-App öffnen (HTTPS)](https://meik.localhost:444) -->
+5. Im Freifox Cache deaktivieren !
 
 [CouchDB-GUI](http://couchdb.localhost:5984/_utils)
 
