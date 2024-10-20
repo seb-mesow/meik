@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExhibitController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -15,7 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('Dashboard'); 
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -23,5 +24,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/exhibits', [ExhibitController::class, 'get_all_exhibits']);
+Route::get('/exhibit/{id}', [ExhibitController::class, 'get_exhibit']);
+Route::post('/exhibit', [ExhibitController::class, 'post_exhibit']);
+Route::put('/exhibit/{id}', [ExhibitController::class, 'put_exhibit']);
+Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete_exhibit']);
 
 require __DIR__.'/auth.php';
