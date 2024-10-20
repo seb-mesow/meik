@@ -136,6 +136,28 @@ Empfehlung: jeden Tag einmal machen
 ### Speicherplatz freigeben
 1. `docker system --volumes`
 2. bei WSL zusätzlich:
-	1. _Quit Docker Desktop_ (ca. 1 Minute warten)
-	2. Powershell-Terminal mit Administrator-Rechten starten
-	3. `Optimize-VHD -Path "C:\Users\USERNAME\AppData\Local\Docker\wsl\disk\docker_data.vhdx" -Mode Full`
+   1. _Quit Docker Desktop_ (ca. 1 Minute warten)
+   2. Powershell-Terminal mit Administrator-Rechten starten
+   3. `Optimize-VHD -Path "C:\Users\USERNAME\AppData\Local\Docker\wsl\disk\docker_data.vhdx" -Mode Full`
+
+
+
+## Interaktionen mit CouchDB
+
+### Dokumente mit bestimmten Prefix abrufen
+1. Für den Abruf ein Design Dokument erstellen
+   Bsp: 
+    {
+      "_id": "_design/exhibit_filter",
+      "_rev": "4-22b5d86d59c77befa7f8fb6202b82581",
+      "views": {
+        "by_exhibit_prefix": {
+          "map": "function (doc) {\n  { if (doc._id && doc._id.indexOf('exhibit') === 0) { emit(doc._id, doc); } }\n}"
+        }
+      },
+      "language": "javascript"
+    }
+2. Zum Abrufen die Funktion getView verwenden.
+   Bsp: 
+    $this->client->getView('exhibit_filter', 'by_exhibit_prefix')
+
