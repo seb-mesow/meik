@@ -30,12 +30,16 @@ class AppServiceProvider extends ServiceProvider
 			return $app->make(CouchDBUserProvider::class);
 		});
 		Auth::extend('couchdb', static function(Application $app, string $guard_name, array $config) {
-			return new SessionGuard(
+			$guard = new SessionGuard(
 				'session',
 				Auth::createUserProvider($config['provider']),
 				$app->make('session.store'),
 				$app->make('request')
 			);
+			if (method_exists($guard, 'setCookieJar')) {
+                $guard->setCookieJar($app->make('cookie'));
+            }
+			return $guard;
 		});
 		
         Vite::prefetch(concurrency: 3);
