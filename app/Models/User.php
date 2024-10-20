@@ -2,7 +2,11 @@
 declare(strict_types=1);
 
 namespace App\Models;
+use App\Repository\CouchDBUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Support\Facades\App;
+use Random\Randomizer;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,15 +15,18 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class User implements Authenticatable
 {
-	public function __construct(
-		private readonly string $original_name,
-		private readonly string $name,
-		private readonly string $password,
-		private readonly bool $is_admin,
-	) {}
 	
+	public function __construct(
+		public readonly string $original_name,
+		public readonly string $name,
+		public readonly string $password,
+		public readonly bool $is_admin = false,
+		public string $remember_token = '',
+		public readonly ?string $rev = null,
+	) {}
+		
 	public function getAuthIdentifierName(): string {
-		return '_id';
+		return 'original_name';
 	}
 	
     public function getAuthIdentifier(): string {
@@ -35,30 +42,24 @@ class User implements Authenticatable
 	}
 	
 	/**
-	 * @deprecated TODO implementieren
-	 *
 	 * @return string
 	 */
     public function getRememberToken(): string {
-		return 'TODO';
+		return $this->remember_token;
 	}
 	
 	/**
-	 * @deprecated TODO implementieren
-	 * 
-	 * @param mixed $value
+	 * @param mixed $new_remember_token
 	 * @return void
 	 */
-    public function setRememberToken($value) {
-		return;
+    public function setRememberToken($new_remember_token) {
+		$this->remember_token = $new_remember_token;
 	}
 	
 	/**
-	 * @deprecated TODO implementieren
-	 * 
 	 * @return string
 	 */
     public function getRememberTokenName(): string {
-		return 'TODO';
+		return 'remember_token';
 	}
 }

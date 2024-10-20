@@ -16,6 +16,7 @@ Hier werden Einstellungen zur Produktiv-Umgebung notiert.
 ## Einrichtung
 - **`APP_DEBUG=false` !!!**
 - PHP-Einstellungen anpassen
+	- `zend.assertions=-1`
 
 ## Workflow
 0. siehe [README](../README.md) — Einrichtung für alle

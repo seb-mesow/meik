@@ -42,12 +42,16 @@ services:
   db:
     build:
       context: db
+    #   args:
+    #     SYS_ADMIN_USER: $SYS_ADMIN_USER
+    #     SYS_ADMIN_PASSWORD: $SYS_ADMIN_PASSWORD
     hostname: couchdb
     ports:
       - 5984:5984
     restart: on-failure:2
     volumes:
       - couchdb_data_persistent:/opt/couchdb/data
+      - ../.env:/opt/couchdb/etc/couchdb_credentials.sh
 
   mariadb:
     image: mariadb:11.5.2-noble

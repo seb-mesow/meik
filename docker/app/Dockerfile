@@ -9,18 +9,19 @@ ARG PHP_FPM_INI_DIR=/etc/php/${PHP_VERSION}/fpm
 ARG PHP_CLI_INI_DIR=/etc/php/${PHP_VERSION}/cli
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
-    --mount=type=cache,target=/var/lib/apt,sharing=private \
-    rm -f /etc/apt/apt.conf.d/docker-clean; \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache; \
-    apt-get update --quiet --quiet; \
-    apt-get install --no-install-recommends --quiet --quiet \
+	--mount=type=cache,target=/var/lib/apt,sharing=private \
+	rm -f /etc/apt/apt.conf.d/docker-clean; \
+	echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache; \
+	apt-get update --quiet --quiet; \
+	apt-get install --no-install-recommends --quiet --quiet \
+		curl \
         ca-certificates \
-        curl \
 		unzip \
-		gosu \
         gpg-agent \
-        software-properties-common; \
-    add-apt-repository ppa:ondrej/php;
+        software-properties-common \
+		gosu; \
+	add-apt-repository ppa:ondrej/php;
+# Die Warnung bei add-apt-repository ppa:ondrej/php kann man ignorieren.
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     --mount=type=cache,target=/var/lib/apt,sharing=private \

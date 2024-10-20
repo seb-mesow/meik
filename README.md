@@ -3,7 +3,7 @@
 ## Starten der Web-App
 0. Docker (Engine) im Host starten
 1. `drb` ("docker restart build")
-2. ggf. `artisan migrate` (Schema für Tabellen in MariaDB aktualisieren)
+2. ggf. `artisan migrate --seed` (Schema für Tabellen in MariaDB aktualisieren)
 3. [Web-App öffnen (HTTP)](http://meik.localhost:8080)
 4. Im Freifox Cache deaktivieren !
 
