@@ -1,7 +1,7 @@
 FROM couchdb:3.4.1
 
 SHELL [ "/usr/bin/env", "bash", "-euo", "pipefail", "-O", "extglob", "-c" ]
-RUN echo "df"
+
 RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     --mount=type=cache,target=/var/lib/apt,sharing=private \
     rm -f /etc/apt/apt.conf.d/docker-clean; \
