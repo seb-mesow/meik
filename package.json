@@ -1,11 +1,11 @@
 {
     "private": true,
     "type": "module",
-	"engineStrict": true,
-	"engines": {
-		"node": ">=20.17.0 <21.0.0",
-		"npm": ">=10.8.2 <11.0.0"
-	},
+    "engineStrict": true,
+    "engines": {
+        "node": ">=20.17.0 <21.0.0",
+        "npm": ">=10.8.2 <11.0.0"
+    },
     "scripts": {
         "dev-slow": "vue-tsc && vite",
         "dev": "vite",
@@ -30,6 +30,7 @@
         "vue-tsc": "^2.0.24"
     },
     "dependencies": {
+        "@primevue/themes": "^4.1.1",
         "primevue": "^4.0.7"
     }
 }
