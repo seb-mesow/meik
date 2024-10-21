@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Exhibit;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
-use stdClass;
+use App\Repository\ExhibitRepository;
 
 class ExhibitApiController extends Controller
 {

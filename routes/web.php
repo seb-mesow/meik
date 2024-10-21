@@ -25,10 +25,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/exhibits', [ExhibitController::class, 'get_all_exhibits']);
-Route::get('/exhibit/{id}', [ExhibitController::class, 'get_exhibit']);
-Route::post('/exhibit', [ExhibitController::class, 'post_exhibit']);
-Route::put('/exhibit/{id}', [ExhibitController::class, 'put_exhibit']);
-Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete_exhibit']);
+Route::middleware('auth')->group(function () {
+    Route::get('/exhibits', [ExhibitController::class, 'get_all_exhibits']);
+    Route::get('/exhibit/{id}', [ExhibitController::class, 'get_exhibit']);
+    Route::post('/exhibit', [ExhibitController::class, 'post_exhibit']);
+    Route::put('/exhibit/{id}', [ExhibitController::class, 'put_exhibit']);
+    Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete_exhibit']);
+});
 
 require __DIR__.'/auth.php';
