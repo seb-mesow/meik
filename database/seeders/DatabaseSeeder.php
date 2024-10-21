@@ -15,12 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(CouchDBUserProvider $provider): void
     {
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
 		$this->call([
 			SetupCouchDBSeeder::class,
 			UserSeeder::class
