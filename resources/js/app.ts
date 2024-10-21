@@ -5,6 +5,9 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, createSSRApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import PrimeVue from 'primevue/config';
+import Lara from '@primevue/themes/lara';
+// import Material from '@primevue/themes/lara';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -17,12 +20,17 @@ createInertiaApp({
         ),
     setup({ el, App, props, plugin }) {
         // für lokale Dev
-        createApp({ render: () => h(App, props) })
+        const app = createApp({ render: () => h(App, props) });
         // für Produktiv
-        // createSSRApp({ render: () => h(App, props) })
-            .use(plugin)
-            .use(ZiggyVue)
-            .mount(el);
+        // const app = createSSRApp({ render: () => h(App, props) });
+        app.use(plugin);
+        app.use(ZiggyVue);
+		app.use(PrimeVue, {
+			theme: {
+				preset: Lara, // oder Material
+			}
+		});
+        app.mount(el);
     },
     progress: {
         color: '#4B5563',
