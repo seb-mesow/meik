@@ -37,7 +37,7 @@ final class ExhibitRepository
             '_id' => ['$beginsWith' => self::ID_PREFIX],
         ])->docs;
 
-        return $this->exhibitFromObject($exhibits);
+        return $this->exhibitsFromArray($exhibits);
     }
 
     /**
@@ -106,6 +106,15 @@ final class ExhibitRepository
     public function exhibitFromObject($object): Exhibit
     {
         return $this->serializer->deserialize(json_encode($object), Exhibit::class, "json");
+    }
+
+    /**
+     * @var array<object> $array
+     * @return Exhibit
+     */
+    public function exhibitsFromArray($array): array
+    {
+        return $this->serializer->deserialize(json_encode($array), 'array<' . Exhibit::class . '>', "json");
     }
 
     /**
