@@ -23,7 +23,6 @@ class ExhibitController extends Controller
 
     public function get_all_exhibits()
     {
-        dd($this->exhibit_repository->get_all_exhibits()->docs);
         return Inertia::render('Exhibits/Exhibits', [
             'exhibits' => $this->exhibit_repository->get_all_exhibits()
         ]);
@@ -31,7 +30,6 @@ class ExhibitController extends Controller
 
     public function get_exhibit(string $id)
     {
-        dd($this->exhibit_repository->get_exhibit($id));
         return Inertia::render('Exhibits/Exhibit', [
             'exhibit' => $this->exhibit_repository->get_exhibit($id)
         ]);
