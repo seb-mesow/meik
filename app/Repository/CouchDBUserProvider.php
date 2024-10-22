@@ -25,7 +25,7 @@ use stdClass;
  * }
  */
 final class CouchDBUserProvider implements UserProvider {
-	private const string ID_PREFIX = 'user:';
+	public const string ID_PREFIX = 'user:';
 	private const int REMEMBER_TOKEN_LENGTH = 64;
 	
 	private ?Randomizer $randomizer;
@@ -85,14 +85,18 @@ final class CouchDBUserProvider implements UserProvider {
 	 * @return ?User
 	 */
     public function retrieveByToken($identifier, $token): ?User {
-		$res = $this->client->limit(1)->find([
-			'_id' => [ '$eq' => self::ID_PREFIX . $identifier ],
-			'remember_token' => [ '$eq' => $token ],
-		]);
-		$docs = $res->docs;
-		// $res = $this->client->key($token)->include_docs(true)->getView('user', 'by-remember_token');
-		if ($docs) {
-			$first = $docs[0];
+		// $res = $this->client->limit(1)->find([
+		// 	'_id' => [ '$eq' => self::ID_PREFIX . $identifier ],
+		// 	'remember_token' => [ '$eq' => $token ],
+		// ]);
+		// $docs = $res->docs;
+		$res = $this->client
+			->key($token)
+			->include_docs(true)
+			->getView('user', 'by-remember_token');
+		$rows = $res->rows;
+		if ($rows) {
+			$first = $rows[0]->doc;
 			return $this->create_user_from_doc($first);
 		}
 		return null;

@@ -5,22 +5,26 @@ namespace App\Providers;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use PHPOnCouch\CouchAdmin;
 use PHPOnCouch\CouchClient;
 
 final class CouchClientProvider extends ServiceProvider
 {
-	private const string COUCHDB_URL_DEFAULT = 'http://couchdb:5984';
-	private const string COUCHDB_DATABASE_DEFAULT = 'meik';
-	
 	/**
 	 * Register services.
 	 */
 	public function register(): void
 	{
-		$this->app->singleton(CouchClient::class, static function (Application $app) {
-			return new CouchClient(env('COUCHDB_URL', self::COUCHDB_URL_DEFAULT), env('COUCHDB_DATABASE', self::COUCHDB_DATABASE_DEFAULT), [
+		$this->app->singleton(CouchClient::class, static function (Application $app): CouchClient {
+			return new CouchClient(env('COUCHDB_URL'), env('COUCHDB_DATABASE'), [
 				'username' => env('COUCHDB_USERNAME'),
 				'password' => env('COUCHDB_PASSWORD'),
+			]);
+		});
+		$this->app->singleton(CouchClient::class.'.admin', static function (Application $app): CouchClient {
+			return new CouchClient(env('COUCHDB_URL'), env('COUCHDB_DATABASE'), [
+				'username' => env('COUCHDB_ADMIN_USERNAME'),
+				'password' => env('COUCHDB_ADMIN_PASSWORD'),
 			]);
 		});
 	}
