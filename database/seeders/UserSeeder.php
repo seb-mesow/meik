@@ -37,6 +37,6 @@ class UserSeeder extends Seeder
 				$existing_user->rev
 			);
 		}
-		$this->user_provider->save($user);
+		$this->user_provider->insert($user);
 	}
 }
