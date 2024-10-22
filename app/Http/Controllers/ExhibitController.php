@@ -6,6 +6,7 @@ use App\Models\Exhibit;
 use App\Repository\ExhibitRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Inertia\Inertia;
 use stdClass;
 
 class ExhibitController extends Controller
@@ -15,12 +16,15 @@ class ExhibitController extends Controller
     }
 
     public function get_all_exhibits() {
-        return $this->exhibit_repository->get_all_exhibits();
+        return Inertia::render('exhibits', [
+            'exhibits' => $this->exhibit_repository->get_all_exhibits()
+        ]);
     }
 
     public function get_exhibit(string $id) {
-
-        return $this->exhibit_repository->get_exhibit($id);
+        return Inertia::render('exhibit', [
+            'exhibit' => $this->exhibit_repository->get_exhibit($id)
+        ]);
     }
 
     public function post_exhibit(Request $request) {
