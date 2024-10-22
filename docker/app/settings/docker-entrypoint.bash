@@ -24,4 +24,7 @@ chown -R www-data:www-data bootstrap/cache;
 chmod -R 0770 storage;
 chmod -R 0770 bootstrap/cache;
 
+chown www-data:www-data .env;
+chmod 664 .env; # auch lesbar für init-Routine des DB-Containers.
+
 exec gosu www-data "$@";
