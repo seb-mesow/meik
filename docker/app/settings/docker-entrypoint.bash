@@ -19,4 +19,9 @@ chmod 750 /var/log/php-fpm;
 chmod 640 /var/log/php/*;
 chmod 640 /var/log/php-fpm/*;
 
+chown -R www-data:www-data storage;
+chown -R www-data:www-data bootstrap/cache;
+chmod -R 0770 storage;
+chmod -R 0770 bootstrap/cache;
+
 exec gosu www-data "$@";

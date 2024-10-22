@@ -22,6 +22,4 @@ envsubst '\$COUCHDB_SYS_ADMIN_USERNAME,\$COUCHDB_SYS_ADMIN_PASSWORD' \
 < /opt/couchdb/etc/local.template.ini \
 > /opt/couchdb/etc/local.ini;
 
-rm /opt/couchdb/etc/local.template.ini;
-
 exec /docker-entrypoint.sh "$@" > /dev/stderr;
