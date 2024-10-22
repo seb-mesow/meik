@@ -14,13 +14,14 @@ class Exhibit
 {
 	public const ID_PREFIX = "exhibit:";
 
-	public string $_id;
-	public string $designation;
-	public string $inventory_number;
-	public string $manufacturer;
-	public string $year_of_construction;
-	public string $location;
-	public Date $aquiry_date;
+	private string $_id;
+	private string $_rev;
+	private string $designation;
+	private string $inventory_number;
+	private string $manufacturer;
+	private string $year_of_construction;
+	private string $location;
+	private Date $aquiry_date;
 	
 	/**
 	 * Get the value of designation
@@ -158,6 +159,26 @@ class Exhibit
 	public function set_aquiry_date($aquiry_date)
 	{
 		$this->aquiry_date = $aquiry_date;
+
+		return $this;
+	}
+
+	/**
+	 * Get the value of _rev
+	 */ 
+	public function get_rev()
+	{
+		return $this->_rev;
+	}
+
+	/**
+	 * Set the value of _rev
+	 *
+	 * @return  self
+	 */ 
+	public function set_rev($_rev)
+	{
+		$this->_rev = $_rev;
 
 		return $this;
 	}
