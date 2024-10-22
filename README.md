@@ -21,53 +21,50 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 
 ### Einrichtung für alle
 1. VS Code einrichten:
-    1. _Git: Allow Force Push_ aktivieren<br>
-       Restliche Einstellungen zu Force-Pushing auf default belassen.
+	1. _Git: Allow Force Push_ aktivieren<br>
+		Restliche Einstellungen zu Force-Pushing auf default belassen.
 2. folgende VS Code Extensions installieren:
-    1. _PHP_ von _DEVSENSE_
-    2. _PHP Debug von _Xdebug_
+	1. _PHP_ von _DEVSENSE_
+	2. _PHP Debug von _Xdebug_
 	3. _Vue - Offical_ von _Vue_
-    4. _optional:_ _GitLens — Git supercharged_ von _GitKraken_
-    4. _optional:_ [_Docker_ von _Microsoft_](https://code.visualstudio.com/docs/containers/overview)
+	4. _optional:_ _GitLens — Git supercharged_ von _GitKraken_
+	4. _optional:_ [_Docker_ von _Microsoft_](https://code.visualstudio.com/docs/containers/overview)
 3. folgendes Firefox-Addon installieren:
-    1. _Xdebug Helper for Firefox_ von _BrianGilbert_
-    2. Firefox schließen und neustarten
+	1. _Xdebug Helper for Firefox_ von _BrianGilbert_
+	2. Firefox schließen und neustarten
 4. `git clone https://github.com/seb-mesow/meik.git`
 5. `cd meik`
 6. Git-Repo
-    1. checken, ob nicht schon gesetzt: `git config user.name`
-    2. dann ggf: `git config user.name 'GITHUB_USERNAME'`
-    3. checken, ob nicht schon gesetzt: `git config user.email`
-    4. dann ggf: `git config user.email 'GITHUB_MAIL_ADRESSE'`
-        - siehe GitHub -> Account -> Settings -> Emails -> Primary email address
-        - sieht z.B. so aus `12345678+username@users.noreply.github.com`
+	1. checken, ob nicht schon gesetzt: `git config user.name`
+	2. dann ggf: `git config user.name 'GITHUB_USERNAME'`
+	3. checken, ob nicht schon gesetzt: `git config user.email`
+	4. dann ggf: `git config user.email 'GITHUB_MAIL_ADRESSE'`
+		- siehe GitHub -> Account -> Settings -> Emails -> Primary email address
+		- sieht z.B. so aus `12345678+username@users.noreply.github.com`
 7. `.bashrc`
-    1. `.bashrc.dist` zu `.bashrc` kopieren
-    2. mit den Aliasen in `.bashrc` vertraut machen. Sie beschleunigen das Arbeiten in der Kommandozeile enorm.
-    3. `.bashrc` anpassen
+	1. `.bashrc.dist` zu `.bashrc` kopieren
+	2. mit den Aliasen in `.bashrc` vertraut machen. Sie beschleunigen das Arbeiten in der Kommandozeile enorm.
+	3. `.bashrc` anpassen
 	4. Eigenes Terminal so einstellen, dass _diese_ `.bashrc` geladen wird.<br>
 	   Dafür am besten ein separates Profil anlegen.
 8. im Unterordner `docker`
-    1. `.env.dist` zu `.env` kopieren
-    2. `compose.override.dist.yml` zu `compose.overide.yml` kopieren
-    3. `.env` anpassen
-    4. `compose.override.yml` anpassen
+	1. `.env.dist` zu `.env` kopieren
+	2. `compose.override.dist.yml` zu `compose.overide.yml` kopieren
+	3. `.env` anpassen
+	4. `compose.override.yml` anpassen
 9. `.env` (in der Wurzel des Repos)
-    1. `.env.example` zu `.env` kopieren
-11. `drb` ("docker restart build")
-12. `ci` ("composer install")
-13. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
-10. `storage`-Verzeichnis
-    1. `bashapproot` (in den `app`-Container als `root` einloggen), darin
-        1. `chown -R www-data:www-data storage`
-        2. `chown -R www-data:www-data bootstrap/cache`
-	    3. `chmod -R 0770 storage`
-	    4. `chmod -R 0770 bootstrap/cache`
-	2. im Host == Ubuntu (nicht in einem Docker-Container)
-        1. `id www-data`, sollte u.A. `gid=33` ausgeben (sonst eine weitere Gruppe mit der GID `33` anlegen)
+	1. `.env.example` zu `.env` kopieren
+10. `drb` ("docker restart build")
+11. `ci` ("composer install")
+	- (notfalls als Ersatz: `docker_compose_run_normal app composer install`)
+12. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
+	- (notfalls als Ersatz: `docker_compose_run_normal node npm ci`)
+13. `storage`-Verzeichnis
+	1. im Host == Ubuntu (nicht in einem Docker-Container)
+		1. `id www-data`, sollte u.A. `gid=33` ausgeben (sonst eine weitere Gruppe mit der GID `33` anlegen)
 		2. `sudo usermod -a -G www-data USERNAME` (`USERNAME` durch Benutzernamen im Host ersetzen)
 		3. Terminal schließen und neuöffnen
-        4. VS Code schließen und neustarten
+		4. VS Code schließen und neustarten
 14. `artisan key:generate`
 15. `php src/Scripts/CreateDBUsersScript.php`
 
@@ -76,7 +73,7 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 ### Empfehlungen für Windows
 1. Windows-Terminal installieren
 2. Git für Windows (erneut) installieren
-   - Dabei unbedingt auch Git-Bash installieren
+	- Dabei unbedingt auch Git-Bash installieren
 3. MEIK-spezifisches Git-Bash-Profil in Windows-Terminal einrichten
 
 ## Tech-Stack
@@ -139,6 +136,6 @@ Empfehlung: jeden Tag einmal machen
 ### Speicherplatz freigeben
 1. `docker system --volumes`
 2. bei WSL zusätzlich:
-   1. _Quit Docker Desktop_ (ca. 1 Minute warten)
-   2. Powershell-Terminal mit Administrator-Rechten starten
-   3. `Optimize-VHD -Path "C:\Users\USERNAME\AppData\Local\Docker\wsl\disk\docker_data.vhdx" -Mode Full`
+	1. _Quit Docker Desktop_ (ca. 1 Minute warten)
+	2. Powershell-Terminal mit Administrator-Rechten starten
+	3. `Optimize-VHD -Path "C:\Users\USERNAME\AppData\Local\Docker\wsl\disk\docker_data.vhdx" -Mode Full`

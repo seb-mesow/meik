@@ -9,7 +9,7 @@
     "scripts": {
         "dev-slow": "vue-tsc && vite",
         "dev": "vite",
-        "dev-debug": "vue-tsc && vite -d -l info",
+        "dev-debug": "vite -d -l info",
         "build-prod": "vite build && vite build --ssr",
         "build-prod-recommended": "vue-tsc && vite build && vite build --ssr",
         "start-ssr-prod": "node bootstrap/ssr/ssr.js"
