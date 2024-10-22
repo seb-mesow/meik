@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use PHPOnCouch\CouchClient;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 use Random\Randomizer;
+use stdClass;
 
 
 /**
@@ -35,7 +36,14 @@ final class CouchDBUserProvider implements UserProvider {
 		return;
 	}
 	
-	public function save(User $user) {
+	public function insert(User $user) {
+		assert(!$user->rev);
+		$user_doc = $this->create_doc_from_user($user);
+		$this->client->storeDoc($user_doc);
+	}
+	
+	public function update(User $user) {
+		assert($user->rev);
 		$user_doc = $this->create_doc_from_user($user);
 		$this->client->storeDoc($user_doc);
 	}
@@ -44,6 +52,19 @@ final class CouchDBUserProvider implements UserProvider {
 		assert($user->rev);
 		$user_doc = $this->create_doc_from_user($user);
 		$this->client->deleteDoc($user_doc);
+	}
+	
+	/**
+	 * @return User[]
+	 */
+	public function get_all(): array {
+		$res = $this->client->find([
+			'_id' => [ '$beginsWith' => self::ID_PREFIX ],
+		]);
+		$_this = $this;
+		return array_map(static function (stdClass $doc) use ($_this): User {
+			return $_this->create_user_from_doc($doc);
+		}, $res->docs);
 	}
 	
 	/**
@@ -69,6 +90,7 @@ final class CouchDBUserProvider implements UserProvider {
 			'remember_token' => [ '$eq' => $token ],
 		]);
 		$docs = $res->docs;
+		// $res = $this->client->key($token)->include_docs(true)->getView('user', 'by-remember_token');
 		if ($docs) {
 			$first = $docs[0];
 			return $this->create_user_from_doc($first);
@@ -78,7 +100,7 @@ final class CouchDBUserProvider implements UserProvider {
 	
     public function updateRememberToken(Authenticatable $user, $token) {
 		assert($user->getRememberToken() === $token);
-		$this->save($user);
+		$this->insert($user);
 	}
 	
 	/**
