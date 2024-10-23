@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use App\Http\Controllers\ExhibitController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Web\ProfileController;
+use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\Web\ExhibitController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;

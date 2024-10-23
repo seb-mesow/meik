@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class UserController extends Controller
+class UserAJAXController extends Controller
 {
     /**
      * Display a listing of the resource.
