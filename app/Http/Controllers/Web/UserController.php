@@ -10,7 +10,7 @@ use Inertia\Inertia;
 use Request;
 use Inertia\Response;
 
-final class UserWebController extends Controller
+final class UserController extends Controller
 {
 	public function __construct(
 		private readonly CouchDBUserProvider $user_provider,
