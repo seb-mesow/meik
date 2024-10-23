@@ -1,14 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repository\CouchDBUserProvider;
 use Inertia\Inertia;
 use Request;
 use Inertia\Response;
 
-final class UserController extends Controller
+final class UserWebController extends Controller
 {
 	public function __construct(
 		private readonly CouchDBUserProvider $user_provider,
@@ -20,7 +22,9 @@ final class UserController extends Controller
 		
 		$user_arr = array_map(static function(User $user): array {
 			return [
-				'name' => $user->name,
+				'username' => $user->username,
+				'forename' => $user->forename,
+				'surname' => $user->surname,
 				'is_admin' => $user->is_admin,
 			];
 		}, $users);
