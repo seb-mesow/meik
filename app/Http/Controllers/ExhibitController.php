@@ -23,8 +23,11 @@ class ExhibitController extends Controller
 
     public function get_all_exhibits()
     {
+        $exhibits = $this->exhibit_repository->get_all_exhibits();
+        $array = array_map(fn($exhibit) => $this->exhibit_repository->objectFromExhibit($exhibit), $exhibits);
+ 
         return Inertia::render('Exhibits/Exhibits', [
-            'exhibits' => $this->exhibit_repository->get_all_exhibits()
+            'exhibits' => $array
         ]);
     }
 

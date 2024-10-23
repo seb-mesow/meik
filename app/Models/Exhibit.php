@@ -14,14 +14,15 @@ class Exhibit
 {
 	public const ID_PREFIX = "exhibit:";
 
-	private string $_id;
-	private string $_rev;
-	private string $designation;
-	private string $inventory_number;
-	private string $manufacturer;
-	private string $year_of_construction;
-	private string $location;
-	private Date $aquiry_date;
+	private ?string $_id = null;
+	private ?string $_rev = null;
+	private ?string $designation = null;
+	private ?string $inventory_number = null;
+	private ?string $manufacturer = null;
+	private ?string $year_of_construction = null;
+	private ?string $location = null;
+	private ?Date $aquiry_date = null;
+	private ?array $text_blocks = null;
 	
 	/**
 	 * Get the value of designation
@@ -179,6 +180,26 @@ class Exhibit
 	public function set_rev($_rev)
 	{
 		$this->_rev = $_rev;
+
+		return $this;
+	}
+
+	/**
+	 * Get the value of text_blocks
+	 */ 
+	public function get_text_blocks()
+	{
+		return $this->text_blocks;
+	}
+
+	/**
+	 * Set the value of text_blocks
+	 *
+	 * @return  self
+	 */ 
+	public function set_text_blocks($text_blocks)
+	{
+		$this->text_blocks = $text_blocks;
 
 		return $this;
 	}

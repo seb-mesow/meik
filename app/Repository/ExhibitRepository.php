@@ -29,7 +29,7 @@ final class ExhibitRepository
 
     /**
      * @var string $id
-     * @return Exhibit|null
+     * @return array<Exhibit>
      */
     public function get_all_exhibits(): mixed
     {
@@ -121,8 +121,17 @@ final class ExhibitRepository
      * @var Exhibit $exhibit
      * @return stdClass
      */
-    public function objectFromExhibit(Exhibit $exhibit): object
+    public function objectFromExhibit(Exhibit $exhibit): stdClass
     {
-        return json_decode($this->serializer->serialize($exhibit, 'json'));
+        $object = (new stdClass());
+        $object->_id = $exhibit->get_designation();
+        $object->_rev = $exhibit->get_designation();
+        $object->designation = $exhibit->get_designation();
+        $object->manufacturer = $exhibit->get_manufacturer();
+        $object->year_of_construction = $exhibit->get_year_of_construction();
+        $object->aquiry_date = $exhibit->get_aquiry_date(); 
+        $object->text_blocks = $exhibit->get_text_blocks(); 
+
+        return $object;
     }
 }
