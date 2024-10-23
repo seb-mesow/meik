@@ -13,12 +13,12 @@ use Inertia\Response;
 final class UserController extends Controller
 {
 	public function __construct(
-		private readonly CouchDBUserProvider $user_provider,
+		private readonly CouchDBUserProvider $repository,
 	) {}
 	
 	public function all_users(Request $request): Response
 	{
-		$users = $this->user_provider->get_all();
+		$users = $this->repository->get_all();
 		
 		$user_arr = array_map(static function(User $user): array {
 			return [

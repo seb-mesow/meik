@@ -5,7 +5,6 @@ namespace App\Repository;
 
 use App;
 use App\Models\User;
-use App\Repository\UserRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use PHPOnCouch\CouchClient;
@@ -13,13 +12,14 @@ use PHPOnCouch\Exceptions\CouchNotFoundException;
 use Random\Randomizer;
 use stdClass;
 
-
 /**
  * @phpstan-type UserDoc object{
  *     _id: string,
  *     _rev: string,
- *     name: string,
+ *     username: string,
  *     password: string,
+ * 	   forename: string,
+ *     surname: string,
  *     is_admin: bool,
  *     remember_token: string
  * }
@@ -67,8 +67,21 @@ final class CouchDBUserProvider implements UserProvider {
 		}, $res->docs);
 	}
 	
+	public function find_by_username(string $username): ?User {
+		$res = $this->client
+			->key($username)
+			->include_docs(true)
+			->getView('user', 'by-username');
+		$rows = $res->rows;
+		if ($rows) {
+			$first = $rows[0]->doc;
+			return $this->create_user_from_doc($first);
+		}
+		return null;
+	}
+	
 	/**
-	 * @param string $identifier original_name
+	 * @param string $identifier username
 	 * @return User|null
 	 */
 	public function retrieveById($identifier): User|null {
@@ -85,11 +98,6 @@ final class CouchDBUserProvider implements UserProvider {
 	 * @return ?User
 	 */
     public function retrieveByToken($identifier, $token): ?User {
-		// $res = $this->client->limit(1)->find([
-		// 	'_id' => [ '$eq' => self::ID_PREFIX . $identifier ],
-		// 	'remember_token' => [ '$eq' => $token ],
-		// ]);
-		// $docs = $res->docs;
 		$res = $this->client
 			->key($token)
 			->include_docs(true)
@@ -112,15 +120,14 @@ final class CouchDBUserProvider implements UserProvider {
 	 * @return ?User
 	 */
 	public function retrieveByCredentials(array $credentials): ?User {
-		$all_docs = $this->client->include_docs(true)->getAllDocs();
-		foreach($all_docs->rows as $row) {
-			$doc = $row->doc;
-			if (str_starts_with($doc->_id, self::ID_PREFIX)
-			&& $doc->name == $credentials['username']
-			&& $doc->password == $credentials['password']
-			) {
-				return $this->create_user_from_doc($doc);
-			}
+		$res = $this->client
+			->key([$credentials['username'], $credentials['password']])
+			->include_docs(true)
+			->getView('user', 'by-credentials');
+		$rows = $res->rows;
+		if ($rows) {
+			$first = $rows[0]->doc;
+			return $this->create_user_from_doc($first);
 		}
 		return null;
 	}
@@ -153,8 +160,10 @@ final class CouchDBUserProvider implements UserProvider {
 		$original_name = substr($doc->_id, strlen(self::ID_PREFIX));
 		return new User(
 			$original_name, 
-			$doc->name, 
-			$doc->password, 
+			$doc->username,
+			$doc->password,
+			$doc->forename,
+			$doc->surname,
 			$doc->is_admin,
 			$doc->remember_token,
 			$doc->_rev
@@ -164,12 +173,14 @@ final class CouchDBUserProvider implements UserProvider {
 	private function create_doc_from_user(User $user): object {
 		/** @var UserDoc */
 		$user_doc = new \stdClass();
-		$user_doc->_id = self::ID_PREFIX . $user->original_name;
+		$user_doc->_id = self::ID_PREFIX . $user->original_username;
 		if ($user->rev) {
 			$user_doc->_rev = $user->rev;
 		}
-		$user_doc->name = $user->name;
+		$user_doc->username = $user->username;
 		$user_doc->password = $user->password;
+		$user_doc->forename = $user->forename;
+		$user_doc->surname = $user->surname;
 		$user_doc->is_admin = $user->is_admin;
 		$user_doc->remember_token = $user->remember_token;
 		return $user_doc;

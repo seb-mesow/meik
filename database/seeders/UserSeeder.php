@@ -19,19 +19,33 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-		$this->create_user(new User('sebastian', 'sebastian', '_sEbAsTiAn=123', true));
-		$this->create_user(new User('niklas', 'niklas', '_nIkLaS=123', true));
-		$this->create_user(new User('pepe', 'pepe', '_pEpE=123', true));
-		$this->create_user(new User('enrico', 'enrico', '_eNrIcO=123', true));
+		$this->create_user(new User(
+			'sebastian', 'sebastian', '_sEbAsTiAn=123',
+			"Sebastian", "Müller",
+			true));
+		$this->create_user(new User(
+			'niklas', 'niklas', '_nIkLaS=123',
+			"Niklas", "Haustein",
+			true));
+		$this->create_user(new User(
+			'pepe', 'pepe', '_pEpE=123', 
+			"Pepe", "Sievert",
+			true));
+		$this->create_user(new User(
+			'enrico', 'enrico', '_eNrIcO=123',
+			"Enrico", "Schmidt",
+			true));
 	}
 	
 	private function create_user(User $user) {
 		$existing_user = $this->user_provider->retrieveById($user->getAuthIdentifier());
 		if ($existing_user) {
 			$user = new User(
-				$user->original_name,
-				$user->name, 
-				$user->password, 
+				$user->original_username,
+				$user->username, 
+				$user->password,
+				$user->forename,
+				$user->surname,
 				$user->is_admin, 
 				$user->remember_token, 
 				$existing_user->rev
