@@ -7,7 +7,8 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
-    // name: '',
+	forename: '',
+	surname: '',
     username: '',
     password: '',
     password_confirmation: '',
@@ -27,25 +28,35 @@ const submit = () => {
         <Head title="Register" />
 
         <form @submit.prevent="submit">
-            <!-- <div>
-                <InputLabel for="name" value="Name" />
-
+            <div>
+                <InputLabel for="forename" value="Vorname" />
                 <TextInput
                     id="name"
                     type="text"
                     class="mt-1 block w-full"
-                    v-model="form.name"
+                    v-model="form.forename"
                     required
                     autofocus
                     autocomplete="name"
                 />
-
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div> -->
+                <InputError class="mt-2" :message="form.errors.forename" />
+            </div>
+            <div>
+                <InputLabel for="surname" value="Nachname" />
+                <TextInput
+                    id="name"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.surname"
+                    required
+                    autofocus
+                    autocomplete="name"
+                />
+                <InputError class="mt-2" :message="form.errors.surname" />
+            </div>
 
             <div class="mt-4">
                 <InputLabel for="username" value="Username" />
-
                 <TextInput
                     id="username"
                     type="text"
@@ -54,13 +65,11 @@ const submit = () => {
                     required
                     autocomplete="username"
                 />
-
                 <InputError class="mt-2" :message="form.errors.username" />
             </div>
 
             <div class="mt-4">
                 <InputLabel for="password" value="Password" />
-
                 <TextInput
                     id="password"
                     type="password"
@@ -69,7 +78,6 @@ const submit = () => {
                     required
                     autocomplete="new-password"
                 />
-
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
@@ -78,7 +86,6 @@ const submit = () => {
                     for="password_confirmation"
                     value="Confirm Password"
                 />
-
                 <TextInput
                     id="password_confirmation"
                     type="password"
@@ -87,7 +94,6 @@ const submit = () => {
                     required
                     autocomplete="new-password"
                 />
-
                 <InputError
                     class="mt-2"
                     :message="form.errors.password_confirmation"
@@ -101,7 +107,6 @@ const submit = () => {
                 >
                     Already registered?
                 </Link>
-
                 <PrimaryButton
                     class="ms-4"
                     :class="{ 'opacity-25': form.processing }"
