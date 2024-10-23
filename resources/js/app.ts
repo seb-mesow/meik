@@ -6,6 +6,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, createSSRApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import PrimeVue from 'primevue/config';
+import ConfirmationService from 'primevue/confirmationservice';
 import Lara from '@primevue/themes/lara';
 // import Material from '@primevue/themes/lara';
 
@@ -23,13 +24,17 @@ createInertiaApp({
         const app = createApp({ render: () => h(App, props) });
         // für Produktiv
         // const app = createSSRApp({ render: () => h(App, props) });
-        app.use(plugin);
+        
+		app.use(plugin);
+		
+		// Plugins für Vue
         app.use(ZiggyVue);
 		app.use(PrimeVue, {
 			theme: {
 				preset: Lara, // oder Material
 			}
 		});
+		
         app.mount(el);
     },
     progress: {

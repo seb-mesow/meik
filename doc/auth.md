@@ -11,3 +11,5 @@ Die Klasse der Benutzer muss das Interface `Illuminate\Contracts\Auth\Authentica
 
 Die Benutzer werden durch ein Repository, welches das Interface `Illuminate\Contracts\Auth\UserProvider` implementieren muss bereitgestellt.
 
+TODO eigene Session mit nur einem Cookie implementieren
+

@@ -4,64 +4,26 @@ declare(strict_types=1);
 namespace App\Http\Controllers\AJAX;
 
 use App\Models\User;
+use App\Repository\CouchDBUserProvider;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 class UserAJAXController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
-    }
+	public function __construct(
+		private readonly CouchDBUserProvider $repository
+	) {}
+	
+	public function set_admin(Request $request, string $username)
+	{
+		sleep(5); // TODO rausnehmen
+		$user = $this->repository->find_by_username($username);
+		if (!$user) {
+			return response(null, 404);
+		}
+		$is_admin = $request->input('is_admin');
+		$user = $user->with_is_admin($is_admin);
+		$this->repository->update($user);
+		return response(null, 204);
+	}
 }

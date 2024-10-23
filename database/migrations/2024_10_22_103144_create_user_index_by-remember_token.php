@@ -3,16 +3,14 @@ declare(strict_types=1);
 
 use App\Repository\CouchDBUserProvider;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use PHPOnCouch\CouchAdmin;
+use Illuminate\Support\Facades\App;
 use PHPOnCouch\CouchClient;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 
 return new class extends Migration
 {
 	private const string DESIGN_DOC_ID = '_design/user';
-	// private const string ID_PREFIX = CouchDBUserProvider::ID_PREFIX;
+	private const string VIEW = 'by-remember_token';
 	
 	private readonly CouchClient $client;
 	private readonly string $map_function;
@@ -23,18 +21,18 @@ return new class extends Migration
 		$id_prefix = CouchDBUserProvider::ID_PREFIX;
 		$this->map_function = <<<END
 		function (doc) {
-			if (doc._id.startsWith('$id_prefix')) {
+			if (doc._id.startsWith('$id_prefix') && doc.remember_token) {
 				emit(doc.remember_token, null);
 			}
 		}
 		END;
 	}
 	
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
+	/**
+	 * Run the migrations.
+	 */
+	public function up(): void
+	{
 		try {
 			$design_doc = $this->client->getDoc(self::DESIGN_DOC_ID);
 		} catch (CouchNotFoundException $e) {
@@ -42,19 +40,25 @@ return new class extends Migration
 			$design_doc->_id = self::DESIGN_DOC_ID;
 		}
 		$design_doc->language = 'javascript';
-		$design_doc->views = [
-			'by-remember_token' => [
-				'map' => $this->map_function
-			]
+		$design_doc->views->{self::VIEW} = [
+			'map' => $this->map_function
 		];
 		$this->client->storeDoc($design_doc);
-    }
+	}
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        // Schema::dropIfExists('user_index_for_remember_token');
-    }
+	/**
+	 * Reverse the migrations.
+	 */
+	public function down(): void
+	{
+		try {
+			$design_doc = $this->client->getDoc(self::DESIGN_DOC_ID);
+		} catch (CouchNotFoundException $e) {
+			return;
+		}
+		$views = $design_doc->views;
+		unset($view[self::VIEW]);
+		$design_doc->views = $views;
+		$this->client->storeDoc($design_doc);
+	}
 };
