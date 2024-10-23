@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -47,6 +48,8 @@ class RegisteredUserController extends Controller
 			$request->username,
 			$request->username,
 			$request->password,
+			$request->forename,
+			$request->surname,
 			false
 		);
 		

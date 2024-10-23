@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
@@ -37,17 +37,18 @@ class AuthenticatedSessionController extends Controller
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        Auth::guard('web')->logout();
+	/**
+	 * Destroy an authenticated session.
+	 */
+	public function destroy(Request $request): RedirectResponse
+	{
+		Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
+		$request->session()->invalidate();
+		
+		// CSRF token neusetzen
+		$request->session()->regenerateToken();
 
-        $request->session()->regenerateToken();
-
-        return redirect('/');
-    }
+		return redirect('/');
+	}
 }
