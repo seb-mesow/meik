@@ -7,9 +7,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import ToggleSwitch from 'primevue/toggleswitch';
-import { useConfirm } from 'primevue/useconfirm';
 import AJAXConfirmationPopup from '@/Components/AJAXConfirmationPopup.vue';
-import axios from 'axios';
 
 // versch. Interface für typsicheres Programmieren
 interface PropUser {

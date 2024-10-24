@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Repository\ExhibitRepository;
 use Illuminate\Http\Request;
@@ -11,9 +13,9 @@ use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use stdClass;
 
-class ExhibitController extends Controller
+class ExhibitAPIController extends Controller
 {
-    private Serializer $serializer;
+	private Serializer $serializer;
 
     public function __construct(
         private readonly ExhibitRepository $exhibit_repository
@@ -21,6 +23,9 @@ class ExhibitController extends Controller
         $this->serializer = SerializerBuilder::create()->build();
     }
 
+    /**
+	 * TODO als API-Route umformulieren
+	 */ 
     public function get_all_exhibits()
     {
         $exhibits = $this->exhibit_repository->get_all_exhibits();
@@ -31,29 +36,13 @@ class ExhibitController extends Controller
         ]);
     }
 
+	/**
+	 * TODO als API-Route umformulieren
+	 */ 
     public function get_exhibit(string $id)
     {
         return Inertia::render('Exhibits/Exhibit', [
             'exhibit' => $this->exhibit_repository->get_exhibit($id)
         ]);
-    }
-
-    public function post_exhibit(Request $request)
-    {
-        $exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
-
-        return $this->exhibit_repository->create($exhibit);
-    }
-
-    public function put_exhibit(Request $request)
-    {
-        $exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
-
-        return $this->exhibit_repository->update($exhibit);
-    }
-
-    public function delete_exhibit(string $id)
-    {
-        return $this->exhibit_repository->delete($id);
     }
 }

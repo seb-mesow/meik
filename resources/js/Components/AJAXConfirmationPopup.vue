@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import Popover from 'primevue/popover';
 import Button from 'primevue/button';
 import axios from 'axios';
