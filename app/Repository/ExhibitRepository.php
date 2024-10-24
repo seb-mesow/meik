@@ -31,12 +31,12 @@ final class ExhibitRepository
      * @var string $id
      * @return array<Exhibit>
      */
-    public function get_all_exhibits(): mixed
+    public function get_all_exhibits(): array
     {
         $exhibits = $this->client->find([
             '_id' => ['$beginsWith' => self::ID_PREFIX],
         ])->docs;
-
+        dd($this->serializer->serialize($this->exhibitsFromArray($exhibits), 'json'));
         return $this->exhibitsFromArray($exhibits);
     }
 
@@ -110,7 +110,7 @@ final class ExhibitRepository
 
     /**
      * @var array<object> $array
-     * @return Exhibit
+     * @return array<Exhibit>
      */
     public function exhibitsFromArray($array): array
     {
