@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -14,59 +15,68 @@ class Exhibit
 {
 	public const ID_PREFIX = "exhibit:";
 
+	/** @Accessor(getter="get__id") */
 	private ?string $_id = null;
+	/** @Accessor(getter="get__rev") */
 	private ?string $_rev = null;
-	private ?string $designation = null;
+	/** @Accessor(getter="get_name") */
+	private ?string $name = null;
+	/** @Accessor(getter="get_inventory_number") */
 	private ?string $inventory_number = null;
+	/** @Accessor(getter="get_manufacturer") */
 	private ?string $manufacturer = null;
+	/** @Accessor(getter="get_year_of_construction") */
 	private ?string $year_of_construction = null;
+	/** @Accessor(getter="location") */
 	private ?string $location = null;
+	/** @Accessor(getter="aquiry_date") */
 	private ?Date $aquiry_date = null;
-	private ?array $text_blocks = null;
-	
+	/** @Accessor(getter="text_blocks") */
+	private ?array $freetextfield = [];
+
 	/**
-	 * Get the value of designation
-	 */ 
+	 * Get the value of id
+	 */
 	public function get__id()
 	{
 		return $this->_id;
 	}
 
 	/**
-	 * Set the value of designation
+	 * Set the value of id
 	 *
 	 * @return  self
-	 */ 
+	 */
 	public function set__id($_id)
 	{
-		$this->_id = self::ID_PREFIX.$_id;
+		$this->_id = self::ID_PREFIX . $_id;
 
 		return $this;
 	}
 
 	/**
-	 * Get the value of designation
-	 */ 
-	public function get_designation()
+	 * Get the value of name
+	 */
+	public function get_name()
 	{
-		return $this->designation;
+		return $this->name;
 	}
 
 	/**
-	 * Set the value of designation
+	 * Set the value of name
 	 *
 	 * @return  self
-	 */ 
-	public function set_designation($designation)
+	 */
+	public function set_name($name)
 	{
-		$this->designation = $designation;
+		$this->name = $name;
 
 		return $this;
 	}
 
 	/**
 	 * Get the value of inventory_number
-	 */ 
+	 */
 	public function get_inventory_number()
 	{
 		return $this->inventory_number;
@@ -76,7 +86,7 @@ class Exhibit
 	 * Set the value of inventory_number
 	 *
 	 * @return  self
-	 */ 
+	 */
 	public function set_inventory_number($inventory_number)
 	{
 		$this->inventory_number = $inventory_number;
@@ -86,7 +96,7 @@ class Exhibit
 
 	/**
 	 * Get the value of manufacturer
-	 */ 
+	 */
 	public function get_manufacturer()
 	{
 		return $this->manufacturer;
@@ -96,7 +106,7 @@ class Exhibit
 	 * Set the value of manufacturer
 	 *
 	 * @return  self
-	 */ 
+	 */
 	public function set_manufacturer($manufacturer)
 	{
 		$this->manufacturer = $manufacturer;
@@ -106,7 +116,7 @@ class Exhibit
 
 	/**
 	 * Get the value of year_of_construction
-	 */ 
+	 */
 	public function get_year_of_construction()
 	{
 		return $this->year_of_construction;
@@ -116,7 +126,7 @@ class Exhibit
 	 * Set the value of year_of_construction
 	 *
 	 * @return  self
-	 */ 
+	 */
 	public function set_year_of_construction($year_of_construction)
 	{
 		$this->year_of_construction = $year_of_construction;
@@ -126,7 +136,7 @@ class Exhibit
 
 	/**
 	 * Get the value of location
-	 */ 
+	 */
 	public function get_location()
 	{
 		return $this->location;
@@ -136,7 +146,7 @@ class Exhibit
 	 * Set the value of location
 	 *
 	 * @return  self
-	 */ 
+	 */
 	public function set_location($location)
 	{
 		$this->location = $location;
@@ -146,7 +156,7 @@ class Exhibit
 
 	/**
 	 * Get the value of aquiry_date
-	 */ 
+	 */
 	public function get_aquiry_date()
 	{
 		return $this->aquiry_date;
@@ -156,7 +166,7 @@ class Exhibit
 	 * Set the value of aquiry_date
 	 *
 	 * @return  self
-	 */ 
+	 */
 	public function set_aquiry_date($aquiry_date)
 	{
 		$this->aquiry_date = $aquiry_date;
@@ -166,7 +176,7 @@ class Exhibit
 
 	/**
 	 * Get the value of _rev
-	 */ 
+	 */
 	public function get_rev()
 	{
 		return $this->_rev;
@@ -176,7 +186,7 @@ class Exhibit
 	 * Set the value of _rev
 	 *
 	 * @return  self
-	 */ 
+	 */
 	public function set_rev($_rev)
 	{
 		$this->_rev = $_rev;
@@ -185,18 +195,18 @@ class Exhibit
 	}
 
 	/**
-	 * Get the value of text_blocks
-	 */ 
-	public function get_text_blocks()
+	 * Get the value of freetextfields
+	 */
+	public function get_freetextfields()
 	{
-		return $this->text_blocks;
+		return $this->freetextfield;
 	}
 
 	/**
 	 * Set the value of text_blocks
 	 *
 	 * @return  self
-	 */ 
+	 */
 	public function set_text_blocks($text_blocks)
 	{
 		$this->text_blocks = $text_blocks;
