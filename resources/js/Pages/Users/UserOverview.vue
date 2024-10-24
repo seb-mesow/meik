@@ -50,29 +50,15 @@ const users_ref = ref<User[]>(props.users.map((prop_user: PropUser): User => {
 const admin_state_toggles_readonly = ref(false);
 
 async function toggle_admin_state(user: User, event: Event): Promise<void> {
-	let _nextTick = false;
-	if(ajax_confirmation_popup.value?.is_visible()) {
-		const target = ajax_confirmation_popup.value?.get_target();
-		_nextTick = true;
-		ajax_confirmation_popup.value?.hide();
-		console.log("hide " + target);
-		if(event.target === target) {
-			console.log("same target");
-			return;
-		}
-	}
-	
 	const request_cfg: AxiosRequestConfig = {
-		url: route('user.set_admin', { username: user.username }),
+		url: route('ajax.user.set_admin', { username: user.username }),
 		method: 'patch',
 		data: {
 			'is_admin': user.is_admin.in_ui,
 		}
 	};
 	
-	if (_nextTick) {
-		await nextTick();
-	}
+	await nextTick();
 	ajax_confirmation_popup.value?.show(event, request_cfg, {
 		fullfied() {
 			user.is_admin.actual = user.is_admin.in_ui;
