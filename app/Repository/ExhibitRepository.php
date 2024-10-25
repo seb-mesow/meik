@@ -9,6 +9,7 @@ use PHPOnCouch\CouchClient;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Date;
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use PHPOnCouch\Exceptions\CouchException;
@@ -36,7 +37,6 @@ final class ExhibitRepository
         $exhibits = $this->client->find([
             '_id' => ['$beginsWith' => self::ID_PREFIX],
         ])->docs;
-        dd($this->serializer->serialize($this->exhibitsFromArray($exhibits), 'json'));
         return $this->exhibitsFromArray($exhibits);
     }
 
