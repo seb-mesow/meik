@@ -1,0 +1,20 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/seb-mesow/meik.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+	vscode-merge-base = origin/main
+[branch "exhibit_routes"]
+	remote = origin
+	merge = refs/heads/exhibit_routes
+	vscode-merge-base = origin/main
+[branch "models"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/models
