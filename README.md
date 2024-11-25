@@ -3,7 +3,7 @@
 ## Starten der Web-App
 0. Docker (Engine) im Host starten
 1. `drb` ("docker restart build")
-2. ggf. `artisan migrate` (Schema für Tabellen in MariaDB aktualisieren)
+2. ggf. `artisan migrate --seed` (Schema für Tabellen in MariaDB aktualisieren)
 3. [Web-App öffnen (HTTP)](http://meik.localhost:8080)
 4. Im Freifox Cache deaktivieren !
 
@@ -11,6 +11,9 @@
 
 [PhpMyAdmin](http://phpmyadmin.localhost:8081)
 
+## nach Rebasen
+1. `ci`
+2. `npm ci`
 
 ## Einrichtung
 
@@ -146,7 +149,7 @@ Empfehlung: jeden Tag einmal machen
 
 ### Dokumente mit bestimmten Prefix abrufen
 1. Für den Abruf ein Design Dokument erstellen
-   Bsp: 
+   Bsp:
     {
       "_id": "_design/exhibit_filter",
       "_rev": "4-22b5d86d59c77befa7f8fb6202b82581",
@@ -158,6 +161,6 @@ Empfehlung: jeden Tag einmal machen
       "language": "javascript"
     }
 2. Zum Abrufen die Funktion getView verwenden.
-   Bsp: 
+   Bsp:
     $this->client->getView('exhibit_filter', 'by_exhibit_prefix')
 
