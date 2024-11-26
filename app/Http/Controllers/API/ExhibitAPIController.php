@@ -28,8 +28,8 @@ class ExhibitAPIController extends Controller
 	 */ 
     public function get_all_exhibits()
     {
-        $exhibits = $this->exhibit_repository->get_all_exhibits();
-        $array = array_map(fn($exhibit) => $this->exhibit_repository->objectFromExhibit($exhibit), $exhibits);
+        $exhibits = $this->exhibit_repository->get_all();
+        $array = array_map(fn($exhibit) => $this->exhibit_repository->create_doc_from_exhibit($exhibit), $exhibits);
  
         return Inertia::render('Exhibits/Exhibits', [
             'exhibits' => $array
@@ -42,7 +42,7 @@ class ExhibitAPIController extends Controller
     public function get_exhibit(string $id)
     {
         return Inertia::render('Exhibits/Exhibit', [
-            'exhibit' => $this->exhibit_repository->get_exhibit($id)
+            'exhibit' => $this->exhibit_repository->find($id)
         ]);
     }
 }

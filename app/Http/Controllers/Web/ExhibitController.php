@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Repository\ExhibitRepository;
 use Illuminate\Http\Request;
@@ -14,28 +15,28 @@ use stdClass;
 
 class ExhibitController extends Controller
 {
-    private Serializer $serializer;
+	public function __construct(
+		private readonly ExhibitRepository $exhibit_repository,
+		private readonly Serializer $serializer
+	) {}
 
-    public function __construct(
-        private readonly ExhibitRepository $exhibit_repository
-    ) {
-        $this->serializer = SerializerBuilder::create()->build();
-    }
-
-    public function get_all_exhibits()
-    {
-        $exhibits = $this->exhibit_repository->get_all_exhibits();
-        $array = array_map(fn($exhibit) => $this->exhibit_repository->objectFromExhibit($exhibit), $exhibits);
- 
-        return Inertia::render('Exhibits/Exhibits', [
-            'exhibits' => $array
-        ]);
-    }
+	public function all_exhibits()
+	{
+		$exhibits = $this->exhibit_repository->get_all();
+		$array = array_map(static function(Exhibit $exhibit): array {
+			return [
+				'name' => $exhibit->get_name(),
+			];
+		}, $exhibits);
+		return Inertia::render('Exhibits/ExhibitOverview', [
+			'exhibits' => $array
+		]);
+	}
 
     public function get_exhibit(string $id)
     {
         return Inertia::render('Exhibits/Exhibit', [
-            'exhibit' => $this->exhibit_repository->get_exhibit($id)
+            'exhibit' => $this->exhibit_repository->find($id)
         ]);
     }
 }

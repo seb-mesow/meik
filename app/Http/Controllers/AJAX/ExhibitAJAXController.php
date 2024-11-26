@@ -24,7 +24,7 @@ class ExhibitAJAXController extends Controller
     {
         $exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
 
-        return $this->exhibit_repository->create($exhibit);
+        return $this->exhibit_repository->insert($exhibit);
     }
 
     public function put_exhibit(Request $request)
