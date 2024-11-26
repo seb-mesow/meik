@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Repository\ExhibitRepository;
 use Illuminate\Http\Request;

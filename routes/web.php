@@ -25,9 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-	Route::get('/users', [UserController::class, 'all_users'])->name('users.all');
 });
 
+Route::get('/users', [UserController::class, 'all_users'])->name('users.all');
 Route::get('/exhibits', [ExhibitController::class, 'get_all_exhibits']);
 Route::get('/exhibit/{id}', [ExhibitController::class, 'get_exhibit']);
 Route::post('/exhibit', [ExhibitController::class, 'post_exhibit']);

@@ -203,7 +203,7 @@ class Exhibit
 	/**
 	 * Get the value of _rev
 	 */
-	public function get_rev()
+	public function get__rev()
 	{
 		return $this->_rev;
 	}
@@ -213,7 +213,7 @@ class Exhibit
 	 *
 	 * @return  self
 	 */
-	public function set_rev($_rev)
+	public function set__rev($_rev)
 	{
 		$this->_rev = $_rev;
 

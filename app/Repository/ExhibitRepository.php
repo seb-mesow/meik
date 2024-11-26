@@ -124,13 +124,13 @@ final class ExhibitRepository
     public function objectFromExhibit(Exhibit $exhibit): stdClass
     {
         $object = (new stdClass());
-        $object->_id = $exhibit->get_designation();
-        $object->_rev = $exhibit->get_designation();
-        $object->designation = $exhibit->get_designation();
+        $object->_id = $exhibit->get__id();
+        $object->_rev = $exhibit->get__rev();
+        $object->name = $exhibit->get_name();
         $object->manufacturer = $exhibit->get_manufacturer();
         $object->year_of_construction = $exhibit->get_year_of_construction();
         $object->aquiry_date = $exhibit->get_aquiry_date(); 
-        $object->text_blocks = $exhibit->get_text_blocks(); 
+        $object->free_text_fielfs = $exhibit->get_free_text_fields(); 
 
         return $object;
     }
