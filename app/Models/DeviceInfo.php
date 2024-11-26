@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
@@ -12,9 +11,9 @@ use Illuminate\Support\Facades\Date;
 // use Illuminate\Foundation\Auth\User as Authenticatable;
 // use Illuminate\Notifications\Notifiable;
 
-class Exhibit
+class DeviceInfo
 {
-	/** @Accessor(getter="get__id") */
+	/** @Accessor(getter="get_id") */
 	private ?string $_id = null;
 
 	/** @Accessor(getter="get__rev") */
@@ -63,7 +62,7 @@ class Exhibit
 	/**
 	 * Get the value of id
 	 */
-	public function get__id()
+	public function get_id()
 	{
 		return $this->_id;
 	}

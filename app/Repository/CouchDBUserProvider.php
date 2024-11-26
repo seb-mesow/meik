@@ -10,12 +10,12 @@ use Illuminate\Contracts\Auth\UserProvider;
 use PHPOnCouch\CouchClient;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 use Random\Randomizer;
-use stdClass;
+use \stdClass;
 
 /**
  * @phpstan-type UserDoc object{
  *     _id: string,
- *     _rev: string,
+ *     _rev?: string,
  *     username: string,
  *     password: string,
  * 	   forename: string,
@@ -84,7 +84,7 @@ final class CouchDBUserProvider implements UserProvider {
 	 * @param string $identifier username
 	 * @return User|null
 	 */
-	public function retrieveById($identifier): User|null {
+	public function retrieveById($identifier): ?User {
 		try {
 			$user_doc = $this->client->getDoc(self::ID_PREFIX . $identifier);
 			return $this->create_user_from_doc($user_doc);
@@ -170,9 +170,12 @@ final class CouchDBUserProvider implements UserProvider {
 		);
 	}
 	
-	private function create_doc_from_user(User $user): object {
+	/**
+	 * @return UserDoc
+	 */
+	private function create_doc_from_user(User $user): stdClass {
 		/** @var UserDoc */
-		$user_doc = new \stdClass();
+		$user_doc = new stdClass();
 		$user_doc->_id = self::ID_PREFIX . $user->original_username;
 		if ($user->rev) {
 			$user_doc->_rev = $user->rev;
