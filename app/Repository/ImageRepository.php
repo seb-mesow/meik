@@ -33,7 +33,7 @@ final class ImageRepository
         $this->serializer = SerializerBuilder::create()->build();
     }
 
-	public function get_by_hash(string $hash): Image {
+	public function get(string $hash): Image {
 		
 	}
 	
