@@ -8,29 +8,32 @@ class Image
 {
 	/** @Accessor(getter="get_hash") */
 	private ?string $hash = null;
+	
 	/** @Accessor(getter="get_data") */
-	private mixed $data = null;
+	private string $data;
 
+	public readonly ?string $rev = null;
+	
+	public function __construct(string $data, ?string $rev = null) {
+		$this->data = $data;
+		$this->rev = $rev;
+	}
+	
 	/**
 	 * Get the value of hash
 	 */
-	public function get_hash()
+	public function get_hash(): string
 	{
+		if (!$this->hash) {
+			$this->hash = md5($this->data);
+		}
 		return $this->hash;
 	}
-
-	/**
-	 * Set the value of hash
-	 *
-	 * @return  self
-	 */
-	public function set_hash($hash)
-	{
-		$this->hash = $hash;
-
-		return $this;
+	
+	public function get_rev(): ?string {
+		return $this->rev;
 	}
-
+	
 	/**
 	 * Get the value of data
 	 */
@@ -47,7 +50,8 @@ class Image
 	public function set_data($data)
 	{
 		$this->data = $data;
-
+		$this->hash = null;
+		
 		return $this;
 	}
 }
