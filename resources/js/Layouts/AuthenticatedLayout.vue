@@ -71,6 +71,12 @@ const showingNavigationDropdown = ref(false);
                                     </template>
 
                                     <template #content>
+										<!-- TODO temporär -->
+                                        <DropdownLink
+                                            :href="route('exhibit.index')"
+                                        >
+                                            Exponate
+                                        </DropdownLink>
                                         <DropdownLink
                                             :href="route('profile.edit')"
                                         >
