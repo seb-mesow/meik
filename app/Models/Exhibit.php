@@ -14,17 +14,14 @@ use Illuminate\Support\Facades\Date;
 
 class Exhibit
 {
-	/** @Accessor(getter="get__id") */
-	private ?string $_id = null;
+	/** @Accessor(getter="get_id") */
+	private readonly string $id;
 
-	/** @Accessor(getter="get__rev") */
-	private ?string $_rev = null;
+	/** @Accessor(getter="get_rev") */
+	private readonly ?string $rev;
 
 	/** @Accessor(getter="get_name") */
-	private ?string $name = null;
-
-	/** @Accessor(getter="get_inventory_number") */
-	private ?string $inventory_number = null;
+	private string $name;
 
 	/** @Accessor(getter="get_manufacturer") 
 	 */
@@ -60,83 +57,35 @@ class Exhibit
 	 */
 	private ?float $current_value = 0;
 
-	/**
-	 * Get the value of id
-	 */
-	public function get__id()
-	{
-		return $this->_id;
+	public function __construct(
+		string $id,
+		string $name,
+		?string $rev = null
+	) {
+		$this->id = $id;
+		$this->name = $name;
+		$this->rev = $rev;
+	}
+	
+	public function get_id(): string {
+		return $this->id;
 	}
 
-	/**
-	 * Set the value of id
-	 *
-	 * @return  self
-	 */
-	public function set__id($_id)
-	{
-		$this->_id = $_id;
-
-		return $this;
-	}
-
-	/**
-	 * Get the value of name
-	 */
-	public function get_name()
-	{
+	public function get_name(): string {
 		return $this->name;
 	}
 
-	/**
-	 * Set the value of name
-	 *
-	 * @return  self
-	 */
-	public function set_name($name)
-	{
+	public function set_name(string $name): self {
 		$this->name = $name;
-
 		return $this;
 	}
 
-	/**
-	 * Get the value of inventory_number
-	 */
-	public function get_inventory_number()
-	{
-		return $this->inventory_number;
-	}
-
-	/**
-	 * Set the value of inventory_number
-	 *
-	 * @return  self
-	 */
-	public function set_inventory_number($inventory_number)
-	{
-		$this->inventory_number = $inventory_number;
-
-		return $this;
-	}
-
-	/**
-	 * Get the value of manufacturer
-	 */
-	public function get_manufacturer()
-	{
+	public function get_manufacturer() {
 		return $this->manufacturer;
 	}
 
-	/**
-	 * Set the value of manufacturer
-	 *
-	 * @return  self
-	 */
-	public function set_manufacturer($manufacturer)
-	{
+	public function set_manufacturer($manufacturer): self {
 		$this->manufacturer = $manufacturer;
-
 		return $this;
 	}
 
@@ -200,27 +149,11 @@ class Exhibit
 		return $this;
 	}
 
-	/**
-	 * Get the value of _rev
-	 */
-	public function get_rev()
-	{
-		return $this->_rev;
+	public function get_rev(): ?string {
+		return $this->rev;
 	}
 
-	/**
-	 * Set the value of _rev
-	 *
-	 * @return  self
-	 */
-	public function set_rev($_rev)
-	{
-		$this->_rev = $_rev;
-
-		return $this;
-	}
-	
-	/**
+    /**
 	 * Get the value of free_text_fields
 	 */
 	public function get_free_text_fields()

@@ -13,11 +13,18 @@ use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use PHPOnCouch\Exceptions\CouchException;
+use PHPOnCouch\Exceptions\CouchNotFoundException;
 use stdClass;
 
+/**
+ * @phpstan-type ExhibitDoc object{
+ *     _id: string,
+ *     _rev?: string,
+ *     name: string,
+ * }
+ */
 final class ExhibitRepository
 {
-
     private const ID_PREFIX = "exhibit:";
     private Serializer $serializer;
 
@@ -32,7 +39,7 @@ final class ExhibitRepository
      * @var string $id
      * @return array<Exhibit>
      */
-    public function get_all_exhibits(): array
+    public function get_all(): array
     {
         $exhibits = $this->client->find([
             '_id' => ['$beginsWith' => self::ID_PREFIX],
@@ -40,52 +47,46 @@ final class ExhibitRepository
         return $this->exhibitsFromArray($exhibits);
     }
 
-    /**
-     * @var string $id
-     * @return Exhibit|null
-     */
-    public function get_exhibit(string $id): mixed
-    {
-        try {
-            return $this->exhibitFromObject($this->client->getDoc($id));
-        } catch (CouchException $ex) {
-            return null;
-        }
-    }
+	public function find(string $id): ?Exhibit {
+		try {
+			return $this->get($id);
+		} catch (CouchNotFoundException $e) {
+			return null;
+		}
+	}
+	
+	private function get(string $id): Exhibit {
+		$couch_db_id = self::ID_PREFIX . $id;
+		$exhibit_doc = $this->client->getDoc($couch_db_id);
+		return $this->create_exhibit_from_doc($exhibit_doc);
+	}
 
-    /**
-     * @return Exhibit
-     */
-    public function create(
-        Exhibit $exhibit
-    ): Exhibit {
-        $doc = $this->client->storeDoc($this->objectFromExhibit($exhibit));
-        return $this->exhibitFromObject($doc);
-    }
-
-    /**
-     * @return Exhibit
-     */
-    public function update(
-        Exhibit $exhibit
-    ): Exhibit {
-        try {
-            $doc = $this->client->getDoc($exhibit->get__id());
-            $exhibit->set_rev($doc->_rev);
-            $doc = $this->client->storeDoc($this->objectFromExhibit($exhibit));
-            return $this->exhibitFromObject($doc);
-        } catch (Exception $e) {
-            echo "ERROR: " . $e->getMessage() . " (" . $e->getCode() . ")<br>\n";
-        }
-    }
+	public function insert(Exhibit $exhibit): Exhibit {
+		assert(!$exhibit->get_rev());
+		$doc = $this->create_doc_from_exhibit($exhibit);
+		$response = $this->client->storeDoc($doc);
+		$doc->_rev = $response->rev;
+		return $this->create_exhibit_from_doc($doc);
+	}
+	
+	public function update(Exhibit $exhibit): Exhibit {
+		assert($exhibit->get_rev());
+		try {
+			$doc = $this->create_doc_from_exhibit($exhibit);
+			$response = $this->client->storeDoc($doc);
+			$doc->_rev = $response->rev;
+			return $this->create_exhibit_from_doc($doc);
+		} catch (Exception $e) {
+			echo "ERROR: " . $e->getMessage() . " (" . $e->getCode() . ")<br>\n";
+			throw $e;
+		}
+	}
 
     /**
      * @var string $id
      * @return Exhibit
      */
-    public function delete(
-        string $id
-    ): void {
+    public function delete(string $id): void {
         try {
             $doc = $this->client->getDoc($id);
         } catch (Exception $e) {
@@ -99,14 +100,17 @@ final class ExhibitRepository
         }
     }
 
-    /**
-     * @var stdClass $object
-     * @return Exhibit
-     */
-    public function exhibitFromObject($object): Exhibit
-    {
-        return $this->serializer->deserialize(json_encode($object), Exhibit::class, "json");
-    }
+	/**
+	 * @param ExhibitDoc $exhibit_doc
+	 */
+	private function create_exhibit_from_doc(stdClass $exhibit_doc): Exhibit {
+		$id = substr($exhibit_doc->_id, strlen(self::ID_PREFIX));
+		return new Exhibit(
+			id: $id,
+			name: $exhibit_doc->name,
+			rev: $exhibit_doc->_rev,
+		);
+	}
 
     /**
      * @var array<object> $array
@@ -117,21 +121,17 @@ final class ExhibitRepository
         return $this->serializer->deserialize(json_encode($array), 'array<' . Exhibit::class . '>', "json");
     }
 
-    /**
-     * @var Exhibit $exhibit
-     * @return stdClass
-     */
-    public function objectFromExhibit(Exhibit $exhibit): stdClass
-    {
-        $object = (new stdClass());
-        $object->_id = $exhibit->get_designation();
-        $object->_rev = $exhibit->get_designation();
-        $object->designation = $exhibit->get_designation();
-        $object->manufacturer = $exhibit->get_manufacturer();
-        $object->year_of_construction = $exhibit->get_year_of_construction();
-        $object->aquiry_date = $exhibit->get_aquiry_date(); 
-        $object->text_blocks = $exhibit->get_text_blocks(); 
-
-        return $object;
-    }
+	private function create_doc_from_exhibit(Exhibit $exhibit): stdClass {
+		$exhibit_doc = new stdClass();
+		$exhibit_doc->_id = self::ID_PREFIX . $exhibit->get_id();
+		if ($rev = $exhibit->get_rev()) {
+			$exhibit_doc->_rev = $rev;
+		}
+		$exhibit_doc->name = $exhibit->get_name();
+		// $exhibit_doc->manufacturer = $exhibit->get_manufacturer();
+		// $exhibit_doc->year_of_construction = $exhibit->get_year_of_construction();
+		// $exhibit_doc->aquiry_date = $exhibit->get_aquiry_date(); 
+		// $exhibit_doc->text_blocks = $exhibit->get_text_blocks(); 
+		return $exhibit_doc;
+	}
 }
