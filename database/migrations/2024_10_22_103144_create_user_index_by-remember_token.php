@@ -40,6 +40,7 @@ return new class extends Migration
 			$design_doc->_id = self::DESIGN_DOC_ID;
 		}
 		$design_doc->language = 'javascript';
+		$design_doc->views = new stdClass();
 		$design_doc->views->{self::VIEW} = [
 			'map' => $this->map_function
 		];
