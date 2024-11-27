@@ -15,11 +15,14 @@ use Illuminate\Support\Facades\Date;
 class Exhibit
 {
 	/** @Accessor(getter="get_id") */
-	private readonly string $id;
+	private readonly ?string $id;
 
 	/** @Accessor(getter="get_rev") */
 	private readonly ?string $rev;
 
+	/** @Accessor(getter="get_inventor_number") */
+	private string $inventor_number;
+	
 	/** @Accessor(getter="get_name") */
 	private string $name;
 
@@ -58,17 +61,25 @@ class Exhibit
 	private ?float $current_value = 0;
 
 	public function __construct(
-		string $id,
+		string $inventor_number,
 		string $name,
+		string $manufacturer,
+		?string $id = null,
 		?string $rev = null
 	) {
 		$this->id = $id;
+		$this->inventor_number = $inventor_number;
 		$this->name = $name;
+		$this->manufacturer = $manufacturer;
 		$this->rev = $rev;
 	}
 	
 	public function get_id(): string {
 		return $this->id;
+	}
+	
+	public function get_inventory_number(): string {
+		return $this->inventor_number;
 	}
 
 	public function get_name(): string {

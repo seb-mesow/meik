@@ -35,6 +35,7 @@ class ExhibitController extends Controller
 
     public function get_exhibit(string $id)
     {
+		
         return Inertia::render('Exhibits/Exhibit', [
             'exhibit' => $this->exhibit_repository->find($id)
         ]);
