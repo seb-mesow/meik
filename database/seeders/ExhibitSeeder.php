@@ -40,7 +40,10 @@ class ExhibitSeeder extends Seeder
 	}
 	
 	private function create_exhibit(Exhibit $exhibit): void {
-		$existing_exhibit = $this->exhibit_repository->find($exhibit->get_id());
+		$existing_exhibit = null;
+		if ($id = $exhibit->get_id()) {
+			$existing_exhibit = $this->exhibit_repository->find($id);
+		}
 		if ($existing_exhibit) {
 			$exhibit = new Exhibit(
 				$exhibit->get_id(),

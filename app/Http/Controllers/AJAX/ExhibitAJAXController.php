@@ -33,9 +33,4 @@ class ExhibitAJAXController extends Controller
 
         return $this->exhibit_repository->update($exhibit);
     }
-
-    public function delete_exhibit(string $id)
-    {
-        return $this->exhibit_repository->delete($id);
-    }
 }

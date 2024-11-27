@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InputField from '@/Components/InputField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { FormValues } from '@/types/meik';
+import type { Form } from '@/types/meik/technical';
 import { Head } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -10,21 +10,18 @@ import { ref } from 'vue';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
-	form: FormValues<{
-		id: string,
+	form: Form<{
+		inventory_number: string,
 		name: string,
-		manufacturer: string,
+		manufacturer: string
 	}>
 }>();
-
-
 // (interne) Attribute der Komponente
-
-
+console.log(props.form);
 </script>
 
 <template>
-	<Head title="Benutzerverwaltung" />
+	<Head title="Exponat" />
 
 	<AuthenticatedLayout>
 		<template #header>
@@ -32,9 +29,9 @@ const props = defineProps<{
 				Exponat
 			</h2>
 		</template>
-		<InputField :form_value="form.id" label="Inventarnummer"/>
-		<InputField :form_value="form.name" label="Bezeichnung"/>
-		<InputField :form_value="form.manufacturer" label="Hersteller"/>
+		<InputField :form_value="form.vals.inventory_number" label="Inventarnummer"/>
+		<InputField :form_value="form.vals.name" label="Bezeichnung"/>
+		<InputField :form_value="form.vals.manufacturer" label="Hersteller"/>
 		<Button as="a" label="Abschnitt hinzufügen" :href="route('new-user')"/>
 	</AuthenticatedLayout>
 </template>
