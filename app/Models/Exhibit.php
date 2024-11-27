@@ -21,7 +21,7 @@ class Exhibit
 	private readonly ?string $rev;
 
 	/** @Accessor(getter="get_inventor_number") */
-	private string $inventor_number;
+	private string $inventory_number;
 	
 	/** @Accessor(getter="get_name") */
 	private string $name;
@@ -61,25 +61,25 @@ class Exhibit
 	private ?float $current_value = 0;
 
 	public function __construct(
-		string $inventor_number,
+		string $inventory_number,
 		string $name,
 		string $manufacturer,
 		?string $id = null,
 		?string $rev = null
 	) {
 		$this->id = $id;
-		$this->inventor_number = $inventor_number;
+		$this->inventory_number = $inventory_number;
 		$this->name = $name;
 		$this->manufacturer = $manufacturer;
 		$this->rev = $rev;
 	}
 	
-	public function get_id(): string {
+	public function get_id(): ?string {
 		return $this->id;
 	}
 	
 	public function get_inventory_number(): string {
-		return $this->inventor_number;
+		return $this->inventory_number;
 	}
 
 	public function get_name(): string {

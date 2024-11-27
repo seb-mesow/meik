@@ -25,6 +25,7 @@ class ExhibitController extends Controller
 		$exhibits = $this->exhibit_repository->get_all();
 		$array = array_map(static function(Exhibit $exhibit): array {
 			return [
+				'id' => $exhibit->get_id(),
 				'name' => $exhibit->get_name(),
 			];
 		}, $exhibits);
@@ -33,11 +34,34 @@ class ExhibitController extends Controller
 		]);
 	}
 
-    public function get_exhibit(string $id)
-    {
-		
-        return Inertia::render('Exhibits/Exhibit', [
-            'exhibit' => $this->exhibit_repository->find($id)
-        ]);
-    }
+	public function get_exhibit(string $id)
+	{
+		$exhibit = $this->exhibit_repository->get($id);
+		return Inertia::render('Exhibits/Exhibit', [
+			'form' => $this->create_form_from_exhibit($exhibit)
+		]);
+	}
+	
+	private function create_form_from_exhibit(Exhibit $exhibit): array {
+		return [
+			'vals' => [
+				'inventory_number' => [
+					'id' => 'inventory_number',
+					'val' => $exhibit->get_inventory_number(),
+					'errs' => []
+				],
+				'manufacturer' => [
+					'id' => 'manufacturer',
+					'val' => $exhibit->get_manufacturer(),
+					'errs' => []
+				],
+				'name' => [
+					'id' => 'name',
+					'val' => $exhibit->get_name(),
+					'errs' => []
+				],
+			],
+			'errs' => []
+		];
+	}
 }

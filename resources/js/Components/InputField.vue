@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InputErrors from './InputError.vue';
 import InputText from 'primevue/inputtext';
-import type { FormValue } from '@/types/meik';
+import type { FormValue } from '@/types/meik/technical';
 
 defineProps<{
 	label: string,
@@ -10,8 +10,8 @@ defineProps<{
 </script>
 <template>
 	<div>
-		<label :for="form_value.id">{{ label }}</label>
-		<InputText type=text :name="form_value.id" v-model="form_value.value"/>
-		<InputErrors :errors="form_value.errors"/>
+		<p><label :for="form_value.id">{{ label }}</label></p>
+		<InputText type=text :name="form_value.id" v-model="form_value.val"/>
+		<InputErrors :errors="form_value.errs"/>
 	</div>
 </template>

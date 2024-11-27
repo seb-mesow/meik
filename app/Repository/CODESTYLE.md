@@ -22,16 +22,20 @@ Das Attribut "id" ist bspw. vom Datentyp `string`.
 	- gibt einen Array von allen Models zurück
 - `public function insert(Exhibit $exhibit): Exhibit`
 	- speichert ein neues Model
+	- Der primäre Schlüssel des übergebenen Models kann oder kann nicht gesetzt sein.
+		- Konkretisierung je nach Model möglich
 	- Das Attribut `rev` des übergebenen Models muss noch `null` sein.
 	- gibt das gleiche Model zurück, aber das Attribut `rev` ist auf die Revisions-ID gesetzt.
 - `public function update(Exhibit $exhibit): Exhibit`
 	- ändert ein bestehendes Model
+	- Der primäre Schlüssel des übergebenen Models muss gesetzt sein.
 	- Das Attribut `rev` des übergebenen Models muss mit der _bisherigen_ Revisions-ID gesetzt sein.
 	- gibt das gleiche Model zurück, aber das Attribut `rev` ist mit der _neuen_ Revisions-ID gesetzt
 	- wenn Model nicht in DB gefunden: wirft eine passende Exception
 	- wenn Revisions-ID nicht mehr aktuell: wirft eine passende Exception
-- `public function delete(Exhibit $exhibit)`
+- `public function remove(Exhibit $exhibit)`
 	- löscht ein bestehendes Model
+	- Der primäre Schlüssel des übergebenen Models muss gesetzt sein.
 	- Das Attribut `rev` des übergebenen Models muss mit der Revisions-ID gesetzt sein.
 	- kein Rückgabewert
 - `private function create_exhibit_from_doc(stdClass $exhibit_doc): Exhibit`

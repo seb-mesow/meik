@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Exhibit } from '@/types/meik.d.ts';
+import type { Exhibit } from '@/types/meik/models';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
@@ -15,9 +15,11 @@ const name: string = exhibit.name;
 </script>
 
 <template>
-	<div class="exhibit-tile">
-		<p>{{ name }}</p>
-	</div>
+	<a :href="route('exhibit.show', exhibit.id)">
+		<div class="exhibit-tile">
+			<p>{{ name }}</p>
+		</div>
+	</a>
 </template>
 
 <style lang="css" scoped>
