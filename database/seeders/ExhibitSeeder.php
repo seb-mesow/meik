@@ -17,10 +17,26 @@ class ExhibitSeeder extends Seeder
 	 * Seed the application's database.
 	 */
 	public function run(): void {
-		$this->create_exhibit(new Exhibit('1', 'MR 610 (Modell 1986)'));
-		$this->create_exhibit(new Exhibit('2', 'Tiumphator CRN1'));
-		$this->create_exhibit(new Exhibit('3', 'Nixdorf 8810 M55'));
-		$this->create_exhibit(new Exhibit('4', 'Nixdorf BA42'));
+		$this->create_exhibit(new Exhibit(
+			'1',
+			'MR 610 (Modell 1986)',
+			'VEB Röhrenwerk Mühlhausen im VEB Kombinat Mikroelektronik (DDR_RFT)'
+		));
+		$this->create_exhibit(new Exhibit(
+			'2', 
+			'Tiumphator CRN1',
+			'Triumphator Leipzig (Mölkau) DDR'
+		));
+		$this->create_exhibit(new Exhibit(
+			'3',
+			'Nixdorf 8810 M55',
+			'Nixdorf Computer AG Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			'4',
+			'Nixdorf BA42',
+			'Diebold Nixdorf GmbH Paderborn',
+		));
 	}
 	
 	private function create_exhibit(Exhibit $exhibit): void {

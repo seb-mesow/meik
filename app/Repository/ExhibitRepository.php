@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Repository;
@@ -20,7 +19,9 @@ use stdClass;
  * @phpstan-type ExhibitDoc object{
  *     _id: string,
  *     _rev?: string,
+ *     inventory_number: string,
  *     name: string,
+ *     manufacturer: string,
  * }
  */
 final class ExhibitRepository
@@ -106,8 +107,10 @@ final class ExhibitRepository
 	private function create_exhibit_from_doc(stdClass $exhibit_doc): Exhibit {
 		$id = substr($exhibit_doc->_id, strlen(self::ID_PREFIX));
 		return new Exhibit(
-			id: $id,
+			inventor_number: $exhibit_doc->inventory_number,
 			name: $exhibit_doc->name,
+			manufacturer: $exhibit_doc->manufacturer,
+			id: $id,
 			rev: $exhibit_doc->_rev,
 		);
 	}
@@ -123,11 +126,15 @@ final class ExhibitRepository
 
 	private function create_doc_from_exhibit(Exhibit $exhibit): stdClass {
 		$exhibit_doc = new stdClass();
-		$exhibit_doc->_id = self::ID_PREFIX . $exhibit->get_id();
+		if ($id = $exhibit->get_id()) {
+			$exhibit_doc->_id = self::ID_PREFIX . $id;
+		}
 		if ($rev = $exhibit->get_rev()) {
 			$exhibit_doc->_rev = $rev;
 		}
+		$exhibit_doc->inventory_number = $exhibit->get_inventory_number();
 		$exhibit_doc->name = $exhibit->get_name();
+		$exhibit_doc->manufacturer = $exhibit->get_manufacturer();
 		// $exhibit_doc->manufacturer = $exhibit->get_manufacturer();
 		// $exhibit_doc->year_of_construction = $exhibit->get_year_of_construction();
 		// $exhibit_doc->aquiry_date = $exhibit->get_aquiry_date(); 

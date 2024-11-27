@@ -77,7 +77,7 @@ async function toggle_admin_state(user: User, event: Event): Promise<void> {
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
             >
-                Dashboard
+                Benutzerverwaltung
             </h2>
         </template>
 
