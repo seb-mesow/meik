@@ -12,11 +12,11 @@ Dazu sind wir im engen Austausch mit der Gruppe 2.
   - [Exponante](#exponante)
   - [Standorte und Plätze](#standorte-und-plätze)
   - [REST-API für die Präsentations-Software](#rest-api-für-die-präsentations-software)
-  - [QR-Codes erstellen](#qr-codes-erstellen)
-  - [Logging (nur intern)](#logging-nur-intern)
-  - [internes Datenblatt erstellen (niedrige Priorität)](#internes-datenblatt-erstellen-niedrige-priorität)
-  - [Barcodes erstellen (niedrige Priorität)](#barcodes-erstellen-niedrige-priorität)
-  - [Barcodes einscannen (optional)](#barcodes-einscannen-optional)
+  - [MUSS: QR-Codes erstellen](#muss-qr-codes-erstellen)
+  - [NICHT: Logging (nur intern)](#nicht-logging-nur-intern)
+  - [MUSS internes Datenblatt erstellen (niedrige Priorität)](#muss-internes-datenblatt-erstellen-niedrige-priorität)
+  - [MUSS Barcodes erstellen (niedrige Priorität)](#muss-barcodes-erstellen-niedrige-priorität)
+  - [NICHT: Barcodes einscannen (optional)](#nicht-barcodes-einscannen-optional)
   - [Frontend / Design](#frontend--design)
   - [Nicht-Funktonale Anforderungen](#nicht-funktonale-anforderungen)
 
@@ -111,7 +111,7 @@ Die genaue Schnittstellen-Beschreibung der REST-API wird direkt mit der Gruppe 2
 Über die REST-API können nur _öffentlich zugängliche_ Exponate abgerufen werden.
 Zu diesen können auch nur _allgemein öffentliche oder als öffentlich markierte_ Informationen übergeben werden.
 
-## QR-Codes erstellen
+## MUSS: QR-Codes erstellen
 
 Besuchende des Museums können mittels Präsentations-Software (entwickelt von der anderen Gruppe)
 bei den Exponaten beiliegende QR-Codes einscannen.
@@ -123,7 +123,7 @@ Dazu ist es erforderlich, dass mit dieser Verwaltungs-Software ein QR-Code,
 welcher die Inventarnummer enthält, erstellt werden kann.
 Der QR-Code soll in einem handelsüblichen Format exportiert werden – vorzugsweise SVG, sonst PNG.
 
-## Logging (nur intern)
+## NICHT: Logging (nur intern)
 
 Zur Nachvollziehbarkeit wird automatisch erfasst, welcher Benutzer an welchem Tag eine bestimmte Information hinzugefügt, gelöscht oder geändert hat.
 - Benutzer
@@ -131,25 +131,25 @@ Zur Nachvollziehbarkeit wird automatisch erfasst, welcher Benutzer an welchem Ta
 - Art der Änderung
 - welche Teil-Information wurde geändert
 
-## internes Datenblatt erstellen (niedrige Priorität)
+## MUSS internes Datenblatt erstellen (niedrige Priorität)
 
 Für Restaurierungs- und Reparaturaufträge kann ein internes Datenblatt mit den relevanten Informationen erstellt werden. Es enthält vorwiegend die Angabe zum Hersteller und technische/physikalische Angaben
 
-## Barcodes erstellen (niedrige Priorität)
+## MUSS Barcodes erstellen (niedrige Priorität)
 
 Zum Zwecke der Inventarisierung sollen Exponate mit einem Barcode versehen werden.
 Der Barcode enthält eine Kennung für die Rubrik und die Inventarnummer.
 Zur Wiederholung: Die Inventarnummer ist unabhängig von der Rubrik.
 
 Die Software des Barcode-Scanners kann mehrere Barcodes am Stück drucken.
-Dazu gibt man in die Software des Barcode-Scanners eine CSV-Datei ein.
+Dazu gibt man in die Software des Barcode-Scanners eine **CSV-Datei** ein.
 Diese CSV-Datei enthält pro Exponat zwei Felder:
 - die eineindeutige Bezeichnung
 - die Nummer des Barcodes = Kennung der Rubrik + Inventarnummer
 
 **Hier zu sind noch weitere Abstimmungen mit dem Auftraggeber erforderlich.**
 
-## Barcodes einscannen (optional)
+## NICHT: Barcodes einscannen (optional)
 
 Für die Inventur ist es sinnvoll physisch vorliegende Exponate mittels eines Barcode-Scanners teil-automatisiert zu erfassen.
 
