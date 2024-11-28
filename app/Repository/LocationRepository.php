@@ -44,7 +44,7 @@ final class LocationRepository
      * @var string $id
      * @return array<Location>
      */
-    public function get_locations_paginated(int $page = 0, int $page_size = 10,): array
+    public function get_locations_paginated(int $page = 0, int $page_size = 50,): array
     {
         $locations = $this->client->limit($page_size)->skip($page * $page_size)->find([
             '_id' => ['$beginsWith' => self::ID_PREFIX],
@@ -72,6 +72,7 @@ final class LocationRepository
         Location $location
     ): Location {
         $doc = $this->client->storeDoc($this->objectFromLocation($location));
+        $doc = $this->client->getDoc($location->get__id());
         return $this->locationFromObject($doc);
     }
 
@@ -85,6 +86,7 @@ final class LocationRepository
             $doc = $this->client->getDoc($location->get__id());
             $location->set__rev($doc->_rev);
             $doc = $this->client->storeDoc($this->objectFromLocation($location));
+            $doc = $this->client->getDoc($location->get__id());
             return $this->locationFromObject($doc);
         } catch (Exception $e) {
             echo "ERROR: " . $e->getMessage() . " (" . $e->getCode() . ")<br>\n";
@@ -137,10 +139,11 @@ final class LocationRepository
     {
         $object = (new stdClass());
         $object->_id = $location->get__id();
-        $object->_rev = $location->get__rev();
+        if ($location->get__rev()) {
+            $object->_rev = $location->get__rev();
+        }
         $object->name = $location->get_name();
         $object->is_public = $location->get_is_public();
-
         return $object;
     }
 }

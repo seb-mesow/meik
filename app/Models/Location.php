@@ -13,7 +13,7 @@ class Location
 	/** @Accessor(getter="get_name") */
 	private ?string $name = null;
 	/** @Accessor(getter="get_is_public") */
-	private ?string $is_public = null;
+	private ?bool $is_public = false;
 
 	/**
 	 * Get the value of _id
