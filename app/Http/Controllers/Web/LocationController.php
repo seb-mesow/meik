@@ -23,13 +23,14 @@ class LocationController extends Controller
         $this->serializer = SerializerBuilder::create()->build();
     }
 
-    public function get_all_locations()
+    public function get_all_locations(Request $request)
     {
-        $locations = $this->location_repository->get_all_locations();
+        $locations = $this->location_repository->get_locations_paginated();
         $array = array_map(fn($location) => $this->location_repository->objectFromLocation($location), $locations);
- 
+        $count = $this->location_repository->get_locations_count();
         return Inertia::render('Locations/Locations', [
-            'locations' => $array
+            'locations' => $array,
+            'count' => $count
         ]);
     }
 

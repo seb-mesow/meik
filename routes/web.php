@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\ExhibitController;
+use App\Http\Controllers\Web\LocationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,5 +34,8 @@ Route::get('/exhibit/{id}', [ExhibitController::class, 'get_exhibit']);
 Route::post('/exhibit', [ExhibitController::class, 'post_exhibit']);
 Route::put('/exhibit/{id}', [ExhibitController::class, 'put_exhibit']);
 Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete_exhibit']);
+
+Route::get('/locations', [LocationController::class, 'get_all_locations']);
+Route::get('/locations/{id}', [LocationController::class, 'get_location']);
 
 require __DIR__.'/auth.php';

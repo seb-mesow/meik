@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
-const props = defineProps(['exhibits'])
-console.log(props.exhibits)
+const props = defineProps(['places'])
 
 </script>
 
 <template>
     <Head title="Exhibits" />
-    <div class="flex flex-wrap">
-    <div class="border-black border-solid border-2 w-[20%] min-w-[20rem]" v-for="exhibit in exhibits">
-       Exhibit {{ exhibit.name }}
-    </div>
-    </div>
-
+    <DataTable :value="places">
+        <Column field="name" header="Name"></Column>
+        <Column field="is_public" header="Public"></Column>
+    </DataTable>
 </template>
