@@ -4,6 +4,7 @@
 0. Docker (Engine) im Host starten
 1. `drb` ("docker restart build")
 2. ggf. `artisan migrate --seed` (Schema für Tabellen in MariaDB aktualisieren)
+	- alternativ: `artisan migrate:fresh --seed`
 3. [Web-App öffnen (HTTP)](http://meik.localhost:8080)
 4. Im Freifox Cache deaktivieren !
 
@@ -133,6 +134,17 @@ Empfehlung: jeden Tag einmal machen
 4. in VS Code: rebasen und zwar auf `origin/main` (nicht `main`!)
 5. (`gp`)
 
+#### Backup wieder herstellen
+```bash
+# Name des Backup-Branches ermitteln (z.B. images_in_db_backup_2024-11-27_18-10-35)
+git branch
+# Backup-Branch auschecken
+git checkout images_in_db_backup_2024-11-27_18-10-35
+# alten normalen Branch löschen
+git branch -D images_in_db
+# neuen normalen Branch aus Backup-Branch erstellen
+git checkout -b images_in_db
+```
 
 ## Docker-Tipps
 
