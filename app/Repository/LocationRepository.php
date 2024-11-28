@@ -32,9 +32,21 @@ final class LocationRepository
      * @var string $id
      * @return array<Location>
      */
-    public function get_all_locations(): array
+    public function get_locations_count(): int
     {
         $locations = $this->client->find([
+            '_id' => ['$beginsWith' => self::ID_PREFIX],
+        ]);
+        return count($locations->docs);
+    }
+
+    /**
+     * @var string $id
+     * @return array<Location>
+     */
+    public function get_locations_paginated(int $page = 0, int $page_size = 10,): array
+    {
+        $locations = $this->client->limit($page_size)->skip($page * $page_size)->find([
             '_id' => ['$beginsWith' => self::ID_PREFIX],
         ])->docs;
         return $this->locationsFromArray($locations);
