@@ -29,7 +29,7 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 		Restliche Einstellungen zu Force-Pushing auf default belassen.
 2. folgende VS Code Extensions installieren:
 	1. _PHP_ von _DEVSENSE_
-	2. _PHP Debug von _Xdebug_
+	2. _PHP Debug_ von _Xdebug_
 	3. _Vue - Offical_ von _Vue_
 	4. _optional:_ _GitLens — Git supercharged_ von _GitKraken_
 	4. _optional:_ [_Docker_ von _Microsoft_](https://code.visualstudio.com/docs/containers/overview)
@@ -58,19 +58,22 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 	4. `compose.override.yml` anpassen
 9. `.env` (in der Wurzel des Repos)
 	1. `.env.example` zu `.env` kopieren
-10. `drb` ("docker restart build")
-11. `ci` ("composer install")
+10. im Unterordner `.vscode`
+	1. `launch.dist.json` zu `launch.json` kopieren
+	2. `settings.dist.json` zu `settings.json` kopieren
+11. `drb` ("docker restart build")
+12. `ci` ("composer install")
 	- (notfalls als Ersatz: `docker_compose_run_normal app composer install`)
-12. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
+13. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
 	- (notfalls als Ersatz: `docker_compose_run_normal node npm ci`)
-13. `storage`-Verzeichnis
+14. `storage`-Verzeichnis
 	1. im Host == Ubuntu (nicht in einem Docker-Container)
 		1. `id www-data`, sollte u.A. `gid=33` ausgeben (sonst eine weitere Gruppe mit der GID `33` anlegen)
 		2. `sudo usermod -a -G www-data USERNAME` (`USERNAME` durch Benutzernamen im Host ersetzen)
 		3. Terminal schließen und neuöffnen
 		4. VS Code schließen und neustarten
-14. `artisan key:generate`
-15. `artisan db:seed --class=SetupCouchDBSeeder`
+15. `artisan key:generate`
+16. `artisan db:seed --class=SetupCouchDBSeeder`
 
 **Es ist _zur Zeit_ nicht möglich mit Windows von VS Code in einem Docker-Container ein PHP-Skript zu starten.**<br>Dies geht nur über die Kommandozeile.
 
