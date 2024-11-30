@@ -22,7 +22,7 @@ type FormValues<P extends Record<RecordKey>> = {
 	[K in keyof P]: _FormValues<K, P[K]>
 }
 
-export type Form<P extends Record<RecordKey, any>> = {
+export type IForm<P extends Record<RecordKey, any>> = {
 	vals: FormValues<P>,
 	errs: string[]
 }
