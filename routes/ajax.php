@@ -45,4 +45,5 @@ Route::prefix('ajax')->group(static function() {
 
 	Route::post('/places', [PlaceAJAXController::class, 'post_place'])
 		->name('ajax.location.post_place');
+	Route::patch('/exhibit/{id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])->name('exhibit.set_metadata');
 });

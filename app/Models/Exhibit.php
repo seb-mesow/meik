@@ -81,6 +81,11 @@ class Exhibit
 	public function get_inventory_number(): string {
 		return $this->inventory_number;
 	}
+	
+	public function set_inventory_number(string $inventory_number): self {
+		$this->inventory_number = $inventory_number;
+		return $this;
+	}
 
 	public function get_name(): string {
 		return $this->name;
@@ -100,61 +105,31 @@ class Exhibit
 		return $this;
 	}
 
-	/**
-	 * Get the value of year_of_construction
-	 */
-	public function get_year_of_construction()
-	{
+	public function get_year_of_construction(){
 		return $this->year_of_construction;
 	}
 
-	/**
-	 * Set the value of year_of_construction
-	 *
-	 * @return  self
-	 */
-	public function set_year_of_construction($year_of_construction)
-	{
+	public function set_year_of_construction($year_of_construction){
 		$this->year_of_construction = $year_of_construction;
 
 		return $this;
 	}
 
-	/**
-	 * Get the value of place
-	 */
-	public function get_place()
-	{
+	public function get_place(){
 		return $this->place;
 	}
 
-	/**
-	 * Set the value of place
-	 *
-	 * @return  self
-	 */
-	public function set_place($place)
-	{
+	public function set_place($place){
 		$this->place = $place;
 
 		return $this;
 	}
 
-	/**
-	 * Get the value of aquiry_date
-	 */
-	public function get_aquiry_date()
-	{
+	public function get_aquiry_date(){
 		return $this->aquiry_date;
 	}
 
-	/**
-	 * Set the value of aquiry_date
-	 *
-	 * @return  self
-	 */
-	public function set_aquiry_date($aquiry_date)
-	{
+	public function set_aquiry_date($aquiry_date){
 		$this->aquiry_date = $aquiry_date;
 
 		return $this;
@@ -164,81 +139,42 @@ class Exhibit
 		return $this->rev;
 	}
 
-    /**
-	 * Get the value of free_text_fields
-	 */
-	public function get_free_text_fields()
-	{
+	public function get_free_text_fields(){
 		return $this->free_text_fields;
 	}
 
-	/**
-	 * Set the value of free_text_fields
-	 *
-	 * @return  self
-	 */
-	public function set_free_text_fields($free_text_fields)
-	{
+	public function set_free_text_fields($free_text_fields){
 		$this->free_text_fields = $free_text_fields;
 
 		return $this;
 	}
+	
 
-	/**
-	 * Get the value of connected_exhibits
-	 */
-	public function get_connected_exhibits()
-	{
+	public function get_connected_exhibits(){
 		return $this->connected_exhibits;
 	}
 
-	/**
-	 * Set the value of connected_exhibits
-	 *
-	 * @return  self
-	 */
-	public function set_connected_exhibits($connected_exhibits)
-	{
+	public function set_connected_exhibits($connected_exhibits){
 		$this->connected_exhibits = $connected_exhibits;
 
 		return $this;
 	}
 
-	/**
-	 * Get the value of original_price
-	 */
-	public function get_original_price()
-	{
+	public function get_original_price(){
 		return $this->original_price;
 	}
 
-	/**
-	 * Set the value of original_price
-	 *
-	 * @return  self
-	 */
-	public function set_original_price($original_price)
-	{
+	public function set_original_price($original_price){
 		$this->original_price = $original_price;
 
 		return $this;
 	}
 
-	/**
-	 * Get the value of current_value
-	 */ 
-	public function get_current_value()
-	{
+	public function get_current_value(){
 		return $this->current_value;
 	}
 
-	/**
-	 * Set the value of current_value
-	 *
-	 * @return  self
-	 */ 
-	public function set_current_value($current_value)
-	{
+	public function set_current_value($current_value){
 		$this->current_value = $current_value;
 
 		return $this;

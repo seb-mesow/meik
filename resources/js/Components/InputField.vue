@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InputErrors from './InputError.vue';
 import InputText from 'primevue/inputtext';
-import type { FormValue } from '@/types/meik/technical';
+import type { FormValue } from '@/util/form';
 
 defineProps<{
 	label: string,

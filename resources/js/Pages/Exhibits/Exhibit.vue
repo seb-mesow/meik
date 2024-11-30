@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InputField from '@/Components/InputField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { IForm } from '@/types/meik/technical';
+import { create_form, create_request_json, type IForm } from '@/util/form';
 import { Head } from '@inertiajs/vue3';
 import axios, { AxiosResponse } from 'axios';
 import Button from 'primevue/button';
@@ -14,7 +14,6 @@ import { ref } from 'vue';
 const props = defineProps<{
 	id?: string
 	form: IForm<{
-		id?: string,
 		inventory_number: string,
 		name: string,
 		manufacturer: string
@@ -23,10 +22,9 @@ const props = defineProps<{
 
 // (interne) Attribute der Seite
 const form = props.form;
-console.log(props.id);
-//@ts-ignore
-const is_new = props.id === undefined;
-console.log(is_new);
+
+const exhibit_id = props.id;
+const is_new = exhibit_id === undefined;
 const button_save_metadata_is_loading = ref(false);
 
 async function save_metadata(event: SubmitEvent) {
@@ -37,12 +35,8 @@ async function save_metadata(event: SubmitEvent) {
 			console.log("AJAX Request senden");
 			await axios.request({
 				method: 'patch',
-				url: route('exhibit.set_metadata', form.vals.id),
-				data: {
-					inventory_number: form.vals.inventory_number,
-					manufacturer: form.vals.manufacturer,
-					name: form.vals.name,
-				}
+				url: route('exhibit.set_metadata', exhibit_id),
+				data: create_request_json(form)
 			});
 			console.log("AJAX Request erfolgreich");
 		} catch (e) {
@@ -76,7 +70,7 @@ async function save_metadata(event: SubmitEvent) {
 				:loading="button_save_metadata_is_loading" 
 				type='button'
 				@click="save_metadata"
-				label='Metadatenn speichern'
+				label='Metadaten speichern'
 			/>
 		</Form>
 		<Button v-if="!is_new" label="Abschnitt hinzufügen" :href="route('user.new')"/>
