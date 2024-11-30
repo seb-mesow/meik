@@ -70,7 +70,7 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 		3. Terminal schließen und neuöffnen
 		4. VS Code schließen und neustarten
 14. `artisan key:generate`
-15. `php src/Scripts/CreateDBUsersScript.php`
+15. `artisan db:seed --class=SetupCouchDBSeeder`
 
 **Es ist _zur Zeit_ nicht möglich mit Windows von VS Code in einem Docker-Container ein PHP-Skript zu starten.**<br>Dies geht nur über die Kommandozeile.
 
