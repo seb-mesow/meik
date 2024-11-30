@@ -35,33 +35,49 @@ class ExhibitController extends Controller
 	{
 		$exhibit = $this->exhibit_repository->get($id);
 		return Inertia::render('Exhibits/Exhibit', [
+			'id' => $exhibit->get_id(),
 			'form' => $this->create_form_from_exhibit($exhibit)
+		]);
+	}
+	
+	public function new()
+	{
+		return Inertia::render('Exhibits/Exhibit', [
+			'form' => $this->create_form_from_exhibit()
 		]);
 	}
 	
 	public function create(Request $request)
 	{
-		$exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
+		$inventory_number = $request->input('inventory_number');
+		$name = $request->input('name');
+		$manufacturer = $request->input('manufacturer');
+		$exhibit = new Exhibit(
+			inventory_number: $inventory_number,
+			name: $name,
+			manufacturer: $manufacturer,
+		);
 		$exhibit = $this->exhibit_repository->insert($exhibit);
+		sleep(5); // TODO entfernen
 		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
 	}
 	
-	private function create_form_from_exhibit(Exhibit $exhibit): array {
+	private function create_form_from_exhibit(?Exhibit $exhibit = null): array {
 		return [
 			'vals' => [
 				'inventory_number' => [
 					'id' => 'inventory_number',
-					'val' => $exhibit->get_inventory_number(),
+					'val' => $exhibit?->get_inventory_number(),
 					'errs' => []
 				],
 				'manufacturer' => [
 					'id' => 'manufacturer',
-					'val' => $exhibit->get_manufacturer(),
+					'val' => $exhibit?->get_manufacturer(),
 					'errs' => []
 				],
 				'name' => [
 					'id' => 'name',
-					'val' => $exhibit->get_name(),
+					'val' => $exhibit?->get_name(),
 					'errs' => []
 				],
 			],
