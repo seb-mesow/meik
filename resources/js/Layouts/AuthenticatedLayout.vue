@@ -73,7 +73,7 @@ const showingNavigationDropdown = ref(false);
                                     <template #content>
 										<!-- TODO temporär -->
                                         <DropdownLink
-                                            :href="route('exhibit.index')"
+                                            :href="route('exhibit.overview')"
                                         >
                                             Exponate
                                         </DropdownLink>

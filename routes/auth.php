@@ -32,7 +32,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-	Route::get('new-user', [RegisteredUserController::class, 'create'])->name('new-user');
+	Route::get('new-user', [RegisteredUserController::class, 'create'])->name('user.new');
 	Route::post('new-user', [RegisteredUserController::class, 'store']);
 
     Route::get('verify-email', EmailVerificationPromptController::class)

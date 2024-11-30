@@ -32,6 +32,6 @@ console.log(props.form);
 		<InputField :form_value="form.vals.inventory_number" label="Inventarnummer"/>
 		<InputField :form_value="form.vals.name" label="Bezeichnung"/>
 		<InputField :form_value="form.vals.manufacturer" label="Hersteller"/>
-		<Button as="a" label="Abschnitt hinzufügen" :href="route('new-user')"/>
+		<Button as="a" label="Abschnitt hinzufügen" :href="route('user.new')"/>
 	</AuthenticatedLayout>
 </template>

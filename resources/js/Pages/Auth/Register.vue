@@ -15,7 +15,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('new-user'), {
+    form.post(route('user.new'), {
         onFinish: () => {
             form.reset('password', 'password_confirmation');
         },
