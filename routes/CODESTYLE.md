@@ -21,14 +21,21 @@ Beispiele anhand des Models `Exhibit`.
 
 ## für Web-Controller — `web.php`
 ### Formular für eine neue Resource laden
-- View: Detailseite, leer
+- View: Detailseite
 - Primär-Schlüssel noch nicht festgelegt
+- Wenn vorhanden, müssen die Formular-Werte aus der Session geladen werden.
 ```php
-Route::get('/exhibit', [ExhibitController::class, ''])->name('exhibit.new');
+Route::get('/exhibit', [ExhibitController::class, 'new'])->name('exhibit.new');
 ```
 ### ein neues Model speichern
 - primärer Schlüssel noch nicht festgelegt
-- Weiterleitung auf Route `exhibit.details` mit neuem Primär-Schlüssel
+- wenn erfolgreich validiert:
+  - Formular-Werte in Session löschen
+  - Weiterleitung auf Route `exhibit.details` mit neuem Primär-Schlüssel
+- wenn Fehler erkannt:
+  - Formular-Werte mit Fehlern in Session speichern
+  - HTTP-Status 422
+  - Weiterleitung auf Route `exhibit.new`
 ```php
 Route::post('/exhibit', [ExhibitController::class, 'create'])->name('exhibit.create');
 ```
@@ -50,15 +57,20 @@ Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete'])->name('exhi
 ```
 ## für AJAXController — `ajax.php`
 ### ein existierendes Model in seiner Gesamtheit aktualisieren
+- wenn Fehler erkannt, dann HTTP-Status-Code 422 und Fehler in JSON-Response zurück
 ```php
 Route::put('/exhibit/{id}', [ExhibitAJAXController::class, 'update'])->name('exhibit.update');
 ```
 ### ein existierendes Model _spezifisch_ teilweise aktualisieren
+- wenn Fehler erkannt, dann HTTP-Status-Code 422 und Fehler in JSON-Response zurück
 ```php
 Route::patch('/exhibit/{id}/TEIL', [ExhibitAJAXController::class, 'change_TEIL'])->name('exhibit.change_TEIL');
+oder
+Route::patch('/exhibit/{id}/TEIL', [ExhibitAJAXController::class, 'set_TEIL'])->name('exhibit.set_TEIL');
 ```
 ### ein existierendes Model _unspezifisch_ teilweise aktualisieren
 - Bitte vermeiden
+- wenn Fehler erkannt, dann HTTP-Status-Code 422 und Fehler in JSON-Response zurück
 ```php
 Route::patch('/exhibit/{id}', [ExhibitAJAXController::class, 'change'])->name('exhibit.change');
 ```
