@@ -16,7 +16,7 @@ final class UserController extends Controller
 		private readonly CouchDBUserProvider $repository,
 	) {}
 	
-	public function all_users(Request $request): Response
+	public function overview(Request $request): Response
 	{
 		$users = $this->repository->get_all();
 		

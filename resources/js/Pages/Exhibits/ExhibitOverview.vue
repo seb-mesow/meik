@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ExhibitTile from '@/Components/ExhibitTile.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { Exhibit } from '@/types/meik.d.ts';
+import type { Exhibit } from '@/types/meik/models';
 import { Head } from '@inertiajs/vue3';
 
 const props = defineProps<{

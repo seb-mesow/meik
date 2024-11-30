@@ -12,25 +12,18 @@ use JMS\Serializer\SerializerBuilder;
 
 class ExhibitAJAXController extends Controller
 {
-    private Serializer $serializer;
+	private Serializer $serializer;
 
-    public function __construct(
-        private readonly ExhibitRepository $exhibit_repository
-    ) {
-        $this->serializer = SerializerBuilder::create()->build();
-    }
+	public function __construct(
+		private readonly ExhibitRepository $exhibit_repository
+	) {
+		$this->serializer = SerializerBuilder::create()->build();
+	}
 
-    public function post_exhibit(Request $request)
-    {
-        $exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
+	public function update(Request $request)
+	{
+		$exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
 
-        return $this->exhibit_repository->insert($exhibit);
-    }
-
-    public function put_exhibit(Request $request)
-    {
-        $exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
-
-        return $this->exhibit_repository->update($exhibit);
-    }
+		return $this->exhibit_repository->update($exhibit);
+	}
 }

@@ -15,7 +15,7 @@ const name: string = exhibit.name;
 </script>
 
 <template>
-	<a :href="route('exhibit.show', exhibit.id)">
+	<a :href="route('exhibit.details', exhibit.id)">
 		<div class="exhibit-tile">
 			<p>{{ name }}</p>
 		</div>

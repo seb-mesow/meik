@@ -7,11 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Repository\ExhibitRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
 use Inertia\Inertia;
 use JMS\Serializer\Serializer;
-use JMS\Serializer\SerializerBuilder;
-use stdClass;
 
 class ExhibitController extends Controller
 {
@@ -20,7 +17,7 @@ class ExhibitController extends Controller
 		private readonly Serializer $serializer
 	) {}
 
-	public function all_exhibits()
+	public function overview()
 	{
 		$exhibits = $this->exhibit_repository->get_all();
 		$array = array_map(static function(Exhibit $exhibit): array {
@@ -34,12 +31,19 @@ class ExhibitController extends Controller
 		]);
 	}
 
-	public function get_exhibit(string $id)
+	public function details(string $id)
 	{
 		$exhibit = $this->exhibit_repository->get($id);
 		return Inertia::render('Exhibits/Exhibit', [
 			'form' => $this->create_form_from_exhibit($exhibit)
 		]);
+	}
+	
+	public function create(Request $request)
+	{
+		$exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
+		$exhibit = $this->exhibit_repository->insert($exhibit);
+		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
 	}
 	
 	private function create_form_from_exhibit(Exhibit $exhibit): array {

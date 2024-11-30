@@ -24,19 +24,19 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+	Route::get('/users', [UserController::class, 'overview'])->name('users.all');
+	Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+	Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+	
+	Route::get('/exhibits', [ExhibitController::class, 'overview'])->name('exhibit.overview');
+	Route::get('/exhibit', [ExhibitController::class, 'new'])->name('exhibit.new');
+	Route::post('/exhibit', [ExhibitController::class, 'create'])->name('exhibit.create');
+	Route::get('/exhibit/{id}', [ExhibitController::class, 'details'])->name('exhibit.details');
+	Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete'])->name('exhibit.delete');
+	
+	Route::get('/locations', [LocationController::class, 'overview'])->name('locations.all');
+	Route::get('/places', [PlaceController::class, 'overview'])->name('places.all');
 });
-
-Route::get('/users', [UserController::class, 'all_users'])->name('users.all');
-Route::get('/exhibits', [ExhibitController::class, 'get_all_exhibits']);
-Route::get('/exhibit/{id}', [ExhibitController::class, 'get_exhibit']);
-Route::post('/exhibit', [ExhibitController::class, 'post_exhibit']);
-Route::put('/exhibit/{id}', [ExhibitController::class, 'put_exhibit']);
-Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete_exhibit']);
-
-Route::get('/locations', [LocationController::class, 'overview'])->name('locations.all');
-Route::get('/places', [PlaceController::class, 'overview'])->name('places.all');
 
 require __DIR__.'/auth.php';
