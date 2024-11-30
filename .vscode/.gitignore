@@ -1,0 +1,4 @@
+*
+!.gitignore
+!launch.dist.json
+!settings.dist.json
