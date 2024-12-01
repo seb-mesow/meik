@@ -15,7 +15,7 @@ import { IFreeText } from '@/types/meik/models';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
-	id?: string
+	id?: string,
 	form: IForm<{
 		inventory_number: string,
 		name: string,

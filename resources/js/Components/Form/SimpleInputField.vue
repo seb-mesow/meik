@@ -5,13 +5,14 @@ import type { IValueForm } from '@/util/form';
 
 defineProps<{
 	label: string,
-	form_value: IValueForm<string, any>
+	form_value: IValueForm<string|number, any>
 }>();
 </script>
+
 <template>
 	<div>
-		<p><label :for="form_value.id">{{ label }}</label></p>
-		<InputText type=text :name="form_value.id" v-model="form_value.val"/>
+		<p><label :for="form_value.id.toString()">{{ label }}</label></p>
+		<InputText type=text :id="form_value.id.toString()" v-model="form_value.val"/>
 		<InputErrors :errors="form_value.errs"/>
 	</div>
 </template>

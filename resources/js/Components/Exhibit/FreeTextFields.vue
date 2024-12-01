@@ -11,8 +11,9 @@ const props = defineProps<{
 </script>
 
 <template>
-	<div>
-		<FreeTextField v-for="free_text_form in props.form.val" :form="free_text_form"/>
+	<div v-for="free_text_form in props.form.val">
+		<hr>
+		<FreeTextField :form="free_text_form"/>
 	</div>
 	<Button label="Abschnitt hinzufügen" :href="route('user.new')"/>
 </template>
