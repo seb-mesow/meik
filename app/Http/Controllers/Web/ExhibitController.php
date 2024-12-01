@@ -37,7 +37,7 @@ class ExhibitController extends Controller
 	public function details(string $id)
 	{
 		$exhibit = $this->exhibit_repository->get($id);
-		$form = $this->create_form($exhibit);
+		$form = $this->create_form($exhibit, true);
 		return Inertia::render('Exhibit/Exhibit', [
 			'id' => $exhibit->get_id(),
 			'form' => $form
@@ -46,7 +46,7 @@ class ExhibitController extends Controller
 	
 	public function new()
 	{
-		$form = $this->create_form();
+		$form = $this->create_form(null, false);
 		return Inertia::render('Exhibit/Exhibit', [
 			'form' => $form
 		]);
@@ -67,7 +67,7 @@ class ExhibitController extends Controller
 		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
 	}
 	
-	private function create_form(?Exhibit $exhibit = null): array {
+	private function create_form(?Exhibit $exhibit, bool $persisted): array {
 		$free_texts = [];
 		foreach ($exhibit->get_free_texts() as $index => $free_text) {
 			$free_texts[$index] = [
@@ -77,11 +77,15 @@ class ExhibitController extends Controller
 			];
 		}
 		
-		return $this->form_transformer->create_form([
-			'inventory_number' => $exhibit?->get_inventory_number(),
-			'manufacturer' => $exhibit?->get_manufacturer(),
-			'name' => $exhibit?->get_name(),
-			'free_texts' => $free_texts,
-		]);
+		return $this->form_transformer->create_form(
+			id: 'exhibit',
+			val: [
+				'inventory_number' => $exhibit?->get_inventory_number(),
+				'manufacturer' => $exhibit?->get_manufacturer(),
+				'name' => $exhibit?->get_name(),
+				'free_texts' => $free_texts,
+			],
+			persisted: $persisted
+		);
 	}
 }

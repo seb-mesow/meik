@@ -7,17 +7,18 @@ const props = defineProps<{
 	modelValue: string
 }>();
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits<{
+	'update:modelValue': [string]
+}>();
 
 function onLoad(params: { instance: Quill }) {
-	console.log(params.instance);
 	params.instance.setContents(params.instance.clipboard.convert({
 		html: props.modelValue
 	}))
 }
 
 function onChange(v: string) {
-	emit("update:modelValue", v);
+	emit('update:modelValue', v);
 }
 </script>
 

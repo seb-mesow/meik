@@ -173,7 +173,10 @@ class Exhibit
 		if ($index > count($this->free_texts)) {
 			throw new OutOfBoundsException("The index must be less than or equal to the current count of free texts.");
 		}
-		array_splice($this->free_texts, $index, 0, $free_text);
+		// From php.net:
+		// "Note: If replacement is not an array, it will be typecast to one (i.e. (array) $replacement).
+		// This may result in unexpected behavior when using an object or null replacement."
+		array_splice($this->free_texts, $index, 0, [$free_text]);
 		return $this;
 	}
 	
