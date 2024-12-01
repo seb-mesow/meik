@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import InputField from '@/Components/InputField.vue';
+import InputField from '@/Components/Form/SimpleInputField.vue';
 import FreeTextField from '@/Components/Exhibit/FreeTextField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { create_form, create_request_json, type IForm } from '@/util/form';
 import { Head } from '@inertiajs/vue3';
 import axios, { AxiosResponse } from 'axios';
 import Button from 'primevue/button';
-import Form from '@/Components/Form.vue';
+import Form from '@/Components/Form/Form.vue';
 import { ref } from 'vue';
 import FreeTextFields from '@/Components/Exhibit/FreeTextFields.vue';
 import { IFreeText } from '@/types/meik/models';

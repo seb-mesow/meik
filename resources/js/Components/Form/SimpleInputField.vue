@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InputErrors from './InputError.vue';
+import InputErrors from './InputErrors.vue';
 import InputText from 'primevue/inputtext';
 import type { IValueForm } from '@/util/form';
 
