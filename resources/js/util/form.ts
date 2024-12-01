@@ -1,96 +1,121 @@
 type RecordKey = string|number|symbol;
 
-export type IValueForm<ID extends RecordKey, T> =
-	T extends Record<RecordKey, any>
-		? IRecordForm<ID, T>
-		: (T extends Array<any>
-			? IArrayForm<ID, T>
-			: ISimpleForm<ID, T>
-		);
+// export type IValueForm<ID extends RecordKey, T> =
+// 	T extends Record<RecordKey, any>
+// 		? IRecordForm<ID, T>
+// 		: (T extends Array<any>
+// 			? IArrayForm<ID, T>
+// 			: ISimpleForm<ID, T>
+// 		);
 
-type IRecordForm<ID extends RecordKey, R extends Record<RecordKey, any>> = ISimpleForm<ID, {
-	[K in keyof R]: IValueForm<K, R[K]>
-}>;
-type IArrayForm<ID extends RecordKey, A extends Array<any>> = ISimpleForm<ID,
-	Array<IValueForm<number, A[number]>>
->;
+// type IRecordForm<ID extends RecordKey, R extends Record<RecordKey, any>> = ISimpleForm<ID, {
+// 	[K in keyof R]: IValueForm<K, R[K]>
+// }>;
+// type IArrayForm<ID extends RecordKey, A extends Array<any>> = ISimpleForm<ID,
+// 	Array<IValueForm<number, A[number]>>
+// >;
 
-type ISimpleForm<ID extends RecordKey, T> = {
+export type IForm<ID extends RecordKey, T> = {
 	id: ID,
-	val: T,
+	val: FormedValue<T>,
 	errs: string[],
+	persisted: boolean,
 }
 
-type IPropsForm<P extends Record<RecordKey, any>> = {
-	[K in keyof P]: IValueForm<K, P[K]>
-}
+// very good names
+type FormedRecord<R extends Record<RecordKey, any>> = { [K in keyof R]: IForm<K, R[K]> };
+type FormedArray<A extends Array<any>> = Array<IForm<number, A[number]>>;
+type FormedSimpleValue<V> = V;
 
-export type IForm<Props extends Record<RecordKey, any>> = {
-	vals: IPropsForm<Props>,
-	errs: string[]
-}
+type FormedValue<T> =
+	T extends Record<RecordKey, any>
+	? FormedRecord<T>
+	: (T extends Array<any>
+		? FormedArray<T>
+		: FormedSimpleValue<T>
+	);
+
+// export type IValueForm<ID extends RecordKey, T> = ISimpleForm<ID, FormedValue<T>>; 
+
+// type IPropsForm<P extends Record<RecordKey, any>> = {
+// 	[K in keyof P]: IValueForm<K, P[K]>
+// }
+
+// export type IForm<Props extends Record<RecordKey, any>> = {
+// 	vals: IPropsForm<Props>,
+// 	errs: string[],
+// 	persisted: boolean,
+// }
 
 
 /**
- * creates a form without errors
+ * creates a form for attributes without errors
  * 
- * Not yet set properties must have the value null.
+ * Not yet set attributes and sub-attributes must have the value null.
  */
-export function create_form(props: Record<RecordKey, any>) {
-	const vals = {};
-	for (let prop in props) {
-		//@ts-ignore
-		vals[prop] = create_form_recurse(prop, props[prop]);
-	}
-	const form = {
-		vals: vals,
-		errs: []
-	};
-	return form;
-}
-function create_form_recurse(prop: RecordKey, val: any) {
-	let mapped_val;
+// export function create_form<Props extends Record<RecordKey, any>>(props: Props, persisted: boolean = false): IForm<Props> {
+// 	//@ts-ignore
+// 	const vals: IPropsForm<Props> = {};
+// 	for (let prop in props) {
+// 		vals[prop] = create_value_form(prop, props[prop]);
+// 	}
+// 	const form: IForm<Props> = {
+// 		vals: vals,
+// 		errs: [],
+// 		persisted: persisted
+// 	};
+// 	return form;
+// }
+
+/**
+ * creates a sub-form for one attribute without errors
+ * 
+ * Not yet set attributes and sub-attributes must have the value null.
+ */
+export function create_form<ID extends RecordKey, T>(attr: ID, val: T, persisted: boolean = false): IForm<ID, T> {
+	let formed_val: FormedValue<T>;
 	if (Array.isArray(val)) {
-		mapped_val = create_form_array(val);
+		//@ts-ignore
+		formed_val = create_form_array(val, persisted);
 	} else if (typeof val === 'object' && val !== null) {
 		//@ts-ignore
-		mapped_val = create_form_record(val);
+		formed_val = create_form_record(val, persisted);
 	} else {
-		mapped_val = create_form_simple(val);
+		//@ts-ignore
+		formed_val = val;
 	}
 	return {
-		id: prop,
-		val: mapped_val,
-		errs: []
+		id: attr,
+		val: formed_val,
+		errs: [],
+		persisted: persisted,
 	};
 }
-function create_form_record(record: Record<RecordKey, any>) {
-	const obj: Record<RecordKey, any> = {};
+function create_form_record<R extends Record<RecordKey, any>>(record: R, persisted: boolean): FormedRecord<R> {
+	//@ts-ignore
+	const obj: FormedRecord<R> = {};
 	for (const key in record) {
-		obj[key] = create_form_recurse(key, record[key]);
+		obj[key] = create_form(key, record[key], persisted);
 	}
 	return obj;
 }
-function create_form_array(array: Array<any>) {
-	const form_values: any[] = []
-	array.forEach((elem, index) => {
-		form_values[index] = create_form_recurse(index, elem);
+function create_form_array<A extends Array<any>>(arr: A, persisted: boolean): FormedArray<A> {
+	const form_values: FormedArray<A> = [];
+	arr.forEach((elem, index) => {
+		form_values[index] = create_form(index, elem, persisted);
 	});
 	return form_values;
 }
-function create_form_simple(val: any) {
-	return val;
-}
 
-export function create_request_json(form: any) {
-	const obj: Record<RecordKey, any> = {};
-	for (const prop in form.vals) {
-		obj[prop] = create_request_json_recurse(form.vals[prop].val);
-		// obj[prop] = form.vals[prop];
-	}
-	return obj;
-}
-function create_request_json_recurse(form_val: any) {
+// export function create_form_request_data(form: any) {
+// 	const obj: Record<RecordKey, any> = {};
+// 	for (const prop in form.vals) {
+// 		obj[prop] = create_value_request_data(form.vals[prop].val);
+// 	}
+// 	return obj;
+// }
+export function create_request_data(form: any) {
+	const form_val = form.val;
 	// console.log(form_val)
 	if (Array.isArray(form_val)) {
 		// console.log("array")
@@ -106,7 +131,7 @@ function create_request_json_recurse(form_val: any) {
 function create_request_json_record(form_value: any) {
 	const obj: Record<RecordKey, any> = {};
 	for (const key in form_value) {
-		obj[key] = create_request_json_recurse(form_value[key].val);
+		obj[key] = create_request_data(form_value[key]);
 	}
 	return obj;
 }
@@ -114,7 +139,7 @@ function create_request_json_array(array_like_obj: any) {
 	const arr: any[] = [];
 	for (const index in array_like_obj) {
 		//@ts-ignore
-		arr[index] = create_request_json_recurse(array_like_obj[index].val);
+		arr[index] = create_request_data(array_like_obj[index]);
 	}
 	return arr;
 }
@@ -122,7 +147,7 @@ function create_request_json_simple(form_value: any): any {
 	return form_value;
 }
 
-/* Testdaten
+
 const my_data = {
 	propUndefined: undefined,
 	propNull: null,
@@ -147,6 +172,5 @@ const my_data = {
 };
 
 console.log(my_data);
-console.log(create_form(my_data));
-console.log(create_request_json(create_form(my_data)));
-*/
+console.log(create_form('my-model', my_data));
+console.log(create_request_data(create_form('my-model', my_data)));

@@ -2,7 +2,7 @@
 import InputField from '@/Components/Form/SimpleInputField.vue';
 import FreeTextField from '@/Components/Exhibit/FreeTextField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { create_form, create_request_json, type IForm } from '@/util/form';
+import { create_request_data, type IForm } from '@/util/form';
 import { Head } from '@inertiajs/vue3';
 import axios, { AxiosResponse } from 'axios';
 import Button from 'primevue/button';
@@ -16,7 +16,7 @@ import { IFreeText } from '@/types/meik/models';
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
 	id?: string,
-	form: IForm<{
+	form: IForm<'exhibit', {
 		inventory_number: string,
 		name: string,
 		manufacturer: string,
@@ -40,7 +40,7 @@ async function save_metadata(event: SubmitEvent) {
 			await axios.request({
 				method: 'patch',
 				url: route('exhibit.set_metadata', exhibit_id),
-				data: create_request_json(form)
+				data: create_request_data(form)
 			});
 			console.log("AJAX Request erfolgreich");
 		} catch (e) {
@@ -62,9 +62,9 @@ async function save_metadata(event: SubmitEvent) {
 			</h2>
 		</template>
 		<Form :action="route('exhibit.create')" method="post">
-			<InputField :form_value="form.vals.inventory_number" label="Inventarnummer"/>
-			<InputField :form_value="form.vals.name" label="Bezeichnung"/>
-			<InputField :form_value="form.vals.manufacturer" label="Hersteller"/>
+			<InputField :form_value="form.val.inventory_number" label="Inventarnummer"/>
+			<InputField :form_value="form.val.name" label="Bezeichnung"/>
+			<InputField :form_value="form.val.manufacturer" label="Hersteller"/>
 			<Button v-if="is_new"
 				:loading="button_save_metadata_is_loading" 
 				type='submit'
@@ -77,6 +77,6 @@ async function save_metadata(event: SubmitEvent) {
 				label='Metadaten speichern'
 			/>
 		</Form>
-		<FreeTextFields v-if="!is_new" :form="form.vals.free_texts"/>
+		<FreeTextFields v-if="exhibit_id !== undefined" :form="form.val.free_texts" :exhibit_id="exhibit_id" />
 	</AuthenticatedLayout>
 </template>

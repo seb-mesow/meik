@@ -8,7 +8,6 @@ use App\Models\Exhibit;
 use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 
@@ -39,9 +38,9 @@ class ExhibitAJAXController extends Controller
 	/**
 	 * inserts a new free text at the specified index
 	 */
-	public function add_free_text(Request $request, string $exhibit_id, int $free_text_index) {
-		$heading = $request->input('heading');
-		$html = $request->input('html');
+	public function create_free_text(Request $request, string $exhibit_id, int $free_text_index) {
+		$heading = $request->input('heading') ?? '';
+		$html = $request->input('html') ?? '';
 		$is_public = $request->input('is_public');
 		
 		$free_text = new FreeText(
