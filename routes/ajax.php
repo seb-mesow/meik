@@ -46,4 +46,8 @@ Route::prefix('ajax')->group(static function() {
 	Route::post('/places', [PlaceAJAXController::class, 'post_place'])
 		->name('ajax.location.post_place');
 	Route::patch('/exhibit/{id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])->name('exhibit.set_metadata');
+	
+	Route::post('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'create_free_text'])->name('exhibit.free_text.create');
+	Route::put('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'update_free_text'])->name('exhibit.free_text.update');
+	Route::delete('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'delete_free_text'])->name('exhibit.free_text.delete');
 });
