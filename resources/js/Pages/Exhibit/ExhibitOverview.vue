@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Button from 'primevue/button';
-import ExhibitTile from '@/Components/ExhibitTile.vue';
+import ExhibitTile from '@/Components/Exhibit/ExhibitTile.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { Exhibit } from '@/types/meik/models';
 import { Head } from '@inertiajs/vue3';
