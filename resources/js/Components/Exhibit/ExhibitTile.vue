@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Exhibit } from '@/types/meik/models';
+import type { IExhibitForTile } from '@/types/meik/models';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
-	exhibit: Exhibit;
+	exhibit: IExhibitForTile;
 }>();
-const exhibit: Exhibit = props.exhibit;
+const exhibit: IExhibitForTile = props.exhibit;
 
 const name: string = exhibit.name;
 // const manufacturer: string = '';

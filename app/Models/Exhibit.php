@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use DateTime;
-use Illuminate\Support\Facades\Date;
+use OutOfBoundsException;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,10 +41,10 @@ class Exhibit
 	 */
 	private ?DateTime $aquiry_date = null;
 
-	/** @Accessor(getter="get_free_text_fields") 
-	 * @Serializer\SerializedName("freetextfield")
+	/** @Accessor(getter="get_free_texts") 
+	 * @Serializer\SerializedName("freetexts")
 	 */
-	private ?array $free_text_fields = [];
+	private array $free_texts;
 
 	/** @Accessor(getter="get_connected_exhibits") 
 	 */
@@ -59,19 +59,25 @@ class Exhibit
 	 *  @Accessor(getter="get_current_value") 
 	 */
 	private ?float $current_value = 0;
-
+	
+	/**
+	 * @param FreeText[] $free_texts
+	 */
 	public function __construct(
 		string $inventory_number,
 		string $name,
 		string $manufacturer,
+		array $free_texts = [],
 		?string $id = null,
 		?string $rev = null
 	) {
 		$this->id = $id;
+		$this->rev = $rev;
+		
 		$this->inventory_number = $inventory_number;
 		$this->name = $name;
 		$this->manufacturer = $manufacturer;
-		$this->rev = $rev;
+		$this->free_texts = $free_texts;
 	}
 	
 	public function get_id(): ?string {
@@ -138,17 +144,54 @@ class Exhibit
 	public function get_rev(): ?string {
 		return $this->rev;
 	}
-
-	public function get_free_text_fields(){
-		return $this->free_text_fields;
+	
+	/**
+	 * @return FreeText[]
+	 */
+	public function get_free_texts(): array {
+		return $this->free_texts;
 	}
-
-	public function set_free_text_fields($free_text_fields){
-		$this->free_text_fields = $free_text_fields;
-
+	
+	/**
+	 * @param FreeText[] $free_texts
+	 */
+	public function set_free_texts(array $free_texts): self {
+		$this->free_texts = $free_texts;
 		return $this;
 	}
 	
+	/**
+	 * inserts a free_text at the specified index
+	 * 
+	 * The indices are 0-based.
+	 * The indices of subsequent free texts are increased by one
+	 */
+	public function insert_free_text(FreeText $free_text, int $index): self {
+		if ($index < 0) {
+			throw new OutOfBoundsException("The index must be non-negative.");
+		}
+		if ($index > count($this->free_texts)) {
+			throw new OutOfBoundsException("The index must be less than or equal to the current count of free texts.");
+		}
+		array_splice($this->free_texts, $index, 0, $free_text);
+		return $this;
+	}
+	
+	/**
+	 * removes the free_text at the specified index
+	 *
+	 * The indices of subsequent free texts are decreased by one
+	 */
+	public function remove_free_text(int $index): self {
+		if ($index < 0) {
+			throw new OutOfBoundsException("The index must be non-negative.");
+		}
+		if ($index >= count($this->free_texts)) {
+			throw new OutOfBoundsException("The index must be less than to the current count of free texts.");
+		}
+		array_splice($this->free_texts, $index, 1);
+		return $this;
+	}
 
 	public function get_connected_exhibits(){
 		return $this->connected_exhibits;

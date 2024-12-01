@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Exhibit;
+use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
 use Illuminate\Database\Seeder;
 
@@ -17,42 +18,46 @@ class ExhibitSeeder extends Seeder
 	 * Seed the application's database.
 	 */
 	public function run(): void {
+		$all_exhibits = $this->exhibit_repository->get_all();
+		foreach ($all_exhibits as $exhibit) {
+			$this->exhibit_repository->remove($exhibit);
+		}
+		
 		$this->create_exhibit(new Exhibit(
-			'1',
-			'MR 610 (Modell 1986)',
-			'VEB Röhrenwerk Mühlhausen im VEB Kombinat Mikroelektronik (DDR_RFT)'
+			inventory_number: '1',
+			name: 'MR 610 (Modell 1986)',
+			manufacturer: 'VEB Röhrenwerk Mühlhausen im VEB Kombinat Mikroelektronik (DDR_RFT)',
+			free_texts: [
+				new FreeText(
+					heading: "öffentlicher Freitext 0",
+					html: "<p>Das kann jeder lesen.</p>",
+					is_public: true
+				),
+				new FreeText(
+					heading: "interner Freitext 1",
+					html: "<p>Das können nur Mitarbeiter lesen.</p>",
+					is_public: false
+				),
+			]
 		));
 		$this->create_exhibit(new Exhibit(
-			'2', 
-			'Tiumphator CRN1',
-			'Triumphator Leipzig (Mölkau) DDR'
+			inventory_number: '2', 
+			name: 'Tiumphator CRN1',
+			manufacturer: 'Triumphator Leipzig (Mölkau) DDR',
 		));
 		$this->create_exhibit(new Exhibit(
-			'3',
-			'Nixdorf 8810 M55',
-			'Nixdorf Computer AG Paderborn',
+			inventory_number: '3',
+			name: 'Nixdorf 8810 M55',
+			manufacturer: 'Nixdorf Computer AG Paderborn',
 		));
 		$this->create_exhibit(new Exhibit(
-			'4',
-			'Nixdorf BA42',
-			'Diebold Nixdorf GmbH Paderborn',
+			inventory_number: '4',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
 		));
 	}
 	
 	private function create_exhibit(Exhibit $exhibit): void {
-		$existing_exhibit = null;
-		if ($id = $exhibit->get_id()) {
-			$existing_exhibit = $this->exhibit_repository->find($id);
-		}
-		if ($existing_exhibit) {
-			$exhibit = new Exhibit(
-				$exhibit->get_id(),
-				$exhibit->get_name(),
-				$existing_exhibit->get_rev()
-			);
-			$this->exhibit_repository->update($exhibit);
-		} else {
-			$this->exhibit_repository->insert($exhibit);
-		}
+		$this->exhibit_repository->insert($exhibit);
 	}
 }

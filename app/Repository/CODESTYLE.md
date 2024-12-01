@@ -38,7 +38,7 @@ Das Attribut "id" ist bspw. vom Datentyp `string`.
 	- Der primäre Schlüssel des übergebenen Models muss gesetzt sein.
 	- Das Attribut `rev` des übergebenen Models muss mit der Revisions-ID gesetzt sein.
 	- kein Rückgabewert
-- `private function create_exhibit_from_doc(stdClass $exhibit_doc): Exhibit`
-	- wandelt ein `stdClass`-Objekt in ein Model um
 - `private function create_doc_from_exhibit(Exhibit $exhibit): stdClass`
 	- wandelt ein Model in ein `stdClass`-Objekt um
+- `private function create_exhibit_from_doc(stdClass $exhibit_doc): Exhibit`
+	- wandelt ein `stdClass`-Objekt in ein Model um

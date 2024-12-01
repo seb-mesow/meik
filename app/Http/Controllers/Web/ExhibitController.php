@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
+use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
+use App\Util\FormTransformer;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use JMS\Serializer\Serializer;
@@ -14,7 +16,8 @@ class ExhibitController extends Controller
 {
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
-		private readonly Serializer $serializer
+		private readonly Serializer $serializer,
+		private readonly FormTransformer $form_transformer,
 	) {}
 
 	public function overview()
@@ -26,7 +29,7 @@ class ExhibitController extends Controller
 				'name' => $exhibit->get_name(),
 			];
 		}, $exhibits);
-		return Inertia::render('Exhibits/ExhibitOverview', [
+		return Inertia::render('Exhibit/ExhibitOverview', [
 			'exhibits' => $array
 		]);
 	}
@@ -34,16 +37,18 @@ class ExhibitController extends Controller
 	public function details(string $id)
 	{
 		$exhibit = $this->exhibit_repository->get($id);
-		return Inertia::render('Exhibits/Exhibit', [
+		$form = $this->create_form($exhibit);
+		return Inertia::render('Exhibit/Exhibit', [
 			'id' => $exhibit->get_id(),
-			'form' => $this->create_form_from_exhibit($exhibit)
+			'form' => $form
 		]);
 	}
 	
 	public function new()
 	{
-		return Inertia::render('Exhibits/Exhibit', [
-			'form' => $this->create_form_from_exhibit()
+		$form = $this->create_form();
+		return Inertia::render('Exhibit/Exhibit', [
+			'form' => $form
 		]);
 	}
 	
@@ -62,26 +67,21 @@ class ExhibitController extends Controller
 		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
 	}
 	
-	private function create_form_from_exhibit(?Exhibit $exhibit = null): array {
-		return [
-			'vals' => [
-				'inventory_number' => [
-					'id' => 'inventory_number',
-					'val' => $exhibit?->get_inventory_number(),
-					'errs' => []
-				],
-				'manufacturer' => [
-					'id' => 'manufacturer',
-					'val' => $exhibit?->get_manufacturer(),
-					'errs' => []
-				],
-				'name' => [
-					'id' => 'name',
-					'val' => $exhibit?->get_name(),
-					'errs' => []
-				],
-			],
-			'errs' => []
-		];
+	private function create_form(?Exhibit $exhibit = null): array {
+		$free_texts = [];
+		foreach ($exhibit->get_free_texts() as $index => $free_text) {
+			$free_texts[$index] = [
+				'heading' => $free_text->get_heading(),
+				'html' => $free_text->get_html(),
+				'is_public' => $free_text->get_is_public()
+			];
+		}
+		
+		return $this->form_transformer->create_form([
+			'inventory_number' => $exhibit?->get_inventory_number(),
+			'manufacturer' => $exhibit?->get_manufacturer(),
+			'name' => $exhibit?->get_name(),
+			'free_texts' => $free_texts,
+		]);
 	}
 }

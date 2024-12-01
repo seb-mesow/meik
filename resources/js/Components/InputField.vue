@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import InputErrors from './InputError.vue';
 import InputText from 'primevue/inputtext';
-import type { FormValue } from '@/util/form';
+import type { IValueForm } from '@/util/form';
 
 defineProps<{
 	label: string,
-	form_value: FormValue<string, any>
+	form_value: IValueForm<string, any>
 }>();
 </script>
 <template>
