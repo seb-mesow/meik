@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import InputField from '@/Components/InputField.vue';
+import FreeTextField from '@/Components/Exhibit/FreeTextField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { create_form, create_request_json, type IForm } from '@/util/form';
 import { Head } from '@inertiajs/vue3';
@@ -73,6 +74,7 @@ async function save_metadata(event: SubmitEvent) {
 				label='Metadaten speichern'
 			/>
 		</Form>
+		<FreeTextField ></FreeTextField>
 		<Button v-if="!is_new" label="Abschnitt hinzufügen" :href="route('user.new')"/>
 	</AuthenticatedLayout>
 </template>
