@@ -23,20 +23,16 @@ class PlaceController extends Controller
         $this->serializer = SerializerBuilder::create()->build();
     }
 
-    public function get_all_places()
+    public function overview(Request $request)
     {
-        $places = $this->place_repository->get_all_places();
+        $location = $request->input('location');
+        $places = $this->place_repository->get_places_paginated($location);
         $array = array_map(fn($place) => $this->place_repository->objectFromPlace($place), $places);
- 
-        return Inertia::render('Places/Places', [
-            'places' => $array
-        ]);
-    }
-
-    public function get_place(string $id)
-    {
-        return Inertia::render('Places/Place', [
-            'place' => $this->place_repository->get_place($id)
+        $count = $this->place_repository->get_places_count();
+        return Inertia::render('Locations/Places/Places', [
+            'places' => $array,
+            'count' => $count,
+            'location' => $location
         ]);
     }
 }

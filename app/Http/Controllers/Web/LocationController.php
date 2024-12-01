@@ -23,7 +23,7 @@ class LocationController extends Controller
         $this->serializer = SerializerBuilder::create()->build();
     }
 
-    public function get_all_locations(Request $request)
+    public function overview()
     {
         $locations = $this->location_repository->get_locations_paginated();
         $array = array_map(fn($location) => $this->location_repository->objectFromLocation($location), $locations);
@@ -31,13 +31,6 @@ class LocationController extends Controller
         return Inertia::render('Locations/Locations', [
             'locations' => $array,
             'count' => $count
-        ]);
-    }
-
-    public function get_location(string $id)
-    {
-        return Inertia::render('Locations/Location', [
-            'location' => $this->location_repository->get_location($id)
         ]);
     }
 }

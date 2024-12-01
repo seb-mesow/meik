@@ -32,10 +32,23 @@ final class PlaceRepository
      * @var string $id
      * @return array<Place>
      */
-    public function get_all_places(): array
+    public function get_places_count(): int
     {
         $places = $this->client->find([
             '_id' => ['$beginsWith' => self::ID_PREFIX],
+        ]);
+        return count($places->docs);
+    }
+
+    /**
+     * @var string $id
+     * @return array<Place>
+     */
+    public function get_places_paginated(string $locationid, int $page = 0, int $page_size = 10,): array
+    {
+        $places = $this->client->limit($page_size)->skip($page * $page_size)->find([
+            '_id' => ['$beginsWith' => self::ID_PREFIX],
+            'location' => $locationid
         ])->docs;
         return $this->placesFromArray($places);
     }
@@ -60,6 +73,7 @@ final class PlaceRepository
         Place $place
     ): Place {
         $doc = $this->client->storeDoc($this->objectFromPlace($place));
+        $doc = $this->client->getDoc($place->get__id());
         return $this->placeFromObject($doc);
     }
 
@@ -73,6 +87,7 @@ final class PlaceRepository
             $doc = $this->client->getDoc($place->get__id());
             $place->set__rev($doc->_rev);
             $doc = $this->client->storeDoc($this->objectFromPlace($place));
+            $doc = $this->client->getDoc($place->get__id());
             return $this->placeFromObject($doc);
         } catch (Exception $e) {
             echo "ERROR: " . $e->getMessage() . " (" . $e->getCode() . ")<br>\n";
@@ -125,10 +140,12 @@ final class PlaceRepository
     {
         $object = (new stdClass());
         $object->_id = $place->get__id();
-        $object->_rev = $place->get__rev();
+        if ($place->get__rev()) {
+            $object->_rev = $place->get__rev();
+        }
         $object->name = $place->get_name();
         $object->is_public = $place->get_is_public();
-
+        $object->location = $place->getLocation();
         return $object;
     }
 }
