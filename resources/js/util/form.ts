@@ -1,33 +1,41 @@
 type RecordKey = string|number|symbol;
 
-type _FormValues<ID extends RecordKey, T> =
+export type IValueForm<ID extends RecordKey, T> =
 	T extends Record<RecordKey, any>
-		? _FormValues_Record<ID, T>
+		? IRecordForm<ID, T>
 		: (T extends Array<any>
-			? _FormValues_Array<ID, T>
-			: FormValue<ID, T>
+			? IArrayForm<ID, T>
+			: ISimpleForm<ID, T>
 		);
 
-type _FormValues_Record<ID extends RecordKey, R extends Record<RecordKey, any>> = {
-	[K in keyof R]: _FormValues<K, R[K]>;
-}
-type _FormValues_Array<ID extends RecordKey, A extends Array<any>> = Array<_FormValues<number, A[number]>>;
+type IRecordForm<ID extends RecordKey, R extends Record<RecordKey, any>> = ISimpleForm<ID, {
+	[K in keyof R]: IValueForm<K, R[K]>
+}>;
+type IArrayForm<ID extends RecordKey, A extends Array<any>> = ISimpleForm<ID,
+	Array<IValueForm<number, A[number]>>
+>;
 
-export type FormValue<ID extends RecordKey, T> = {
+type ISimpleForm<ID extends RecordKey, T> = {
 	id: ID,
 	val: T,
 	errs: string[],
 }
 
-type FormValues<P extends Record<RecordKey, any>> = {
-	[K in keyof P]: _FormValues<K, P[K]>
+type IPropsForm<P extends Record<RecordKey, any>> = {
+	[K in keyof P]: IValueForm<K, P[K]>
 }
 
-export type IForm<P extends Record<RecordKey, any>> = {
-	vals: FormValues<P>,
+export type IForm<Props extends Record<RecordKey, any>> = {
+	vals: IPropsForm<Props>,
 	errs: string[]
 }
 
+
+/**
+ * creates a form without errors
+ * 
+ * Not yet set properties must have the value null.
+ */
 export function create_form(props: Record<RecordKey, any>) {
 	const vals = {};
 	for (let prop in props) {
@@ -54,7 +62,7 @@ function create_form_recurse(prop: RecordKey, val: any) {
 		id: prop,
 		val: mapped_val,
 		errs: []
-	}
+	};
 }
 function create_form_record(record: Record<RecordKey, any>) {
 	const obj: Record<RecordKey, any> = {};

@@ -2,11 +2,11 @@
 import Button from 'primevue/button';
 import ExhibitTile from '@/Components/Exhibit/ExhibitTile.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { Exhibit } from '@/types/meik/models';
+import type { IExhibitForTile } from '@/types/meik/models';
 import { Head } from '@inertiajs/vue3';
 
 const props = defineProps<{
-	exhibits: Exhibit[]
+	exhibits: IExhibitForTile[]
 }>();
 console.log(props.exhibits);
 </script>

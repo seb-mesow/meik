@@ -8,6 +8,8 @@ import axios, { AxiosResponse } from 'axios';
 import Button from 'primevue/button';
 import Form from '@/Components/Form.vue';
 import { ref } from 'vue';
+import FreeTextFields from '@/Components/Exhibit/FreeTextFields.vue';
+import { IFreeText } from '@/types/meik/models';
 
 // versch. Interface für typsicheres Programmieren
 
@@ -17,7 +19,8 @@ const props = defineProps<{
 	form: IForm<{
 		inventory_number: string,
 		name: string,
-		manufacturer: string
+		manufacturer: string,
+		free_texts: IFreeText[],
 	}>
 }>();
 
@@ -74,7 +77,6 @@ async function save_metadata(event: SubmitEvent) {
 				label='Metadaten speichern'
 			/>
 		</Form>
-		<FreeTextField ></FreeTextField>
-		<Button v-if="!is_new" label="Abschnitt hinzufügen" :href="route('user.new')"/>
+		<FreeTextFields v-if="!is_new" :form="form.vals.free_texts"/>
 	</AuthenticatedLayout>
 </template>
