@@ -161,7 +161,7 @@ class Exhibit
 	}
 	
 	/**
-	 * inserts a free_text at the specified index
+	 * inserts a free text at the specified index
 	 * 
 	 * The indices are 0-based.
 	 * The indices of subsequent free texts are increased by one
@@ -178,7 +178,23 @@ class Exhibit
 	}
 	
 	/**
-	 * removes the free_text at the specified index
+	 * updates the free text at the specified index
+	 * 
+	 * The indices are 0-based.
+	 */
+	public function update_free_text(FreeText $free_text, int $index): self {
+		if ($index < 0) {
+			throw new OutOfBoundsException("The index must be non-negative.");
+		}
+		if ($index >= count($this->free_texts)) {
+			throw new OutOfBoundsException("The index must be less than or equal to the current count of free texts.");
+		}
+		$this->free_texts[$index] = $free_text;
+		return $this;
+	}
+	
+	/**
+	 * removes the free text at the specified index
 	 *
 	 * The indices of subsequent free texts are decreased by one
 	 */
