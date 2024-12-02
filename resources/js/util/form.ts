@@ -1,4 +1,4 @@
-type RecordKey = string|number|symbol;
+type RecordKey = string|number;
 
 // export type IValueForm<ID extends RecordKey, T> =
 // 	T extends Record<RecordKey, any>
@@ -15,22 +15,63 @@ type RecordKey = string|number|symbol;
 // 	Array<IValueForm<number, A[number]>>
 // >;
 
-export type IForm<ID extends RecordKey, T> = {
+type KeyWords = '__persisted'|'__index'|'__key';
+type _Persisted = boolean;
+type _Index = number;
+type _Key = number|string;
+
+type TypeSpec = number|string|boolean|null|undefined|bigint|({
+	__persisted?: _Persisted,
+	__index?: _Index,
+	__key?: _Index,
+}&{
+	[key: RecordKey]: TypeSpec
+})
+
+export type IForm<ID extends RecordKey, T extends TypeSpec> = {
 	id: ID,
 	val: FormedValue<T>,
 	errs: string[],
-	persisted: boolean,
 }
+& (T extends { __persisted: infer P } ? { persisted: P } : {})
+& (T extends { __index: infer I } ? { index: I } : {})
+& (T extends { __key: infer K } ? { key: K }: {});
+
+
+type MyForm = IForm<'xyz', {
+	heading: string,
+	__persisted: true,
+	__index: number
+}>;
+
+const my_value: MyForm = {
+	id: 'xyz',
+	val: {
+		heading: {
+			id: 'heading',
+			val: 'sdfsdf',
+			errs: [],
+		}
+	},
+	errs: [],
+	persisted: true,
+	index: 12,
+};
+
+// https://www.typescriptlang.org/docs/handbook/utility-types.html
 
 // very good names
+//@ts-ignore
 type FormedRecord<R extends Record<RecordKey, any>> = { [K in keyof R]: IForm<K, R[K]> };
 type FormedArray<A extends Array<any>> = Array<IForm<number, A[number]>>;
 type FormedSimpleValue<V> = V;
 
 type FormedValue<T> =
 	T extends Record<RecordKey, any>
-	? FormedRecord<T>
-	: (T extends Array<any>
+	? ( T extends { __type: infer T2 }
+		? FormedValue<T2>
+		: FormedRecord<Omit<T, KeyWords>>
+	) : (T extends Array<any>
 		? FormedArray<T>
 		: FormedSimpleValue<T>
 	);
@@ -72,7 +113,10 @@ type FormedValue<T> =
  * 
  * Not yet set attributes and sub-attributes must have the value null.
  */
-export function create_form<ID extends RecordKey, T>(attr: ID, val: T, persisted: boolean = false): IForm<ID, T> {
+export function create_form<ID extends RecordKey, T extends TypeSpec>(
+	attr: ID, val: T, persisted: boolean = false
+): IForm<ID, T>
+{
 	let formed_val: FormedValue<T>;
 	if (Array.isArray(val)) {
 		//@ts-ignore
