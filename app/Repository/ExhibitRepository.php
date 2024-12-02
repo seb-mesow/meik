@@ -27,19 +27,33 @@ use stdClass;
  * }
  * 
  * @phpstan-type FreeTextDoc object{
+ *     _id: int,
  *     heading: string,
  *     html: string,
  *     is_public: bool
  * }
+ * 
+ * @phpstan-type MetaDoc object{
+ *     next_id: int,
+ *     free_text: object {
+ *         next_id: int
+ *     }
+ * }
  */
-final class ExhibitRepository
+final class ExhibitRepository 
 {
-	public const ID_PREFIX = "exhibit:";
+	use RepositoryTrait;
+	
+	private const MODEL_TYPE_ID = "exhibit";
+	
 	private Serializer $serializer;
 
 	public function __construct(
-		private readonly CouchClient $client
+		CouchClient $client
 	) {
+		$this->client = $client;
+		$this->meta_doc = $this->get_meta_doc();
+		
 		$this->serializer = SerializerBuilder::create()->build();
 	}
 	
@@ -124,21 +138,11 @@ final class ExhibitRepository
 		}
 	}
 	
-	private function determinate_next_available_id(): string {
-		// TODO letzte freie ID ermitteln
-		return Str::uuid()->toString();
-	}
-	
 	/**
 	 * @return ExhibitDoc
 	 */
 	private function create_doc_from_exhibit(Exhibit $exhibit): stdClass {
-		$exhibit_doc = new stdClass();
-		
-		$exhibit_doc->_id = self::ID_PREFIX . ($exhibit->get_id() ?? $this->determinate_next_available_id());
-		if ($rev = $exhibit->get_rev()) {
-			$exhibit_doc->_rev = $rev;
-		}
+		$exhibit_doc = $this->create_stub_doc_from_model($exhibit);
 		
 		$exhibit_doc->inventory_number = $exhibit->get_inventory_number();
 		$exhibit_doc->name = $exhibit->get_name();
@@ -150,11 +154,6 @@ final class ExhibitRepository
 		}, $exhibit->get_free_texts());
 		$exhibit_doc->free_texts = $free_text_docs;
 		
-		// $exhibit_doc->manufacturer = $exhibit->get_manufacturer();
-		// $exhibit_doc->year_of_construction = $exhibit->get_year_of_construction();
-		// $exhibit_doc->aquiry_date = $exhibit->get_aquiry_date(); 
-		// $exhibit_doc->text_blocks = $exhibit->get_text_blocks();
-		
 		return $exhibit_doc;
 	}
 	
@@ -162,8 +161,6 @@ final class ExhibitRepository
 	 * @param ExhibitDoc $exhibit_doc
 	 */
 	private function create_exhibit_from_doc(stdClass $exhibit_doc): Exhibit {
-		$id = substr($exhibit_doc->_id, strlen(self::ID_PREFIX));
-		
 		$_this = $this;
 		$free_texts = array_map(static function (stdClass $free_text_doc) use ($_this): FreeText {
 			return $_this->create_free_text_from_doc($free_text_doc);
@@ -174,7 +171,7 @@ final class ExhibitRepository
 			name: $exhibit_doc->name,
 			manufacturer: $exhibit_doc->manufacturer,
 			free_texts: $free_texts,
-			id: $id,
+			id: $this->determinate_model_id_from_doc($exhibit_doc),
 			rev: $exhibit_doc->_rev,
 		);
 	}
@@ -187,9 +184,14 @@ final class ExhibitRepository
 	{
 		return $this->serializer->deserialize(json_encode($array), 'array<' . Exhibit::class . '>', "json");
 	}
-
+	
+	/**
+	 * @return FreeTextDoc
+	 */
 	private function create_doc_from_free_text(FreeText $free_text): stdClass {
+		/** @var FreeTextDoc */
 		$free_text_doc =  new stdClass();
+		$free_text_doc->_id = $free_text->get_id() ?? $this->determinate_next_available_sub_model_id('free_text');
 		$free_text_doc->heading = $free_text->get_heading();
 		$free_text_doc->html = $free_text->get_html();
 		$free_text_doc->is_public = $free_text->get_is_public();
@@ -201,6 +203,7 @@ final class ExhibitRepository
 	 */
 	private function create_free_text_from_doc(stdClass $free_text_doc): FreeText {
 		return new FreeText(
+			id: $free_text_doc->_id,
 			heading: $free_text_doc->heading,
 			html: $free_text_doc->html,
 			is_public: $free_text_doc->is_public,

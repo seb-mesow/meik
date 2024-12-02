@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Repository;
@@ -17,7 +16,6 @@ use stdClass;
 
 final class PlaceRepository
 {
-
     private const ID_PREFIX = "place:";
     private Serializer $serializer;
 
@@ -26,7 +24,6 @@ final class PlaceRepository
     ) {
         $this->serializer = SerializerBuilder::create()->build();
     }
-
 
     /**
      * @var string $id
