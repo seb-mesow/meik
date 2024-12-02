@@ -51,9 +51,9 @@ alias cda='composer dump-autoload'
 
 alias shnode='docker_compose_exec_normal -it --entrypoint sh node -i'
 alias shnoderoot='docker_compose_exec_root -it --entrypoint sh node -i'
-alias node='docker_compose_exec_normal node'
-alias npm='docker_compose_exec_normal node npm'
-alias npx='docker_compose_exec_normal node npx'
+alias node='docker_compose_run_normal node'
+alias npm='docker_compose_run_normal node npm'
+alias npx='docker_compose_run_normal node npx'
 
 SYS_ADMIN_USER=nJgHb8j3yN4BgdG46N8dnddzhy7523Hd3gAsfY10jw7Vk9wkQyp3Pdb2el6vfopy1gfF789J5GvcdS68Tf6VGcvG6ghDF4d3Dx6F
 SYS_ADMIN_PASSWORD=7cFcFdVsHV2Gs65o7CgKNdH15pLH7tH2zBxDQxS4syPfVj6Ytp4qCfDv4CgEhZhb65TFvcjoBHvg654DFcxgh654Cd49yAQPMnK5
