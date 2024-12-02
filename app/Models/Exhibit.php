@@ -1,9 +1,10 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Interfaces\MainModel;
+use App\Models\Traits\MainModelTrait;
 use DateTime;
 use OutOfBoundsException;
 
@@ -12,14 +13,10 @@ use OutOfBoundsException;
 // use Illuminate\Foundation\Auth\User as Authenticatable;
 // use Illuminate\Notifications\Notifiable;
 
-class Exhibit
+class Exhibit implements MainModel
 {
-	/** @Accessor(getter="get_id") */
-	private readonly ?string $id;
-
-	/** @Accessor(getter="get_rev") */
-	private readonly ?string $rev;
-
+	use MainModelTrait;
+	
 	/** @Accessor(getter="get_inventor_number") */
 	private string $inventory_number;
 	
@@ -68,10 +65,10 @@ class Exhibit
 		string $name,
 		string $manufacturer,
 		array $free_texts = [],
-		?string $id = null,
+		string|int|null $id = null,
 		?string $rev = null
 	) {
-		$this->id = $id;
+		$this->id = is_int($id) ? (string) $id : $id;
 		$this->rev = $rev;
 		
 		$this->inventory_number = $inventory_number;
@@ -79,11 +76,7 @@ class Exhibit
 		$this->manufacturer = $manufacturer;
 		$this->free_texts = $free_texts;
 	}
-	
-	public function get_id(): ?string {
-		return $this->id;
-	}
-	
+		
 	public function get_inventory_number(): string {
 		return $this->inventory_number;
 	}
@@ -141,10 +134,6 @@ class Exhibit
 		return $this;
 	}
 
-	public function get_rev(): ?string {
-		return $this->rev;
-	}
-	
 	/**
 	 * @return FreeText[]
 	 */

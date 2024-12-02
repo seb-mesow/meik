@@ -5,21 +5,32 @@ namespace App\Models;
 
 class FreeText
 {
+	private readonly ?string $id;
+	
 	/** @Accessor(getter="get_heading") */
 	private string $heading;
+	
 	/** @Accessor(getter="get_html") */
 	private string $html;
+	
 	/** @Accessor(getter="get_is_public") */
 	private bool $is_public;
 
 	public function __construct(
 		string $heading,
 		string $html,
-		bool $is_public = false
+		bool $is_public = false,
+		string|int|null $id = null
 	) {
+		$this->id =  is_int($id) ? (string) $id : $id;
+		
 		$this->heading = $heading;
 		$this->html = $html;
 		$this->is_public = $is_public;
+	}
+	
+	public function get_id(): ?string {
+		return $this->id;
 	}
 	
 	public function get_heading(): string {
