@@ -58,6 +58,8 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 	4. `compose.override.yml` anpassen
 9. `.env` (in der Wurzel des Repos)
 	1. `.env.example` zu `.env` kopieren
+	2. `bashapproot`
+		3. darin `chown normal:normal .env`
 10. im Unterordner `.vscode`
 	1. `launch.dist.json` zu `launch.json` kopieren
 	2. `settings.dist.json` zu `settings.json` kopieren
