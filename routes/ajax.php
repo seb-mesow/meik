@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('ajax')->group(static function() {
 	Route::patch('/user/{username}/set_admin', [ UserAJAXController::class, 'set_admin'])->name('user.set_admin');
 	
-	Route::put('/exhibit/{id}', [ExhibitAJAXController::class, 'update'])->name('exhibit.update');
-	
 	Route::patch('/user/{username}/set_admin', [UserAJAXController::class, 'set_admin'])
 		->name('ajax.user.set_admin');
 
@@ -45,6 +43,7 @@ Route::prefix('ajax')->group(static function() {
 
 	Route::post('/places', [PlaceAJAXController::class, 'post_place'])
 		->name('ajax.location.post_place');
+		
 	Route::patch('/exhibit/{id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])->name('exhibit.set_metadata');
 	
 	Route::post('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'create_free_text'])->name('exhibit.free_text.create');
