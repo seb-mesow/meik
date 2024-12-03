@@ -9,6 +9,7 @@ use App\Repository\ExhibitRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Inertia\Inertia;
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use stdClass;
@@ -26,23 +27,13 @@ class ExhibitAPIController extends Controller
     /**
 	 * TODO als API-Route umformulieren
 	 */ 
-    public function get_all_exhibits()
+    public function get_all_exhibits(Request $request)
     {
-        $exhibits = $this->exhibit_repository->get_all();
-        $array = array_map(fn($exhibit) => $this->exhibit_repository->create_doc_from_exhibit($exhibit), $exhibits);
- 
-        return Inertia::render('Exhibits/Exhibits', [
-            'exhibits' => $array
-        ]);
+        $page = (int)$request->input('page', 0);
+        $pageSize = (int)$request->input('pageSize', 10);
+        $exhibits = $this->exhibit_repository->get_exhibits_paginated($page, $pageSize);
+        return $this->serializer->serialize($exhibits, 'json', new SerializationContext);
     }
 
-	/**
-	 * TODO als API-Route umformulieren
-	 */ 
-    public function get_exhibit(string $id)
-    {
-        return Inertia::render('Exhibits/Exhibit', [
-            'exhibit' => $this->exhibit_repository->find($id)
-        ]);
-    }
+
 }

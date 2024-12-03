@@ -8,6 +8,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import Lara from '@primevue/themes/lara';
+import ToastService from 'primevue/toastservice';
 // import Material from '@primevue/themes/lara';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -34,6 +35,8 @@ createInertiaApp({
 				preset: Lara, // oder Material
 			}
 		});
+        app.use(ConfirmationService);
+        app.use(ToastService);
 		
         app.mount(el);
     },
