@@ -19,7 +19,8 @@ import Toast from 'primevue/toast';
 
 const props = defineProps<{
     places: place[],
-    count: number
+    count: number,
+    location: string
 }>()
 
 interface place {
@@ -65,7 +66,7 @@ const onRowEditComplete = (event: any) => {
 const delete_confirm = (event: any, place: any) => {
     confirm.require({
         target: event.currentTarget,
-        message: 'Sind Sie sicher das Sie den Standort löschen wollen? Untergeordnete Standplätze werden auch gelöscht',
+        message: 'Sind Sie sicher das Sie den Platz löschen wollen?',
         icon: 'pi pi-exclamation-triangle',
         rejectProps: {
             label: 'Abbrechen',
@@ -102,10 +103,10 @@ function deleteplace(id: string): void {
     } else {
         axios.delete(`/ajax/places/${id}`)
             .then(() => {
-                toast.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Standort wurde erfolgreich gelöscht', life: 3000 });
+                toast.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich gelöscht', life: 3000 });
                 fetchData({ page: currentPage, rows: currentPageSize })
             }).catch(() =>
-                toast.add({ severity: 'error', summary: 'Fehler', detail: 'Der Standort konnte nicht gelöscht werden', life: 3000 })
+                toast.add({ severity: 'error', summary: 'Fehler', detail: 'Der Platz konnte nicht gelöscht werden', life: 3000 })
             );
     }
 
@@ -113,6 +114,7 @@ function deleteplace(id: string): void {
 
 function postData(new_data: any, data: any): void {
     new_data._id = `place:${new_data.name}${(new Date()).getTime()}`
+    new_data.location = props.location;
     axios.post('/ajax/places', new_data)
         .then(response => {
             Object.assign(data, response.data)
@@ -125,7 +127,7 @@ function fetchData(event: any): void {
     currentPage = event.page
     currentPageSize = event.rows
 
-    axios.get('ajax/places', { params: { page: event.page, pageSize: event.rows } })
+    axios.get('ajax/places', { params: { location: props.location, page: event.page, pageSize: event.rows } })
         .then(response => {
             rows.value = response.data;
         })
@@ -167,11 +169,9 @@ const addNew = () => {
                             style="width: 25%">
                             <template #body="{ data, field }">
                                 <template v-if="field == 'name'">
-                                    <a v-if="data['_id']"
-                                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                        :href="route('places.all', { 'place': data._id })">
-                                        {{ data[field] }}</a>
-                                    <span v-else class="text-green-600">Neuer Standort</span>
+
+                                    <span v-if="data._id">{{ data[field] }}</span>
+                                    <span v-else class="text-green-600">Neuer Platz</span>
                                 </template>
                                 <template v-else>
                                     <template v-if="data[field] == true">
@@ -181,7 +181,6 @@ const addNew = () => {
                             </template>
                             <template #editor="{ data, field }">
                                 <template v-if="field == 'name'">
-                                    {{ data }}
                                     <InputText v-model="data[field]" autofocus fluid />
                                 </template>
                                 <template v-else>
@@ -189,9 +188,9 @@ const addNew = () => {
                                 </template>
                             </template>
                         </Column>
-                        <Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center">
+                        <Column :rowEditor="true" style="width: 10%;" bodyStyle="text-align:center">
                         </Column>
-                        <Column style="width: 10%; min-width: 8rem">
+                        <Column style="width: 10%;">
                             <template #body="{ data }">
                                 <Button class="border-none" icon="pi pi-trash" outlined rounded severity="danger"
                                     @click="delete_confirm($event, data)" />
