@@ -144,7 +144,7 @@ defineExpose({
 					<span>Sicher?</span>
 				</slot>
 			</div>
-			<div v-if="is_buttons">
+			<div class="flex justify-evenly" v-if="is_buttons">
 				<Button label="Ja" :loading="is_loading" @click="call_ajax"/>
 				<Button label="Abbrechen" @click="reject_by_button"/>
 			</div>
