@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IFreeText } from '@/types/meik/models';
+import { IFreeTextForm } from '@/types/meik/models';
 import { create_request_data, IForm } from '@/util/form';
 import Editor from 'primevue/editor';
 import { reactive, ref, toRaw } from 'vue';
@@ -13,11 +13,11 @@ import Button from 'primevue/button';
 // (interne) Attribute der Komponente
 const props = defineProps<{
 	exhibit_id: string,
-	form: IForm<number, IFreeText>;
+	form: IFreeTextForm;
 }>();
 
 const emit = defineEmits<{
-	'to_delete': [number]
+	'to_delete': [string]
 }>();
 
 const form = reactive(props.form);
@@ -36,12 +36,15 @@ async function click_save() {
 				data: create_request_data(form)
 			});
 		} else {
-			console.log(`POST exhibit.free_text.create ${props.exhibit_id} ${form.id}`);
+			console.log(`POST exhibit.free_text.create ${props.exhibit_id}`);
 			console.log(create_request_data(form));
 			await axios.request({
 				method: "post",
-				url: route('exhibit.free_text.create', [props.exhibit_id, form.id]),
-				data: create_request_data(form)
+				url: route('exhibit.free_text.create', [props.exhibit_id]),
+				data: {
+					index: form.id,
+					data: create_request_data(form)
+				}
 			});
 		}
 	} finally {

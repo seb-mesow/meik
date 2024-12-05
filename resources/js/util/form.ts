@@ -15,20 +15,26 @@ type RecordKey = string|number;
 // 	Array<IValueForm<number, A[number]>>
 // >;
 
-type KeyWords = '__persisted'|'__index'|'__key';
+type KeyWords = '__type'|'__persisted'|'__index'|'__key';
 type _Persisted = boolean;
 type _Index = number;
 type _Key = number|string;
 
-type TypeSpec = number|string|boolean|null|undefined|bigint|({
+type SimpleValue = number|string|boolean|null|undefined|bigint
+interface IFormSpec {
+	__type?: FormSpec,
 	__persisted?: _Persisted,
 	__index?: _Index,
 	__key?: _Index,
-}&{
-	[key: RecordKey]: TypeSpec
-})
+};
+type FormSpec = SimpleValue|Array<FormSpec>|IFormSpec&{[key: Exclude<RecordKey,KeyWords>]: FormSpec};
+export type CheckFormSpec<FS extends IFormSpec> = FS extends IFormSpec ? FS : never; // extends IFormSpec ? FS : never;
+// type EnforceKeyWords<FS extends Record<RecordKey,FormSpec>> =
+	// FS & {
+		
+	// };
 
-export type IForm<ID extends RecordKey, T extends TypeSpec> = {
+export type IForm<ID extends RecordKey, T extends FormSpec> = {
 	id: ID,
 	val: FormedValue<T>,
 	errs: string[],
@@ -39,7 +45,12 @@ export type IForm<ID extends RecordKey, T extends TypeSpec> = {
 
 
 type MyForm = IForm<'xyz', {
-	heading: string,
+	simple_prop: string,
+	simple_prop_advanced: { __type: number, __index: number },
+	record_prop: {
+		p1: string,
+		p2: { __type: number, __persisted: false },
+	},
 	__persisted: true,
 	__index: number
 }>;
@@ -47,9 +58,32 @@ type MyForm = IForm<'xyz', {
 const my_value: MyForm = {
 	id: 'xyz',
 	val: {
-		heading: {
-			id: 'heading',
+		simple_prop: {
+			id: 'simple_prop',
 			val: 'sdfsdf',
+			errs: [],
+		},
+		simple_prop_advanced: {
+			id: 'simple_prop_advanced',
+			val: 1234,
+			errs: [],
+			index: 12,
+		},
+		record_prop: {
+			id: 'record_prop',
+			val: {
+				p1: {
+					id: 'p1',
+					val: 'asdad',
+					errs: [],
+				},
+				p2: {
+					id: 'p2',
+					val: 123,
+					errs: [],
+					persisted: false
+				},
+			},
 			errs: [],
 		}
 	},
@@ -62,18 +96,21 @@ const my_value: MyForm = {
 
 // very good names
 //@ts-ignore
-type FormedRecord<R extends Record<RecordKey, any>> = { [K in keyof R]: IForm<K, R[K]> };
-type FormedArray<A extends Array<any>> = Array<IForm<number, A[number]>>;
-type FormedSimpleValue<V> = V;
+type FormedRecord<R extends Record<RecordKey, FormSpec>> = { [K in keyof R]: IForm<K, R[K]> };
+type FormedArray<A extends Array<FormSpec>> = Array<IForm<number, A[number]>>;
+type FormedSimpleValue<V extends SimpleValue> = V;
 
-type FormedValue<T> =
-	T extends Record<RecordKey, any>
-	? ( T extends { __type: infer T2 }
+type FormedValue<T extends FormSpec> =
+	T extends Record<RecordKey, FormSpec>
+	? ( T extends { __type: infer T2 extends FormSpec }
 		? FormedValue<T2>
 		: FormedRecord<Omit<T, KeyWords>>
-	) : (T extends Array<any>
+	) : (T extends Array<FormSpec>
 		? FormedArray<T>
-		: FormedSimpleValue<T>
+		: (T extends SimpleValue
+			? FormedSimpleValue<T>
+			: never 
+		)
 	);
 
 // export type IValueForm<ID extends RecordKey, T> = ISimpleForm<ID, FormedValue<T>>; 
@@ -113,8 +150,8 @@ type FormedValue<T> =
  * 
  * Not yet set attributes and sub-attributes must have the value null.
  */
-export function create_form<ID extends RecordKey, T extends TypeSpec>(
-	attr: ID, val: T, persisted: boolean = false
+export function create_form<ID extends RecordKey, T extends FormSpec>(
+	attr: ID, val: T
 ): IForm<ID, T>
 {
 	let formed_val: FormedValue<T>;
@@ -122,31 +159,52 @@ export function create_form<ID extends RecordKey, T extends TypeSpec>(
 		//@ts-ignore
 		formed_val = create_form_array(val, persisted);
 	} else if (typeof val === 'object' && val !== null) {
-		//@ts-ignore
-		formed_val = create_form_record(val, persisted);
+		if ('__type' in val) {
+			//@ts-ignore
+			return create_form(attr, val.__type);
+		} else {
+			//@ts-ignore
+			formed_val = create_form_record(val);
+		}
 	} else {
 		//@ts-ignore
 		formed_val = val;
 	}
-	return {
+	const form : Record<RecordKey, any> = {
 		id: attr,
 		val: formed_val,
 		errs: [],
-		persisted: persisted,
 	};
+	if (typeof val === 'object' && val !== null) {
+		if ('__persisted' in val) {
+			form.persisted = val.__persisted;
+		}
+		if ('__index' in val) {
+			form.index = val.__index;
+		}
+		if ('__key' in val) {
+			form.key = val.__key;
+		}
+	}
+	//@ts-ignore
+	return form;
 }
-function create_form_record<R extends Record<RecordKey, any>>(record: R, persisted: boolean): FormedRecord<R> {
+function create_form_record<T extends FormSpec, R extends Record<RecordKey, T>>(
+	record: R
+): FormedRecord<R> {
 	//@ts-ignore
 	const obj: FormedRecord<R> = {};
 	for (const key in record) {
-		obj[key] = create_form(key, record[key], persisted);
+		obj[key] = create_form(key, record[key]);
 	}
 	return obj;
 }
-function create_form_array<A extends Array<any>>(arr: A, persisted: boolean): FormedArray<A> {
+function create_form_array<T extends FormSpec, A extends Array<T>>(
+	arr: A
+): FormedArray<A> {
 	const form_values: FormedArray<A> = [];
 	arr.forEach((elem, index) => {
-		form_values[index] = create_form(index, elem, persisted);
+		form_values[index] = create_form(index, elem);
 	});
 	return form_values;
 }
@@ -215,6 +273,6 @@ const my_data = {
 	},
 };
 
-console.log(my_data);
-console.log(create_form('my-model', my_data));
-console.log(create_request_data(create_form('my-model', my_data)));
+// console.log(my_data);
+// console.log(create_form('my-model', my_data));
+// console.log(create_request_data(create_form('my-model', my_data)));
