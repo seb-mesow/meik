@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import axios, { AxiosRequestConfig } from 'axios';
-import { nextTick, ref, toRaw } from 'vue';
+import axios from 'axios';
+import { ref } from 'vue';
 import InputText from 'primevue/inputtext';
 
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
-import Dialog from 'primevue/dialog';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from 'primevue/card';
-import AJAXConfirmationPopup from '@/Components/AJAXConfirmationPopup.vue';
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
@@ -39,11 +36,11 @@ const home = ref({
 const items = ref([
     {
         label: props.location_name,
-        route: 'locations.all'
+        route: 'location.overview'
     },
     {
         label: 'Plätze',
-        route: 'places.all'
+        route: 'place.overview'
     },
 ]);
 
@@ -161,14 +158,7 @@ const addNew = () => {
 }
 </script>
 
-<style lang="scss">
-@import 'primeicons/primeicons.css';
-</style>
-
-
 <template>
-
-    <Head title="places" />
     <Toast />
     <AuthenticatedLayout>
         <template #header>
@@ -181,10 +171,13 @@ const addNew = () => {
                 </template>
             </Breadcrumb>
         </template>
+		
         <ConfirmPopup></ConfirmPopup>
+		
         <div class="absolute bottom-4 right-4">
             <Button severity="info" :disabled="!allowNew" icon="pi pi-plus" @click="addNew" />
         </div>
+		
         <div class="p-4">
             <Card>
                 <template #content>
@@ -227,6 +220,6 @@ const addNew = () => {
                 </template>
             </Card>
         </div>
+		
     </AuthenticatedLayout>
-
 </template>

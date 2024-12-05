@@ -12,10 +12,15 @@ const props = defineProps<{
 }>();
 
 const home = ref({
-	label: 'Exponate',
+	icon: 'pi pi-home',
 	route: 'exhibit.overview'
 });
-
+const items = ref([
+	{
+		label: 'Exponate',
+		route: 'exhibit.overview'
+	}
+]);
 </script>
 
 <template>
@@ -24,7 +29,7 @@ const home = ref({
 	<AuthenticatedLayout>
 
 		<template #header>
-			<Breadcrumb :home="home">
+			<Breadcrumb :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="route(item.route)">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -34,10 +39,10 @@ const home = ref({
 			</Breadcrumb>
 		</template>
 
-
-		<div class="absolute bottom-4 right-4">
-            <Button severity="info" :href="route('exhibit.new')" icon="pi pi-plus" as="a" />
-        </div>
+		<div class="fixed bottom-4 right-4">
+			<Button severity="info" as="a" :href="route('exhibit.new')" icon="pi pi-plus"/>
+		</div>
+		
 		<div class="flex flex-wrap">
 			<!-- <div class="border-black border-solid border-2 w-[20%] min-w-[20rem]" v-for="exhibit in exhibits"> -->
 			<ExhibitTile v-for="exhibit in exhibits" :exhibit="exhibit" />

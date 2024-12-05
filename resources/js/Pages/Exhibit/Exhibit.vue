@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import InputField from '@/Components/Form/SimpleInputField.vue';
-import FreeTextField from '@/Components/Exhibit/FreeTextField.vue';
+import Form from '@/Components/Form/Form.vue';
+import SimpleInputField from '@/Components/Form/SimpleInputField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { create_request_data, type IForm } from '@/util/form';
-import { Head } from '@inertiajs/vue3';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import Button from 'primevue/button';
-import Form from '@/Components/Form/Form.vue';
 import { ref } from 'vue';
 import FreeTextFields from '@/Components/Exhibit/FreeTextFields.vue';
 import { IFreeText } from '@/types/meik/models';
@@ -32,6 +30,10 @@ const home = ref({
 });
 const items = ref([
 	{
+		label: 'Exponate',
+		route: 'exhibit.overview'
+	},
+	{
 		label: props?.name ?? 'Neues Exponat'
 	},
 ]);
@@ -51,7 +53,7 @@ async function save_metadata(event: SubmitEvent) {
 			console.log("AJAX Request senden");
 			await axios.request({
 				method: 'patch',
-				url: route('exhibit.set_metadata', exhibit_id),
+				url: route('ajax.exhibit.set_metadata', exhibit_id),
 				data: create_request_data(form)
 			});
 			console.log("AJAX Request erfolgreich");
@@ -65,9 +67,6 @@ async function save_metadata(event: SubmitEvent) {
 </script>
 
 <template>
-
-	<Head title="Exponat" />
-
 	<AuthenticatedLayout>
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
@@ -84,13 +83,23 @@ async function save_metadata(event: SubmitEvent) {
 		</template>
 
 		<Form :action="route('exhibit.create')" method="post">
-			<InputField :form_value="form.val.inventory_number" label="Inventarnummer" />
-			<InputField :form_value="form.val.name" label="Bezeichnung" />
-			<InputField :form_value="form.val.manufacturer" label="Hersteller" />
-			<Button v-if="is_new" :loading="button_save_metadata_is_loading" type='submit' label='Speichern' />
-			<Button v-else :loading="button_save_metadata_is_loading" type='button' @click="save_metadata"
-				label='Metadaten speichern' />
+			<SimpleInputField :form_value="form.val.inventory_number" label="Inventarnummer"/>
+			<SimpleInputField :form_value="form.val.name" label="Bezeichnung"/>
+			<SimpleInputField :form_value="form.val.manufacturer" label="Hersteller"/>
+			<Button v-if="is_new"
+				:loading="button_save_metadata_is_loading" 
+				type='submit'
+				label='Speichern'
+			/>
+			<Button v-else
+				:loading="button_save_metadata_is_loading" 
+				type='button'
+				@click="save_metadata"
+				label='Metadaten speichern'
+			/>
 		</Form>
+		
 		<FreeTextFields v-if="exhibit_id !== undefined" :form="form.val.free_texts" :exhibit_id="exhibit_id" />
+		
 	</AuthenticatedLayout>
 </template>

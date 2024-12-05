@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { IFreeText } from '@/types/meik/models';
 import { create_request_data, IForm } from '@/util/form';
-import Editor from 'primevue/editor';
-import { reactive, ref, toRaw } from 'vue';
+import { reactive, ref } from 'vue';
 import SimpleInputField from '../Form/SimpleInputField.vue';
 import RichTextEditor from '../Form/RichTextEditor.vue';
 import ToggleButton from 'primevue/togglebutton';
-import AJAXButton from '../Control/AJAXButton.vue';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import Button from 'primevue/button';
 
 // (interne) Attribute der Komponente
@@ -28,19 +26,19 @@ async function click_save() {
 	save_button_loading.value = true;
 	try {
 		if (form.persisted) {
-			console.log(`PUT exhibit.free_text.update ${props.exhibit_id} ${form.id}`);
+			console.log(`PUT ajax.exhibit.free_text.update ${props.exhibit_id} ${form.id}`);
 			console.log(create_request_data(form));
 			await axios.request({
 				method: "put",
-				url: route('exhibit.free_text.update', [props.exhibit_id, form.id]),
+				url: route('ajax.exhibit.free_text.update', [props.exhibit_id, form.id]),
 				data: create_request_data(form)
 			});
 		} else {
-			console.log(`POST exhibit.free_text.create ${props.exhibit_id} ${form.id}`);
+			console.log(`POST ajax.exhibit.free_text.create ${props.exhibit_id} ${form.id}`);
 			console.log(create_request_data(form));
 			await axios.request({
 				method: "post",
-				url: route('exhibit.free_text.create', [props.exhibit_id, form.id]),
+				url: route('ajax.exhibit.free_text.create', [props.exhibit_id, form.id]),
 				data: create_request_data(form)
 			});
 		}
@@ -53,10 +51,10 @@ async function click_delete() {
 	if (form.persisted) {
 		delete_button_loading.value = true;
 		try {
-			console.log(`DELETE exhibit.free_text.delete ${props.exhibit_id} ${form.id}`);
+			console.log(`DELETE ajax.exhibit.free_text.delete ${props.exhibit_id} ${form.id}`);
 			await axios.request({
 				method: "delete",
-				url: route('exhibit.free_text.delete', [props.exhibit_id, form.id]),
+				url: route('ajax.exhibit.free_text.delete', [props.exhibit_id, form.id]),
 			})
 		} finally {
 			delete_button_loading.value = false;
@@ -68,7 +66,7 @@ async function click_delete() {
 
 <template>
 	<div>
-		<div>#{{ props.form.id }}</div>
+		<!-- <div>#{{ props.form.id }}</div> -->
 		<div class="flex justify-between">
 			<SimpleInputField label="Überschrift" :form_value="form.val.heading"/>
 			<ToggleButton v-model="form.val.is_public.val" onLabel='öffentlich' offLabel="intern" class="w-28"/>
