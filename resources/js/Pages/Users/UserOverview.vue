@@ -30,18 +30,18 @@ interface User {
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
-    users: PropUser[];
+	users: PropUser[];
 }>();
 
 const home = ref({
-    icon: 'pi pi-home',
-    route: 'exhibit.overview'
+	icon: 'pi pi-home',
+	route: 'exhibit.overview'
 });
 const items = ref([
-    {
-        label: 'Benutzerverwaltung',
-        route: 'users.all'
-    },
+	{
+		label: 'Benutzerverwaltung',
+		route: 'user.overview'
+	},
 ]);
 
 // (interne) Attribute der Komponente
@@ -82,25 +82,23 @@ async function toggle_admin_state(user: User, event: Event): Promise<void> {
 </script>
 
 <template>
-    <Head title="Benutzerverwaltung" />
-
-    <AuthenticatedLayout>
-        <template #header>
-            <Breadcrumb :home="home" :model="items">
-                <template #item="{ item }">
-                    <a class="cursor-pointer text-2xl" :href="route(item.route)">
-                        <span v-if="item.icon" :class="item.icon"></span>
-                        <span v-else>{{ item.label }}</span>
-                    </a>
-                </template>
-            </Breadcrumb>
-        </template>
+	<AuthenticatedLayout>
+		<template #header>
+			<Breadcrumb :home="home" :model="items">
+				<template #item="{ item }">
+					<a class="cursor-pointer text-2xl" :href="route(item.route)">
+						<span v-if="item.icon" :class="item.icon"></span>
+						<span v-else>{{ item.label }}</span>
+					</a>
+				</template>
+			</Breadcrumb>
+		</template>
 
 		<DataTable :value="users_ref" tableStyle="min-width: 50rem">
-		    <Column field="username" header="Benutzername"/>
-		    <Column field="forename" header="Vorname"/>
-		    <Column field="surname" header="Nachname"/>
-		    <Column field="is_admin" header="ist Admin?">
+			<Column field="username" header="Benutzername"/>
+			<Column field="forename" header="Vorname"/>
+			<Column field="surname" header="Nachname"/>
+			<Column field="is_admin" header="ist Admin?">
 				<template #body='{ data }'>
 					<ToggleSwitch 
 						v-model="data.is_admin.in_ui"
@@ -110,10 +108,12 @@ async function toggle_admin_state(user: User, event: Event): Promise<void> {
 				</template>
 			</Column>
 		</DataTable>
+		
 		<AJAXConfirmationPopup ref="ajax_confirmation_popup"/>
 		
 		<div class="absolute bottom-4 right-4">
-            <Button severity="info" as="a" :href="route('user.new')" icon="pi pi-plus" />
-        </div>
-    </AuthenticatedLayout>
+			<Button severity="info" as="a" :href="route('user.new')" icon="pi pi-plus" />
+		</div>
+		
+	</AuthenticatedLayout>
 </template>

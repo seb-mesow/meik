@@ -3,7 +3,6 @@ import Form from '@/Components/Form/Form.vue';
 import SimpleInputField from '@/Components/Form/SimpleInputField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { create_request_data, type IForm } from '@/util/form';
-import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import Button from 'primevue/button';
 import { ref } from 'vue';
@@ -64,9 +63,6 @@ async function save_metadata(event: SubmitEvent) {
 </script>
 
 <template>
-
-	<Head title="Exponat" />
-
 	<AuthenticatedLayout>
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
@@ -98,6 +94,8 @@ async function save_metadata(event: SubmitEvent) {
 				label='Metadaten speichern'
 			/>
 		</Form>
+		
 		<FreeTextFields v-if="exhibit_id !== undefined" :form="form.val.free_texts" :exhibit_id="exhibit_id" />
+		
 	</AuthenticatedLayout>
 </template>
