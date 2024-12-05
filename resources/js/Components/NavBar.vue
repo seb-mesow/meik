@@ -41,10 +41,6 @@ import ResponsiveNavLink from './ResponsiveNavLink.vue';
 	</nav>
 </template>
 
-<style scoped lang="scss">
-@import 'primeicons/primeicons.css';
-</style>
-
 <style scoped lang="css">
 .navbar-underlay {
 	width: 9rem;

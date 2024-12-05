@@ -158,11 +158,6 @@ const addNew = () => {
 }
 </script>
 
-<style lang="scss">
-@import 'primeicons/primeicons.css';
-</style>
-
-
 <template>
     <Toast />
     <AuthenticatedLayout>
