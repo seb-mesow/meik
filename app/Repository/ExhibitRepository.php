@@ -147,7 +147,7 @@ final class ExhibitRepository
 		
 		$free_text_docs = array_map(static function (FreeText $free_text) use ($_this): stdClass {
 			return $_this->create_doc_from_free_text($free_text);
-		}, $exhibit?->get_free_texts());
+		}, $exhibit->get_free_texts());
 		$exhibit_doc->free_texts = $free_text_docs;
 		
 		// $exhibit_doc->manufacturer = $exhibit->get_manufacturer();
@@ -167,7 +167,7 @@ final class ExhibitRepository
 		$_this = $this;
 		$free_texts = array_map(static function (stdClass $free_text_doc) use ($_this): FreeText {
 			return $_this->create_free_text_from_doc($free_text_doc);
-		}, $exhibit_doc?->free_texts ?? []);
+		}, $exhibit_doc->free_texts);
 		
 		return new Exhibit(
 			inventory_number: $exhibit_doc->inventory_number,
