@@ -15,7 +15,7 @@ class UserAJAXController extends Controller
 	
 	public function set_admin(Request $request, string $username)
 	{
-		sleep(5); // TODO rausnehmen
+		// sleep(5); // TODO rausnehmen
 		$user = $this->repository->find_by_username($username);
 		if (!$user) {
 			return response(null, 404);
