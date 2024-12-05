@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import InputField from '@/Components/Form/InputField.vue';
+import SimpleInputField from '@/Components/Form/SimpleInputField.vue';
+import FreeTextField from '@/Components/Exhibit/FreeTextField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { create_request_data, type IForm } from '@/util/form';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import Button from 'primevue/button';
-import Form from '@/Components/Form/Form.vue';
 import { ref } from 'vue';
 import FreeTextFields from '@/Components/Exhibit/FreeTextFields.vue';
 import { IExhibitForm} from '@/types/meik/models';
@@ -103,12 +103,20 @@ async function save_metadata(event: SubmitEvent) {
 		</template>
 
 		<Form :action="route('exhibit.create')" method="post">
-			<InputField :form="form.val.inventory_number" label="Inventarnummer" />
-			<InputField :form="form.val.name" label="Bezeichnung" />
-			<InputField :form="form.val.manufacturer" label="Hersteller" />
-			<Button v-if="is_new" :loading="button_save_metadata_is_loading" type='submit' label='Speichern' />
-			<Button v-else :loading="button_save_metadata_is_loading" type='button' @click="save_metadata"
-				label='Metadaten speichern' />
+			<SimpleInputField :form="form.val.inventory_number" label="Inventarnummer" />
+			<SimpleInputField :form="form.val.name" label="Bezeichnung" />
+			<SimpleInputField :form="form.val.manufacturer" label="Hersteller" />
+			<Button v-if="is_new"
+				:loading="button_save_metadata_is_loading" 
+				type='submit'
+				label='Speichern'
+			/>
+			<Button v-else
+				:loading="button_save_metadata_is_loading" 
+				type='button'
+				@click="save_metadata"
+				label='Metadaten speichern'
+			/>
 		</Form>
 		<FreeTextFields v-if="exhibit_id !== undefined" :init_props="form.val.free_texts" :exhibit_id="exhibit_id" />
 	</AuthenticatedLayout>
