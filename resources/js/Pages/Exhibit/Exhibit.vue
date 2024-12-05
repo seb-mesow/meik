@@ -24,6 +24,10 @@ const home = ref({
 });
 const items = ref([
 	{
+		label: 'Exponate',
+		route: 'exhibit.overview'
+	},
+	{
 		label: props?.name ?? 'Neues Exponat'
 	},
 ]);
