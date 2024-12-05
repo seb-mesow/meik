@@ -93,7 +93,7 @@ export class FreeTextForm implements IFreeTextForm {
 		console.log(`PUT exhibit.free_text.update ${this.exhibit_id} ${this.id}`);
 		const request_config: AxiosRequestConfig<IUpdateFreeTextRequestData> = {
 			method: "put",
-			url: route('exhibit.free_text.update', [this.exhibit_id, this.id]),
+			url: route('ajax.exhibit.free_text.update', [this.exhibit_id, this.id]),
 			data: {
 				val: {
 					heading: {
@@ -125,7 +125,7 @@ export class FreeTextForm implements IFreeTextForm {
 		console.log(`POST exhibit.free_text.create ${this.exhibit_id}`);
 		const request_config: AxiosRequestConfig<ICreateFreeTextRequestData> = {
 			method: "post",
-			url: route('exhibit.free_text.create', [this.exhibit_id]),
+			url: route('ajax.exhibit.free_text.create', [this.exhibit_id]),
 			data: {
 				index: this.parent.get_index_for_persisting({form: this}),
 				val: {
@@ -161,7 +161,7 @@ export class FreeTextForm implements IFreeTextForm {
 		console.log(`DELETE exhibit.free_text.delete ${this.exhibit_id} ${this.id}`);
 		const request_config: AxiosRequestConfig<IDeleteFreeTextRequestData> = {
 			method: "delete",
-			url: route('exhibit.free_text.delete', [this.exhibit_id, this.id])
+			url: route('ajax.exhibit.free_text.delete', [this.exhibit_id, this.id])
 		};
 		return axios.request(request_config).then(
 			(response: AxiosResponse<IDeleteFreeText200ResponseData>) => {

@@ -25,7 +25,8 @@ Beispiele anhand des Models `Exhibit`.
 - Primär-Schlüssel noch nicht festgelegt
 - Wenn vorhanden, müssen die Formular-Werte aus der Session geladen werden.
 ```php
-Route::get('/exhibit', [ExhibitController::class, 'new'])->name('exhibit.new');
+Route::get('/exhibit', [ExhibitController::class, 'new'])
+	->name('exhibit.new');
 ```
 ### ein neues Model speichern
 - primärer Schlüssel noch nicht festgelegt
@@ -37,40 +38,49 @@ Route::get('/exhibit', [ExhibitController::class, 'new'])->name('exhibit.new');
   - HTTP-Status 422
   - Weiterleitung auf Route `exhibit.new`
 ```php
-Route::post('/exhibit', [ExhibitController::class, 'create'])->name('exhibit.create');
+Route::post('/exhibit', [ExhibitController::class, 'create'])
+	->name('exhibit.create');
 ```
 ### ein Model vollständig abrufen
 - View: Detailseite, vorausgefüllt
 ```php
-Route::get('/exhibit/{id}', [ExhibitController::class, 'details'])->name('exhibit.details');
+Route::get('/exhibit/{id}', [ExhibitController::class, 'details'])
+	->name('exhibit.details');
 ```
 ### alle Models einer Klasse auszugweise abrufen (Übersicht)
 - Für jede Ressource muss nur ein Teil aller Informationen geladen werden.
 - View: Übersicht
 ```php
-Route::get('/exhibits', [ExhibitController::class, 'overview'])->name('exhibit.overview');
+Route::get('/exhibits', [ExhibitController::class, 'overview'])
+	->name('exhibit.overview');
 ```
 ### ein Model löschen
 - wenn erfolgreich Weiterleitung zur Route `exhibit.overview`
 ```php
-Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete'])->name('exhibit.delete');
+Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete'])
+	->name('exhibit.delete');
 ```
 ## für AJAXController — `ajax.php`
+Der Name der Routen beginnt immer mit `ajax.` .
 ### ein existierendes Model in seiner Gesamtheit aktualisieren
 - wenn Fehler erkannt, dann HTTP-Status-Code 422 und Fehler in JSON-Response zurück
 ```php
-Route::put('/exhibit/{id}', [ExhibitAJAXController::class, 'update'])->name('exhibit.update');
+Route::put('/exhibit/{id}', [ExhibitAJAXController::class, 'update'])
+	->name('ajax.exhibit.update');
 ```
 ### ein existierendes Model _spezifisch_ teilweise aktualisieren
 - wenn Fehler erkannt, dann HTTP-Status-Code 422 und Fehler in JSON-Response zurück
 ```php
-Route::patch('/exhibit/{id}/TEIL', [ExhibitAJAXController::class, 'change_TEIL'])->name('exhibit.change_TEIL');
+Route::patch('/exhibit/{id}/TEIL', [ExhibitAJAXController::class, 'change_TEIL'])
+	->name('ajax.exhibit.change_TEIL');
 oder
-Route::patch('/exhibit/{id}/TEIL', [ExhibitAJAXController::class, 'set_TEIL'])->name('exhibit.set_TEIL');
+Route::patch('/exhibit/{id}/TEIL', [ExhibitAJAXController::class, 'set_TEIL'])
+	->name('ajax.exhibit.set_TEIL');
 ```
 ### ein existierendes Model _unspezifisch_ teilweise aktualisieren
 - Bitte vermeiden
 - wenn Fehler erkannt, dann HTTP-Status-Code 422 und Fehler in JSON-Response zurück
 ```php
-Route::patch('/exhibit/{id}', [ExhibitAJAXController::class, 'change'])->name('exhibit.change');
+Route::patch('/exhibit/{id}', [ExhibitAJAXController::class, 'change'])
+	->name('ajax.exhibit.change');
 ```

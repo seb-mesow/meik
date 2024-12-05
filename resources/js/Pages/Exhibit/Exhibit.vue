@@ -72,7 +72,7 @@ async function save_metadata(event: SubmitEvent) {
 			console.log("AJAX Request senden");
 			await axios.request({
 				method: 'patch',
-				url: route('exhibit.set_metadata', exhibit_id),
+				url: route('ajax.exhibit.set_metadata', exhibit_id),
 				data: create_request_data(form)
 			});
 			console.log("AJAX Request erfolgreich");
