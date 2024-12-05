@@ -23,7 +23,7 @@ import ResponsiveNavLink from './ResponsiveNavLink.vue';
 					<span class="material-symbols-outlined pr-2">
 						location_on
 					</span>
-					<span>Location</span>
+					<span>Standorte</span>
 				</ResponsiveNavLink>
 				
 				<ResponsiveNavLink :href="route('user.overview')" class="flex justify-between items-center p-4 text-white">
