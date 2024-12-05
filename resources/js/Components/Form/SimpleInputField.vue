@@ -12,7 +12,11 @@ defineProps<{
 <template>
 	<div>
 		<p><label :for="form_value.id.toString()">{{ label }}</label></p>
-		<InputText type=text :id="form_value.id.toString()" v-model="form_value.val"/>
+		<InputText type=text
+			v-model="form_value.val"
+			:name="form_value.id.toString()"
+			:id="form_value.id.toString()"
+		/>
 		<InputErrors :errors="form_value.errs"/>
 	</div>
 </template>
