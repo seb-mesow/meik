@@ -74,6 +74,7 @@ const showingNavigationDropdown = ref(false);
                     </header>
                 </div>
                 <main class="w-full">
+				<!-- <main class="p-4"> -->
                     <slot />
                 </main>
             </div>

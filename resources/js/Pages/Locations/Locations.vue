@@ -161,9 +161,7 @@ const addNew = () => {
 @import 'primeicons/primeicons.css';
 </style>
 
-
 <template>
-
     <Head title="Locations" />
     <Toast />
     <AuthenticatedLayout>
@@ -181,13 +179,11 @@ const addNew = () => {
         <div class="absolute bottom-4 right-4">
             <Button severity="info" :disabled="!allowNew" icon="pi pi-plus" @click="addNew" />
         </div>
-        <div class="p-4">
             <Card>
                 <template #content>
                     <DataTable :totalRecords="rowNumber" @page="fetchData($event)" lazy :value="rows" paginator
                         :rows="10" @data="fetchData" :rowsPerPageOptions="[10, 20, 50]" editMode="row"
                         v-model:editingRows="editingRows" @row-edit-save="onRowEditComplete($event)">
-
                         <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header"
                             style="width: 25%">
                             <template #body="{ data, field }">
@@ -225,7 +221,5 @@ const addNew = () => {
                     </DataTable>
                 </template>
             </Card>
-        </div>
     </AuthenticatedLayout>
-
 </template>
