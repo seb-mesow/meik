@@ -1,4 +1,4 @@
-<script>
+<script setup lang="ts">
 import DropdownLink from '@/Components/Dropdown.vue';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 </script>
