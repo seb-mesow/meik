@@ -25,36 +25,36 @@ const showingNavigationDropdown = ref(false);
     <div class="flex flex-col h-screen">
         <div class="h-full flex bg-gray-100 dark:bg-gray-900">
             <div
-                class=" flex gap-8 shadow w-40
+                class="flex gap-8 shadow w-40
                  flex-col justify-between border-b h-full border-gray-100 dark:border-gray-700 dark:bg-gray-800 bg-[#003a6a]">
 
                  <div class="p-1">
                     <img src="resources/graphic/Logo_isc_300x122.jpg">
                  </div>
 
-                <div>
-                <a :href="route('exhibit.overview')" class="flex justify-between items-center p-4 text-white">
+                <div class="gap-8 ">
+                <ResponsiveNavLink :href="route('exhibit.overview')" class="flex justify-between items-center p-4 text-white">
                     <span class="material-symbols-outlined pr-2">
                         archive
                     </span>
                     <span>Exponate</span>
-                </a>
+                </ResponsiveNavLink>
 
 
-                <a :href="route('users.all')" class="flex justify-between items-center p-4 text-white">
+                <ResponsiveNavLink :href="route('users.all')" class="flex justify-between items-center p-4 text-white">
                     <span class="material-symbols-outlined pr-2">
                         person
                     </span>
                     <span>Benutzer</span>
-                </a>
+                </ResponsiveNavLink>
 
 
-                <a :href="route('locations.all')" class="flex justify-between items-center p-4 text-white">
+                <ResponsiveNavLink :href="route('locations.all')" class="flex justify-between items-center p-4 text-white">
                     <span class="material-symbols-outlined pr-2">
                         location_on
                     </span>
                     <span>Location</span>
-                </a>
+                </ResponsiveNavLink>
 
                 </div>
 
