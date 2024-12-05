@@ -10,9 +10,6 @@ use App\Http\Controllers\AJAX\ExhibitAJAXController;
 Route::prefix('ajax')->group(static function() {
 	# --- Benutzerverwaltung ---
 	Route::patch('/user/{username}/set_admin', [UserAJAXController::class, 'set_admin'])
-		->name('user.set_admin');
-	
-	Route::patch('/user/{username}/set_admin', [UserAJAXController::class, 'set_admin'])
 		->name('ajax.user.set_admin');
 
 	# --- Locations / Standorte ---
@@ -52,18 +49,18 @@ Route::prefix('ajax')->group(static function() {
 	
 	# --- Exponate ---
 	Route::patch('/exhibit/{exhibit_id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])
-		->name('exhibit.set_metadata');
+		->name('ajax.exhibit.set_metadata');
 	
 	// siehe freetexts.d.ts
 	Route::post('/exhibit/{exhibit_id}/free_text', [ExhibitAJAXController::class, 'create_free_text'])
-		->name('exhibit.free_text.create');
+		->name('ajax.exhibit.free_text.create');
 	
 	Route::put('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'update_free_text'])
-		->name('exhibit.free_text.update');
+		->name('ajax.exhibit.free_text.update');
 	
 	Route::delete('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'delete_free_text'])
-		->name('exhibit.free_text.delete');
+		->name('ajax.exhibit.free_text.delete');
 	
 	Route::patch('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'move_free_text'])
-		->name('exhibit.free_text.move');
+		->name('ajax.exhibit.free_text.move');
 });
