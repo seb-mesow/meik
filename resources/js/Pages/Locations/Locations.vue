@@ -190,7 +190,7 @@ const addNew = () => {
                                 <template v-if="field == 'name'">
                                     <a v-if="data['_id']"
                                         class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                        :href="route('places.all', { 'location': data._id })">
+                                        :href="route('place.overview', { 'location': data._id })">
                                         {{ data[field] }}</a>
                                     <span v-else class="text-green-600">Neuer Standort</span>
                                 </template>
@@ -202,7 +202,7 @@ const addNew = () => {
                             </template>
                             <template #editor="{ data, field }">
                                 <template v-if="field == 'name'">
-                                    {{ data }}
+                                    <!-- {{ data }} -->
                                     <InputText v-model="data[field]" autofocus fluid />
                                 </template>
                                 <template v-else>
