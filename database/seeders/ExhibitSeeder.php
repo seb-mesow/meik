@@ -55,6 +55,78 @@ class ExhibitSeeder extends Seeder
 			name: 'Nixdorf BA42',
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
 		));
+		
+		
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
+		$this->create_exhibit(new Exhibit(
+			inventory_number: '100',
+			name: 'Nixdorf BA42',
+			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+		));
 	}
 	
 	private function create_exhibit(Exhibit $exhibit): void {
