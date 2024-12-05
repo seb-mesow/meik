@@ -58,7 +58,7 @@ const toast = useToast();
 
 const columns = ref([
     { field: 'name', header: 'Name' },
-    { field: 'is_public', header: 'Öffentlich' },
+    // { field: 'is_public', header: 'Öffentlich' },
 ]);
 
 const editingRows = ref([]);
@@ -131,7 +131,7 @@ function deleteplace(id: string): void {
 
 function postData(new_data: any, data: any): void {
     new_data._id = `place:${new_data.name}${(new Date()).getTime()}`
-    new_data.location = props.locationId;
+    new_data.location = props.location_id;
     axios.post('/ajax/places', new_data)
         .then(response => {
             Object.assign(data, response.data)
@@ -144,7 +144,7 @@ function fetchData(event: any): void {
     currentPage = event.page
     currentPageSize = event.rows
 
-    axios.get('ajax/places', { params: { location: props.locationId, page: event.page, pageSize: event.rows } })
+    axios.get('ajax/places', { params: { location: props.location_id, page: event.page, pageSize: event.rows } })
         .then(response => {
             rows.value = response.data;
         })
