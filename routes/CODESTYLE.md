@@ -14,6 +14,10 @@
 
 Mehr als Orientierung gesehen, keine strikte Festlegung
 
+Query-Parameter sind verboten. (Stichwort: Clean URL)<br>
+Stattdessen die Parameter vorzugsweise im Body angeben;
+alternativ als Teil der URL.
+
 Die Namen von Controller-Funktionen sollen sich an CRUD orientieren
 und NICHT die HTTP-Methoden beinhalten.
 
@@ -70,6 +74,7 @@ Route::put('/exhibit/{id}', [ExhibitAJAXController::class, 'update'])
 ```
 ### ein existierendes Model _spezifisch_ teilweise aktualisieren
 - wenn Fehler erkannt, dann HTTP-Status-Code 422 und Fehler in JSON-Response zurück
+- `TEIL` ist entsprechend durch etwas kurzes Aussagekräftiges zu ersetzen.
 ```php
 Route::patch('/exhibit/{id}/TEIL', [ExhibitAJAXController::class, 'change_TEIL'])
 	->name('ajax.exhibit.change_TEIL');
