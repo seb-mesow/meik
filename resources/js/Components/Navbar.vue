@@ -1,22 +1,6 @@
 <script>
 import DropdownLink from '@/Components/Dropdown.vue';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
-export default {
-  methods: {
-    navigateToProfile() {
-      this.$inertia.visit(this.route('profile.edit')); // Navigiert zur Profil-Seite
-    },
-    navigateToExhibits(){
-      this.$inertia.visit(this.route('exhibit.overview'));
-    },
-    navigateToLocation(){
-      this.$inertia.visit(this.route('locations.all'));
-    },
-
-  },
-  //name: "Navbar",
-};
-
 </script>
 
 <template>
@@ -25,34 +9,34 @@ export default {
       <ul class="nav-list">
         <!-- Card für Exponate -->
         <li class="nav-item">
-          <div class="card card-exponate" @click="navigateToExhibits">
+          <a class="card card-exponate" :href="route('exhibit.overview')">
             <img src="/resources/graphic/exponat.png" alt="Exponate Icon" class="card-image" />
             <div class="card-content">
               <span>Exponate</span>
             </div>
-          </div>
+          </a>
         </li>
 
         <!-- Card für Nutzer -->
         <li class="nav-item">
-          <div class="card card-user" @click="navigateToProfile">
+          <a class="card card-user" :href="route('user.overview')">
             <img src="/resources/graphic/user1.png" alt="Nutzer Icon" class="card-image" />
               <DropdownLink  :href="route('profile.edit')">
                </DropdownLink>
             <div class="card-content">
               <span>Nutzer</span>
             </div>
-          </div>
+          </a>
         </li>
 
         <!-- Card für Exponat-Standort -->
         <li class="nav-item">
-          <div class="card card-standort" @click="navigateToLocation">
+          <a class="card card-standort" :href="route('location.overview')">
             <img src="/resources/graphic/exponatOrt.png" alt="Standort Icon" class="card-image" />
             <div class="card-content">
-              <span>Exponat-Standort</span>
+              <span>Standorte</span>
             </div>
-          </div>
+          </a>
         </li>
       </ul>
     </nav>
