@@ -26,15 +26,15 @@ class UserSeeder extends Seeder
 		$this->create_user(new User(
 			'niklas', 'niklas', '_nIkLaS=123',
 			"Niklas", "Haustein",
-			true));
+			false));
 		$this->create_user(new User(
 			'pepe', 'pepe', '_pEpE=123', 
 			"Pepe", "Sievert",
-			true));
+			false));
 		$this->create_user(new User(
 			'enrico', 'enrico', '_eNrIcO=123',
 			"Enrico", "Schmidt",
-			true));
+			false));
 	}
 	
 	private function create_user(User $user) {

@@ -14,7 +14,7 @@ class Location
 	private ?string $name = null;
 	/** @Accessor(getter="get_is_public") */
 	private ?bool $is_public = false;
-
+	
 	/**
 	 * Get the value of _id
 	 */ 
