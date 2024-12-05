@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
-import Card from 'primevue/card';
-import { Head } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -18,10 +11,6 @@ const showingNavigationDropdown = ref(false);
 </style>
 
 <template>
-
-    <Head>
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    </Head>
     <div class="flex flex-col h-screen">
         <div class="h-full flex bg-gray-100 dark:bg-gray-900">
             <div
@@ -41,7 +30,7 @@ const showingNavigationDropdown = ref(false);
                 </ResponsiveNavLink>
 
 
-                <ResponsiveNavLink :href="route('users.all')" class="flex justify-between items-center p-4 text-white">
+                <ResponsiveNavLink :href="route('user.overview')" class="flex justify-between items-center p-4 text-white">
                     <span class="material-symbols-outlined pr-2">
                         person
                     </span>
@@ -49,7 +38,7 @@ const showingNavigationDropdown = ref(false);
                 </ResponsiveNavLink>
 
 
-                <ResponsiveNavLink :href="route('locations.all')" class="flex justify-between items-center p-4 text-white">
+                <ResponsiveNavLink :href="route('location.overview')" class="flex justify-between items-center p-4 text-white">
                     <span class="material-symbols-outlined pr-2">
                         location_on
                     </span>
