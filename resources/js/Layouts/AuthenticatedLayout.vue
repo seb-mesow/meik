@@ -36,9 +36,7 @@ const showingNavigationDropdown = ref(false);
                             <div
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                             >
-                                <Navbar>
-                                    
-                                </Navbar>
+                                <Navbar class="fixed-navbar" />
 
                                 <!-- <NavLink
                                     :href="route('dashboard')"
