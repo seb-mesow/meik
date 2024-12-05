@@ -1,43 +1,49 @@
 <script setup lang="ts">
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import ResponsiveNavLink from './ResponsiveNavLink.vue';
 </script>
 
 <template>
 	<div class="navbar-underlay"/>
-	<nav class="navbar">
-		<ul class="nav-list">
-			<!-- Card für Exponate -->
-			<li class="nav-item">
-				<a class="card card-exponate" :href="route('exhibit.overview')">
-					<img src="/resources/graphic/exponat.png" alt="Exponate Icon" class="card-image" />
-					<div class="card-content">
-						<span>Exponate</span>
-					</div>
-				</a>
-			</li>
+	<nav>
+		<div class="navbar flex flex-col justify-between">
+			<div class="p-1">
+				<img src="/resources/graphic/Logo_isc_300x122.jpg">
+			</div>
 			
-			<!-- Card für Exponat-Standort -->
-			<li class="nav-item">
-				<a class="card card-standort" :href="route('location.overview')">
-					<img src="/resources/graphic/exponatOrt.png" alt="Standort Icon" class="card-image" />
-					<div class="card-content">
-						<span>Standorte</span>
-					</div>
-				</a>
-			</li>
-			
-			<!-- Card für Nutzer -->
-			<li class="nav-item">
-				<a class="card card-user" :href="route('user.overview')">
-					<img src="/resources/graphic/user1.png" alt="Nutzer Icon" class="card-image" />
-					<div class="card-content">
-						<span>Nutzer</span>
-					</div>
-				</a>
-			</li>
-		</ul>
+			<div class="gap-8">
+				<ResponsiveNavLink :href="route('exhibit.overview')" class="flex justify-between items-center p-4 text-white">
+					<span class="material-symbols-outlined pr-2">
+						archive
+					</span>
+					<span>Exponate</span>
+				</ResponsiveNavLink>
+				
+				<ResponsiveNavLink :href="route('location.overview')" class="flex justify-between items-center p-4 text-white">
+					<span class="material-symbols-outlined pr-2">
+						location_on
+					</span>
+					<span>Location</span>
+				</ResponsiveNavLink>
+				
+				<ResponsiveNavLink :href="route('user.overview')" class="flex justify-between items-center p-4 text-white">
+					<span class="material-symbols-outlined pr-2">
+						person
+					</span>
+					<span>Benutzer</span>
+				</ResponsiveNavLink>
+			</div>
+
+			<div class="justify-self-end p-1">
+				<img src="/resources/graphic/FV_ISC.jpg">
+			</div>
+		</div>
 	</nav>
 </template>
+
+<style scoped lang="scss">
+@import 'primeicons/primeicons.css';
+</style>
 
 <style scoped lang="css">
 .navbar-underlay {
@@ -45,14 +51,14 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 }
 
 .navbar {
-	position: fixed;
 	width: 9rem;
 	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	justify-content: space-between;
 	background-color: #003366; /* Dunkelblau */
-	display: flex;
-	flex-direction: column;
 	align-items: center;
-	padding-top: 7rem;
 }
 
 .nav-list {
