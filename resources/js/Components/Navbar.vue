@@ -1,10 +1,31 @@
+<script>
+import DropdownLink from '@/Components/Dropdown.vue';
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
+export default {
+  methods: {
+    navigateToProfile() {
+      this.$inertia.visit(this.route('profile.edit')); // Navigiert zur Profil-Seite
+    },
+    navigateToExhibits(){
+      this.$inertia.visit(this.route('exhibit.overview'));
+    },
+    navigateToLocation(){
+      this.$inertia.visit(this.route('locations.all'));
+    },
+
+  },
+  //name: "Navbar",
+};
+
+</script>
+
 <template>
   <div class="fixed-navbar">
     <nav class="navbar">
       <ul class="nav-list">
         <!-- Card für Exponate -->
         <li class="nav-item">
-          <div class="card card-exponate">
+          <div class="card card-exponate" @click="navigateToExhibits">
             <img src="/resources/graphic/exponat.png" alt="Exponate Icon" class="card-image" />
             <div class="card-content">
               <span>Exponate</span>
@@ -14,8 +35,10 @@
 
         <!-- Card für Nutzer -->
         <li class="nav-item">
-          <div class="card card-user">
+          <div class="card card-user" @click="navigateToProfile">
             <img src="/resources/graphic/user1.png" alt="Nutzer Icon" class="card-image" />
+              <DropdownLink  :href="route('profile.edit')">
+               </DropdownLink>
             <div class="card-content">
               <span>Nutzer</span>
             </div>
@@ -24,7 +47,7 @@
 
         <!-- Card für Exponat-Standort -->
         <li class="nav-item">
-          <div class="card card-standort">
+          <div class="card card-standort" @click="navigateToLocation">
             <img src="/resources/graphic/exponatOrt.png" alt="Standort Icon" class="card-image" />
             <div class="card-content">
               <span>Exponat-Standort</span>
@@ -36,12 +59,6 @@
   </div>
 </template>
 
-<script>
-import 'material-design-icons-iconfont/dist/material-design-icons.css';
-export default {
-  name: "Navbar",
-};
-</script>
 
 <style scoped>
 .fixed-navbar {
