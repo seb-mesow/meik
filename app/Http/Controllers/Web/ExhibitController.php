@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
-use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
 use App\Util\FormTransformer;
 use Illuminate\Http\Request;
@@ -64,7 +63,7 @@ class ExhibitController extends Controller
 			manufacturer: $manufacturer,
 		);
 		$exhibit = $this->exhibit_repository->insert($exhibit);
-		sleep(5); // TODO entfernen
+		// sleep(5); // TODO entfernen
 		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
 	}
 	
