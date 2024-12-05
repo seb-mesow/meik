@@ -29,7 +29,7 @@ const showingNavigationDropdown = ref(false);
                  flex-col justify-between border-b h-full border-gray-100 dark:border-gray-700 dark:bg-gray-800 bg-[#003a6a]">
 
                  <div class="p-1">
-                    <img src="resources/graphic/Logo_isc_300x122.jpg">
+                    <img src="/resources/graphic/Logo_isc_300x122.jpg">
                  </div>
 
                 <div class="flex flex-col gap-8 ">
@@ -59,7 +59,7 @@ const showingNavigationDropdown = ref(false);
                 </div>
 
                 <div class="justify-self-end p-1">
-                    <img src="resources/graphic/FV_ISC.jpg">
+                    <img src="/resources/graphic/FV_ISC.jpg">
                  </div>
 
             </div>

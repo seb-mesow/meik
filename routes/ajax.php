@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AJAX\ExhibitAJAXController;
+use App\Http\Controllers\AJAX\LocationAJAXController;
+use App\Http\Controllers\AJAX\PlaceAJAXController;
 use App\Http\Controllers\AJAX\UserAJAXController;
 use Illuminate\Support\Facades\Route;
 
