@@ -61,7 +61,7 @@ const admin_state_toggles_readonly = ref(false);
 
 async function toggle_admin_state(user: User, event: Event): Promise<void> {
 	const request_cfg: AxiosRequestConfig = {
-		url: route('user.set_admin', { username: user.username }),
+		url: route('ajax.user.set_admin', { username: user.username }),
 		method: 'patch',
 		data: {
 			'is_admin': user.is_admin.in_ui,
