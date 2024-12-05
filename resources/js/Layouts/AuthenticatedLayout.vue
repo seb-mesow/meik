@@ -32,7 +32,7 @@ const showingNavigationDropdown = ref(false);
                     <img src="resources/graphic/Logo_isc_300x122.jpg">
                  </div>
 
-                <div class="gap-8 ">
+                <div class="flex flex-col gap-8 ">
                 <ResponsiveNavLink :href="route('exhibit.overview')" class="flex justify-between items-center p-4 text-white">
                     <span class="material-symbols-outlined pr-2">
                         archive
@@ -68,7 +68,7 @@ const showingNavigationDropdown = ref(false);
                 <div class="w-full flex bg-white h-16">
                     <!-- Page Heading -->
                     <header class="bg-white w-full h-fit min-h-16 shadow dark:bg-gray-800" v-if="$slots.header">
-                        <div class="pl-8 h-full items-center flex">
+                        <div class="pl-4 h-full items-center flex">
                             <slot name="header" />
                         </div>
                     </header>
