@@ -32,7 +32,7 @@ class ExhibitAJAXController extends Controller
 		$exhibit->set_name($name);
 		$exhibit->set_manufacturer($manufacturer);
 		$exhibit = $this->exhibit_repository->update($exhibit);
-		sleep(5); // TODO entfernen
+		//sleep(5); // TODO entfernen
 	}
 	
 	public function create_free_text(Request $request, int $exhibit_id) {

@@ -58,7 +58,7 @@ class ExhibitController extends Controller
 			manufacturer: $manufacturer,
 		);
 		$exhibit = $this->exhibit_repository->insert($exhibit);
-		sleep(5); // TODO entfernen
+		// sleep(5); // TODO entfernen
 		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
 	}
 	
