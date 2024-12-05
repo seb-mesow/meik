@@ -8,6 +8,7 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import ToggleSwitch from 'primevue/toggleswitch';
 import AJAXConfirmationPopup from '@/Components/AJAXConfirmationPopup.vue';
+import Breadcrumb from 'primevue/breadcrumb';
 
 // versch. Interface für typsicheres Programmieren
 interface PropUser {
@@ -31,6 +32,17 @@ interface User {
 const props = defineProps<{
     users: PropUser[];
 }>();
+
+const home = ref({
+    icon: 'pi pi-home',
+    route: 'exhibit.overview'
+});
+const items = ref([
+    {
+        label: 'Benutzerverwaltung',
+        route: 'users.all'
+    },
+]);
 
 // (interne) Attribute der Komponente
 const ajax_confirmation_popup = ref<InstanceType<typeof AJAXConfirmationPopup>>();
@@ -74,11 +86,14 @@ async function toggle_admin_state(user: User, event: Event): Promise<void> {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
-            >
-                Benutzerverwaltung
-            </h2>
+            <Breadcrumb :home="home" :model="items">
+                <template #item="{ item }">
+                    <a class="cursor-pointer text-2xl" :href="route(item.route)">
+                        <span v-if="item.icon" :class="item.icon"></span>
+                        <span v-else>{{ item.label }}</span>
+                    </a>
+                </template>
+            </Breadcrumb>
         </template>
 
 		<DataTable :value="users_ref" tableStyle="min-width: 50rem">
@@ -97,6 +112,8 @@ async function toggle_admin_state(user: User, event: Event): Promise<void> {
 		</DataTable>
 		<AJAXConfirmationPopup ref="ajax_confirmation_popup"/>
 		
-		<Button as="a" label="Benutzer hinzufügen" :href="route('user.new')"/>
+		<div class="absolute bottom-4 right-4">
+            <Button severity="info" as="a" :href="route('user.new')" icon="pi pi-plus" />
+        </div>
     </AuthenticatedLayout>
 </template>

@@ -40,7 +40,8 @@ class ExhibitController extends Controller
 		$form = $this->create_form($exhibit, true);
 		return Inertia::render('Exhibit/Exhibit', [
 			'id' => $exhibit->get_id(),
-			'form' => $form
+			'name' => $exhibit->get_name(),
+ 			'form' => $form
 		]);
 	}
 	
@@ -69,7 +70,7 @@ class ExhibitController extends Controller
 	
 	private function create_form(?Exhibit $exhibit, bool $persisted): array {
 		$free_texts = [];
-		foreach ($exhibit->get_free_texts() as $index => $free_text) {
+		foreach ($exhibit?->get_free_texts() ?? [] as $index => $free_text) {
 			$free_texts[$index] = [
 				'heading' => $free_text->get_heading(),
 				'html' => $free_text->get_html(),
