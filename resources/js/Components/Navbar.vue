@@ -4,7 +4,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 </script>
 
 <template>
-  <div class="fixed-navbar">
+	<div class="navbar-underlay"></div>
     <nav class="navbar">
       <ul class="nav-list">
         <!-- Card für Exponate -->
@@ -40,18 +40,15 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
         </li>
       </ul>
     </nav>
-  </div>
 </template>
 
-
-<style scoped>
-.fixed-navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
+<style lang="css" scoped>
+.navbar-underlay {
+  width: 9rem;
 }
 
 .navbar {
+  position: fixed;
   width: 9rem;
   height: 100vh;
   background-color: #003366; /* Dunkelblau */
