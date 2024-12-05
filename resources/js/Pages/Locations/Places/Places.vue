@@ -185,7 +185,6 @@ const addNew = () => {
         <div class="absolute bottom-4 right-4">
             <Button severity="info" :disabled="!allowNew" icon="pi pi-plus" @click="addNew" />
         </div>
-        <div class="p-4">
             <Card>
                 <template #content>
                     <DataTable :totalRecords="rowNumber" @page="fetchData($event)" lazy :value="rows" paginator
@@ -226,7 +225,6 @@ const addNew = () => {
                     </DataTable>
                 </template>
             </Card>
-        </div>
     </AuthenticatedLayout>
 
 </template>
