@@ -68,7 +68,7 @@ async function click_delete() {
 
 <template>
 	<div>
-		<div>#{{ props.form.id }}</div>
+		<!-- <div>#{{ props.form.id }}</div> -->
 		<div class="flex justify-between">
 			<SimpleInputField label="Überschrift" :form_value="form.val.heading"/>
 			<ToggleButton v-model="form.val.is_public.val" onLabel='öffentlich' offLabel="intern" class="w-28"/>

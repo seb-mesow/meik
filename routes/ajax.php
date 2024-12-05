@@ -1,13 +1,17 @@
 <?php
-
 declare(strict_types=1);
 
-use App\Http\Controllers\AJAX\UserAJAXController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\AJAX\UserAJAXController;
+
+use App\Http\Controllers\AJAX\ExhibitAJAXController;
+
+use App\Http\Controllers\AJAX\LocationAJAXController;
+use App\Http\Controllers\AJAX\PlaceAJAXController;
+
+
 Route::prefix('ajax')->group(static function() {
-	Route::patch('/user/{username}/set_admin', [ UserAJAXController::class, 'set_admin'])->name('user.set_admin');
-	
 	Route::patch('/user/{username}/set_admin', [UserAJAXController::class, 'set_admin'])
 		->name('ajax.user.set_admin');
 
