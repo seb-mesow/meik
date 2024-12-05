@@ -24,7 +24,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-	Route::get('/users', [UserController::class, 'overview'])->name('users.all');
+	Route::get('/users', [UserController::class, 'overview'])->name('user.overview');
 	Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 	Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -35,8 +35,8 @@ Route::middleware('auth')->group(function () {
 	Route::get('/exhibit/{id}', [ExhibitController::class, 'details'])->name('exhibit.details');
 	Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete'])->name('exhibit.delete');
 	
-	Route::get('/locations', [LocationController::class, 'overview'])->name('locations.all');
-	Route::get('/places', [PlaceController::class, 'overview'])->name('places.all');
+	Route::get('/locations', [LocationController::class, 'overview'])->name('location.overview');
+	Route::get('/places', [PlaceController::class, 'overview'])->name('place.overview');
 });
 
 require __DIR__.'/auth.php';
