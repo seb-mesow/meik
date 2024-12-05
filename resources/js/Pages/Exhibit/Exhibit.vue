@@ -3,7 +3,6 @@ import SimpleInputField from '@/Components/Form/SimpleInputField.vue';
 import FreeTextField from '@/Components/Exhibit/FreeTextField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { create_request_data, type IForm } from '@/util/form';
-import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import Button from 'primevue/button';
 import { ref } from 'vue';
