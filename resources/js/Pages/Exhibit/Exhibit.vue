@@ -10,12 +10,14 @@ import Form from '@/Components/Form/Form.vue';
 import { ref } from 'vue';
 import FreeTextFields from '@/Components/Exhibit/FreeTextFields.vue';
 import { IFreeText } from '@/types/meik/models';
+import Breadcrumb from 'primevue/breadcrumb';
 
 // versch. Interface für typsicheres Programmieren
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
 	id?: string,
+	name?: string
 	form: IForm<'exhibit', {
 		inventory_number: string,
 		name: string,
@@ -23,6 +25,16 @@ const props = defineProps<{
 		free_texts: IFreeText[],
 	}>
 }>();
+
+const home = ref({
+	icon: 'pi pi-home',
+	route: 'exhibit.overview'
+});
+const items = ref([
+	{
+		label: props?.name ?? 'Neues Exponat'
+	},
+]);
 
 // (interne) Attribute der Seite
 const form = props.form;
@@ -53,29 +65,31 @@ async function save_metadata(event: SubmitEvent) {
 </script>
 
 <template>
+
 	<Head title="Exponat" />
 
 	<AuthenticatedLayout>
 		<template #header>
-			<h2	class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-				Exponat
-			</h2>
+			<Breadcrumb :home="home" :model="items">
+				<template #item="{ item }">
+					<a v-if="item.route" class="cursor-pointer text-2xl" :href="route(item.route)">
+						<span v-if="item.icon" :class="item.icon"></span>
+						<span v-else>{{ item.label }}</span>
+					</a>
+					<span class="text-2xl" v-else>
+						{{ item.label }}
+					</span>
+				</template>
+			</Breadcrumb>
 		</template>
+
 		<Form :action="route('exhibit.create')" method="post">
-			<InputField :form_value="form.val.inventory_number" label="Inventarnummer"/>
-			<InputField :form_value="form.val.name" label="Bezeichnung"/>
-			<InputField :form_value="form.val.manufacturer" label="Hersteller"/>
-			<Button v-if="is_new"
-				:loading="button_save_metadata_is_loading" 
-				type='submit'
-				label='Speichern'
-			/>
-			<Button v-else
-				:loading="button_save_metadata_is_loading" 
-				type='button'
-				@click="save_metadata"
-				label='Metadaten speichern'
-			/>
+			<InputField :form_value="form.val.inventory_number" label="Inventarnummer" />
+			<InputField :form_value="form.val.name" label="Bezeichnung" />
+			<InputField :form_value="form.val.manufacturer" label="Hersteller" />
+			<Button v-if="is_new" :loading="button_save_metadata_is_loading" type='submit' label='Speichern' />
+			<Button v-else :loading="button_save_metadata_is_loading" type='button' @click="save_metadata"
+				label='Metadaten speichern' />
 		</Form>
 		<FreeTextFields v-if="exhibit_id !== undefined" :form="form.val.free_texts" :exhibit_id="exhibit_id" />
 	</AuthenticatedLayout>

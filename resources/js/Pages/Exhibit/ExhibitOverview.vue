@@ -4,22 +4,43 @@ import ExhibitTile from '@/Components/Exhibit/ExhibitTile.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { IExhibitForTile } from '@/types/meik/models';
 import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import Breadcrumb from 'primevue/breadcrumb';
 
 const props = defineProps<{
 	exhibits: IExhibitForTile[]
 }>();
-console.log(props.exhibits);
+
+const home = ref({
+	label: 'Exponate',
+	route: 'exhibit.overview'
+});
+
 </script>
 
 <template>
-	<Head title="Exponate"/>
+
+	<Head title="Exponate" />
 	<AuthenticatedLayout>
-		<Button :href="route('exhibit.new')" label="Exponat hinzufügen" as="a"/>
+
+		<template #header>
+			<Breadcrumb :home="home">
+				<template #item="{ item }">
+					<a class="cursor-pointer text-2xl" :href="route(item.route)">
+						<span v-if="item.icon" :class="item.icon"></span>
+						<span v-else>{{ item.label }}</span>
+					</a>
+				</template>
+			</Breadcrumb>
+		</template>
+
+
+		<div class="absolute bottom-4 right-4">
+            <Button severity="info" :href="route('exhibit.new')" icon="pi pi-plus" as="a" />
+        </div>
 		<div class="flex flex-wrap">
 			<!-- <div class="border-black border-solid border-2 w-[20%] min-w-[20rem]" v-for="exhibit in exhibits"> -->
-				<ExhibitTile v-for="exhibit in exhibits"
-					:exhibit="exhibit"
-				/>
+			<ExhibitTile v-for="exhibit in exhibits" :exhibit="exhibit" />
 			<!-- </div> -->
 		</div>
 	</AuthenticatedLayout>

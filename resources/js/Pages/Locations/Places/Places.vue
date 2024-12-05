@@ -16,19 +16,36 @@ import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
+import Breadcrumb from 'primevue/breadcrumb';
 
 const props = defineProps<{
     places: place[],
     count: number,
-    location: string
+    location_id: string,
+    location_name: string
 }>()
 
 interface place {
-    _id: string|null,
-    _rev: string|null,
-    name: string|null,
-    is_public: boolean|null,
+    _id: string | null,
+    _rev: string | null,
+    name: string | null,
+    is_public: boolean | null,
 }
+
+const home = ref({
+    icon: 'pi pi-home',
+    route: 'exhibit.overview'
+});
+const items = ref([
+    {
+        label: props.location_name,
+        route: 'locations.all'
+    },
+    {
+        label: 'Plätze',
+        route: 'places.all'
+    },
+]);
 
 let currentPage = 0;
 let currentPageSize = 10;
@@ -114,7 +131,7 @@ function deleteplace(id: string): void {
 
 function postData(new_data: any, data: any): void {
     new_data._id = `place:${new_data.name}${(new Date()).getTime()}`
-    new_data.location = props.location;
+    new_data.location = props.locationId;
     axios.post('/ajax/places', new_data)
         .then(response => {
             Object.assign(data, response.data)
@@ -127,7 +144,7 @@ function fetchData(event: any): void {
     currentPage = event.page
     currentPageSize = event.rows
 
-    axios.get('ajax/places', { params: { location: props.location, page: event.page, pageSize: event.rows } })
+    axios.get('ajax/places', { params: { location: props.locationId, page: event.page, pageSize: event.rows } })
         .then(response => {
             rows.value = response.data;
         })
@@ -154,9 +171,19 @@ const addNew = () => {
     <Head title="places" />
     <Toast />
     <AuthenticatedLayout>
+        <template #header>
+            <Breadcrumb :home="home" :model="items">
+                <template #item="{ item }">
+                    <a class="cursor-pointer text-2xl" :href="route(item.route)">
+                        <span v-if="item.icon" :class="item.icon"></span>
+                        <span v-else>{{ item.label }}</span>
+                    </a>
+                </template>
+            </Breadcrumb>
+        </template>
         <ConfirmPopup></ConfirmPopup>
         <div class="absolute bottom-4 right-4">
-            <Button :disabled="!allowNew" icon="pi pi-plus" @click="addNew" />
+            <Button severity="info" :disabled="!allowNew" icon="pi pi-plus" @click="addNew" />
         </div>
         <div class="p-4">
             <Card>

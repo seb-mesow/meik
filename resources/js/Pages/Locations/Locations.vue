@@ -18,6 +18,7 @@ import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import Login from '../Auth/Login.vue';
 import Message from 'primevue/message';
+import Breadcrumb from 'primevue/breadcrumb';
 
 const props = defineProps<{
     locations: Location[],
@@ -25,11 +26,11 @@ const props = defineProps<{
 }>()
 
 interface Location {
-    _id: string|null,
-    _rev: string|null,
-    name: string|null,
-    is_public: boolean|null,
-    invalid: boolean|null
+    _id: string | null,
+    _rev: string | null,
+    name: string | null,
+    is_public: boolean | null,
+    invalid: boolean | null
 }
 
 let currentPage = 0;
@@ -40,6 +41,17 @@ let deleteLocationDialog = ref();
 let allowNew = ref(true);
 const confirm = useConfirm();
 const toast = useToast();
+
+const home = ref({
+    icon: 'pi pi-home',
+    route: 'exhibit.overview'
+});
+const items = ref([
+    {
+        label: 'Standorte',
+        route: 'locations.all'
+    },
+]);
 
 const columns = ref([
     { field: 'name', header: 'Name' },
@@ -155,9 +167,19 @@ const addNew = () => {
     <Head title="Locations" />
     <Toast />
     <AuthenticatedLayout>
+        <template #header>
+            <Breadcrumb :home="home" :model="items">
+                <template #item="{ item }">
+                    <a class="cursor-pointer text-2xl" :href="route(item.route)">
+                        <span v-if="item.icon" :class="item.icon"></span>
+                        <span v-else>{{ item.label }}</span>
+                    </a>
+                </template>
+            </Breadcrumb>
+        </template>
         <ConfirmPopup></ConfirmPopup>
         <div class="absolute bottom-4 right-4">
-            <Button :disabled="!allowNew" icon="pi pi-plus" @click="addNew" />
+            <Button severity="info" :disabled="!allowNew" icon="pi pi-plus" @click="addNew" />
         </div>
         <div class="p-4">
             <Card>
