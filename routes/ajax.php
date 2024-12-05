@@ -4,17 +4,16 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AJAX\UserAJAXController;
-
 use App\Http\Controllers\AJAX\ExhibitAJAXController;
-
 use App\Http\Controllers\AJAX\LocationAJAXController;
 use App\Http\Controllers\AJAX\PlaceAJAXController;
 
-
 Route::prefix('ajax')->group(static function() {
+	# --- Users ---------------------------------
 	Route::patch('/user/{username}/set_admin', [UserAJAXController::class, 'set_admin'])
-		->name('ajax.user.set_admin');
-
+	->name('ajax.user.set_admin');
+	
+	# --- Locations ---------------------------------
 	Route::post('/locations', [LocationAJAXController::class, 'post_location'])
 		->name('ajax.location.post_location');
 
@@ -33,6 +32,7 @@ Route::prefix('ajax')->group(static function() {
 	Route::post('/locations', [LocationAJAXController::class, 'post_location'])
 		->name('ajax.location.post_location');
 
+	# --- Places ---------------------------------
 	Route::put('/places', [PlaceAJAXController::class, 'put_place'])
 		->name('ajax.place.put_place');
 
@@ -47,10 +47,17 @@ Route::prefix('ajax')->group(static function() {
 
 	Route::post('/places', [PlaceAJAXController::class, 'post_place'])
 		->name('ajax.location.post_place');
-		
-	Route::patch('/exhibit/{id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])->name('exhibit.set_metadata');
 	
-	Route::post('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'create_free_text'])->name('exhibit.free_text.create');
-	Route::put('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'update_free_text'])->name('exhibit.free_text.update');
-	Route::delete('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'delete_free_text'])->name('exhibit.free_text.delete');
+	# --- Exhibits ---------------------------------
+	Route::patch('/exhibit/{id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])
+		->name('ajax.exhibit.set_metadata');
+	
+	Route::post('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'create_free_text'])
+		->name('ajax.exhibit.free_text.create');
+		
+	Route::put('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'update_free_text'])
+		->name('ajax.exhibit.free_text.update');
+		
+	Route::delete('/exhibit/{id}/free_text/{free_text_index}', [ExhibitAJAXController::class, 'delete_free_text'])
+		->name('ajax.exhibit.free_text.delete');
 });
