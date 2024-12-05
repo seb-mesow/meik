@@ -53,7 +53,7 @@ const showingNavigationDropdown = ref(false);
                     <span class="material-symbols-outlined pr-2">
                         location_on
                     </span>
-                    <span>Location</span>
+                    <span>Standorte</span>
                 </ResponsiveNavLink>
 
                 </div>
