@@ -172,7 +172,7 @@ const addNew = () => {
 		
 		<ConfirmPopup></ConfirmPopup>
 		
-		<div class="absolute bottom-4 right-4">
+		<div class="fixed bottom-4 right-4">
 			<Button severity="info" :disabled="!allowNew" icon="pi pi-plus" @click="addNew" />
 		</div>
 		

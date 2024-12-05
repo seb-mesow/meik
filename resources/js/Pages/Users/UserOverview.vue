@@ -111,7 +111,7 @@ async function toggle_admin_state(user: User, event: Event): Promise<void> {
 		
 		<AJAXConfirmationPopup ref="ajax_confirmation_popup"/>
 		
-		<div class="absolute bottom-4 right-4">
+		<div class="fixed bottom-4 right-4">
 			<Button severity="info" as="a" :href="route('user.new')" icon="pi pi-plus" />
 		</div>
 		
