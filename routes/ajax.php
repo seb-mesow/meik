@@ -23,8 +23,8 @@ Route::prefix('ajax')->group(static function() {
 		->name('ajax.location.delete_location');
 	
 	Route::patch('/locations', [LocationAJAXController::class, 'patch_location'])
-		->name('ajax.location.post_location');
-	
+		->name('ajax.location.patch_location');
+
 	Route::get('locations', [LocationAJAXController::class, 'get_locations_paginated'])
 		->name('ajax.location.get_locations_paginated');
 	
