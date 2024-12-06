@@ -10,15 +10,16 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(CouchDBUserProvider $provider): void
-    {
+	/**
+	 * Seed the application's database.
+	 */
+	public function run(CouchDBUserProvider $provider): void
+	{
 		$this->call([
 			SetupCouchDBSeeder::class,
 			UserSeeder::class,
 			ExhibitSeeder::class,
+			LocationSeeder::class
 		]);
-    }
+	}
 }
