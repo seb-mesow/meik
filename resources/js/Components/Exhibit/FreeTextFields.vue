@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IFreeText } from '@/types/meik/models';
+import type { IFreeTextsForms } from '@/types/meik/models';
 import { create_form, IForm } from '@/util/form';
 import FreeTextField from './FreeTextField.vue';
 import Button from 'primevue/button';
@@ -8,10 +8,11 @@ import { reactive, Ref, ref } from 'vue';
 // (interne) Attribute der Komponente
 const props = defineProps<{
 	exhibit_id: string,
-	form: IForm<'free_texts', IFreeText[]>;
+	form: IFreeTextsForms;
 }>();
 
 const forms = reactive(props.form); // ref geht nicht
+console.log('forms ==');
 console.log(forms);
 // TODO differente between visual index and index for db
 function append_form() {
@@ -23,11 +24,7 @@ function append_form() {
 		}
 	}
 	const index = greatest_index+1;
-	const form: IForm<number, IFreeText> = create_form(index, {
-		heading: '',
-		html: '',
-		is_public: false,
-	});
+	const form: = ;
 	forms.val[index] = form;
 }
 

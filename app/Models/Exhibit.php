@@ -1,25 +1,28 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Interfaces\Identifiable;
+use App\Models\Interfaces\MainModel;
+use App\Models\Interfaces\Revisionable;
+use App\Models\Traits\IdentifiableTrait;
+use App\Models\Traits\RevisionableTrait;
+use DateInvalidOperationException;
 use DateTime;
 use OutOfBoundsException;
+use RuntimeException;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Illuminate\Foundation\Auth\User as Authenticatable;
 // use Illuminate\Notifications\Notifiable;
 
-class Exhibit
+class Exhibit implements Identifiable, Revisionable
 {
-	/** @Accessor(getter="get_id") */
-	private readonly ?string $id;
-
-	/** @Accessor(getter="get_rev") */
-	private readonly ?string $rev;
-
+	use IdentifiableTrait;
+	use RevisionableTrait;
+	
 	/** @Accessor(getter="get_inventor_number") */
 	private string $inventory_number;
 	
@@ -41,7 +44,10 @@ class Exhibit
 	 */
 	private ?DateTime $aquiry_date = null;
 
-	/** @Accessor(getter="get_free_texts") 
+	/** 
+	 * @var FreeText[]
+	 * 
+	 * @Accessor(getter="get_free_texts") 
 	 * @Serializer\SerializedName("freetexts")
 	 */
 	private array $free_texts;
@@ -68,10 +74,10 @@ class Exhibit
 		string $name,
 		string $manufacturer,
 		array $free_texts = [],
-		?string $id = null,
+		string|int|null $id = null,
 		?string $rev = null
 	) {
-		$this->id = $id;
+		$this->id = is_int($id) ? (string) $id : $id;
 		$this->rev = $rev;
 		
 		$this->inventory_number = $inventory_number;
@@ -79,11 +85,7 @@ class Exhibit
 		$this->manufacturer = $manufacturer;
 		$this->free_texts = $free_texts;
 	}
-	
-	public function get_id(): ?string {
-		return $this->id;
-	}
-	
+		
 	public function get_inventory_number(): string {
 		return $this->inventory_number;
 	}
@@ -141,15 +143,23 @@ class Exhibit
 		return $this;
 	}
 
-	public function get_rev(): ?string {
-		return $this->rev;
-	}
-	
 	/**
 	 * @return FreeText[]
 	 */
 	public function get_free_texts(): array {
 		return $this->free_texts;
+	}
+	
+	public function determinate_free_text_id_to_index_map(): array {
+		$map = [];
+		foreach ($this->free_texts as $index => $free_text) {
+			if (is_string($id = $free_text->get_id())) {
+				$map[$id] = $index;
+			} else {
+				throw new RuntimeException("ID of a FreeText is not set. Save first.");
+			}
+		}
+		return $map;
 	}
 	
 	/**
@@ -167,6 +177,7 @@ class Exhibit
 	 * The indices of subsequent free texts are increased by one
 	 */
 	public function insert_free_text(FreeText $free_text, int $index): self {
+		assert(!$free_text->get_id());
 		if ($index < 0) {
 			throw new OutOfBoundsException("The index must be non-negative.");
 		}
@@ -180,38 +191,55 @@ class Exhibit
 		return $this;
 	}
 	
-	/**
-	 * updates the free text at the specified index
-	 * 
-	 * The indices are 0-based.
-	 */
-	public function update_free_text(FreeText $free_text, int $index): self {
-		if ($index < 0) {
-			throw new OutOfBoundsException("The index must be non-negative.");
+	public function update_free_text(FreeText $new_free_text): self {
+		assert($new_free_text->get_id());
+		// if ($index < 0) {
+		// 	throw new OutOfBoundsException("The index must be non-negative.");
+		// }
+		// if ($index >= count($this->free_texts)) {
+		// 	throw new OutOfBoundsException("The index must be less than or equal to the current count of free texts.");
+		// }
+		foreach ($this->free_texts as $index => $existing_free_text) {
+			if ($existing_free_text->get_id() === $new_free_text->get_id()) {
+				$this->free_texts[$index] = $new_free_text;
+			}
 		}
-		if ($index >= count($this->free_texts)) {
-			throw new OutOfBoundsException("The index must be less than or equal to the current count of free texts.");
-		}
-		$this->free_texts[$index] = $free_text;
 		return $this;
 	}
 	
-	/**
-	 * removes the free text at the specified index
-	 *
-	 * The indices of subsequent free texts are decreased by one
-	 */
-	public function remove_free_text(int $index): self {
-		if ($index < 0) {
-			throw new OutOfBoundsException("The index must be non-negative.");
+	public function remove_free_text(string $free_text_id): self {
+		// if ($index < 0) {
+		// 	throw new OutOfBoundsException("The index must be non-negative.");
+		// }
+		// if ($index >= count($this->free_texts)) {
+		// 	throw new OutOfBoundsException("The index must be less than to the current count of free texts.");
+		// }
+		foreach ($this->free_texts as $index => $free_text) {
+			if ($free_text->get_id() === $free_text_id) {
+				array_splice($this->free_texts, $index, 1);
+				return $this;
+			}
 		}
-		if ($index >= count($this->free_texts)) {
-			throw new OutOfBoundsException("The index must be less than to the current count of free texts.");
-		}
-		array_splice($this->free_texts, $index, 1);
-		return $this;
+		throw new RuntimeException("No FreeText with the specified ID found");
 	}
-
+	
+	/**
+	 * moves a free text to the specified index
+	 * 
+	 * The indices are 0-based.
+	 * The indices of subsequent free texts are increased by one
+	 */
+	public function move_free_text(string $free_text_id, int $new_index): self {
+		foreach ($this->free_texts as $index => $free_text) {
+			if ($free_text->get_id() === $free_text_id) {
+				array_splice($this->free_texts, $index, 1);
+				array_splice($this->free_texts, $new_index, 0, [$free_text]);
+				return $this;
+			}
+		}
+		throw new RuntimeException("No FreeText with the specified ID found");
+	}
+	
 	public function get_connected_exhibits(){
 		return $this->connected_exhibits;
 	}

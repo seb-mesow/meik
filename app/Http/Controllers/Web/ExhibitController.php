@@ -70,8 +70,8 @@ class ExhibitController extends Controller
 	
 	private function create_form(?Exhibit $exhibit, bool $persisted): array {
 		$free_texts = [];
-		foreach ($exhibit?->get_free_texts() ?? [] as $index => $free_text) {
-			$free_texts[$index] = [
+		foreach ($exhibit->get_free_texts() as $index => $free_text) {
+			$free_texts[$free_text->get_id()] = [
 				'heading' => $free_text->get_heading(),
 				'html' => $free_text->get_html(),
 				'is_public' => $free_text->get_is_public()
