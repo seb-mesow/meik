@@ -126,7 +126,9 @@ function deleteLocation(id: string): void {
 }
 
 function postData(new_data: any, data: any): void {
+	// TODO ID von Locations ausschließlich im Repository setzen.
 	new_data._id = `location:${new_data.name}${(new Date()).getTime()}`
+	
 	axios.post('/ajax/locations', new_data)
 		.then(response => {
 			Object.assign(data, response.data)
