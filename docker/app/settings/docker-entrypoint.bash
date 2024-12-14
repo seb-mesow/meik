@@ -12,17 +12,20 @@ touch /var/log/php/xdebug.log;
 touch /var/log/php-fpm/global.log;
 touch /var/log/php-fpm/access.log;
 touch /var/log/php-fpm/xdebug.log;
+
 chown -R www-data:www-data /var/log/php;
 chown -R www-data:www-data /var/log/php-fpm;
-chmod 750 /var/log/php;
-chmod 750 /var/log/php-fpm;
-chmod 640 /var/log/php/*;
-chmod 640 /var/log/php-fpm/*;
+find /var/log/php     -type d -exec chmod u=rwx,g=rwxs,o=t {} \;
+find /var/log/php-fpm -type d -exec chmod u=rwx,g=rwxs,o=t {} \;
+find /var/log/php     -type f -exec chmod u=rw,g=rw,o= {} \;
+find /var/log/php-fpm -type f -exec chmod u=rw,g=rw,o= {} \;
 
 chown -R www-data:www-data storage;
 chown -R www-data:www-data bootstrap/cache;
-chmod -R 0770 storage;
-chmod -R 0770 bootstrap/cache;
+find storage         -type d -exec chmod u=rwx,g=rwxs,o=t {} \;
+find bootstrap/cache -type d -exec chmod u=rwx,g=rwxs,o=t {} \;
+find storage         -type f -exec chmod u=rw,g=rw,o= {} \;
+find bootstrap/cache -type f -exec chmod u=rw,g=rw,o= {} \;
 
 chown www-data:www-data .env;
 # auch lesbar für init-Routine des DB-Containers.
