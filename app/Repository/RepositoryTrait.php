@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\Interfaces\Identifiable;
 use App\Models\Interfaces\MainModel;
+use App\Models\Interfaces\Revisionable;
 use PHPOnCouch\CouchClient;
 use stdClass;
 
@@ -26,15 +28,15 @@ trait RepositoryTrait
 	private readonly stdClass $meta_doc;
 	
 	/**
-	 * @param MainModel $main_model
+	 * @param Identifiable&Revisionable $main_model
 	 * @param MainModelMetaDoc $main_model_meta_doc
 	 * @return StubMainModelDoc
 	 */
-	protected function create_stub_doc_from_model(MainModel $main_model, ?stdClass $main_model_meta_doc = null): stdClass {
+	protected function create_stub_doc_from_model(Identifiable&Revisionable $model, ?stdClass $main_model_meta_doc = null): stdClass {
 		$stub_main_model_doc = new stdClass();
 		$stub_main_model_doc->_id = 
-			self::ID_PREFIX . ($main_model->get_id() ?? $this->determinate_next_available_model_id());
-		if ($rev = $main_model->get_rev()) {
+			self::ID_PREFIX . ($model->get_nullable_id() ?? $this->determinate_next_available_model_id());
+		if ($rev = $model->get_nullable_rev()) {
 			$stub_main_model_doc->_rev = $rev;
 		}
 		return $stub_main_model_doc;
@@ -42,10 +44,10 @@ trait RepositoryTrait
 	
 	/**
 	 * @param StubMainModelDoc $main_model_doc
-	 * @return string
+	 * @return int
 	 */
-	protected function determinate_model_id_from_doc(stdClass $main_model_doc): string {
-		return substr($main_model_doc->_id, strlen(self::ID_PREFIX));
+	protected function determinate_model_id_from_doc(stdClass $main_model_doc): int {
+		return (int) substr($main_model_doc->_id, strlen(self::ID_PREFIX));
 	}
 	
 	/**

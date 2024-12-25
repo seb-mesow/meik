@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-class FreeText
+use App\Models\Interfaces\Identifiable;
+use App\Models\Traits\IdentifiableTrait;
+
+class FreeText implements Identifiable
 {
-	private readonly ?string $id;
+	use IdentifiableTrait;
 	
 	/** @Accessor(getter="get_heading") */
 	private string $heading;
@@ -20,17 +23,13 @@ class FreeText
 		string $heading,
 		string $html,
 		bool $is_public = false,
-		string|int|null $id = null
+		int|null $id = null
 	) {
-		$this->id =  is_int($id) ? (string) $id : $id;
+		$this->id = $id;
 		
 		$this->heading = $heading;
 		$this->html = $html;
 		$this->is_public = $is_public;
-	}
-	
-	public function get_id(): ?string {
-		return $this->id;
 	}
 	
 	public function get_heading(): string {
