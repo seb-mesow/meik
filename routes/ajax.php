@@ -10,7 +10,7 @@ use App\Http\Controllers\AJAX\ExhibitAJAXController;
 
 Route::prefix('ajax')->group(static function() {
 	# --- Benutzerverwaltung ---
-	Route::patch('/user/{username}/set_admin', [ UserAJAXController::class, 'set_admin'])
+	Route::patch('/user/{username}/set_admin', [UserAJAXController::class, 'set_admin'])
 		->name('user.set_admin');
 	
 	Route::patch('/user/{username}/set_admin', [UserAJAXController::class, 'set_admin'])
@@ -55,23 +55,23 @@ Route::prefix('ajax')->group(static function() {
 	Route::patch('/exhibit/{exhibit_id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])
 		->name('exhibit.set_metadata');
 	
-	// Request: { index: int, data: FreeText }
-	// Response: { id: string, positions: Record<string, int> }
+	// Request: FreeTextForm
+	// Response: { form: FreeTextForm, indices: Record<int, int> }
 	Route::post('/exhibit/{exhibit_id}/free_text', [ExhibitAJAXController::class, 'create_free_text'])
-	->name('exhibit.free_text.create');
+		->name('exhibit.free_text.create');
 	
-	// Request: FreeText
-	// Response: <empty>
-	Route::put('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'update_free_text'])
-	->name('exhibit.free_text.update');
+	// Request: FreeTextForm
+	// Response: FreeTextForm
+	Route::put('/exhibit/{exhibit_id}/free_text', [ExhibitAJAXController::class, 'update_free_text'])
+		->name('exhibit.free_text.update');
 	
 	// Request: <empty>
-	// Response: Record<string, int>
+	// Response: Record<int, int>
 	Route::delete('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'delete_free_text'])
-	->name('exhibit.free_text.delete');
+		->name('exhibit.free_text.delete');
 	
 	// Request: int
-	// Response: Record<string, int>
+	// Response: Record<int, int>
 	Route::patch('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'move_free_text'])
 		->name('exhibit.free_text.move');
 });

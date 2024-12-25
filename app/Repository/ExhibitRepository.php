@@ -16,6 +16,7 @@ use PHPOnCouch\Exceptions\CouchNotFoundException;
 use Illuminate\Support\Str;
 use stdClass;
 
+
 /**
  * @phpstan-type ExhibitDoc object{
  *     _id: string,
@@ -74,7 +75,7 @@ final class ExhibitRepository
 
 	 /**
      * @var string $id
-     * @return array<Location>
+     * @return \App\Models\Location[]
      */
     public function get_exhibits_paginated(int $page = 0, int $page_size = 10,): array
     {
@@ -84,7 +85,7 @@ final class ExhibitRepository
         return $this->exhibitsFromArray($locations);
     }
 
-	public function find(string $id): ?Exhibit {
+	public function find(int $id): ?Exhibit {
 		try {
 			return $this->get($id);
 		} catch (CouchNotFoundException $e) {
@@ -92,7 +93,7 @@ final class ExhibitRepository
 		}
 	}
 	
-	public function get(string $id): Exhibit {
+	public function get(int $id): Exhibit {
 		$couch_db_id = self::ID_PREFIX . $id;
 		$exhibit_doc = $this->client->getDoc($couch_db_id);
 		return $this->create_exhibit_from_doc($exhibit_doc);
@@ -102,8 +103,8 @@ final class ExhibitRepository
 	 * ID darf noch nicht gesetzt sein
 	 */
 	public function insert(Exhibit $exhibit): Exhibit {
-		assert(!$exhibit->get_id());
-		assert(!$exhibit->get_rev());
+		assert(!$exhibit->get_nullable_id());
+		assert(!$exhibit->get_nullable_rev());
 		$doc = $this->create_doc_from_exhibit($exhibit); // setzt neue ID
 		$response = $this->client->storeDoc($doc);
 		$doc->_rev = $response->rev;
@@ -111,8 +112,8 @@ final class ExhibitRepository
 	}
 	
 	public function update(Exhibit $exhibit): Exhibit {
-		assert($exhibit->get_id());
-		assert($exhibit->get_rev());
+		// assert($exhibit->get_id());
+		// assert($exhibit->get_rev());
 		try {
 			$doc = $this->create_doc_from_exhibit($exhibit);
 			$response = $this->client->storeDoc($doc);
@@ -125,8 +126,8 @@ final class ExhibitRepository
 	}
 
 	public function remove(Exhibit $exhibit): void {
-		assert($exhibit->get_id());
-		assert($exhibit->get_rev());
+		// assert($exhibit->get_id());
+		// assert($exhibit->get_rev());
 		$delete_doc = new stdClass();
 		$delete_doc->_id = self::ID_PREFIX . $exhibit->get_id();
 		$delete_doc->_rev = $exhibit->get_rev();
@@ -147,8 +148,8 @@ final class ExhibitRepository
 		$exhibit_doc->inventory_number = $exhibit->get_inventory_number();
 		$exhibit_doc->name = $exhibit->get_name();
 		$exhibit_doc->manufacturer = $exhibit->get_manufacturer();
-		$_this = $this;
 		
+		$_this = $this;
 		$free_text_docs = array_map(static function (FreeText $free_text) use ($_this): stdClass {
 			return $_this->create_doc_from_free_text($free_text);
 		}, $exhibit->get_free_texts());
@@ -191,7 +192,7 @@ final class ExhibitRepository
 	private function create_doc_from_free_text(FreeText $free_text): stdClass {
 		/** @var FreeTextDoc */
 		$free_text_doc =  new stdClass();
-		$free_text_doc->_id = $free_text->get_id() ?? $this->determinate_next_available_sub_model_id('free_text');
+		$free_text_doc->_id = $free_text->get_nullable_id() ?? $this->determinate_next_available_sub_model_id('free_text');
 		$free_text_doc->heading = $free_text->get_heading();
 		$free_text_doc->html = $free_text->get_html();
 		$free_text_doc->is_public = $free_text->get_is_public();
@@ -203,7 +204,7 @@ final class ExhibitRepository
 	 */
 	private function create_free_text_from_doc(stdClass $free_text_doc): FreeText {
 		return new FreeText(
-			id: $free_text_doc->_id,
+			id: (int) $free_text_doc->_id,
 			heading: $free_text_doc->heading,
 			html: $free_text_doc->html,
 			is_public: $free_text_doc->is_public,
