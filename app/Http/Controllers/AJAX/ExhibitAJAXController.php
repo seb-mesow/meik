@@ -50,17 +50,16 @@ class ExhibitAJAXController extends Controller
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$exhibit->insert_free_text($free_text, $index);
 		$exhibit = $this->exhibit_repository->update($exhibit);
-		assert($free_text->get_id());
-		$map = $exhibit->determinate_free_text_id_to_index_map();
+		$free_text_id = $exhibit->get_free_texts()[$index]->get_id();
+		$indices_order = $exhibit->determinate_indices_order();
 		
 		return response()->json([
-			'form' => '',
-			'indices' => $map,
+			'id' => $free_text_id,
+			'indices_order' => $indices_order
 		]);
 	}
 	
-	public function update_free_text(Request $request, int $exhibit_id) {
-		$free_text_id = $request->input('id');
+	public function update_free_text(Request $request, int $exhibit_id, int $free_text_id) {
 		$heading = $request->input('val.heading.val');
 		$html = $request->input('val.html.val');
 		$is_public = $request->input('val.is_public.val');
@@ -81,8 +80,8 @@ class ExhibitAJAXController extends Controller
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$exhibit->remove_free_text($free_text_id);
 		$this->exhibit_repository->update($exhibit);
-		$map = $exhibit->determinate_free_text_id_to_index_map();
-		return response()->json($map);
+		$indices_order = $exhibit->determinate_indices_order();
+		return response()->json($indices_order);
 	}
 	
 	public function move_free_text(Request $request, int $exhibit_id, int $free_text_id) {
@@ -90,12 +89,11 @@ class ExhibitAJAXController extends Controller
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$exhibit->move_free_text($free_text_id, $new_index);
 		$this->exhibit_repository->update($exhibit);
-		$map = $exhibit->determinate_free_text_id_to_index_map();
-		return response()->json($map);
+		$indices_order = $exhibit->determinate_indices_order();
+		return response()->json($indices_order);
 	}
 	
-	public function update(Request $request)
-	{
+	public function update(Request $request) {
 		$exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
 		return $this->exhibit_repository->update($exhibit);
 	}

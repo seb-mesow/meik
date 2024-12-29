@@ -1,52 +1,46 @@
 <script setup lang="ts">
-import type { IFreeText } from '@/types/meik/models';
-import { create_form, IForm } from '@/util/form';
+import { IFreeTextsInitPageProps } from '@/types/page_props/freetexts';
 import FreeTextField from './FreeTextField.vue';
 import Button from 'primevue/button';
-import { reactive, Ref, ref } from 'vue';
+import { IFreeTextForm } from '@/form/freetextform';
+import { FreeTextsForm, IFreeTextsForm, IFreeTextFormConstructorArgs } from '@/form/freetextsform';
+import { IFreeTextInitPageProps } from '@/types/page_props/freetext';
+import { Reactive, reactive, Ref } from 'vue';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
-	exhibit_id: string,
-	form: IForm<'free_texts', IFreeText[]>;
+	exhibit_id: number,
+	init_props: IFreeTextsInitPageProps;
 }>();
-
-const forms = reactive(props.form); // ref geht nicht
-console.log(forms);
-// TODO differente between visual index and index for db
-function append_form() {
-	let greatest_index = -1;
-	for (const index_str in forms.val) {
-		const index = parseInt(index_str);
-		if (index > greatest_index) {
-			greatest_index = index;
-		}
-	}
-	const index = greatest_index+1;
-	const form: IForm<number, IFreeText> = create_form(index, {
-		heading: '',
-		html: '',
-		is_public: false,
-	});
-	forms.val[index] = form;
-}
-
-function delete_form(index: number) {
-	forms.val.splice(index, 1);
-	index = 0;
-	for (const i in forms.val) {
-		forms.val[i].id = index++;
-	}
-}
+console.log(`FreeTextFields.vue: props.init_props ==`);
+console.log(props.init_props);
+const form: IFreeTextsForm = reactive(new FreeTextsForm({
+	exhibit_id: props.exhibit_id,
+	val: props.init_props.val.map((_init_props: IFreeTextInitPageProps): IFreeTextFormConstructorArgs => {
+		return {
+			id: _init_props.id,
+			heading: _init_props.val.heading,
+			html: _init_props.val.html,
+			is_public: _init_props.val.is_public,
+		};
+	}),
+	errs: props.init_props.errs,
+}));
+console.log(`FreeTextFields.vue: form ==`);
+console.log(form);
 </script>
 
 <template>
-	<div v-for="free_text_form in forms.val">
+	<!-- Die Reaktivität von form erstreckt sich auch auf seine Properties (deep reactive) -->
+	<div v-for="free_text_form in form.children" :key="free_text_form.ui_id">
 		<hr class="my-3">
-		<FreeTextField :form="free_text_form" :exhibit_id="exhibit_id" @to_delete="delete_form"/>
+		<!-- @vue-ignore-->
+		<FreeTextField
+			:form="free_text_form"
+		/>
 	</div>
 	<hr class="my-3">
-	<Button @click="append_form" label="Abschnitt hinzufügen"/>
+	<Button @click="form.append_form()" label="Abschnitt hinzufügen"/>
 </template>
 
 <style lang="css" scoped>

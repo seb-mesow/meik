@@ -148,16 +148,11 @@ class Exhibit implements Identifiable, Revisionable
 		return $this->free_texts;
 	}
 	
-	public function determinate_free_text_id_to_index_map(): array {
-		$map = [];
-		foreach ($this->free_texts as $index => $free_text) {
-			// if (is_string($id = $free_text->get_id())) {
-			$map[$free_text->get_id()] = $index;
-			//} else {
-			//	throw new RuntimeException("ID of a FreeText is not set. Save first.");
-			//}
-		}
-		return $map;
+	/**
+	 * @return int[]
+	 */
+	public function determinate_indices_order(): array {
+		return array_map(static fn (FreeText $free_text): int => $free_text->get_id(), $this->free_texts);
 	}
 	
 	/**
