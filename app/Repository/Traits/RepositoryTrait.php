@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Traits;
 
 use App\Models\Interfaces\IntIdentifiable;
 use App\Models\Interfaces\MainModel;
@@ -16,7 +16,7 @@ use stdClass;
  * 
  * @phpstan-type StubMainModelDoc object{
  *     _id: string,
- *     _rev: string,
+ *     _rev?: string,
  * }
  */
 trait RepositoryTrait

@@ -5,17 +5,13 @@ namespace App\Repository;
 
 use App\Models\Exhibit;
 use App\Models\FreeText;
+use App\Repository\Traits\RepositoryTrait;
 use PHPOnCouch\CouchClient;
 use Exception;
-use Illuminate\Support\Facades\Date;
-use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
-use PHPOnCouch\Exceptions\CouchException;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
-use Illuminate\Support\Str;
 use stdClass;
-
 
 /**
  * @phpstan-type ExhibitDoc object{
