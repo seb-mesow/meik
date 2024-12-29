@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Repository\CouchDBUserProvider;
-use App\Util\FormTransformer;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Foundation\Application;
@@ -26,9 +25,6 @@ class AppServiceProvider extends ServiceProvider
 		});
 		$this->app->singleton(Serializer::class, static function(Application $app) {
 			return $app->make(SerializerBuilder::class)->build();
-		});
-		$this->app->singleton(FormTransformer::class, static function (): FormTransformer {
-			return new FormTransformer();
 		});
 	}
 
