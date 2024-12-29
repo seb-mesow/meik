@@ -15,15 +15,15 @@ touch /var/log/php-fpm/xdebug.log;
 
 chown -R www-data:www-data /var/log/php;
 chown -R www-data:www-data /var/log/php-fpm;
-find /var/log/php     -type d -exec chmod u=rwx,g=rwxs,o=t {} \;
-find /var/log/php-fpm -type d -exec chmod u=rwx,g=rwxs,o=t {} \;
+find /var/log/php     -type d -exec chmod u=rwx,g=rwxs,o= {} \;
+find /var/log/php-fpm -type d -exec chmod u=rwx,g=rwxs,o= {} \;
 find /var/log/php     -type f -exec chmod u=rw,g=rw,o= {} \;
 find /var/log/php-fpm -type f -exec chmod u=rw,g=rw,o= {} \;
 
 chown -R www-data:www-data storage;
 chown -R www-data:www-data bootstrap/cache;
-find storage         -type d -exec chmod u=rwx,g=rwxs,o=t {} \;
-find bootstrap/cache -type d -exec chmod u=rwx,g=rwxs,o=t {} \;
+find storage         -type d -exec chmod u=rwx,g=rwxs,o= {} \;
+find bootstrap/cache -type d -exec chmod u=rwx,g=rwxs,o= {} \;
 find storage         -type f -exec chmod u=rw,g=rw,o= {} \;
 find bootstrap/cache -type f -exec chmod u=rw,g=rw,o= {} \;
 
