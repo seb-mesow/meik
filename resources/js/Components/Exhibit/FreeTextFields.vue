@@ -2,10 +2,9 @@
 import { IFreeTextsInitPageProps } from '@/types/page_props/freetexts';
 import FreeTextField from './FreeTextField.vue';
 import Button from 'primevue/button';
-import { IFreeTextForm } from '@/form/freetextform';
 import { FreeTextsForm, IFreeTextsForm, IFreeTextFormConstructorArgs } from '@/form/freetextsform';
 import { IFreeTextInitPageProps } from '@/types/page_props/freetext';
-import { Reactive, reactive, Ref } from 'vue';
+import { reactive } from 'vue';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
@@ -34,10 +33,7 @@ console.log(form);
 	<!-- Die Reaktivität von form erstreckt sich auch auf seine Properties (deep reactive) -->
 	<div v-for="free_text_form in form.children" :key="free_text_form.ui_id">
 		<hr class="my-3">
-		<!-- @vue-ignore-->
-		<FreeTextField
-			:form="free_text_form"
-		/>
+		<FreeTextField :form="free_text_form" />
 	</div>
 	<hr class="my-3">
 	<Button @click="form.append_form()" label="Abschnitt hinzufügen"/>
