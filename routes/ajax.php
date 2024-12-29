@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
@@ -55,23 +54,16 @@ Route::prefix('ajax')->group(static function() {
 	Route::patch('/exhibit/{exhibit_id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])
 		->name('exhibit.set_metadata');
 	
-	// Request: FreeTextForm
-	// Response: { form: FreeTextForm, indices: Record<int, int> }
+	// siehe freetexts.d.ts
 	Route::post('/exhibit/{exhibit_id}/free_text', [ExhibitAJAXController::class, 'create_free_text'])
 		->name('exhibit.free_text.create');
 	
-	// Request: FreeTextForm
-	// Response: FreeTextForm
-	Route::put('/exhibit/{exhibit_id}/free_text', [ExhibitAJAXController::class, 'update_free_text'])
+	Route::put('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'update_free_text'])
 		->name('exhibit.free_text.update');
 	
-	// Request: <empty>
-	// Response: Record<int, int>
 	Route::delete('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'delete_free_text'])
 		->name('exhibit.free_text.delete');
 	
-	// Request: int
-	// Response: Record<int, int>
 	Route::patch('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'move_free_text'])
 		->name('exhibit.free_text.move');
 });

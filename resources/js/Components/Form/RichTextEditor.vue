@@ -1,24 +1,26 @@
 <script setup lang="ts">
 // https://github.com/primefaces/primevue/issues/5606#issuecomment-2198442124
+import { ISingleValueForm, SingleValueForm } from "@/form/singlevalueform";
 import Editor from "primevue/editor";
 import Quill from "quill";
 
 const props = defineProps<{
-	modelValue: string
+	modelValue: ISingleValueForm<string>
 }>();
 
 const emit = defineEmits<{
-	'update:modelValue': [string]
+	'update:modelValue': [ISingleValueForm<string>]
 }>();
 
 function onLoad(params: { instance: Quill }) {
 	params.instance.setContents(params.instance.clipboard.convert({
-		html: props.modelValue
-	}))
+		html: props.modelValue.val
+	}));
 }
 
 function onChange(v: string) {
-	emit('update:modelValue', v);
+	props.modelValue.val = v;
+	emit('update:modelValue', props.modelValue);
 }
 </script>
 

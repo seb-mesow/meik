@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-	errors: string[];
+	errors: readonly string[];
 }>();
 </script>
 
