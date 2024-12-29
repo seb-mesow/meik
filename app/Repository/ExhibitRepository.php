@@ -5,7 +5,7 @@ namespace App\Repository;
 
 use App\Models\Exhibit;
 use App\Models\FreeText;
-use App\Repository\Traits\RepositoryTrait;
+use App\Repository\Traits\IntIdRepositoryTrait;
 use PHPOnCouch\CouchClient;
 use Exception;
 use JMS\Serializer\Serializer;
@@ -39,7 +39,7 @@ use stdClass;
  */
 final class ExhibitRepository 
 {
-	use RepositoryTrait;
+	use IntIdRepositoryTrait;
 	
 	private const MODEL_TYPE_ID = "exhibit";
 	

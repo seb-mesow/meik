@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Repository\Traits;
 
 use App\Models\Interfaces\IntIdentifiable;
-use App\Models\Interfaces\MainModel;
 use App\Models\Interfaces\Revisionable;
 use PHPOnCouch\CouchClient;
 use stdClass;
@@ -19,7 +18,7 @@ use stdClass;
  *     _rev?: string,
  * }
  */
-trait RepositoryTrait
+trait IntIdRepositoryTrait
 {
 	protected const string ID_PREFIX = self::MODEL_TYPE_ID . ':';
 	protected const string META_DOC_ID = 'meta:' . self::MODEL_TYPE_ID;
