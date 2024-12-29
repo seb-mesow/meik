@@ -26,14 +26,14 @@ Das Attribut "id" ist bspw. vom Datentyp `string`.
 		- Konkretisierung je nach Model möglich
 	- Das Attribut `rev` des übergebenen Models muss noch `null` sein.
 	- gibt das gleiche Model zurück, aber das Attribut `rev` ist auf die Revisions-ID gesetzt.
-- `public function update(Exhibit $exhibit): Exhibit`
+- `public function update(Exhibit $exhibit): void`
 	- ändert ein bestehendes Model
 	- Der primäre Schlüssel des übergebenen Models muss gesetzt sein.
 	- Das Attribut `rev` des übergebenen Models muss mit der _bisherigen_ Revisions-ID gesetzt sein.
-	- gibt das gleiche Model zurück, aber das Attribut `rev` ist mit der _neuen_ Revisions-ID gesetzt
+	- setzt die Revisions-ID des Models auf die _neue_ Revisions-ID.
 	- wenn Model nicht in DB gefunden: wirft eine passende Exception
 	- wenn Revisions-ID nicht mehr aktuell: wirft eine passende Exception
-- `public function remove(Exhibit $exhibit)`
+- `public function remove(Exhibit $exhibit): void`
 	- löscht ein bestehendes Model
 	- Der primäre Schlüssel des übergebenen Models muss gesetzt sein.
 	- Das Attribut `rev` des übergebenen Models muss mit der Revisions-ID gesetzt sein.

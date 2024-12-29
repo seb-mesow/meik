@@ -14,9 +14,12 @@
 
 Mehr als Orientierung gesehen, keine strikte Festlegung
 
-Query-Parameter sind verboten. (Stichwort: Clean URL)<br>
+Query-Parameter sind weitestgehend verboten. (Stichwort: Clean URL)<br>
 Stattdessen die Parameter vorzugsweise im Body angeben;
 alternativ als Teil der URL.
+Query-Parameter sind nur bei AJAX-GET-Routen erlaubt,
+da mit der GET-Methode kein Body mit gesendet werden soll
+und bei Web-Routen eben vermieden werden sollen.
 
 Die Namen von Controller-Funktionen sollen sich an CRUD orientieren
 und NICHT die HTTP-Methoden beinhalten.
