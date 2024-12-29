@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Interfaces\Identifiable;
-use App\Models\Traits\IdentifiableTrait;
+use App\Models\Interfaces\IntIdentifiable;
+use App\Models\Traits\IntIdentifiableTrait;
 
-class FreeText implements Identifiable
+class FreeText implements IntIdentifiable
 {
-	use IdentifiableTrait;
+	use IntIdentifiableTrait;
 	
 	/** @Accessor(getter="get_heading") */
 	private string $heading;

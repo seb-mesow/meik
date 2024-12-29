@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Models\Interfaces\Identifiable;
+use App\Models\Interfaces\IntIdentifiable;
 use App\Models\Interfaces\MainModel;
 use App\Models\Interfaces\Revisionable;
 use PHPOnCouch\CouchClient;
@@ -28,11 +28,11 @@ trait RepositoryTrait
 	private readonly stdClass $meta_doc;
 	
 	/**
-	 * @param Identifiable&Revisionable $main_model
+	 * @param IntIdentifiable&Revisionable $main_model
 	 * @param MainModelMetaDoc $main_model_meta_doc
 	 * @return StubMainModelDoc
 	 */
-	protected function create_stub_doc_from_model(Identifiable&Revisionable $model, ?stdClass $main_model_meta_doc = null): stdClass {
+	protected function create_stub_doc_from_model(IntIdentifiable&Revisionable $model, ?stdClass $main_model_meta_doc = null): stdClass {
 		$stub_main_model_doc = new stdClass();
 		$stub_main_model_doc->_id = 
 			self::ID_PREFIX . ($model->get_nullable_id() ?? $this->determinate_next_available_model_id());
