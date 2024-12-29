@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import SimpleInputField from '@/Components/Form/SimpleInputField.vue';
-import FreeTextField from '@/Components/Exhibit/FreeTextField.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { create_request_data, type IForm } from '@/util/form';
 import axios from 'axios';
 import Button from 'primevue/button';
 import { ref } from 'vue';
 import FreeTextFields from '@/Components/Exhibit/FreeTextFields.vue';
-import { IExhibitForm} from '@/types/meik/models';
+import { IExhibitForm } from '@/types/meik/models';
 import Breadcrumb from 'primevue/breadcrumb';
 import { IExhibitInitPageProps } from '@/types/page_props/exhibit';
+import InputField from '@/Components/Form/InputField.vue';
 // versch. Interface für typsicheres Programmieren
 
 // Argumente an die Seite (siehe Controller)
@@ -106,9 +105,9 @@ async function save_metadata(event: SubmitEvent) {
 		</template>
 
 		<Form :action="route('exhibit.create')" method="post">
-			<SimpleInputField :form="form.val.inventory_number" label="Inventarnummer" />
-			<SimpleInputField :form="form.val.name" label="Bezeichnung" />
-			<SimpleInputField :form="form.val.manufacturer" label="Hersteller" />
+			<InputField :form="form.val.inventory_number" label="Inventarnummer" />
+			<InputField :form="form.val.name" label="Bezeichnung" />
+			<InputField :form="form.val.manufacturer" label="Hersteller" />
 			<Button v-if="is_new"
 				:loading="button_save_metadata_is_loading" 
 				type='submit'
