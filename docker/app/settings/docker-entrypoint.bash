@@ -27,9 +27,9 @@ find bootstrap/cache -type d -exec chmod u=rwx,g=rwxs,o= {} \;
 find storage         -type f -exec chmod u=rw,g=rw,o= {} \;
 find bootstrap/cache -type f -exec chmod u=rw,g=rw,o= {} \;
 
-chown www-data:www-data .env;
+chown www-data:www-data /var/www/.env;
 # auch lesbar für init-Routine des DB-Containers.
 # auch bearbeitbar für User normal, der in der Gruppe www-data
-chmod 664 .env;
+chmod u=rw,g=rw,o= /var/www/.env;
 
 exec gosu www-data "$@";
