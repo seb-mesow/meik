@@ -28,11 +28,7 @@ return new class extends Migration
 		END;
 	}
 	
-	/**
-	 * Run the migrations.
-	 */
-	public function up(): void
-	{
+	public function up(): void {
 		try {
 			$design_doc = $this->client->getDoc(self::DESIGN_DOC_ID);
 		} catch (CouchNotFoundException $e) {
@@ -46,11 +42,7 @@ return new class extends Migration
 		$this->client->storeDoc($design_doc);
 	}
 
-	/**
-	 * Reverse the migrations.
-	 */
-	public function down(): void
-	{
+	public function down(): void {
 		try {
 			$design_doc = $this->client->getDoc(self::DESIGN_DOC_ID);
 		} catch (CouchNotFoundException $e) {

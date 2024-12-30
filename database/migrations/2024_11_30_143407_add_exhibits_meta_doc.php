@@ -16,22 +16,15 @@ return new class extends Migration
 		$this->client = App::make(CouchClient::class);
 	}
 	
-	/**
-	 * Run the migrations.
-	 */
-	public function up(): void
-	{
+	public function up(): void {
 		$meta_doc = new stdClass();
 		$meta_doc->_id = self::META_DOC_ID;
+		
 		$meta_doc->next_id = 0;
 		$this->client->storeDoc($meta_doc);
 	}
 
-	/**
-	 * Reverse the migrations.
-	 */
-	public function down(): void
-	{
+	public function down(): void {
 		$meta_doc = new stdClass();
 		$meta_doc->_id = self::META_DOC_ID;
 		$this->client->deleteDoc($meta_doc);

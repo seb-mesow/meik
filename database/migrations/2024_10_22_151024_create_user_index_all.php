@@ -28,11 +28,7 @@ return new class extends Migration
 		END;
 	}
 	
-	/**
-	 * Run the migrations.
-	 */
-	public function up(): void
-	{
+	public function up(): void {
 		try {
 			$design_doc = $this->client->getDoc(self::DESIGN_DOC_ID);
 		} catch (CouchNotFoundException $e) {
@@ -44,21 +40,21 @@ return new class extends Migration
 			'map' => $this->map_function
 		];
 		$this->client->storeDoc($design_doc);
-    }
+	}
 
-	/**
-	 * Reverse the migrations.
-	 */
-	public function down(): void
-	{
+	public function down(): void {
 		try {
 			$design_doc = $this->client->getDoc(self::DESIGN_DOC_ID);
 		} catch (CouchNotFoundException $e) {
 			return;
 		}
 		$views = $design_doc->views;
-		unset($view[self::VIEW]);
-		$design_doc->views = $views;
-		$this->client->storeDoc($design_doc);
+		unset($views[self::VIEW]);
+		if (count($views) < 1) {
+			$this->client->deleteDoc($design_doc);
+		} else {	
+			$design_doc->views = $views;
+			$this->client->storeDoc($design_doc);
+		}
 	}
 };
