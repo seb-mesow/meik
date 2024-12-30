@@ -20,17 +20,17 @@ Das Attribut "id" ist bspw. vom Datentyp `string`.
 	- wenn nicht existiert: eine passende Exception werfen
 - `public function get_all(): array`
 	- gibt einen Array von allen Models zurück
-- `public function insert(Exhibit $exhibit): Exhibit`
+- `public function insert(Exhibit $exhibit): void`
 	- speichert ein neues Model
-	- Der primäre Schlüssel des übergebenen Models kann oder kann nicht gesetzt sein.
-		- Konkretisierung je nach Model möglich
+	- Der primäre Schlüssel des übergebenen Models muss noch null sein.
 	- Das Attribut `rev` des übergebenen Models muss noch `null` sein.
-	- gibt das gleiche Model zurück, aber das Attribut `rev` ist auf die Revisions-ID gesetzt.
+	- setzt als _Nebeneffekt_ die ID des Models auf eine neu generierte ID
+	- setzt als _Nebeneffekt_ die Revisions-ID des Models auf die vergebene Revisions-ID
 - `public function update(Exhibit $exhibit): void`
 	- ändert ein bestehendes Model
 	- Der primäre Schlüssel des übergebenen Models muss gesetzt sein.
 	- Das Attribut `rev` des übergebenen Models muss mit der _bisherigen_ Revisions-ID gesetzt sein.
-	- setzt die Revisions-ID des Models auf die _neue_ Revisions-ID.
+	- setzt als _Nebeneffekt_ die Revisions-ID des Models auf die _neue_ Revisions-ID.
 	- wenn Model nicht in DB gefunden: wirft eine passende Exception
 	- wenn Revisions-ID nicht mehr aktuell: wirft eine passende Exception
 - `public function remove(Exhibit $exhibit): void`
