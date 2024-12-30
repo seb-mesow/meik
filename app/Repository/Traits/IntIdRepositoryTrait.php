@@ -13,6 +13,8 @@ use stdClass;
  *     next_id: int
  * }
  * 
+ * Die _id wird bei neuen Docs sofort gesetzt.
+ * Die _rev fehlt bei neuen Models erstmal.
  * @phpstan-type StubMainModelDoc object{
  *     _id: string,
  *     _rev?: string,
@@ -27,18 +29,35 @@ trait IntIdRepositoryTrait
 	private readonly stdClass $meta_doc;
 	
 	/**
+	 * setzt als Nebeneffekt bei neuen Models die ID
+	 * 
 	 * @param IntIdentifiable&Revisionable $main_model
-	 * @param MainModelMetaDoc $main_model_meta_doc
 	 * @return StubMainModelDoc
 	 */
-	protected function create_stub_doc_from_model(IntIdentifiable&Revisionable $model, ?stdClass $main_model_meta_doc = null): stdClass {
+	protected function create_stub_doc_from_model(IntIdentifiable&Revisionable $model): stdClass {
 		$stub_main_model_doc = new stdClass();
-		$stub_main_model_doc->_id = 
-			self::ID_PREFIX . ($model->get_nullable_id() ?? $this->determinate_next_available_model_id());
+		if (is_null($model->get_nullable_id())) {
+			$model->set_id($this->determinate_next_available_model_id());
+		}
+		$stub_main_model_doc->_id = $this->determinate_doc_id_from_model($model);
 		if ($rev = $model->get_nullable_rev()) {
 			$stub_main_model_doc->_rev = $rev;
 		}
 		return $stub_main_model_doc;
+	}
+	
+	/**
+	 * für `delete()`-Funktion
+	 */
+	private function determinate_doc_id_from_model(IntIdentifiable $model): string {
+		return $this->determinate_doc_id_from_model_id($model->get_id());
+	}
+	
+	/**
+	 * für `get()`-Funktion
+	 */
+	private function determinate_doc_id_from_model_id(int $model_id): string {
+		return self::ID_PREFIX . ((string) $model_id);
 	}
 	
 	/**

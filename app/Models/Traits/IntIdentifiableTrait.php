@@ -7,7 +7,7 @@ use RuntimeException;
 
 trait IntIdentifiableTrait
 {
-	private readonly ?int $id;
+	private ?int $id;
 	
 	public function get_nullable_id(): ?int {
 		if (is_null($this->id) || (is_int($this->id) && ($this->id >= 0))) {
@@ -21,5 +21,17 @@ trait IntIdentifiableTrait
 			return $this->id;
 		};
 		throw new RuntimeException("Malformed integer ID");
+	}
+	
+	public function set_id(int $id): void {
+		if ($id < 0) {
+			throw new RuntimeException("Malformed new integer ID");
+		}
+		if ($this->id !== $id) {
+			if (is_int($this->id)) {
+				throw new RuntimeException("Cannot reassign integer ID");
+			}
+			$this->id = $id;
+		}
 	}
 }
