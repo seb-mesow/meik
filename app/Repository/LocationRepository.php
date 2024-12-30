@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\Location;
+use App\Repository\Traits\StringIdRepositoryTrait;
+use App\Util\StringIdGenerator;
 use PHPOnCouch\CouchClient;
 use App\Models\User;
 use Exception;
@@ -13,137 +15,141 @@ use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use PHPOnCouch\Exceptions\CouchException;
+use PHPOnCouch\Exceptions\CouchNotFoundException;
 use stdClass;
 
+/**
+ * Die _id wird bei neuen Docs sofort gesetzt.
+ * @phpstan-type LocationDoc object{
+ *     _id: string,
+ *     _rev?: string,
+ *     name: string,
+ *     is_public: bool
+ * }
+ */
 final class LocationRepository
 {
+	use StringIdRepositoryTrait;
+	
+	public const string MODEL_TYPE_ID = 'location';
+	
+	private Serializer $serializer;
 
-    private const ID_PREFIX = "location:";
-    private Serializer $serializer;
+	public function __construct(
+		CouchClient $client,
+		StringIdGenerator $string_id_generator,
+		Serializer $serializer,
+	) {
+		$this->client = $client;
+		$this->string_id_generator = $string_id_generator;
+		$this->serializer = $serializer;
+	}
 
-    public function __construct(
-        private readonly CouchClient $client
-    ) {
-        $this->serializer = SerializerBuilder::create()->build();
-    }
+	public function get_count(): int
+	{
+		// TODO effizienter machen
+		$locations = $this->client->find([
+			'_id' => ['$beginsWith' => self::MODEL_TYPE_ID],
+		]);
+		return count($locations->docs);
+	}
 
+	/**
+	 * @return array{
+	 *     locations: Location[],
+	 *     total_count: int
+	 * }
+	 */
+	public function get_paginated(int $page_number, int $count_per_page): array {
+		$response = $this->client
+			->limit($count_per_page)
+			->skip($page_number * $count_per_page)
+			->include_docs(true)
+			->getView(self::MODEL_TYPE_ID, 'all');
+		$_this = $this;
+		$locations = array_map(static function(stdClass $row) use ($_this): Location {
+			return $_this->create_location_from_doc($row->doc);
+		}, $response->rows);
+		return [
+			'locations' => $locations,
+			'total_count' => $response->total_rows,
+		];
+	}
+	
+	public function find(string $id): ?Location {
+		try {
+			return $this->get($id);
+		} catch (CouchNotFoundException $e) {
+			return null;
+		}
+	}
+	
+	public function get(string $id): Location {
+		$doc_id = $this->determinate_doc_id_from_model_id($id);
+		$location_doc = $this->client->getDoc($doc_id);
+		return $this->create_location_from_doc($location_doc);
+	}
+	
+	public function insert(Location $location): void {
+		assert(!$location->get_nullable_id());
+		assert(!$location->get_nullable_rev());	
+		$doc = $this->create_doc_from_location($location);
+		$response = $this->client->storeDoc($doc);
+		$location->set_rev($response->rev);
+	}
+	
+	public function update(Location $location): void {
+		assert($location->get_id());
+		assert($location->get_rev());
+		$doc = $this->create_doc_from_location($location);
+		$response = $this->client->storeDoc($doc);
+		$location->set_rev($response->rev);
+	}
+	
+	public function remove(Location $location): void {
+		assert($location->get_id());
+		assert($location->get_rev());
+		$delete_doc = $this->create_stub_doc_from_model($location);
+		$this->client->deleteDoc($delete_doc);
+	}
+	
+	public function remove_by_id(string $location_id): void {
+		$doc_id = $this->determinate_doc_id_from_model_id($location_id);
+		$doc = $this->client->getDoc($doc_id); // retrieves _rev
+		$this->client->deleteDoc($doc);
+	}
 
-    /**
-     * @var string $id
-     * @return array<Location>
-     */
-    public function get_locations_count(): int
-    {
-        $locations = $this->client->find([
-            '_id' => ['$beginsWith' => self::ID_PREFIX],
-        ]);
-        return count($locations->docs);
-    }
+	/**
+	 * @param LocationDoc $location_doc
+	 */
+	private function create_location_from_doc(stdClass $location_doc): Location {
+		return new Location(
+			name: $location_doc->name,
+			is_public: $location_doc->is_public,
+			id: $this->determinate_model_id_from_doc($location_doc),
+			rev: $location_doc->_rev,
+		);
+	}
 
-    /**
-     * @var string $id
-     * @return array<Location>
-     */
-    public function get_locations_paginated(int $page = 0, int $page_size = 10,): array
-    {
-        $locations = $this->client->limit($page_size)->skip($page * $page_size)->find([
-            '_id' => ['$beginsWith' => self::ID_PREFIX],
-        ])->docs;
-        return $this->locationsFromArray($locations);
-    }
+	/**
+	 * @param LocationDoc[] $location_docs
+	 * @return Location[]
+	 */
+	private function create_locations_from_docs(array $location_docs): array {
+		$_this = $this;
+		return array_map(static function(stdClass $location_doc) use ($_this): Location {
+			return $_this->create_location_from_doc($location_doc);
+		}, $location_docs);
+	}
 
-    /**
-     * @var string $id
-     * @return Location|null
-     */
-    public function get_location(string $id): mixed
-    {
-        try {
-            return $this->locationFromObject($this->client->getDoc($id));
-        } catch (CouchException $ex) {
-            return null;
-        }
-    }
-
-    /**
-     * @return Location
-     */
-    public function create(
-        Location $location
-    ): Location {
-        $doc = $this->client->storeDoc($this->objectFromLocation($location));
-        $doc = $this->client->getDoc($location->get__id());
-        return $this->locationFromObject($doc);
-    }
-
-    /**
-     * @return Location
-     */
-    public function update(
-        Location $location
-    ): Location {
-        try {
-            $doc = $this->client->getDoc($location->get__id());
-            $location->set__rev($doc->_rev);
-            $doc = $this->client->storeDoc($this->objectFromLocation($location));
-            $doc = $this->client->getDoc($location->get__id());
-            return $this->locationFromObject($doc);
-        } catch (Exception $e) {
-            echo "ERROR: " . $e->getMessage() . " (" . $e->getCode() . ")<br>\n";
-        }
-    }
-
-    /**
-     * @var string $id
-     * @return Location
-     */
-    public function delete(
-        string $id
-    ): void {
-        try {
-            $doc = $this->client->getDoc($id);
-        } catch (Exception $e) {
-            echo "ERROR: " . $e->getMessage() . " (" . $e->getCode() . ")<br>\n";
-        }
-        // permanently remove the document
-        try {
-            $this->client->deleteDoc($doc);
-        } catch (Exception $e) {
-            echo "ERROR: " . $e->getMessage() . " (" . $e->getCode() . ")<br>\n";
-        }
-    }
-
-    /**
-     * @var stdClass $object
-     * @return Location
-     */
-    public function locationFromObject($object): Location
-    {
-        return $this->serializer->deserialize(json_encode($object), Location::class, "json");
-    }
-
-    /**
-     * @var array<object> $array
-     * @return array<Location>
-     */
-    public function locationsFromArray($array): array
-    {
-        return $this->serializer->deserialize(json_encode($array), 'array<' . Location::class . '>', "json");
-    }
-
-    /**
-     * @var Location $location
-     * @return stdClass
-     */
-    public function objectFromLocation(Location $location): stdClass
-    {
-        $object = (new stdClass());
-        $object->_id = $location->get__id();
-        if ($location->get__rev()) {
-            $object->_rev = $location->get__rev();
-        }
-        $object->name = $location->get_name();
-        $object->is_public = $location->get_is_public();
-        return $object;
-    }
+	/**
+	 * @return LocationDoc
+	 */
+	private function create_doc_from_location(Location $location): stdClass {
+		/** @var LocationDoc */
+		$location_doc = $this->create_stub_doc_from_model($location);
+		$location_doc->name = $location->get_name();
+		$location_doc->is_public = $location->get_is_public();
+		return $location_doc;
+	}
 }
