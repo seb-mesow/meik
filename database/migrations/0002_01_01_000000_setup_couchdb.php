@@ -55,9 +55,6 @@ return new class extends Migration
 		return env('COUCHDB_PASSWORD');
 	}
 	
-	/**
-	 * Run the migrations.
-	 */
 	public function up(): void {
 		$this->delete_all_users();
 		$this->delete_database_if_exists();
@@ -103,9 +100,6 @@ return new class extends Migration
 		$this->admin->addDatabaseMemberUser($this->get_username());
 	}
 	
-	/**
-	 * Reverse the migrations.
-	 */
 	public function down(): void {
 		$this->delete_database_if_exists();
 	}

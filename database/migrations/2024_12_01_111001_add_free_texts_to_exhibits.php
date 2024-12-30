@@ -16,11 +16,7 @@ return new class extends Migration
 		$this->id_prefix = "exhibit:";
 	}
 	
-	/**
-	 * Run the migrations.
-	 */
-	public function up(): void
-	{
+	public function up(): void {
 		$meta_doc = $this->client->getDoc(self::META_DOC_ID);
 		$free_text_meta_doc = new stdClass;
 		$free_text_meta_doc->next_id = 0;
@@ -36,11 +32,7 @@ return new class extends Migration
 		}
 	}
 
-	/**
-	 * Reverse the migrations.
-	 */
-	public function down(): void
-	{
+	public function down(): void {
 		$exhibit_docs = $this->client->find([
 			'_id' => ['$beginsWith' => $this->id_prefix],
 		]);
