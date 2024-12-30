@@ -13,23 +13,20 @@ Route::prefix('ajax')->group(static function() {
 		->name('ajax.user.set_admin');
 
 	# --- Locations / Standorte ---
-	Route::post('/locations', [LocationAJAXController::class, 'post_location'])
-		->name('ajax.location.post_location');
+	Route::get('/locations', [LocationAJAXController::class, 'get_paginated'])
+		->name('ajax.location.get_paginated');
 	
-	Route::put('/locations', [LocationAJAXController::class, 'put_location'])
-		->name('ajax.location.put_location');
+	Route::post('/location', [LocationAJAXController::class, 'create'])
+		->name('ajax.location.create');
 	
-	Route::delete('/locations/{id}', [LocationAJAXController::class, 'delete_location'])
-		->name('ajax.location.delete_location');
+	Route::put('/location/{location_id}', [LocationAJAXController::class, 'update'])
+		->name('ajax.location.update');
 	
-	Route::patch('/locations', [LocationAJAXController::class, 'patch_location'])
-		->name('ajax.location.patch_location');
+	Route::patch('/location/{location_id}', [LocationAJAXController::class, 'change'])
+		->name('ajax.location.change');
 
-	Route::get('locations', [LocationAJAXController::class, 'get_locations_paginated'])
-		->name('ajax.location.get_locations_paginated');
-	
-	Route::post('/locations', [LocationAJAXController::class, 'post_location'])
-		->name('ajax.location.post_location');
+	Route::delete('/location/{location_id}', [LocationAJAXController::class, 'delete'])
+		->name('ajax.location.delete');
 	
 	# --- Plätze / Places ---
 	Route::put('/places', [PlaceAJAXController::class, 'put_place'])
