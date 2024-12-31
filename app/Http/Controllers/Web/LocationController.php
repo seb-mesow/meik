@@ -36,8 +36,10 @@ class LocationController extends Controller
 		] , $locations);
 		
 		return Inertia::render('Locations/Locations', [
-			'locations' => $locations_json,
-			'total_count' => $total_count
+			'init_props' => [
+				'locations' => $locations_json,
+				'total_count' => $total_count
+			]
 		]);
 	}
 }

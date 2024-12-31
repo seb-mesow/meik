@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import DataTable, { DataTablePageEvent, DataTableRowEditSaveEvent } from 'primevue/datatable';
+import DataTable, {
+	DataTablePageEvent,
+	DataTableRowEditCancelEvent,
+	DataTableRowEditInitEvent,
+	DataTableRowEditSaveEvent
+} from 'primevue/datatable';
 import Column from 'primevue/column';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Ref, ref, watch } from 'vue';
@@ -22,23 +27,23 @@ import {
 	IGetLocationsPaginatedQueryParams, 
 	IUpdateLocationRequestData
 } from '@/types/ajax/location';
+import { ILocationInitPageProps, ILocationsInitPageProps } from '@/types/page_props/location';
 
-interface Location {
+interface ILocationForm {
 	id?: string;
-	name?: string;
-	is_public?: boolean;
-	invalid?: boolean;
+	name: string;
+	is_public: boolean;
+	delete_button_enabled: boolean; // funktioniert auch ohne explizite Reactivity
 }
 
 const props = defineProps<{
-	locations: Location[],
-	total_count: number,
+	init_props: ILocationsInitPageProps
 }>()
 
 let page_number = 0;
-let count_per_page = props.locations.length;
-const rows: Ref<Location[]> = ref(props.locations);
-const total_count: Ref<number> = ref(props.total_count);
+let count_per_page = props.init_props.locations.length;
+const rows: Ref<ILocationForm[]> = ref(new_forms_from_props(props.init_props.locations));
+const total_count: Ref<number> = ref(props.init_props.total_count);
 // console.log(`rows.length == ${rows.value.length}`);
 // console.log(`total_count == ${total_count.value}`);
 // watch(rows, (new_rows) => {
@@ -67,33 +72,99 @@ const columns = ref([
 	{ field: 'is_public', header: 'Öffentlich' },
 ]);
 
-const editingRows: Ref<Location[]> = ref([]);
+const editing_rows: Ref<ILocationForm[]> = ref([]);
+// watch(editing_rows, (new_editing_rows) => {
+// 	console.log(`editing_rows.length == ${new_editing_rows.length}`);
+// });
+
+function new_forms_from_props(locations_init_props: ILocationInitPageProps[]): ILocationForm[] {
+	return locations_init_props.map((location: ILocationInitPageProps): ILocationForm => {
+		return {
+			id: location.id,
+			name: location.name,
+			is_public: location.is_public,
+			delete_button_enabled: true,
+		}
+	});
+}
+
+function prepend_form() {
+	create_button_enabled.value = false;
+	const newRow: ILocationForm = {
+		name: '',
+		is_public: false,
+		delete_button_enabled: false,
+	};
+	editing_rows.value.unshift(newRow);
+	rows.value.unshift(newRow);
+}
+
+async function on_row_edit_init(event: DataTableRowEditInitEvent) {
+	console.log('on_row_edit_init');
+	create_button_enabled.value = false;
+	event.data.delete_button_enabled = false;
+	// Die zu bearbeitende Zeile wird automatisch zu editing_rows hinzugefügt.
+}
 
 async function on_row_edit_save(event: DataTableRowEditSaveEvent) {
+	console.log('on_row_edit_save');
 	let { data, newData } = event;
-
+	// data ist direkt das Objekt in der rows-Property oder ein Proxy darauf.
+	// newData ist wahrscheinlich das Objekt in der editingRows-Property oder ein Proxy darauf
+	// und beim Updaten eine Kopie des Objektes in der rows-Property.
+	
+	console.log("event ==");
+	console.log(event);
+	
+	// Die bearbeitete Zeile wird automatisch aus editing_rows entfernt;
+	
 	if (!newData.name) {
-		editingRows.value.push(data);
 		toast.add({ severity: 'error', summary: 'Name notwendig', detail: 'Das Feld "Name" darf nicht leer sein', life: 3000 });
+		
+		editing_rows.value.unshift(data);
+		// Es muss das IDENTISCHE Zeilen-Objekt in editing_rows erhalten blieben
+		// (newData ist ein Kopie und damit zwar gleich aber nicht identisch.)
 		return;
 	}
 
 	if (newData.id) {
-		await ajax_update({ id: newData.id, name: newData.name, is_public: newData.is_public });
+		await ajax_update({
+			id: newData.id,
+			name: newData.name,
+			is_public: newData.is_public
+		});
 	} else {
-		data.id = await ajax_create({ name: newData.name, is_public: newData.is_public });
-		data.name = newData.name;
-		data.is_public = newData.is_public;
+		newData.id = await ajax_create({
+			name: newData.name,
+			is_public: newData.is_public
+		});
 	}
+	// Werte der Zeile im Objekt rows setzen:
+	data.id = newData.id;
+	data.name = newData.name;
+	data.is_public = newData.is_public;
+	data.delete_button_enabled = true;
 	// Die Rows sollen bewusst nicht geupdated werden:
 	// Alle vorher angezeigten Zeilen und die neue Zeile sollen zunächst erstmal bleiben.
 	create_button_enabled.value = true;
+	console.log("Ende");
 };
+
+async function on_row_edit_cancel(event: DataTableRowEditCancelEvent) {
+	console.log('on_row_edit_cancel');
+	let { data, newData } = event;
+	if (newData.id) {
+		data.delete_button_enabled = true;
+	} else { // war create
+		rows.value.shift();
+	}
+	create_button_enabled.value = true;
+}
 
 function delete_confirm(event: any, location: any) {
 	confirm.require({
 		target: event.currentTarget,
-		message: 'Sind Sie sicher das Sie den Standort löschen wollen? Untergeordnete Plätze werden auch gelöscht.',
+		message: "Sind Sie sicher das Sie den Standort löschen wollen Untergeordnete Plätze werden auch gelöscht.",
 		icon: 'pi pi-exclamation-triangle',
 		rejectProps: {
 			label: 'Abbrechen',
@@ -179,8 +250,11 @@ async function on_page(event: DataTablePageEvent): Promise<void> {
 }
 
 async function update_rows(): Promise<void> {
-	const responses = await ajax_get_paginated({ page_number: page_number, count_per_page: count_per_page });
-	rows.value = responses.locations;
+	const responses = await ajax_get_paginated({
+		page_number: page_number,
+		count_per_page: count_per_page
+	});
+	rows.value = new_forms_from_props(responses.locations);
 	total_count.value = responses.total_count;
 }
 
@@ -196,14 +270,6 @@ async function ajax_get_paginated(params: IGetLocationsPaginatedQueryParams): Pr
 			return response.data;
 		}
 	);
-}
-
-function append_form() {
-	create_button_enabled.value = false;
-	const newRow: Location = { name: '', is_public: false };
-	rows.value.unshift(newRow);
-	editingRows.value.unshift(newRow);
-	total_count.value += 1;
 }
 </script>
 
@@ -224,25 +290,28 @@ function append_form() {
 		<ConfirmPopup></ConfirmPopup>
 		
 		<div class="fixed bottom-4 right-4">
-			<Button severity="info" :disabled="!create_button_enabled" icon="pi pi-plus" @click="append_form" />
+			<Button severity="info" :disabled="!create_button_enabled" icon="pi pi-plus" @click="prepend_form" />
 		</div>
 		
 		<Card>
 			<template #content>
 				<DataTable
-					:value="rows" 
+					:value="rows"
 					paginator
 					:totalRecords="total_count"
 					:rows="count_per_page"
 					:rowsPerPageOptions="[10, 20, 50]"
 					@page="on_page"
 					lazy
-				>
-					<!-- lazy
-					@data="on_page"
+					v-model:editingRows="editing_rows"
 					editMode="row"
-					v-model:editingRows="editingRows" 
-					@row-edit-save="on_row_edit_save($event)" -->
+					@row-edit-init="on_row_edit_init"
+					@row-edit-save="on_row_edit_save"
+					@row-edit-cancel="on_row_edit_cancel"
+				>
+					<!--
+					@data="on_page"
+					-->
 					<!-- TODO @data eventuell raus -->
 					<Column field="name" header="Name" style="width: 25%">
 						<template #body="{ data, field }">
@@ -272,7 +341,8 @@ function append_form() {
 					<Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
 					<Column style="width: 10%; min-width: 8rem">
 						<template #body="{ data }">
-							<Button 
+							<Button
+								:disabled="!data.delete_button_enabled"
 								class="border-none" icon="pi pi-trash" outlined rounded severity="danger"
 								@click="delete_confirm($event, data)"
 							/>
