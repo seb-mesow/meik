@@ -10,6 +10,8 @@ use Illuminate\Database\Seeder;
 
 class LocationSeeder extends Seeder
 {
+	private const int COUNT = 100;
+	
 	public function __construct(
 		private readonly LocationRepository $location_repository
 	) {}
@@ -17,21 +19,30 @@ class LocationSeeder extends Seeder
 	/**
 	 * Run the database seeds.
 	 */
-	public function run(): void
-	{
-		$this->create_location((new Location())
-			->set__id("location:Keller 0851733426576496")
-			->set_name("Keller 085")
-			->set_is_public(true)
-		);
-		$this->create_location((new Location())
-			->set__id("location:Raum 6281733426554903")
-			->set_name("Raum 628")
-			->set_is_public(false)
-		);
+	public function run(): void {
+		$this->create_location(new Location(
+			name: "Keller 085",
+			is_public: true,
+		));
+		$this->create_location(new Location(
+			name: "Raum 628",
+			is_public: false
+		));
+		
+		$is_public = false;
+		for ($i = 0; $i < self::COUNT; $i++) {
+			$this->create_location(new Location(
+				name: "Standort $i",
+				is_public: $is_public,
+			));
+			$is_public = !$is_public;
+			if (($i % 10) === 0) {
+				sleep(1);
+			}
+		}
 	}
 	
-	private function create_location(Location $loc) {
-		$this->location_repository->create($loc);
+	private function create_location(Location $location): void {
+		$this->location_repository->insert($location);
 	}
 }

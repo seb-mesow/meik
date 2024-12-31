@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Interfaces\Identifiable;
+use App\Models\Interfaces\IntIdentifiable;
 use App\Models\Interfaces\Revisionable;
-use App\Models\Traits\IdentifiableTrait;
+use App\Models\Traits\IntIdentifiableTrait;
 use App\Models\Traits\RevisionableTrait;
 use DateTime;
 use OutOfBoundsException;
@@ -16,9 +16,9 @@ use RuntimeException;
 // use Illuminate\Foundation\Auth\User as Authenticatable;
 // use Illuminate\Notifications\Notifiable;
 
-class Exhibit implements Identifiable, Revisionable
+class Exhibit implements IntIdentifiable, Revisionable
 {
-	use IdentifiableTrait;
+	use IntIdentifiableTrait;
 	use RevisionableTrait;
 	
 	/** @Accessor(getter="get_inventor_number") */
