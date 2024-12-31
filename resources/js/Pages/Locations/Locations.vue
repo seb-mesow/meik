@@ -21,10 +21,10 @@ import Toast from 'primevue/toast';
 import Breadcrumb from 'primevue/breadcrumb';
 import {
 	ICreateLocation200ResponseData,
-	ICreateLocationRequestData, 
-	IDeleteLocationRequestData, 
+	ICreateLocationRequestData,
+	IDeleteLocationRequestData,
 	IGetLocationsPaginated200ResponseData,
-	IGetLocationsPaginatedQueryParams, 
+	IGetLocationsPaginatedQueryParams,
 	IUpdateLocationRequestData
 } from '@/types/ajax/location';
 import { ILocationInitPageProps, ILocationsInitPageProps } from '@/types/page_props/location';
@@ -161,10 +161,10 @@ async function on_row_edit_cancel(event: DataTableRowEditCancelEvent) {
 	create_button_enabled.value = true;
 }
 
-function delete_confirm(event: any, location: any) {
+function delete_confirm(event: any, location: ILocationForm) {
 	confirm.require({
 		target: event.currentTarget,
-		message: "Sind Sie sicher das Sie den Standort löschen wollen Untergeordnete Plätze werden auch gelöscht.",
+		message: "Sind Sie sicher das Sie den Standort löschen wollen? Untergeordnete Plätze werden auch gelöscht.",
 		icon: 'pi pi-exclamation-triangle',
 		rejectProps: {
 			label: 'Abbrechen',
@@ -175,7 +175,7 @@ function delete_confirm(event: any, location: any) {
 			label: 'Bestätigen'
 		},
 		accept: () => {
-			return accept_delete(location.id);
+			return accept_delete(location);
 		},
 		reject: () => {
 		}
@@ -200,11 +200,13 @@ async function ajax_update(params: { id: string, name: string, is_public: boolea
 	return axios.request(request_config);
 }
 
-async function accept_delete(id: string): Promise<void> {
-	total_count.value -= 1;
-
-	ajax_delete(id).then(
+async function accept_delete(location: ILocationForm): Promise<void> {
+	if (!location.id) {
+		throw new Error('accept_delete(): Missing id of location');
+	}
+	return ajax_delete(location.id).then(
 		() => {
+			rows.value = rows.value.filter((rows_location: ILocationForm): boolean => rows_location !== location);
 			toast.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Standort wurde erfolgreich gelöscht.', life: 3000 });
 		},
 		() => {
@@ -213,10 +215,10 @@ async function accept_delete(id: string): Promise<void> {
 	);
 }
 
-async function ajax_delete(id: string): Promise<void> {
+async function ajax_delete(location_id: string): Promise<void> {
 	const request_config: AxiosRequestConfig<IDeleteLocationRequestData> = {
 		method: "delete",
-		url: route('ajax.localtion.delete', { location_id: id })
+		url: route('ajax.location.delete', { location_id: location_id })
 	};
 	return axios.request(request_config);
 }
@@ -274,7 +276,8 @@ async function ajax_get_paginated(params: IGetLocationsPaginatedQueryParams): Pr
 </script>
 
 <template>
-	<Toast />
+	<Toast/>
+	<ConfirmPopup/>
 	<AuthenticatedLayout>
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
@@ -286,8 +289,6 @@ async function ajax_get_paginated(params: IGetLocationsPaginatedQueryParams): Pr
 				</template>
 			</Breadcrumb>
 		</template>
-		
-		<ConfirmPopup></ConfirmPopup>
 		
 		<div class="fixed bottom-4 right-4">
 			<Button severity="info" :disabled="!create_button_enabled" icon="pi pi-plus" @click="prepend_form" />
@@ -309,10 +310,6 @@ async function ajax_get_paginated(params: IGetLocationsPaginatedQueryParams): Pr
 					@row-edit-save="on_row_edit_save"
 					@row-edit-cancel="on_row_edit_cancel"
 				>
-					<!--
-					@data="on_page"
-					-->
-					<!-- TODO @data eventuell raus -->
 					<Column field="name" header="Name" style="width: 25%">
 						<template #body="{ data, field }">
 							<a v-if="data.id"
@@ -351,6 +348,5 @@ async function ajax_get_paginated(params: IGetLocationsPaginatedQueryParams): Pr
 				</DataTable>
 			</template>
 		</Card>
-		
 	</AuthenticatedLayout>
 </template>
