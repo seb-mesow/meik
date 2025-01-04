@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Util\StringIdGenerator;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use PHPOnCouch\CouchAdmin;
@@ -27,6 +28,7 @@ final class CouchClientProvider extends ServiceProvider
 				'password' => env('COUCHDB_ADMIN_PASSWORD'),
 			]);
 		});
+		$this->app->singleton(StringIdGenerator::class);
 	}
 
 	/**
