@@ -14,13 +14,9 @@ use JMS\Serializer\SerializerBuilder;
 
 class LocationAJAXController extends Controller
 {
-	private Serializer $serializer;
-
 	public function __construct(
 		private readonly LocationRepository $location_repository
-	) {
-		$this->serializer = SerializerBuilder::create()->build();
-	}
+	) {}
 
 	public function get_paginated(Request $request): JsonResponse {
 		$page_number = (int) $request->query('page_number');
