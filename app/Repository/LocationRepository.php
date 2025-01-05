@@ -32,17 +32,13 @@ final class LocationRepository
 	use StringIdRepositoryTrait;
 	
 	public const string MODEL_TYPE_ID = 'location';
-	
-	private Serializer $serializer;
 
 	public function __construct(
 		CouchClient $client,
 		StringIdGenerator $string_id_generator,
-		Serializer $serializer,
 	) {
 		$this->client = $client;
 		$this->string_id_generator = $string_id_generator;
-		$this->serializer = $serializer;
 	}
 
 	public function get_count(): int
