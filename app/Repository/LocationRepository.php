@@ -41,15 +41,6 @@ final class LocationRepository
 		$this->string_id_generator = $string_id_generator;
 	}
 
-	public function get_count(): int
-	{
-		// TODO effizienter machen
-		$locations = $this->client->find([
-			'_id' => ['$beginsWith' => self::MODEL_TYPE_ID],
-		]);
-		return count($locations->docs);
-	}
-
 	/**
 	 * @return array{
 	 *     locations: Location[],
