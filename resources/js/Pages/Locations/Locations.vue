@@ -21,12 +21,12 @@ const props = defineProps<{
 
 const home = ref({
 	icon: 'pi pi-home',
-	route: 'exhibit.overview'
+	url: route('exhibit.overview'),
 });
 const items = ref([
 	{
 		label: 'Standorte',
-		route: 'location.overview'
+		url: route('location.overview'),
 	},
 ]);
 
@@ -60,7 +60,7 @@ const form: Reactive<ILocationsForm> = reactive(new LocationsForm({
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
 				<template #item="{ item }">
-					<a class="cursor-pointer text-2xl" :href="route(item.route)">
+					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
 						<span v-else>{{ item.label }}</span>
 					</a>
