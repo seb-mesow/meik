@@ -11,16 +11,16 @@ const props = defineProps<{
 	exhibits: IExhibitForTile[]
 }>();
 
-const home = ref({
+const home = {
 	icon: 'pi pi-home',
-	route: 'exhibit.overview'
-});
-const items = ref([
+	url: route('exhibit.overview'),
+};
+const items = [
 	{
 		label: 'Exponate',
-		route: 'exhibit.overview'
+		url: route('exhibit.overview'),
 	}
-]);
+];
 </script>
 
 <template>
@@ -31,7 +31,7 @@ const items = ref([
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
 				<template #item="{ item }">
-					<a class="cursor-pointer text-2xl" :href="route(item.route)">
+					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
 						<span v-else>{{ item.label }}</span>
 					</a>
