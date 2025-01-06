@@ -33,16 +33,16 @@ const props = defineProps<{
 	users: PropUser[];
 }>();
 
-const home = ref({
+const home = {
 	icon: 'pi pi-home',
-	route: 'exhibit.overview'
-});
-const items = ref([
+	url: route('exhibit.overview'),
+};
+const items = [
 	{
 		label: 'Benutzerverwaltung',
-		route: 'user.overview'
+		url: route('user.overview'),
 	},
-]);
+];
 
 // (interne) Attribute der Komponente
 const ajax_confirmation_popup = ref<InstanceType<typeof AJAXConfirmationPopup>>();
@@ -86,7 +86,7 @@ async function toggle_admin_state(user: User, event: Event): Promise<void> {
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
 				<template #item="{ item }">
-					<a class="cursor-pointer text-2xl" :href="route(item.route)">
+					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
 						<span v-else>{{ item.label }}</span>
 					</a>

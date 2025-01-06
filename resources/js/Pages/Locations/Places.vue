@@ -19,11 +19,11 @@ const props = defineProps<{
 	init_props: IPlacesInitPageProps,
 }>()
 
-const home = ref({
+const home = {
 	icon: 'pi pi-home',
 	url: route('exhibit.overview'),
-});
-const items = ref([
+};
+const items = [
 	{
 		label: 'Standorte',
 		url: route('location.overview'),
@@ -32,7 +32,7 @@ const items = ref([
 		label: props.location_name,
 		url: route('place.overview', { location_id: props.init_props.location_id }),
 	},
-]);
+];
 
 const confirm_service = useConfirm();
 const toast_service = useToast();

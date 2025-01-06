@@ -17,19 +17,19 @@ const props = defineProps<{
 	init_props: IExhibitInitPageProps,
 }>();
 
-const home = ref({
+const home = {
 	icon: 'pi pi-home',
-	route: 'exhibit.overview'
-});
-const items = ref([
+	url: route('exhibit.overview'),
+};
+const items = [
 	{
 		label: 'Exponate',
-		route: 'exhibit.overview'
+		url: route('exhibit.overview'),
 	},
 	{
-		label: props?.name ?? 'Neues Exponat'
+		label: props?.name ?? 'Neues Exponat',
 	},
-]);
+];
 
 console.log("Exhibit.vue: props.init_props ==");
 console.log(props.init_props);
@@ -75,7 +75,7 @@ async function save_metadata(event: SubmitEvent) {
 			await axios.request({
 				method: 'patch',
 				url: route('ajax.exhibit.set_metadata', exhibit_id),
-				data: create_request_data(form)
+				data: create_request_data(form) // TODO sendet unnützerweise auch free_texts
 			});
 			console.log("AJAX Request erfolgreich");
 		} catch (e) {
@@ -93,13 +93,10 @@ async function save_metadata(event: SubmitEvent) {
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
 				<template #item="{ item }">
-					<a v-if="item.route" class="cursor-pointer text-2xl" :href="route(item.route)">
+					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
 						<span v-else>{{ item.label }}</span>
 					</a>
-					<span class="text-2xl" v-else>
-						{{ item.label }}
-					</span>
 				</template>
 			</Breadcrumb>
 		</template>
