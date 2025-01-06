@@ -19,9 +19,6 @@ const props = defineProps<{
 	init_props: ILocationsInitPageProps
 }>()
 
-const confirm_service = useConfirm();
-const toast_service = useToast();
-
 const home = ref({
 	icon: 'pi pi-home',
 	route: 'exhibit.overview'
@@ -32,6 +29,9 @@ const items = ref([
 		route: 'location.overview'
 	},
 ]);
+
+const confirm_service = useConfirm();
+const toast_service = useToast();
 
 const form: Reactive<ILocationsForm> = reactive(new LocationsForm({
 	locations: props.init_props.locations.map((_props: ILocationInitPageProps): ILocationFormConstructorArgs => {
@@ -92,7 +92,7 @@ const form: Reactive<ILocationsForm> = reactive(new LocationsForm({
 						<template #body="{ data }">
 							<a v-if="data.id"
 								class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-								:href="route('place.overview', { 'location': data._id })"
+								:href="data.get_place_overview_url_path()"
 							>
 								{{ data.name.val }}
 							</a>
@@ -126,5 +126,6 @@ const form: Reactive<ILocationsForm> = reactive(new LocationsForm({
 				</DataTable>
 			</template>
 		</Card>
+		
 	</AuthenticatedLayout>
 </template>

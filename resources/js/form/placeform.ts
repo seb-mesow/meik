@@ -1,51 +1,49 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
-	ICreateLocation200ResponseData,
-	ICreateLocationRequestData,
-	IDeleteLocation200ResponseData,
-	IUpdateLocationRequestData
-} from "@/types/ajax/location";
+	ICreatePlace200ResponseData,
+	ICreatePlaceRequestData,
+	IDeletePlace200ResponseData,
+	IUpdatePlaceRequestData
+} from "@/types/ajax/place";
 import { ToastServiceMethods } from "primevue/toastservice";
 import { ConfirmationServiceMethods } from "primevue/confirmationservice";
 import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
 
-export interface ILocationForm {
-	get_place_overview_url_path(): string;
+export interface IPlaceForm {
 	delete(event: any): void;
 	init_editing(): void;
-	try_save(new_form: LocationForm): void;
+	try_save(new_form: PlaceForm): void;
 	cancel_editing(): void;
 	readonly delete_button_enabled: boolean;
 };
 
 // um eine zirkuläre Abhängigkeit zu vermeiden:
-// locationform.ts (lower module) soll nichts von locationsform.ts (higher module) importieren
-export interface ILocationFormParent {
-	delete_form(location: LocationForm): void;
-	append_form_in_editing(location: LocationForm): void;
+// placeform.ts (lower module) soll nichts von placesform.ts (higher module) importieren
+export interface IPlaceFormParent {
+	delete_form(place: PlaceForm): void;
+	append_form_in_editing(place: PlaceForm): void;
+	readonly location_id: string;
 }
 
-export interface ILocationFormConstructorArgs {
+export interface IPlaceFormConstructorArgs {
 	id?: string,
 	name?: ISingleValueForm2ConstructorArgs<string>,
-	is_public?: ISingleValueForm2ConstructorArgs<boolean>,
 	delete_button_enabled?: boolean,
-	parent: ILocationFormParent,
+	parent: IPlaceFormParent,
 	toast_service: ToastServiceMethods,
 	confirm_service: ConfirmationServiceMethods,
 };
 
-export class LocationForm implements ILocationForm {
+export class PlaceForm implements IPlaceForm {
 	public id?: string;
 	public name: SingleValueForm2<string>;
-	public is_public: SingleValueForm2<boolean>;
 	public delete_button_enabled: boolean;
 	
-	private readonly parent: ILocationFormParent;
+	private readonly parent: IPlaceFormParent;
 	private readonly toast_service: ToastServiceMethods;
 	private readonly confirm_service: ConfirmationServiceMethods;
 	
-	public constructor(args: ILocationFormConstructorArgs) {
+	public constructor(args: IPlaceFormConstructorArgs) {
 		this.parent = args.parent;
 		this.toast_service = args.toast_service;
 		this.confirm_service = args.confirm_service;
@@ -54,13 +52,8 @@ export class LocationForm implements ILocationForm {
 			val: args.name?.val ?? '',
 			errs: args.name?.errs
 		};
-		const is_public_args: ISingleValueForm2ConstructorArgs<boolean> = {
-			val: args.is_public?.val ?? false,
-			errs: args.is_public?.errs
-		};
 		this.id = args.id;
 		this.name = new SingleValueForm2(name_args, 'name');
-		this.is_public = new SingleValueForm2(is_public_args, 'is_public');
 		this.delete_button_enabled = args.delete_button_enabled ?? true;
 	}
 	
@@ -69,15 +62,15 @@ export class LocationForm implements ILocationForm {
 	}
 
 	public init_editing(): void {
-		console.log('LocationForm::cancel_editing()');
+		console.log('PlaceForm::cancel_editing()');
 		console.log(`this.id === ${this.id}`);
 		console.log(`this.name.val === ${this.name.val}`);
 		this.delete_button_enabled = false;
 	}
 	
-	public async try_save(new_form: Pick<LocationForm, 'name'|'is_public'>): Promise<void> {
+	public async try_save(new_form: Pick<PlaceForm, 'name'>): Promise<void> {
 		return new Promise(async (resolve: () => void, reject: () => void) => {
-			console.log('LocationForm::on_row_edit_save()');
+			console.log('PlaceForm::on_row_edit_save()');
 			console.log(`this.name.val === ${this.name.val}`);
 			console.log(`this.name.val_in_editing === ${this.name.val_in_editing}`);
 			// this ist direkt das Objekt in der rows-Property oder ein Proxy darauf.
@@ -96,7 +89,6 @@ export class LocationForm implements ILocationForm {
 			
 			// Werte der Zeile im Objekt rows setzen:
 			this.name.commit();
-			this.is_public.commit();
 
 			await this.save();
 			
@@ -107,11 +99,12 @@ export class LocationForm implements ILocationForm {
 	}
 	
 	public cancel_editing(): void {
-		console.log('LocationForm::cancel_editing()');
+		console.log('PlaceForm::cancel_editing()');
 		console.log(`this.id === ${this.id}`);
 		console.log(`this.name.val === ${this.name.val}`);
+		
 		this.name.rollback();
-		this.is_public.rollback();
+		
 		if (this.is_persisted()) {
 			// war update
 			this.delete_button_enabled = true;
@@ -133,7 +126,7 @@ export class LocationForm implements ILocationForm {
 		return new Promise((resolve: () => void, reject: () => void) => {
 			this.confirm_service.require({
 				target: event.currentTarget,
-				message: "Sind Sie sicher das Sie den Standort löschen wollen? Untergeordnete Plätze werden auch gelöscht.",
+				message: "Sind Sie sicher das Sie den Platz löschen wollen?",
 				icon: 'pi pi-exclamation-triangle',
 				rejectProps: {
 					label: 'Abbrechen',
@@ -155,12 +148,12 @@ export class LocationForm implements ILocationForm {
 		return new Promise((resolve: () => void, reject: () => void) => {
 			this.ajax_delete().then(
 				() => {
-					this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Standort wurde erfolgreich gelöscht.', life: 3000 });
+					this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich gelöscht.', life: 3000 });
 					this.parent.delete_form(this);
 					resolve();
 				},
 				() => {
-					this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Standort konnte nicht gelöscht werden.', life: 3000 });
+					this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Platz konnte nicht gelöscht werden.', life: 3000 });
 					reject();
 				}
 			);
@@ -168,57 +161,35 @@ export class LocationForm implements ILocationForm {
 	}
 	
 	private ajax_create(): Promise<void> {
-		const request_config: AxiosRequestConfig<ICreateLocationRequestData> = {
+		const request_config: AxiosRequestConfig<ICreatePlaceRequestData> = {
 			method: "post",
-			url: route('ajax.location.create'),
-			data: {
-				val: {
-					name: {
-						val: this.name.val
-					},
-					is_public: {
-						val: this.is_public.val
-					}
-				}
-			}
+			url: route('ajax.place.create', { location_id: this.parent.location_id }),
+			data: this.name.val,
 		};
 		return axios.request(request_config).then(
-			(response: AxiosResponse<ICreateLocation200ResponseData>) => {
+			(response: AxiosResponse<ICreatePlace200ResponseData>) => {
 				this.id = response.data
 			}
 		);
 	}
 	
 	private ajax_update(): Promise<void> {
-		const request_config: AxiosRequestConfig<IUpdateLocationRequestData> = {
+		const request_config: AxiosRequestConfig<IUpdatePlaceRequestData> = {
 			method: "put",
-			url: route('ajax.location.update', { location_id: this.id }),
-			data: {
-				val: {
-					name: {
-						val: this.name.val
-					},
-					is_public: {
-						val: this.is_public.val
-					}
-				}
-			}
+			url: route('ajax.place.update', { place_id: this.id }),
+			data:this.name.val,
 		};
 		return axios.request(request_config);
 	}
 	
 	private ajax_delete(): Promise<void> {
 		if (!this.is_persisted()) {
-			throw new Error('accept_delete(): Missing id of location');
+			throw new Error('accept_delete(): Missing id of place');
 		}
-		const request_config: AxiosRequestConfig<IDeleteLocation200ResponseData> = {
+		const request_config: AxiosRequestConfig<IDeletePlace200ResponseData> = {
 			method: "delete",
-			url: route('ajax.location.delete', { location_id: this.id })
+			url: route('ajax.place.delete', { place_id: this.id })
 		};
 		return axios.request(request_config);
-	}
-	
-	public get_place_overview_url_path(): string {
-		return route('place.overview', { location_id: this.id });
 	}
 }
