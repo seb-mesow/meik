@@ -22,27 +22,21 @@ Route::prefix('ajax')->group(static function() {
 	Route::put('/location/{location_id}', [LocationAJAXController::class, 'update'])
 		->name('ajax.location.update');
 	
-	Route::patch('/location/{location_id}', [LocationAJAXController::class, 'change'])
-		->name('ajax.location.change');
-
 	Route::delete('/location/{location_id}', [LocationAJAXController::class, 'delete'])
 		->name('ajax.location.delete');
 	
 	# --- Plätze / Places ---
-	Route::put('/places', [PlaceAJAXController::class, 'put_place'])
-		->name('ajax.place.put_place');
+	Route::get('/location/{location_id}/places', [PlaceAJAXController::class, 'get_paginated'])
+		->name('ajax.place.get_paginated');
 	
-	Route::delete('/places/{id}', [PlaceAJAXController::class, 'delete_place'])
-		->name('ajax.place.delete_place');
+	Route::post('location/{location_id}/place', [PlaceAJAXController::class, 'create'])
+		->name('ajax.place.create');
 	
-	Route::patch('/places', [PlaceAJAXController::class, 'patch_place'])
-		->name('ajax.place.post_place');
+	Route::put('/place/{place_id}', [PlaceAJAXController::class, 'update'])
+		->name('ajax.place.update');
 	
-	Route::get('/places', [PlaceAJAXController::class, 'get_places_paginated'])
-		->name('ajax.place.get_places_paginated');
-	
-	Route::post('/places', [PlaceAJAXController::class, 'post_place'])
-		->name('ajax.location.post_place');
+	Route::delete('/place/{place_id}', [PlaceAJAXController::class, 'delete'])
+		->name('ajax.place.delete');
 	
 	# --- Exponate ---
 	Route::patch('/exhibit/{exhibit_id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])

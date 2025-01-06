@@ -1,14 +1,14 @@
 export interface IGetLocationsPaginatedQueryParams {
-	page_number: number;
-	count_per_page: number;
+	page_number: number,
+	count_per_page: number,
 };
 export interface IGetLocationsPaginated200ResponseData {
 	locations: {
 		id: string,
 		name: string,
-		is_public: boolean
+		is_public: boolean,
 	}[],
-	total_count: number
+	total_count: number,
 };
 
 export interface ICreateLocationRequestData {
@@ -59,4 +59,4 @@ export interface IUpdateLocation422ResponseData {
 
 export type IDeleteLocationRequestData = never;
 export type IDeleteLocation200ResponseData = never;
-export type IDeleteLocation422ResponseData = never;
+export type IDeleteLocation422ResponseData = string[]; // errs

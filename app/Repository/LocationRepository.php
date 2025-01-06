@@ -8,13 +8,6 @@ use App\Models\Location;
 use App\Repository\Traits\StringIdRepositoryTrait;
 use App\Util\StringIdGenerator;
 use PHPOnCouch\CouchClient;
-use App\Models\User;
-use Exception;
-use Illuminate\Support\Facades\Date;
-use JMS\Serializer\SerializationContext;
-use JMS\Serializer\Serializer;
-use JMS\Serializer\SerializerBuilder;
-use PHPOnCouch\Exceptions\CouchException;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 use stdClass;
 
@@ -53,7 +46,7 @@ final class LocationRepository
 			->skip($page_number * $count_per_page)
 			->include_docs(true)
 			->getView(self::MODEL_TYPE_ID, 'all');
-		$_this = $this;
+			$_this = $this;
 		$locations = array_map(static function(stdClass $row) use ($_this): Location {
 			return $_this->create_location_from_doc($row->doc);
 		}, $response->rows);
@@ -61,6 +54,18 @@ final class LocationRepository
 			'locations' => $locations,
 			'total_count' => $response->total_rows,
 		];
+	}
+	
+	public function find_by_name(string $name): ?Location {
+		$response = $this->client
+			->key($name)
+			->include_docs(true)
+			->getView(self::MODEL_TYPE_ID, 'all');
+		if ($cnt = count($response->rows) > 0) {
+			assert($cnt === 1);
+			return $this->create_location_from_doc($response->rows[0]->doc);
+		}
+		return null;
 	}
 	
 	public function find(string $id): ?Location {

@@ -4,107 +4,47 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-class Place
+use App\Models\Interfaces\Revisionable;
+use App\Models\Interfaces\StringIdentifiable;
+use App\Models\Traits\RevisionableTrait;
+use App\Models\Traits\StringIdentifiableTrait;
+
+class Place implements StringIdentifiable, Revisionable
 {
-	/** @Accessor(getter="get__id") */
-	private ?string $_id = null;
-	/** @Accessor(getter="get__rev") */
-	private ?string $_rev = null;
+	use StringIdentifiableTrait;
+	use RevisionableTrait;
+	
 	/** @Accessor(getter="get_name") */
-	private ?string $name = null;
-	/** @Accessor(getter="get_is_public") */
-	private ?string $is_public = null;
-	/** @Accessor(getter="get_location") */
-	private ?string $location = null;
+	private string $name;
 
-	/**
-	 * Get the value of _id
-	 */
-	public function get__id()
-	{
-		return $this->_id;
+	/** @Accessor(getter="get_location_id") */
+	private string $location_id;
+	
+	public function __construct(
+		string $name,
+		string $location_id,
+		?string $id = null,
+		?string $rev = null
+	) {
+		$this->name = $name;
+		$this->location_id = $location_id;
+		$this->id = $id;
+		$this->rev = $rev;
 	}
-
-	/**
-	 * Set the value of _id
-	 *
-	 * @return  self
-	 */
-	public function set__id($_id): self 
-	{
-		$this->_id = $_id;
-
-		return $this;
-	}
-
-	/**
-	 * Get the value of _rev
-	 */
-	public function get__rev()
-	{
-		return $this->_rev;
-	}
-
-	/**
-	 * Set the value of _rev
-	 *
-	 * @return  self
-	 */
-	public function set__rev($_rev): self
-	{
-		$this->_rev = $_rev;
-
-		return $this;
-	}
-
-	/**
-	 * Get the value of name
-	 */
-	public function get_name()
-	{
+	
+	public function get_name(): string {
 		return $this->name;
 	}
 
-	/**
-	 * Set the value of name
-	 *
-	 * @return  self
-	 */
-	public function set_name($name): self
-	{
+	public function set_name(string $name): void {
 		$this->name = $name;
-
-		return $this;
 	}
 
-	/**
-	 * Get the value of is_public
-	 */
-	public function get_is_public()
-	{
-		return $this->is_public;
+	public function get_location_id(): string {
+		return $this->location_id;
 	}
 
-	/**
-	 * Set the value of is_public
-	 *
-	 * @return  self
-	 */
-	public function set_is_public($is_public): self
-	{
-		$this->is_public = $is_public;
-
-		return $this;
-	}
-
-	public function getLocation(): ?string
-	{
-		return $this->location;
-	}
-
-	public function setLocation(?string $location): self
-	{
-		$this->location = $location;
-		return $this;
+	public function set_location_id(string $location_id): void {
+		$this->location_id = $location_id;
 	}
 }

@@ -5,7 +5,6 @@ namespace Database\Seeders;
 
 use App\Models\Location;
 use App\Repository\LocationRepository;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class LocationSeeder extends Seeder
@@ -26,6 +25,10 @@ class LocationSeeder extends Seeder
 		));
 		$this->create_location(new Location(
 			name: "Raum 628",
+			is_public: false
+		));
+		$this->create_location(new Location(
+			name: "Standort mit vielen Plätzen",
 			is_public: false
 		));
 		

@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
 	Route::get('/locations', [LocationController::class, 'overview'])->name('location.overview');
 	
 	# --- Places ---
-	Route::get('/places', [PlaceController::class, 'overview'])->name('place.overview');
+	Route::get('/location/{location_id}/places', [PlaceController::class, 'overview'])->name('place.overview');
 });
 
 require __DIR__.'/auth.php';
