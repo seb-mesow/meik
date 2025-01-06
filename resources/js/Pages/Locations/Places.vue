@@ -21,15 +21,15 @@ const props = defineProps<{
 
 const home = ref({
 	icon: 'pi pi-home',
-	route: 'exhibit.overview'
+	url: route('exhibit.overview'),
 });
 const items = ref([
 	{
-		label: props.location_name,
+		label: 'Standorte',
 		url: route('location.overview'),
 	},
 	{
-		label: 'Plätze',
+		label: props.location_name,
 		url: route('place.overview', { location_id: props.init_props.location_id }),
 	},
 ]);
