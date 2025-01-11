@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
+use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -57,7 +58,7 @@ class ExhibitController extends Controller
 			name: $name,
 			manufacturer: $manufacturer,
 		);
-		$exhibit = $this->exhibit_repository->insert($exhibit);
+		$this->exhibit_repository->insert($exhibit);
 		// sleep(5); // TODO entfernen
 		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
 	}
@@ -66,27 +67,25 @@ class ExhibitController extends Controller
 		if (!$exhibit) {
 			$persisted = false; // TODO remove
 		}
-		$free_text_forms = [];
-		foreach ($exhibit->get_free_texts() as $index => $free_text) {
-			$free_text_forms[] = [
-				'id' => $free_text->get_id(),
-				'errs' => [],
-				'val' => [
-					'heading' => [
-						'val' => $free_text->get_heading(),
-						'errs' => [],
-					],
-					'html' => [
-						'val' => $free_text->get_html(),
-						'errs' => [],
-					],
-					'is_public' => [
-						'val' => $free_text->get_is_public(),
-						'errs' => [],
-					]
+		$free_texts = $exhibit?->get_free_texts() ?? [];
+		$free_text_forms = array_map(static fn(FreeText $free_text): array => [
+			'id' => $free_text->get_id(),
+			'errs' => [],
+			'val' => [
+				'heading' => [
+					'val' => $free_text->get_heading(),
+					'errs' => [],
+				],
+				'html' => [
+					'val' => $free_text->get_html(),
+					'errs' => [],
+				],
+				'is_public' => [
+					'val' => $free_text->get_is_public(),
+					'errs' => [],
 				]
-			];
-		}
+			]
+		], $free_texts);
 		
 		$exhibit_form = [
 			'val' => [

@@ -62,10 +62,10 @@ export interface IUpdateFreeText422ResponseData {
 	}
 }; 
 
-export type IDeleteFreeTextRequestData = never
-export type IDeleteFreeText200ResponseData = IFreeTextIndicesOrder
-export type IDeleteFreeText422ResponseData = never
+export type IDeleteFreeTextRequestData = never;
+export type IDeleteFreeText200ResponseData = IFreeTextIndicesOrder;
+export type IDeleteFreeText422ResponseData = never;
 
 export type IMoveFreeTextRequestData = number; // new index
-export type IMoveFreeText200ResponseData = IFreeTextIndicesOrder
-export type IMoveFreeText422ResponseData = never
+export type IMoveFreeText200ResponseData = IFreeTextIndicesOrder;
+export type IMoveFreeText422ResponseData = never;

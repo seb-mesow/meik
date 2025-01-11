@@ -9,6 +9,7 @@ import { IExhibitForm } from '@/types/meik/models';
 import Breadcrumb from 'primevue/breadcrumb';
 import { IExhibitInitPageProps } from '@/types/page_props/exhibit';
 import InputField from '@/Components/Form/InputField.vue';
+import Form from '@/Components/Form/Form.vue';
 // versch. Interface für typsicheres Programmieren
 
 // Argumente an die Seite (siehe Controller)

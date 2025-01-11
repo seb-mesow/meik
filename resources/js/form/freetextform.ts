@@ -23,7 +23,7 @@ export interface IFreeTextForm {
 	readonly is_delete_button_loading: boolean;
 }
 
-// um eine zirkulräre Abhängigkeit zu vermeiden:
+// um eine zirkuläre Abhängigkeit zu vermeiden:
 // freetextform.ts (lower module) soll nichts von freetextsforms.ts (higher module) importieren
 export interface IFreeTextFormParent {
 	update_indices(args: { new_indices_order: IFreeTextIndicesOrder }): void;

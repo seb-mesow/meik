@@ -14,6 +14,7 @@ use PHPOnCouch\Exceptions\CouchNotFoundException;
 use stdClass;
 
 /**
+ * Die _id wird bei neuen Docs sofort gesetzt.
  * @phpstan-type ExhibitDoc object{
  *     _id: string,
  *     _rev?: string,
@@ -23,6 +24,7 @@ use stdClass;
  *     free_texts: FreeTextDoc[]
  * }
  * 
+ * Die _id wird bei neuen Docs sofort gesetzt.
  * @phpstan-type FreeTextDoc object{
  *     _id: int,
  *     heading: string,
@@ -58,8 +60,7 @@ final class ExhibitRepository
 	 * @var string $id
 	 * @return array<Exhibit>
 	 */
-	public function get_all(): array
-	{
+	public function get_all(): array {
 		$res = $this->client->find([
 			'_id' => ['$beginsWith' => self::ID_PREFIX],
 		]);
@@ -69,17 +70,22 @@ final class ExhibitRepository
 		}, $res->docs);
 	}
 
-	 /**
-     * @var string $id
-     * @return \App\Models\Location[]
-     */
-    public function get_exhibits_paginated(int $page = 0, int $page_size = 10,): array
-    {
-        $locations = $this->client->limit($page_size)->skip($page * $page_size)->find([
-            '_id' => ['$beginsWith' => self::ID_PREFIX],
-        ])->docs;
-        return $this->exhibitsFromArray($locations);
-    }
+	/**
+	 * @var string $id
+	 * @return \App\Models\Location[]
+	 */
+	public function get_exhibits_paginated(int $page = 0, int $page_size = 10,): array {
+		$locations = $this->client
+			->limit($page_size)
+			->skip($page * $page_size)
+			->find([
+				'_id' => [
+					'$beginsWith' => self::ID_PREFIX
+				],
+			])
+			->docs;
+		return $this->exhibitsFromArray($locations);
+	}
 
 	public function find(int $id): ?Exhibit {
 		try {
@@ -90,55 +96,39 @@ final class ExhibitRepository
 	}
 	
 	public function get(int $id): Exhibit {
-		$couch_db_id = self::ID_PREFIX . $id;
-		$exhibit_doc = $this->client->getDoc($couch_db_id);
+		$doc_id = $this->determinate_doc_id_from_model_id($id);
+		$exhibit_doc = $this->client->getDoc($doc_id);
 		return $this->create_exhibit_from_doc($exhibit_doc);
 	}
 
-	/**
-	 * ID darf noch nicht gesetzt sein
-	 */
-	public function insert(Exhibit $exhibit): Exhibit {
+	public function insert(Exhibit $exhibit): void {
 		assert(!$exhibit->get_nullable_id());
 		assert(!$exhibit->get_nullable_rev());
 		$doc = $this->create_doc_from_exhibit($exhibit); // setzt neue ID
 		$response = $this->client->storeDoc($doc);
-		$doc->_rev = $response->rev;
-		return $this->create_exhibit_from_doc($doc);
+		$exhibit->set_rev($response->rev);
 	}
 	
-	public function update(Exhibit $exhibit): Exhibit {
-		// assert($exhibit->get_id());
-		// assert($exhibit->get_rev());
-		try {
-			$doc = $this->create_doc_from_exhibit($exhibit);
-			$response = $this->client->storeDoc($doc);
-			$doc->_rev = $response->rev;
-			return $this->create_exhibit_from_doc($doc);
-		} catch (Exception $e) {
-			echo "ERROR: " . $e->getMessage() . " (" . $e->getCode() . ")<br>\n";
-			throw $e;
-		}
+	public function update(Exhibit $exhibit): void {
+		assert($exhibit->get_id());
+		assert($exhibit->get_rev());
+		$doc = $this->create_doc_from_exhibit($exhibit);
+		$response = $this->client->storeDoc($doc);
+		$exhibit->set_rev($response->rev);
 	}
 
 	public function remove(Exhibit $exhibit): void {
-		// assert($exhibit->get_id());
-		// assert($exhibit->get_rev());
-		$delete_doc = new stdClass();
-		$delete_doc->_id = self::ID_PREFIX . $exhibit->get_id();
-		$delete_doc->_rev = $exhibit->get_rev();
-		try {
-			$this->client->deleteDoc($delete_doc);
-		} catch (Exception $e) {
-			echo "ERROR: " . $e->getMessage() . " (" . $e->getCode() . ")<br>\n";
-			throw $e;
-		}
+		assert($exhibit->get_id());
+		assert($exhibit->get_rev());
+		$delete_doc = $this->create_stub_doc_from_model($exhibit);
+		$this->client->deleteDoc($delete_doc);
 	}
 	
 	/**
 	 * @return ExhibitDoc
 	 */
 	private function create_doc_from_exhibit(Exhibit $exhibit): stdClass {
+		/** @var ExhibitDoc */
 		$exhibit_doc = $this->create_stub_doc_from_model($exhibit);
 		
 		$exhibit_doc->inventory_number = $exhibit->get_inventory_number();
@@ -174,11 +164,11 @@ final class ExhibitRepository
 	}
 
 	/**
+	 * @deprecated
 	 * @var array<object> $array
 	 * @return array<Exhibit>
 	 */
-	public function exhibitsFromArray($array): array
-	{
+	public function exhibitsFromArray($array): array {
 		return $this->serializer->deserialize(json_encode($array), 'array<' . Exhibit::class . '>', "json");
 	}
 	
@@ -187,8 +177,7 @@ final class ExhibitRepository
 	 */
 	private function create_doc_from_free_text(FreeText $free_text): stdClass {
 		/** @var FreeTextDoc */
-		$free_text_doc =  new stdClass();
-		$free_text_doc->_id = $free_text->get_nullable_id() ?? $this->determinate_next_available_sub_model_id('free_text');
+		$free_text_doc = $this->create_stub_sub_doc_from_sub_model($free_text, 'free_text');
 		$free_text_doc->heading = $free_text->get_heading();
 		$free_text_doc->html = $free_text->get_html();
 		$free_text_doc->is_public = $free_text->get_is_public();

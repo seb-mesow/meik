@@ -10,7 +10,7 @@ trait IntIdentifiableTrait
 	private ?int $id;
 	
 	public function get_nullable_id(): ?int {
-		if (is_null($this->id) || (is_int($this->id) && ($this->id >= 0))) {
+		if (($this->id === null) || (is_int($this->id) && ($this->id >= 0))) {
 			return $this->id;
 		}
 		throw new RuntimeException("Malformed nullable, integer ID");

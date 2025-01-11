@@ -1,7 +1,5 @@
 import { IFreeTextForm, IFreeTextInitPageProps } from "../ajax/freetext"
 
-
-
 export interface IExhibitForm {
 	id: number,
 	val: {
