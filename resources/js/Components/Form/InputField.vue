@@ -13,8 +13,8 @@ const form = props.form;
 
 <template>
 	<div>
-		<p><label :for="form.id.toString()">{{ props.label }}</label></p>
-		<InputText type=text :id="form.id.toString()" v-model="form.val"/>
+		<p><label :for="form.id">{{ props.label }}</label></p>
+		<InputText type=text :id="form.id" :name="form.id" v-model="form.val"/>
 		<InputErrors :errors="form.errs"/>
 	</div>
 </template>

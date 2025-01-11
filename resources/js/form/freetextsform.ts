@@ -1,5 +1,12 @@
-import { FreeTextForm, IFreeTextForm, IFreeTextFormConstructorArgs as IRealFreeTextFormConstructorArgs, IFreeTextFormParent } from "./freetextform";
-import { IFreeTextIndicesOrder as IFreeTextIndicesOrder } from "@/types/ajax/freetext";
+import {
+	FreeTextForm,
+	IFreeTextForm,
+	IFreeTextFormConstructorArgs as IRealFreeTextFormConstructorArgs,
+	IFreeTextFormParent
+} from "./freetextform";
+import {
+	IFreeTextIndicesOrder
+} from "@/types/ajax/freetext";
 
 export interface IFreeTextsForm {
 	readonly children: Readonly<IFreeTextForm[]>;

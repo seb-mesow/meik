@@ -19,6 +19,11 @@ use stdClass;
  *     _id: string,
  *     _rev?: string,
  * }
+ * 
+ * Die _id wird bei neuen Docs sofort gesetzt.
+ * @phpstan-type StubSubModelDoc object{
+ *     _id: string,
+ * }
  */
 trait IntIdRepositoryTrait
 {
@@ -36,7 +41,7 @@ trait IntIdRepositoryTrait
 	 */
 	protected function create_stub_doc_from_model(IntIdentifiable&Revisionable $model): stdClass {
 		$stub_main_model_doc = new stdClass();
-		if (is_null($model->get_nullable_id())) {
+		if ($model->get_nullable_id() === null) {
 			$model->set_id($this->determinate_next_available_model_id());
 		}
 		$stub_main_model_doc->_id = $this->determinate_doc_id_from_model($model);
@@ -44,6 +49,21 @@ trait IntIdRepositoryTrait
 			$stub_main_model_doc->_rev = $rev;
 		}
 		return $stub_main_model_doc;
+	}
+	
+	/**
+	 * setzt als Nebeneffekt bei neuen Models die ID
+	 * 
+	 * @param IntIdentifiable $sub_model
+	 * @return StubSubModelDoc
+	 */
+	private function create_stub_sub_doc_from_sub_model(IntIdentifiable $sub_model, string $namespace): stdClass {
+		$stub_sub_doc = new stdClass();
+		if ($sub_model->get_nullable_id() === null) {
+			$sub_model->set_id($this->determinate_next_available_sub_model_id($namespace));
+		}
+		$stub_sub_doc->_id = $sub_model->get_id();
+		return $stub_sub_doc;
 	}
 	
 	/**

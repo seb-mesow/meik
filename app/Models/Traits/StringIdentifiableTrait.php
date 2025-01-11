@@ -10,7 +10,7 @@ trait StringIdentifiableTrait
 	private ?string $id;
 	
 	public function get_nullable_id(): ?string {
-		if (is_null($this->id) || (is_string($this->id) && ($this->id !== ''))) {
+		if (($this->id === null) || (is_string($this->id) && ($this->id !== ''))) {
 			return $this->id;
 		}
 		throw new RuntimeException("Malformed nullable, string ID");

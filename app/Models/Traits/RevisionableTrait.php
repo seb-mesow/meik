@@ -10,7 +10,7 @@ trait RevisionableTrait
 	private ?string $rev;
 	
 	public function get_nullable_rev(): ?string {
-		if (is_null($this->rev) || (is_string($this->rev) && $this->rev !== '')) {
+		if (($this->rev === null)|| (is_string($this->rev) && $this->rev !== '')) {
 			return $this->rev;
 		}
 		throw new RuntimeException("Malformed nullable revision ID");
