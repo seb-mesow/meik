@@ -25,6 +25,7 @@ use \stdClass;
  * }
  */
 final class CouchDBUserProvider implements UserProvider {
+	public const MODEL_TYPE_ID = 'user';
 	public const string ID_PREFIX = 'user:';
 	private const int REMEMBER_TOKEN_LENGTH = 64;
 	
@@ -71,7 +72,7 @@ final class CouchDBUserProvider implements UserProvider {
 		$res = $this->client
 			->key($username)
 			->include_docs(true)
-			->getView('user', 'by-username');
+			->getView(self::MODEL_TYPE_ID, 'by-username');
 		$rows = $res->rows;
 		if ($rows) {
 			$first = $rows[0]->doc;
