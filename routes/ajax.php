@@ -54,4 +54,23 @@ Route::prefix('ajax')->group(static function() {
 	
 	Route::patch('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'move_free_text'])
 		->name('ajax.exhibit.free_text.move');
+		
+	// siehe images.d.ts
+	Route::get('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'get'])
+		->name('ajax.exhibit.image.get');
+	
+	Route::post('/exhibit/{exhibit_id}/image', [ImageAJAXController::class, 'create'])
+		->name('ajax.exhibit.image.create');
+	
+	Route::patch('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'set_metadata'])
+		->name('ajax.exhibit.image.set_metadata');
+	
+	Route::put('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'update'])
+		->name('ajax.exhibit.image.update');
+	
+	Route::delete('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'delete'])
+		->name('ajax.exhibit.image.delete');
+	
+	Route::patch('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'move'])
+		->name('ajax.exhibit.image.move');
 });
