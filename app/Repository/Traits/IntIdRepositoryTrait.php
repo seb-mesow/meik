@@ -27,7 +27,6 @@ use stdClass;
  */
 trait IntIdRepositoryTrait
 {
-	protected const string ID_PREFIX = self::MODEL_TYPE_ID . ':';
 	protected const string META_DOC_ID = 'meta:' . self::MODEL_TYPE_ID;
 	
 	protected readonly CouchClient $client;
@@ -77,7 +76,7 @@ trait IntIdRepositoryTrait
 	 * für `get()`-Funktion
 	 */
 	private function determinate_doc_id_from_model_id(int $model_id): string {
-		return self::ID_PREFIX . ((string) $model_id);
+		return self::MODEL_TYPE_ID . ((string) $model_id);
 	}
 	
 	/**
@@ -85,7 +84,7 @@ trait IntIdRepositoryTrait
 	 * @return int
 	 */
 	protected function determinate_model_id_from_doc(stdClass $main_model_doc): int {
-		return (int) substr($main_model_doc->_id, strlen(self::ID_PREFIX));
+		return (int) substr($main_model_doc->_id, strlen(self::MODEL_TYPE_ID));
 	}
 	
 	/**

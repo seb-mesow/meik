@@ -9,7 +9,6 @@ use App\Models\FreeText;
 use App\Repository\Traits\IntIdRepositoryTrait;
 use Dotenv\Util\Regex;
 use PHPOnCouch\CouchClient;
-use Exception;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
@@ -65,7 +64,7 @@ final class ExhibitRepository
 	public function get_all(): array
 	{
 		$res = $this->client->find([
-			'_id' => ['$beginsWith' => self::ID_PREFIX],
+			'_id' => ['$beginsWith' => self::MODEL_TYPE_ID],
 		]);
 		$_this = $this;
 		return array_map(static function (stdClass $doc) use ($_this): Exhibit {
@@ -84,7 +83,7 @@ final class ExhibitRepository
 			->skip($page * $page_size)
 			->find([
 				'_id' => [
-					'$beginsWith' => self::ID_PREFIX
+					'$beginsWith' => self::MODEL_TYPE_ID
 				],
 			])
 			->docs;

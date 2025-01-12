@@ -14,8 +14,9 @@ class DatabaseSeeder extends Seeder
 		$this->call([
 			UserSeeder::class,
 			ExhibitSeeder::class,
-			LocationSeeder::class,
-			PlaceSeeder::class,
+			ImageSeeder::class,
+			// LocationSeeder::class,
+			// PlaceSeeder::class,
 		]);
 	}
 }
