@@ -10,6 +10,11 @@ use Illuminate\Database\Seeder;
 
 class ExhibitSeeder extends Seeder
 {
+	/**
+	 * @var Exhibit[]
+	 */
+	private array $exhibits = [];
+	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository
 	) {}
@@ -91,5 +96,13 @@ class ExhibitSeeder extends Seeder
 	
 	private function create_exhibit(Exhibit $exhibit): void {
 		$this->exhibit_repository->insert($exhibit);
+		$this->exhibits[] = $exhibit;
+	}
+	
+	/**
+	 * @return Exhibit[]
+	 */
+	public function get_exhibits(): array {
+		return $this->exhibits;	
 	}
 }

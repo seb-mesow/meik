@@ -18,10 +18,10 @@ return new class extends Migration
 	public function __construct() {
 		$this->client = App::make(CouchClient::class.'.admin');
 		
-		$id_prefix = LocationRepository::MODEL_TYPE_ID;
+		$model_type_id = LocationRepository::MODEL_TYPE_ID;
 		$this->map_function = <<<END
 		function(doc) {
-			if (doc._id.startsWith('$id_prefix')) {
+			if (doc._id.startsWith('$model_type_id')) {
 				emit(doc.name, null);
 				// no value specified
 				// retrieve by seperate lookup or include_docs parameter

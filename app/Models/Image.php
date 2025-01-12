@@ -1,57 +1,46 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
 
-class Image
-{
-	/** @Accessor(getter="get_hash") */
-	private ?string $hash = null;
-	
-	/** @Accessor(getter="get_data") */
-	private string $data;
+use App\Models\Interfaces\Revisionable;
+use App\Models\Interfaces\StringIdentifiable;
+use App\Models\Traits\RevisionableTrait;
+use App\Models\Traits\StringIdentifiableTrait;
 
-	public readonly ?string $rev = null;
+class Image implements StringIdentifiable, Revisionable
+{
+	use StringIdentifiableTrait;
+	use RevisionableTrait;
 	
-	public function __construct(string $data, ?string $rev = null) {
-		$this->data = $data;
+	private string $description;
+	private bool $is_public;
+	
+	public function __construct(
+		string $description = '',
+		bool $is_public = false,
+		?string $id = null,
+		?string $rev = null
+	) {
+		$this->description = $description;
+		$this->is_public = $is_public;
+		$this->id = $id;
 		$this->rev = $rev;
 	}
 	
-	/**
-	 * Get the value of hash
-	 */
-	public function get_hash(): string
-	{
-		if (!$this->hash) {
-			$this->hash = md5($this->data);
-		}
-		return $this->hash;
+	public function get_description(): string {
+		return $this->description;
 	}
 	
-	public function get_rev(): ?string {
-		return $this->rev;
+	public function set_description(string $description): void {
+		$this->description = $description;
 	}
 	
-	/**
-	 * Get the value of data
-	 */
-	public function get_data()
-	{
-		return $this->data;
+	public function get_is_public(): bool {
+		return $this->is_public;
 	}
-
-	/**
-	 * Set the value of data
-	 *
-	 * @return  self
-	 */
-	public function set_data($data)
-	{
-		$this->data = $data;
-		$this->hash = null;
-		
-		return $this;
+	
+	public function set_is_public(bool $is_public): void {
+		$this->is_public = $is_public;
 	}
 }

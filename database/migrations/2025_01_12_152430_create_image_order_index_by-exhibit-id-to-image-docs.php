@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use App\Repository\PlaceRepository;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\App;
 use PHPOnCouch\CouchClient;
@@ -9,27 +8,27 @@ use PHPOnCouch\Exceptions\CouchNotFoundException;
 
 return new class extends Migration
 {
-	private const string DESIGN_DOC_ID = '_design/place';
-	private const string VIEW = 'by-location-id';
+	private const string DESIGN_DOC_ID = '_design/imageorder';
+	private const string VIEW = 'by-exhibit-id-to-image-docs';
 	
 	private readonly CouchClient $client;
 	private readonly string $map_function;
-	private readonly string $reduce_function;
 	
 	public function __construct() {
 		$this->client = App::make(CouchClient::class.'.admin');
 		
-		$model_type_id = PlaceRepository::MODEL_TYPE_ID;
+		$model_type_id = 'imageorder';
+		$model_type_id_length = strlen($model_type_id);
 		$this->map_function = <<<END
 		function(doc) {
 			if (doc._id.startsWith('$model_type_id')) {
-				emit(doc.location_id, null);
-				// no value specified
-				// retrieve by seperate lookup or include_docs parameter
+				exhibit_id = doc._id.substring($model_type_id_length);
+				for (const image_id of doc.image_ids) {
+					emit(exhibit_id, { _id: image_id });
+				}
 			}
 		}
 		END;
-		$this->reduce_function = '_count';
 	}
 	
 	public function up(): void {
@@ -43,7 +42,6 @@ return new class extends Migration
 		$design_doc->views ??= new stdClass();
 		$design_doc->views->{self::VIEW} = [
 			'map' => $this->map_function,
-			'reduce' => $this->reduce_function,
 		];
 		$this->client->storeDoc($design_doc);
 	}
