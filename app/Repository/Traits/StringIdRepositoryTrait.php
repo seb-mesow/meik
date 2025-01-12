@@ -51,6 +51,16 @@ trait StringIdRepositoryTrait
 		return $stub_main_model_doc;
 	}
 	
+	/**
+	 * @return StubMainModelDoc _rev ist immer vorhanden und null
+	 */
+	private function create_stub_doc_from_doc_id(string $doc_id): stdClass {
+		$stub_main_model_doc = new stdClass();
+		$stub_main_model_doc->_id = $doc_id;
+		$stub_main_model_doc->_rev = null;
+		return $stub_main_model_doc;
+	}
+	
 	private function generate_new_model_id(): string {
 		return (self::MODEL_TYPE_ID);
 	}

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Http\Controllers\AJAX\ImageAJAXController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AJAX\UserAJAXController;
 use App\Http\Controllers\AJAX\LocationAJAXController;
@@ -54,23 +55,29 @@ Route::prefix('ajax')->group(static function() {
 	
 	Route::patch('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'move_free_text'])
 		->name('ajax.exhibit.free_text.move');
-		
-	// siehe images.d.ts
-	Route::get('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'get'])
-		->name('ajax.exhibit.image.get');
 	
+	// siehe images.d.ts
 	Route::post('/exhibit/{exhibit_id}/image', [ImageAJAXController::class, 'create'])
 		->name('ajax.exhibit.image.create');
-	
-	Route::patch('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'set_metadata'])
-		->name('ajax.exhibit.image.set_metadata');
-	
-	Route::put('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'update'])
-		->name('ajax.exhibit.image.update');
-	
+		
 	Route::delete('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'delete'])
 		->name('ajax.exhibit.image.delete');
 	
 	Route::patch('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'move'])
 		->name('ajax.exhibit.image.move');
+	
+	Route::get('/image/{image_id}/meta_data', [ImageAJAXController::class, 'get_meta_data'])
+		->name('ajax.image.get_meta_data');
+	
+	Route::patch('/image/{image_id}/meta_data', [ImageAJAXController::class, 'update_meta_data'])
+		->name('ajax.image.update_meta_data');
+	
+	Route::get('/image/{image_id}', [ImageAJAXController::class, 'get_file'])
+		->name('ajax.image.get_file');
+	
+	Route::put('/image/{image_id}', [ImageAJAXController::class, 'set_file'])
+		->name('ajax.image.set_file');
+	
+	Route::get('/thumbnail/{image_id}', [ImageAJAXController::class, 'get_thumbnail_file'])
+		->name('ajax.thumbnail.get_file');
 });

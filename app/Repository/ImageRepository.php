@@ -27,6 +27,10 @@ use stdClass;
  *         thumbnail: AttachmentDoc,
  *     }
  * }
+ * @phpstan-type FileInfos array{
+ *     content_type: string,
+ *     file: string,
+ * }
  */
 final class ImageRepository
 {
@@ -35,7 +39,7 @@ final class ImageRepository
 	private const string MODEL_TYPE_ID = "image";
 	private const string ORIGINAL_IMAGE_ATTACHMENT_NAME = 'image';
 	private const string THUMBNAIL_ATTACHMENT_NAME = 'thumbnail';
-	public const string DEFAULT_IMAGE_MIME_TYPE = 'application/octet-stream';
+	public const string DEFAULT_IMAGE_CONTENT_TYPE = 'application/octet-stream';
 	
 	public function __construct(
 		CouchClient $client,
@@ -96,14 +100,32 @@ final class ImageRepository
 		return $image_doc;
 	}
 	
-	public function get_image_data(string $image_id): string {
-		$image_stub_doc = $this->create_stub_doc_from_model_id($image_id);
-		return $this->client->getAttachment($image_stub_doc, self::ORIGINAL_IMAGE_ATTACHMENT_NAME);
+	/**
+	 * @return FileInfos
+	 */
+	public function get_file(string $image_id): array {
+		// TODO fork php-on-couch and request only once (The Content-Type is in the header of the response of couchdb,)
+		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
+		/** @var ImageDoc */
+		$image_doc = $this->client->getDoc($doc_id);
+		$content_type = $image_doc->_attachments->image->content_type;
+		$image_stub_doc = $this->create_stub_doc_from_doc_id($doc_id);
+		$file = $this->client->getAttachment($image_stub_doc, self::ORIGINAL_IMAGE_ATTACHMENT_NAME);
+		return [ 'content_type' => $content_type, 'file' => $file ];
 	}
 	
-	public function get_thumbnail_data(string $image_id): string {
-		$image_stub_doc = $this->create_stub_doc_from_model_id($image_id);
-		return $this->client->getAttachment($image_stub_doc, self::THUMBNAIL_ATTACHMENT_NAME);
+	/**
+	 * @return FileInfos
+	 */
+	public function get_thumbnail(string $image_id): array {
+		// TODO fork php-on-couch and request only once (The Content-Type is in the header of the response of couchdb,)
+		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
+		/** @var ImageDoc */
+		$image_doc = $this->client->getDoc($doc_id);
+		$content_type = $image_doc->_attachments->thumbnail->content_type;
+		$image_stub_doc = $this->create_stub_doc_from_doc_id($doc_id);
+		$file = $this->client->getAttachment($image_stub_doc, self::THUMBNAIL_ATTACHMENT_NAME);
+		return [ 'content_type' => $content_type, 'file' => $file ];
 	}
 	
 	// TODO always retrieve image type from user's file
@@ -111,56 +133,56 @@ final class ImageRepository
 	/**
 	 * Image-Doc muss bereits in DB vorhanden sein!
 	 */
-	public function insert_image_data(string $image_id, string $image_data, string $mime_type = self::DEFAULT_IMAGE_MIME_TYPE): void {
+	public function insert_file(string $image_id, string $image_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
 		$image_doc = $this->client->getDoc($doc_id);
 		$this->client->storeAsAttachment(
 			doc: $image_doc,
 			data: $image_data,
 			filename: self::ORIGINAL_IMAGE_ATTACHMENT_NAME,
-			contentType: $mime_type,
+			contentType: $content_type,
 		);
 	}
 	
 	/**
 	 * Image-Doc muss bereits in DB vorhanden sein!
 	 */
-	public function update_image_data(string $image_id, string $image_data, string $mime_type = self::DEFAULT_IMAGE_MIME_TYPE): void {
+	public function update_file(string $image_id, string $image_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
 		$image_doc = $this->client->getDoc($doc_id);
 		$this->client->storeAsAttachment(
 			doc: $image_doc,
 			data: $image_data,
 			filename: self::ORIGINAL_IMAGE_ATTACHMENT_NAME,
-			contentType: $mime_type,
+			contentType: $content_type,
 		);
 	}
 	
 	/**
 	 * Image-Doc muss bereits in DB vorhanden sein!
 	 */
-	public function insert_thumbnail_data(string $image_id, string $thumbnail_data, string $mime_type = self::DEFAULT_IMAGE_MIME_TYPE): void {
+	public function insert_thumbnail(string $image_id, string $thumbnail_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
 		$image_doc = $this->client->getDoc($doc_id);
 		$this->client->storeAsAttachment(
 			doc: $image_doc,
 			data: $thumbnail_data,
 			filename: self::THUMBNAIL_ATTACHMENT_NAME,
-			contentType: $mime_type,
+			contentType: $content_type,
 		);
 	}
 	
 	/**
 	 * Image-Doc muss bereits in DB vorhanden sein!
 	 */
-	public function update_thumbnail_data(string $image_id, string $thumbnail_data, string $mime_type = self::DEFAULT_IMAGE_MIME_TYPE): void {
+	public function update_thumbnail(string $image_id, string $thumbnail_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
 		$image_doc = $this->client->getDoc($doc_id);
 		$this->client->storeAsAttachment(
 			doc: $image_doc,
 			data: $thumbnail_data,
 			filename: self::THUMBNAIL_ATTACHMENT_NAME,
-			contentType: $mime_type,
+			contentType: $content_type,
 		);
 	}
 }

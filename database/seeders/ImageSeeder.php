@@ -74,7 +74,7 @@ class ImageSeeder extends Seeder
 	private function insert_image(
 		ImageOrder $image_order,
 		string $rel_filepath,
-		string $mime_type = ImageRepository::DEFAULT_IMAGE_MIME_TYPE,
+		string $mime_type = ImageRepository::DEFAULT_IMAGE_CONTENT_TYPE,
 		string $description = '',
 		bool $is_public = false
 	): void {
@@ -82,7 +82,7 @@ class ImageSeeder extends Seeder
 		$this->image_repository->insert($image);
 		usleep(100);
 		$image_data = file_get_contents($this->determinate_image_filepath($rel_filepath));
-		$this->image_repository->insert_image_data($image->get_id(), $image_data, $mime_type);
+		$this->image_repository->insert_file($image->get_id(), $image_data, $mime_type);
 		$index = count($image_order->get_image_ids());
 		$image_order->insert_image_id($image->get_id(), $index);
 	}
