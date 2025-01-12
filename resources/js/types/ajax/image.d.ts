@@ -1,37 +1,44 @@
 export type IImagesIndicesOrder = number[];
 
-export type IGetImageRequestData = never;
-export type IGetImage200ResponseData = never; // binary
-export type IGetImage422ResponseData = string[]; // errs
-
-export interface ICreateImageQueryParams {
-	index: number
-};
-export type ICreateImageRequestData = never; // binary
-export interface ICreateFreeText200ResponseData {
-	id: number,
-	indices_order: IImagesIndicesOrder
-}
-export type ICreateFreeText422ResponseData = string[]; // errs
-
-export interface ISetImageMetaDataRequestData {
-	description: string[],
+export type ICreateImageRequestData = {
+	index: number,
+	description: string,
 	is_public: boolean,
-}
-export type ISetImageMetaData200ResponseData = never;
-export interface ISetImageMetaData422ResponseData {
+};
+export interface ICreateImage200ResponseData {
+	id: number,
+	indices_order: IImagesIndicesOrder,
+};
+export interface ICreateImage422ResponseData {
+	index: string[], // errs
 	description: string[], // errs
 	is_public: string[], // errs
-}
-
-export type IUpdateImageRequestData = never; // binary
-export type IUpdateFreeText200ResponseData = never;
-export type IUpdateFreeText422ResponseData = string[]; // errs
+};
 
 export type IDeleteImageRequestData = never;
 export type IDeleteImage200ResponseData = IImageIndicesOrder;
 export type IDeleteImage422ResponseData = string[]; // errs
 
-export type IMoveimageRequestData = number; // new index
-export type IMoveimage200ResponseData = IImagesIndicesOrder;
-export type IMoveimage422ResponseData = string[]; // errs
+export type IMoveImageRequestData = number; // new index
+export type IMoveImage200ResponseData = IImagesIndicesOrder;
+export type IMoveImage422ResponseData = string[]; // errs
+
+export type IGetImageMetaDataRequestData = never;
+export interface IGetImageMetaData200ResponseData {
+	description: string,
+	is_public: string,
+};
+export type IGetImageMetaData422ResponseData = string[]; // errs
+
+export interface IUpdateImageMetaDataRequestData {
+	description: string,
+	is_public: boolean,
+}
+export type IUpdateImageMetaData200ResponseData = never;
+export interface IUpdateImageMetaData422ResponseData {
+	description: string[], // errs
+	is_public: string[], // errs
+}
+
+export type ISetImageFile200ResponseData = never;
+export type ISetImageFile422ResponseData = string[];
