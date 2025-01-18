@@ -1,61 +1,114 @@
 <script setup lang="ts">
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
-import ResponsiveNavLink from './ResponsiveNavLink.vue';
 </script>
 
 <template>
 	<div class="navbar-underlay"/>
 	<nav>
-		<div class="navbar flex flex-col justify-between">
-			<div class="p-1">
-				<img src="/resources/graphic/Logo_isc_300x122.jpg">
-			</div>
-			
-			<div class="gap-8">
-				<ResponsiveNavLink :href="route('exhibit.overview')" class="flex justify-between items-center p-4 text-white">
-					<span class="material-symbols-outlined pr-2">
-						archive
-					</span>
-					<span>Exponate</span>
-				</ResponsiveNavLink>
+		<div class="navbar">
+			<img class="logo" src="/resources/graphic/Logo_isc_300x122.jpg">
+			<div>
+				<a :href="route('exhibit.overview')">
+					<div class="link">
+						<div class="icon-box">
+							<span class="icon material-symbols-outlined">
+								archive
+							</span>
+						</div>
+						<div class="label-box">
+							<span class="label">Exponate</span>
+						</div>
+					</div>
+				</a>
 				
-				<ResponsiveNavLink :href="route('location.overview')" class="flex justify-between items-center p-4 text-white">
-					<span class="material-symbols-outlined pr-2">
-						location_on
-					</span>
-					<span>Standorte</span>
-				</ResponsiveNavLink>
+				<a :href="route('location.overview')">
+					<div class="link">
+						<div class="icon-box">
+							<span class="icon material-symbols-outlined">
+								location_on
+							</span>
+						</div>
+						<div class="label-box">
+							<span class="label">Standorte</span>
+						</div>
+					</div>
+				</a>
 				
-				<ResponsiveNavLink :href="route('user.overview')" class="flex justify-between items-center p-4 text-white">
-					<span class="material-symbols-outlined pr-2">
-						person
-					</span>
-					<span>Benutzer</span>
-				</ResponsiveNavLink>
+				<a :href="route('user.overview')">
+					<div class="link">
+						<div class="icon-box">
+							<span class="icon material-symbols-outlined">
+								person
+							</span>
+						</div>
+						<div class="label-box">
+							<span>Benutzer</span>
+						</div>
+					</div>
+				</a>
 			</div>
-
-			<div class="justify-self-end p-1">
-				<img src="/resources/graphic/FV_ISC.jpg">
-			</div>
+			<img class="logo" src="/resources/graphic/FV_ISC.jpg">
 		</div>
 	</nav>
 </template>
 
-<style scoped lang="css">
+<style lang="css" scoped>
 .navbar-underlay {
-	width: 9rem;
+	width: 8rem;
 }
-
 .navbar {
-	width: 9rem;
+	width: 8rem;
 	height: 100vh;
 	position: fixed;
 	top: 0;
 	left: 0;
-	justify-content: space-between;
 	background-color: #003366; /* Dunkelblau */
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
 	align-items: center;
 }
+.logo {
+	padding: 0.25rem;
+}
+.link {
+	width: 7.5rem;
+	height: 2rem;
+	display: flow-root;
+}
+.icon-box {
+	display: inline flow-root;
+	vertical-align: middle;
+	width: 33%;
+	text-align: center;
+}
+.label-box {
+	display: inline flow-root;
+	width: 67%;
+	text-align: center;
+}
+@media screen and (max-width: 768px) {
+	.navbar-underlay {
+		width: 3rem;
+	}
+	.navbar {
+		width: 3rem;
+		justify-content: space-around;
+	}
+	.logo {
+		display: none;
+	}
+	.link {
+		width: 3.5rem;
+	}
+	.icon-box {
+		width: 100%;
+	}	
+	.label-box {
+		display: none;
+	}
+}
+
 
 .nav-list {
 	list-style: none;
