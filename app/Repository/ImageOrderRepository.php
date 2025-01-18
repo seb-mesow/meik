@@ -20,7 +20,7 @@ final class ImageOrderRepository
 {
 	use IntIdRepositoryTrait;
 	
-	private const MODEL_TYPE_ID = "imageorder";
+	public const MODEL_TYPE_ID = "imageorder";
 	
 	public function __construct(
 		CouchClient $client,

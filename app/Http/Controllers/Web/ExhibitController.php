@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
+use App\Repository\ImageRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use JMS\Serializer\Serializer;
@@ -15,7 +16,7 @@ class ExhibitController extends Controller
 {
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
-		private readonly Serializer $serializer,
+		private readonly ImageRepository $image_repository,
 	) {}
 
 	public function overview() {
@@ -109,7 +110,9 @@ class ExhibitController extends Controller
 			'errs' => [],
 		];
 		if ($exhibit) {
-			$exhibit_form['id'] = $exhibit->get_id();
+			$exhibit_id = $exhibit->get_id();
+			$exhibit_form['id'] = $exhibit_id;
+			$exhibit_form['title_image_id'] = $this->image_repository->get_title_image_id($exhibit_id);
 		}
 		return $exhibit_form;
 	}

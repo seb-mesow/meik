@@ -60,7 +60,8 @@ const form: IExhibitForm = {
 			errs: props.init_props.val.free_texts.errs,
 		}
 	},
-	errs: props.init_props.errs ?? []
+	errs: props.init_props.errs ?? [],
+	title_image_id: props.init_props.title_image_id,
 }
 
 const exhibit_id = form.id;
@@ -101,23 +102,52 @@ async function save_metadata(event: SubmitEvent) {
 				</template>
 			</Breadcrumb>
 		</template>
-
-		<Form :action="route('exhibit.create')" method="post">
-			<InputField :form="form.val.inventory_number" label="Inventarnummer" />
-			<InputField :form="form.val.name" label="Bezeichnung" />
-			<InputField :form="form.val.manufacturer" label="Hersteller" />
-			<Button v-if="is_new"
-				:loading="button_save_metadata_is_loading" 
-				type='submit'
-				label='Speichern'
-			/>
-			<Button v-else
-				:loading="button_save_metadata_is_loading" 
-				type='button'
-				@click="save_metadata"
-				label='Metadaten speichern'
-			/>
-		</Form>
+		
+		<div class="upper-forms">
+			<Form
+				class="metadata-form"
+				:action="route('exhibit.create')"
+				method="post"
+			>
+				<InputField :form="form.val.inventory_number" label="Inventarnummer" />
+				<InputField :form="form.val.name" label="Bezeichnung" />
+				<InputField :form="form.val.manufacturer" label="Hersteller" />
+				<Button v-if="is_new"
+					:loading="button_save_metadata_is_loading" 
+					type='submit'
+					label='Speichern'
+				/>
+				<Button v-else
+					:loading="button_save_metadata_is_loading" 
+					type='button'
+					@click="save_metadata"
+					label='Metadaten speichern'
+				/>
+			</Form>
+			<div class="images-form">
+				<img
+					v-if="form.title_image_id"
+					class="title-image"
+					:src="route('ajax.image.get_file', { image_id: form.title_image_id })"
+				>
+			</div>
+		</div>
 		<FreeTextFields v-if="exhibit_id !== undefined" :init_props="form.val.free_texts" :exhibit_id="exhibit_id" />
 	</AuthenticatedLayout>
 </template>
+<style lang="css" scoped>
+.upper-forms {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 1rem;
+}
+.metadata-form {
+	flex: 18rem;
+}
+.images-form {
+	flex: 18rem;
+}
+.title-image {
+	object-fit: inherit;
+}
+</style>
