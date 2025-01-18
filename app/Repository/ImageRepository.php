@@ -128,6 +128,14 @@ final class ImageRepository
 		return [ 'content_type' => $content_type, 'file' => $file ];
 	}
 	
+	public function get_title_image_id(int $exhibit_id): ?string {
+		$response = $this->client
+			->key([$exhibit_id, 0]) // @phpstan-ignore-line
+			->include_docs(true) // @phpstan-ignore-line
+			->getView(ImageOrderRepository::MODEL_TYPE_ID, 'by-exhibit-id-to-image-docs');
+		return $response->rows[0]?->value->_id;
+	}
+	
 	// TODO always retrieve image type from user's file
 	
 	/**

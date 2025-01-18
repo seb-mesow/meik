@@ -1,7 +1,7 @@
 import { IFreeTextsInitPageProps } from "./freetexts"
 
 export interface IExhibitInitPageProps {
-	id: number,
+	id?: number,
 	val: {
 		inventory_number: {
 			val: string,
@@ -20,5 +20,6 @@ export interface IExhibitInitPageProps {
 			errs?: string[]
 		}
 	},
-	errs?: string[]
+	errs?: string[],
+	title_image_id?: string,
 }

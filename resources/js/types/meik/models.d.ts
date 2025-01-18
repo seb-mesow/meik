@@ -40,6 +40,7 @@ export interface IExhibitForm {
 			errs: string[];
 		},
 		free_texts: IFreeTextsForms,
-	}
+	},
+	title_image_id?: string,
 }
 

@@ -22,9 +22,9 @@ return new class extends Migration
 		$this->map_function = <<<END
 		function(doc) {
 			if (doc._id.startsWith('$model_type_id')) {
-				exhibit_id = doc._id.substring($model_type_id_length);
-				for (const image_id of doc.image_ids) {
-					emit(exhibit_id, { _id: image_id });
+				exhibit_id = parseInt(doc._id.substring($model_type_id_length), 10);
+				for (const index in doc.image_ids) {
+					emit([exhibit_id, parseInt(index, 10)], { _id: doc.image_ids[index] });
 				}
 			}
 		}
