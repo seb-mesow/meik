@@ -10,48 +10,61 @@ use App\Models\Traits\RevisionableTrait;
 use DateTime;
 use OutOfBoundsException;
 use RuntimeException;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\SerializedName;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Illuminate\Foundation\Auth\User as Authenticatable;
 // use Illuminate\Notifications\Notifiable;
 
+
+#[ExclusionPolicy("all")]
 class Exhibit implements IntIdentifiable, Revisionable
 {
 	use IntIdentifiableTrait;
 	use RevisionableTrait;
 	
 	/** @Accessor(getter="get_inventor_number") */
+	#[Expose]
 	private string $inventory_number;
 	
 	/** @Accessor(getter="get_name") */
+	#[Expose]
 	private string $name;
 
 	/** @Accessor(getter="get_manufacturer") 
 	 */
+	#[Expose]
 	private ?string $manufacturer = null;
 
 	/** @Accessor(getter="get_year_of_construction") */
+	#[Expose]
 	private ?string $year_of_construction = null;
 
 	/** @Accessor(getter="get_place") */
+	#[Expose]
 	private ?string $place = null;
 
 	/** @Accessor(getter="get_aquiry_date") 
 	 * @Type("DateTime")
 	 */
+	#[Expose]
 	private ?DateTime $aquiry_date = null;
 
 	/** 
 	 * @var FreeText[]
 	 * 
 	 * @Accessor(getter="get_free_texts") 
-	 * @Serializer\SerializedName("freetexts")
 	 */
+	#[Expose]
+	#[SerializedName('freetexts')]
 	private array $free_texts;
 
 	/** @Accessor(getter="get_connected_exhibits") 
 	 */
+	#[Expose]
 	private ?array $connected_exhibits = [];
 
 	/**
@@ -67,6 +80,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 	/**
 	 * @param FreeText[] $free_texts
 	 */
+	#[Expose]
 	public function __construct(
 		string $inventory_number,
 		string $name,
