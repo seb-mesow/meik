@@ -13,6 +13,8 @@ class PlaceSeeder extends Seeder
 {
 	private const int COUNT = 100;
 	
+	private array $places = [];
+	
 	public function __construct(
 		private readonly PlaceRepository $place_repository,
 		private readonly LocationRepository $location_repository,
@@ -69,6 +71,7 @@ class PlaceSeeder extends Seeder
 	
 	private function create_place(Place $place): void {
 		$this->place_repository->insert($place);
+		$this->places[] = $place;
 	}
 	
 	private function create_many_places(string $location_id): void {
@@ -78,7 +81,7 @@ class PlaceSeeder extends Seeder
 				location_id: $location_id,
 			));
 			if (($i % 10) === 0) {
-				sleep(1);
+				usleep(100);
 			}
 		}
 	}
@@ -87,5 +90,12 @@ class PlaceSeeder extends Seeder
 		$location = $this->location_repository->find_by_name($name);
 		assert($location);
 		return $location;
+	}
+	
+	/**
+	 * @return Place[]
+	 */
+	public function get_places(): array {
+		return $this->places;	
 	}
 }

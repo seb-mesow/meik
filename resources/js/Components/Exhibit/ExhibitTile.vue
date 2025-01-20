@@ -1,23 +1,16 @@
 <script setup lang="ts">
-import type { IExhibitForTile } from '@/types/meik/models';
-
+import type { IExhibitOverviewExhibitTileInitPageProps } from '@/types/page_props/exhibit_overview';
 // (interne) Attribute der Komponente
 const props = defineProps<{
-	exhibit: IExhibitForTile;
+	exhibit: IExhibitOverviewExhibitTileInitPageProps;
 }>();
-const exhibit: IExhibitForTile = props.exhibit;
-
-const name: string = exhibit.name;
-// const manufacturer: string = '';
-// const site: string = '';
-// const place: string = '';
-
+const exhibit: IExhibitOverviewExhibitTileInitPageProps = props.exhibit;
 </script>
 
 <template>
 	<a :href="route('exhibit.details', exhibit.id)">
 		<div class="exhibit-tile">
-			<p>{{ name }}</p>
+			<p>{{ exhibit.name }}</p>
 		</div>
 	</a>
 </template>

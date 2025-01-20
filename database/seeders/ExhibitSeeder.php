@@ -16,13 +16,16 @@ class ExhibitSeeder extends Seeder
 	private array $exhibits = [];
 	
 	public function __construct(
-		private readonly ExhibitRepository $exhibit_repository
+		private readonly ExhibitRepository $exhibit_repository,
+		private readonly PlaceSeeder $place_seeder,
 	) {}
 	
 	/**
 	 * Seed the application's database.
 	 */
 	public function run(): void {
+		$places = $this->place_seeder->get_places();
+		
 		$all_exhibits = $this->exhibit_repository->get_all();
 		foreach ($all_exhibits as $exhibit) {
 			$this->exhibit_repository->remove($exhibit);
@@ -32,6 +35,8 @@ class ExhibitSeeder extends Seeder
 			inventory_number: 'N-12345',
 			name: 'Nixdorf BA42',
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+			year_of_manufacture: 1961,
+			place_id: $places[0]->get_id(),
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -50,6 +55,8 @@ class ExhibitSeeder extends Seeder
 			inventory_number: 'T-12345', 
 			name: 'Tiumphator CRN1',
 			manufacturer: 'Triumphator Leipzig (Mölkau) DDR',
+			year_of_manufacture: 1962,
+			place_id: $places[1]->get_id(),
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -67,6 +74,8 @@ class ExhibitSeeder extends Seeder
 			inventory_number: 'N-98765',
 			name: 'Nixdorf 8810 M55',
 			manufacturer: 'Nixdorf Computer AG Paderborn',
+			year_of_manufacture: 1963,
+			place_id: $places[2]->get_id(),
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -84,6 +93,8 @@ class ExhibitSeeder extends Seeder
 			inventory_number: 'NB-42',
 			name: 'Nixdorf BA42',
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
+			year_of_manufacture: 1964,
+			place_id: $places[3]->get_id(),
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",

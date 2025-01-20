@@ -41,11 +41,11 @@ class Exhibit implements IntIdentifiable, Revisionable
 
 	/** @Accessor(getter="get_year_of_construction") */
 	#[Expose]
-	private ?string $year_of_construction = null;
+	private int $year_of_manufacture;
 
-	/** @Accessor(getter="get_place") */
+	/** @Accessor(getter="get_place_id") */
 	#[Expose]
-	private ?string $place = null;
+	private string $place_id;
 
 	/** @Accessor(getter="get_aquiry_date") 
 	 * @Type("DateTime")
@@ -85,6 +85,8 @@ class Exhibit implements IntIdentifiable, Revisionable
 		string $inventory_number,
 		string $name,
 		string $manufacturer,
+		int $year_of_manufacture,
+		string $place_id,
 		array $free_texts = [],
 		int|null $id = null,
 		?string $rev = null
@@ -95,6 +97,8 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->inventory_number = $inventory_number;
 		$this->name = $name;
 		$this->manufacturer = $manufacturer;
+		$this->year_of_manufacture = $year_of_manufacture;
+		$this->place_id = $place_id;
 		$this->free_texts = $free_texts;
 	}
 		
@@ -125,26 +129,14 @@ class Exhibit implements IntIdentifiable, Revisionable
 		return $this;
 	}
 
-	public function get_year_of_construction(){
-		return $this->year_of_construction;
+	public function get_place_id(){
+		return $this->place_id;
 	}
 
-	public function set_year_of_construction($year_of_construction){
-		$this->year_of_construction = $year_of_construction;
-
-		return $this;
+	public function get_year_of_manufacture(): int {
+		return $this->year_of_manufacture;
 	}
-
-	public function get_place(){
-		return $this->place;
-	}
-
-	public function set_place($place){
-		$this->place = $place;
-
-		return $this;
-	}
-
+	
 	public function get_aquiry_date(){
 		return $this->aquiry_date;
 	}

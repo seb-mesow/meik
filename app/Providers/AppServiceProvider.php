@@ -5,6 +5,10 @@ namespace App\Providers;
 
 use App\Repository\CouchDBUserProvider;
 use Database\Seeders\ExhibitSeeder;
+use Database\Seeders\ImageSeeder;
+use Database\Seeders\LocationSeeder;
+use Database\Seeders\PlaceSeeder;
+use Database\Seeders\UserSeeder;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Foundation\Application;
@@ -27,7 +31,11 @@ class AppServiceProvider extends ServiceProvider
 		$this->app->singleton(Serializer::class, static function(Application $app) {
 			return $app->make(SerializerBuilder::class)->build();
 		});
+		$this->app->singleton(UserSeeder::class);
+		$this->app->singleton(LocationSeeder::class);
+		$this->app->singleton(PlaceSeeder::class);
 		$this->app->singleton(ExhibitSeeder::class);
+		$this->app->singleton(ImageSeeder::class);
 	}
 
 	/**

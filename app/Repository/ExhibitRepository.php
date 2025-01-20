@@ -22,6 +22,8 @@ use stdClass;
  *     inventory_number: string,
  *     name: string,
  *     manufacturer: string,
+ *     year_of_manufacture: int,
+ *     place_id: int,
  *     free_texts: FreeTextDoc[]
  * }
  * 
@@ -137,7 +139,6 @@ final class ExhibitRepository
 
 	public function get_by_selectors(array $selectors): array
 	{
-
 		$docs = $this->client->find(
 			$selectors
 		)->docs;
@@ -155,11 +156,13 @@ final class ExhibitRepository
 	{
 		/** @var ExhibitDoc */
 		$exhibit_doc = $this->create_stub_doc_from_model($exhibit);
-
+		
 		$exhibit_doc->inventory_number = $exhibit->get_inventory_number();
 		$exhibit_doc->name = $exhibit->get_name();
 		$exhibit_doc->manufacturer = $exhibit->get_manufacturer();
-
+		$exhibit_doc->year_of_manufacture = $exhibit->get_year_of_manufacture();
+		$exhibit_doc->place_id = $exhibit->get_place_id();
+		
 		$_this = $this;
 		$free_text_docs = array_map(static function (FreeText $free_text) use ($_this): stdClass {
 			return $_this->create_doc_from_free_text($free_text);
@@ -178,12 +181,13 @@ final class ExhibitRepository
 		$free_texts = array_map(static function (stdClass $free_text_doc) use ($_this): FreeText {
 			return $_this->create_free_text_from_doc($free_text_doc);
 		}, $exhibit_doc->free_texts);
-
-
+		
 		return new Exhibit(
 			inventory_number: $exhibit_doc->inventory_number,
 			name: $exhibit_doc->name,
 			manufacturer: $exhibit_doc->manufacturer,
+			year_of_manufacture: $exhibit_doc->year_of_manufacture,
+			place_id: $exhibit_doc->place_id,
 			free_texts: $free_texts,
 			id: $this->determinate_model_id_from_doc($exhibit_doc),
 			rev: $exhibit_doc->_rev,
