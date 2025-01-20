@@ -15,33 +15,36 @@ import ToastService from 'primevue/toastservice';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
-    resolve: (name) =>
-        resolvePageComponent(
-            `./Pages/${name}.vue`,
-            import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
-        ),
-    setup({ el, App, props, plugin }) {
-        // für lokale Dev
-        const app = createApp({ render: () => h(App, props) });
-        // für Produktiv
-        // const app = createSSRApp({ render: () => h(App, props) });
-        
+	title: (title) => `${title} - ${appName}`,
+	resolve: (name) =>
+		resolvePageComponent(
+			`./Pages/${name}.vue`,
+			import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
+		),
+	setup({ el, App, props, plugin }) {
+		// für lokale Dev
+		const app = createApp({ render: () => h(App, props) });
+		// für Produktiv
+		// const app = createSSRApp({ render: () => h(App, props) });
+		
 		app.use(plugin);
 		
 		// Plugins für Vue
-        app.use(ZiggyVue);
+		app.use(ZiggyVue);
 		app.use(PrimeVue, {
 			theme: {
 				preset: Lara, // oder Material
+				options: {
+					darkModeSelector: '.p-dark'
+				}
 			}
 		});
-        app.use(ConfirmationService);
-        app.use(ToastService);
+		app.use(ConfirmationService);
+		app.use(ToastService);
 		
-        app.mount(el);
-    },
-    progress: {
-        color: '#4B5563',
-    },
+		app.mount(el);
+	},
+	progress: {
+		color: '#4B5563',
+	},
 });
