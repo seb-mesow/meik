@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import isc_logo_url from '../../images/Logo_isc_300x122.jpg';
+import fv_logo_url from '../../images/FV_ISC.jpg';
 import { toggle_dark_mode } from '@/bootstrap';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import Button from 'primevue/button';
@@ -8,7 +10,7 @@ import Button from 'primevue/button';
 	<div class="navbar-underlay">
 	<nav>
 		<div class="navbar">
-			<img class="logo" src="/resources/graphic/Logo_isc_300x122.jpg">
+			<img class="logo" :src="isc_logo_url">
 			<div>
 				<a :href="route('exhibit.overview')">
 					<div class="link">
@@ -52,7 +54,7 @@ import Button from 'primevue/button';
 			<Button @click="toggle_dark_mode">
 				<i id="dark_mode_icon" class="pi pi-sun"/>
 			</Button>
-			<img class="logo" src="/resources/graphic/FV_ISC.jpg">
+			<img class="logo" :src="fv_logo_url">
 		</div>
 	</nav>
 	</div>
