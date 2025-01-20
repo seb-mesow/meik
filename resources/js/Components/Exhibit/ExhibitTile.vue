@@ -1,5 +1,6 @@
-<script setup lang="ts">
-import type { IExhibitOverviewExhibitTileInitPageProps } from '@/types/page_props/exhibit_overview';
+<script lang="ts" setup>
+import { IExhibitOverviewExhibitTileInitPageProps } from '@/types/page_props/exhibit_overview';
+
 // (interne) Attribute der Komponente
 const props = defineProps<{
 	exhibit: IExhibitOverviewExhibitTileInitPageProps;
