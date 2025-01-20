@@ -124,7 +124,9 @@ async function save_metadata(event: SubmitEvent) {
 				/>
 			</Form>
 			<div class="images-form">
-				<a :href="route('exhibit.images.details', { exhibit_id: exhibit_id })">
+				<a v-if="exhibit_id"
+					:href="route('exhibit.images.details', { exhibit_id: exhibit_id })"
+				>
 					<img
 						v-if="form.title_image_id"
 						class="title-image"
