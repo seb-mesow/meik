@@ -1,15 +1,16 @@
-export type IImagesIndicesOrder = number[];
+export type IImageIDsOrder = number[];
 
-export type ICreateImageRequestData = {
+export interface ICreateImageRequestData {
 	index: number,
 	description: string,
 	is_public: boolean,
 };
 export interface ICreateImage200ResponseData {
-	id: number,
-	indices_order: IImagesIndicesOrder,
+	id: string,
+	ids_order: IImageIDsOrder,
 };
 export interface ICreateImage422ResponseData {
+	errs: string[],
 	index: string[], // errs
 	description: string[], // errs
 	is_public: string[], // errs
@@ -20,7 +21,7 @@ export type IDeleteImage200ResponseData = IImageIndicesOrder;
 export type IDeleteImage422ResponseData = string[]; // errs
 
 export type IMoveImageRequestData = number; // new index
-export type IMoveImage200ResponseData = IImagesIndicesOrder;
+export type IMoveImage200ResponseData = IImageIDsOrder;
 export type IMoveImage422ResponseData = string[]; // errs
 
 export type IGetImageMetaDataRequestData = never;
@@ -40,5 +41,6 @@ export interface IUpdateImageMetaData422ResponseData {
 	is_public: string[], // errs
 }
 
+export type ISetImageFileRequestData = File;
 export type ISetImageFile200ResponseData = never;
 export type ISetImageFile422ResponseData = string[];

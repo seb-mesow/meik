@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Location;
 use App\Repository\LocationRepository;
 use Inertia\Inertia;
-use stdClass;
 
 class LocationController extends Controller
 {

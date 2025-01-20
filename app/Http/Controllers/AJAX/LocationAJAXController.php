@@ -8,9 +8,6 @@ use App\Models\Location;
 use App\Repository\LocationRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use JMS\Serializer\Serializer;
-use JMS\Serializer\SerializerBuilder;
 
 class LocationAJAXController extends Controller
 {
