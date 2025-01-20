@@ -2,13 +2,11 @@
 import Button from 'primevue/button';
 import ExhibitTile from '@/Components/Exhibit/ExhibitTile.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { IExhibitForTile } from '@/types/meik/models';
-import { Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import type { IExhibitOverviewInitPageProps } from '@/types/page_props/exhibit_overview';
 import Breadcrumb from 'primevue/breadcrumb';
 
 const props = defineProps<{
-	exhibits: IExhibitForTile[]
+	init_props: IExhibitOverviewInitPageProps,
 }>();
 
 const home = {
@@ -21,6 +19,7 @@ const items = [
 		url: route('exhibit.overview'),
 	}
 ];
+const exhibits = props.init_props.exhibits;
 </script>
 
 <template>

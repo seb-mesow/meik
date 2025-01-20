@@ -8,6 +8,8 @@ use App\Models\Exhibit;
 use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
 use App\Repository\ImageRepository;
+use App\Repository\LocationRepository;
+use App\Repository\PlaceRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use JMS\Serializer\Serializer;
@@ -16,22 +18,37 @@ class ExhibitController extends Controller
 {
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
+		private readonly LocationRepository $location_repository,
+		private readonly PlaceRepository $place_repository,
 		private readonly ImageRepository $image_repository,
 	) {}
 
 	public function overview() {
 		$exhibits = $this->exhibit_repository->get_all();
-		$array = array_map(static function(Exhibit $exhibit): array {
-			return [
-				'id' => $exhibit->get_id(),
-				'name' => $exhibit->get_name(),
-			];
-		}, $exhibits);
+		$array = [];
+		foreach ($exhibits as $exhibit) {
+			$array[] = $this->determinate_overview_page_props($exhibit);
+		}
 		return Inertia::render('Exhibit/ExhibitOverview', [
-			'exhibits' => $array
+			'init_props' => [
+				'exhibits' => $array,
+			],
 		]);
 	}
 
+	private function determinate_overview_page_props(Exhibit $exhibit): array {
+		$place = $this->place_repository->get($exhibit->get_place_id());
+		$location = $this->location_repository->get($place->get_location_id());
+		return [
+			'id' => $exhibit->get_id(),
+			'name' => $exhibit->get_name(),
+			'inventory_number' => $exhibit->get_inventory_number(),
+			'year_of_manufacture' => $exhibit->get_year_of_manufacture(),
+			'location_name' => $location->get_name(),
+			'place_name' => $place->get_name(),
+		];
+	}
+	
 	public function details(int $id) {
 		$exhibit = $this->exhibit_repository->get($id);
 		$form = $this->create_form($exhibit, true);

@@ -40,7 +40,7 @@ class LocationSeeder extends Seeder
 			));
 			$is_public = !$is_public;
 			if (($i % 10) === 0) {
-				sleep(1);
+				usleep(100);
 			}
 		}
 	}
