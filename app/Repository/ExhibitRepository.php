@@ -78,15 +78,21 @@ final class ExhibitRepository
 	 * @var string $id
 	 * @return \App\Models\Location[]
 	 */
-	public function get_exhibits_paginated(int $page = 0, int $page_size = 10,): array
+	public function get_exhibits_paginated(array $selectors = [], int $page = 0, int $page_size = 10,): array
 	{
+		dd($selectors);
 		$exhibits = $this->client
 			->limit($page_size)
 			->skip($page * $page_size)
 			->find([
-				'_id' => [
-					'$beginsWith' => self::MODEL_TYPE_ID
-				],
+				'$and' => [
+					[
+						'_id' => [
+							'$beginsWith' => self::MODEL_TYPE_ID
+						]
+					],
+					$selectors
+				]
 			])
 			->docs;
 		$_this = $this;

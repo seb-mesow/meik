@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Web;
@@ -59,25 +60,28 @@ class ExhibitController extends Controller
 		return $tile_props;
 	}
 	
-	public function details(int $id) {
+	public function details(int $id)
+	{
 		$exhibit = $this->exhibit_repository->get($id);
 		$form = $this->create_form($exhibit, true);
 		return Inertia::render('Exhibit/Exhibit', [
 			'id' => $exhibit->get_id(),
 			'name' => $exhibit->get_name(),
- 			'init_props' => $form
+			'init_props' => $form
 		]);
 	}
-	
-	public function new() {
+
+	public function new()
+	{
 		$form = $this->create_form(null, false);
 		return Inertia::render('Exhibit/Exhibit', [
 			'name' => 'Neues Exponat',
 			'init_props' => $form
 		]);
 	}
-	
-	public function create(Request $request) {
+
+	public function create(Request $request)
+	{
 		$inventory_number = $request->input('inventory_number');
 		$name = $request->input('name');
 		$manufacturer = $request->input('manufacturer');
@@ -92,8 +96,9 @@ class ExhibitController extends Controller
 		// sleep(5); // TODO entfernen
 		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
 	}
-	
-	private function create_form(?Exhibit $exhibit, ?bool $persisted): array {
+
+	private function create_form(?Exhibit $exhibit, ?bool $persisted): array
+	{
 		if (!$exhibit) {
 			$persisted = false; // TODO remove
 		}
@@ -116,7 +121,7 @@ class ExhibitController extends Controller
 				]
 			]
 		], $free_texts);
-		
+
 		$exhibit_form = [
 			'val' => [
 				'inventory_number' => [
