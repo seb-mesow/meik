@@ -1,5 +1,10 @@
 import { IValueForm as IValueForm, IForm, FormSpec, IFormSpec, CheckFormSpec } from "@/util/form";
 
+export interface IRubricForTile {
+	id: string;
+	name: string;
+};
+
 interface ICheckFormSpec {
 	id: boolean
 };

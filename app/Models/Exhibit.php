@@ -76,11 +76,12 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 *  @Accessor(getter="get_current_value") 
 	 */
 	private ?float $current_value = 0;
-	
+
 	/**
-	 * @param FreeText[] $free_texts
+	 *  @Accessor(getter="get_rubric_id") 
 	 */
-	#[Expose]
+	private string $rubric_id;
+	
 	public function __construct(
 		string $inventory_number,
 		string $name,
@@ -88,6 +89,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 		int $year_of_manufacture,
 		string $place_id,
 		array $free_texts = [],
+		string $rubric_id,
 		int|null $id = null,
 		?string $rev = null
 	) {
@@ -100,6 +102,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->year_of_manufacture = $year_of_manufacture;
 		$this->place_id = $place_id;
 		$this->free_texts = $free_texts;
+		$this->rubric_id = $rubric_id;
 	}
 		
 	public function get_inventory_number(): string {
@@ -265,6 +268,22 @@ class Exhibit implements IntIdentifiable, Revisionable
 
 	public function set_current_value($current_value){
 		$this->current_value = $current_value;
+
+		return $this;
+	}
+
+
+	public function get_rubric_id()
+	{
+		return $this->rubric_id;
+	}
+
+	/**
+	 * @return  self
+	 */ 
+	public function set_rubric_id($rubric_id)
+	{
+		$this->rubric_id = $rubric_id;
 
 		return $this;
 	}

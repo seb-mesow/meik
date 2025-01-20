@@ -37,6 +37,7 @@ class ExhibitSeeder extends Seeder
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
 			year_of_manufacture: 1961,
 			place_id: $places[0]->get_id(),
+			rubric_id: 'sonstiges',
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -57,6 +58,7 @@ class ExhibitSeeder extends Seeder
 			manufacturer: 'Triumphator Leipzig (Mölkau) DDR',
 			year_of_manufacture: 1962,
 			place_id: $places[1]->get_id(),
+			rubric_id: 'sonstiges',
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -76,6 +78,7 @@ class ExhibitSeeder extends Seeder
 			manufacturer: 'Nixdorf Computer AG Paderborn',
 			year_of_manufacture: 1963,
 			place_id: $places[2]->get_id(),
+			rubric_id: 'sonstiges',
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -95,6 +98,7 @@ class ExhibitSeeder extends Seeder
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
 			year_of_manufacture: 1964,
 			place_id: $places[3]->get_id(),
+			rubric_id: 'sonstiges',
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
