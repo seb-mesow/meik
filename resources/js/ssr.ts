@@ -1,29 +1,50 @@
+import '../css/app.css';
+import 'primeicons/primeicons.css';
+
 import { createInertiaApp } from '@inertiajs/vue3';
-import createServer from '@inertiajs/vue3/server';
-import { renderToString } from '@vue/server-renderer';
+import createServer from '@inertiajs/vue3/server'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createSSRApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import PrimeVue from 'primevue/config';
+import ConfirmationService from 'primevue/confirmationservice';
+import Lara from '@primevue/themes/lara';
+import ToastService from 'primevue/toastservice';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
-createServer((page) =>
-    createInertiaApp({
-        page,
-        render: renderToString,
-        title: (title) => `${title} - ${appName}`,
-        resolve: (name) =>
-            resolvePageComponent(
-                `./Pages/${name}.vue`,
-                import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
-            ),
-        setup({ App, props, plugin }) {
-            return createSSRApp({ render: () => h(App, props) })
-                .use(plugin)
-                .use(ZiggyVue, {
-                    ...page.props.ziggy,
-                    location: new URL(page.props.ziggy.location),
-                });
-        },
-    }),
-);
+createServer(page => 
+	createInertiaApp({
+		page: page,
+		title(title) {
+			return `${title} - ${appName}`;
+		},
+		resolve(name) {
+			return resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'));
+		},
+		setup({ el, App, props, plugin }) {
+			// für lokale Dev
+			const app = createSSRApp({ render: () => h(App, props) });
+			
+			app.use(plugin);
+			
+			// Plugins für Vue
+			app.use(ZiggyVue);
+			app.use(PrimeVue, {
+				theme: {
+					preset: Lara, // oder Material
+					options: {
+						darkModeSelector: '.p-dark'
+					}
+				}
+			});
+			app.use(ConfirmationService);
+			app.use(ToastService);
+			
+			app.mount(el);
+		},
+		progress: {
+			color: '#4B5563',
+		},
+	})
+)

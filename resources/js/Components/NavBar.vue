@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import isc_logo_url from '../../images/Logo_isc_300x122.jpg';
 import fv_logo_url from '../../images/FV_ISC.jpg';
-import { toggle_dark_mode } from '@/bootstrap';
+import { toggle_dark_mode } from '@/bootstrap-app';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import Button from 'primevue/button';
 </script>

@@ -1,17 +1,15 @@
 # Deployment
-
 Hier werden Einstellungen zur Produktiv-Umgebung notiert.
 
 ## TODO
-
 - für Deployment Image, welches Node und PHP vereint.<br>
   siehe [Hinweisbox auf der Inertia-Seite](https://inertiajs.com/server-side-rendering)
 
 ## Notizen
-
 - Server-Side Rendering (SSR) ist nur für die Produktiv-Umgebung sinnvoll.
 - Für die lokale Development-Umgebung verwenden wir Hot Module Replacement,
   welches für SSR hinderlich ist.
+- Vite einstweilen auf belassen wegen: https://github.com/laravel/vite-plugin/issues/316
 
 ## Einrichtung
 - **`APP_DEBUG=false` !!!**
@@ -21,10 +19,9 @@ Hier werden Einstellungen zur Produktiv-Umgebung notiert.
 
 ## Workflow
 0. siehe [README](../README.md) — Einrichtung für alle
-1. `resources/js/app.ts` anpassen
 2. `artisan optimize` (Config, Event-Listener-Mapping, Routes cachen)
 3. `npm run build-prod`
-4. `npm run start-ssr-prod`
+4. `node resources/ssr/ssr.js`
 
 ## Einloggen
 1. `ssh BENUTZERNAME@DOMAIN_NAME`

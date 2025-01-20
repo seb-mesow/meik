@@ -10,31 +10,31 @@
         "dev-slow": "vue-tsc && vite",
         "dev": "vite",
         "dev-debug": "vite -d -l info",
-        "build-prod": "vite build && vite build --ssr",
+        "build-prod": "vite build --ssr",
         "build-prod-recommended": "vue-tsc && vite build && vite build --ssr",
         "start-ssr-prod": "node bootstrap/ssr/ssr.js"
     },
     "devDependencies": {
-        "@inertiajs/vue3": "^1.0.0",
-        "@tailwindcss/forms": "^0.5.3",
-        "@vitejs/plugin-vue": "^5.0.0",
-        "@vue/server-renderer": "^3.4.0",
-        "autoprefixer": "^10.4.12",
-        "axios": "^1.6.4",
-        "laravel-vite-plugin": "^1.0",
-        "postcss": "^8.4.31",
-        "sass-embedded": "^1.81.0",
-        "tailwindcss": "^3.2.1",
-        "typescript": "^5.5.3",
-        "vite": "^5.0",
-        "vue": "^3.4.0",
-        "vue-tsc": "^2.0.24"
+        "autoprefixer": "^10.4.12"
     },
     "dependencies": {
-        "@primevue/themes": "^4.1.1",
+        "@inertiajs/vue3": "^2.0",
+        "@primevue/themes": "^4.2",
+        "@tailwindcss/forms": "^0.5.3",
+        "@vitejs/plugin-vue": "^5.2",
+        "@vue/server-renderer": "^3.5.13",
+        "axios": "^1.7",
+        "laravel-vite-plugin": "^1.1",
         "material-design-icons-iconfont": "^6.7.0",
-        "primeicons": "^7.0.0",
-        "primevue": "^4.0.7",
-        "quill": "^2.0.3"
+        "postcss": "^8.5",
+        "primeicons": "^7.0",
+        "primevue": "^4.2",
+        "quill": "^2.0",
+        "sass-embedded": "^1.83",
+        "tailwindcss": "^3.2.1",
+        "typescript": "^5.7",
+        "vite": "^6.0.8",
+        "vue": "^3.5",
+        "vue-tsc": "^2.2"
     }
 }
