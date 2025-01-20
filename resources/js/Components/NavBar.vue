@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { toggle_dark_mode } from '@/bootstrap';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import Button from 'primevue/button';
 </script>
 
 <template>
-	<div class="navbar-underlay"/>
+	<div class="navbar-underlay">
 	<nav>
 		<div class="navbar">
 			<img class="logo" src="/resources/graphic/Logo_isc_300x122.jpg">
@@ -47,14 +49,20 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 					</div>
 				</a>
 			</div>
+			<Button @click="toggle_dark_mode">
+				<i id="dark_mode_icon" class="pi pi-sun"/>
+			</Button>
 			<img class="logo" src="/resources/graphic/FV_ISC.jpg">
 		</div>
 	</nav>
+	</div>
 </template>
 
 <style lang="css" scoped>
 .navbar-underlay {
-	width: 8rem;
+	flex-grow: 0;
+	flex-shrink: 0;
+	flex-basis: 8rem;
 }
 .navbar {
 	width: 8rem;
@@ -89,7 +97,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 }
 @media screen and (max-width: 768px) {
 	.navbar-underlay {
-		width: 3rem;
+		flex-basis: 3rem;
 	}
 	.navbar {
 		width: 3rem;
