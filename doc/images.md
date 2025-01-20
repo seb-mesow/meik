@@ -37,6 +37,8 @@ Benutzerbindung
 - unten Thumbnails mit allen Bilder auf einmal
   - dabei Bild hinzufügen Button
   - Drag and Drop für Reihenfolge
+  - extra Save-Button für Reihenfolge
+  - Titel-Bild hervorgehoben
 
 # DB-Entwurf
 - ImageOrder hat folgende Attribute

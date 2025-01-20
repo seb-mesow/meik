@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Http\Controllers\Web\ImagesController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\ExhibitController;
@@ -31,6 +32,9 @@ Route::middleware('auth')->group(function () {
 	Route::post('/exhibit', [ExhibitController::class, 'create'])->name('exhibit.create');
 	Route::get('/exhibit/{id}', [ExhibitController::class, 'details'])->name('exhibit.details');
 	Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete'])->name('exhibit.delete');
+	
+	# --- Images ---
+	Route::get('/exhibit/{exhibit_id}/images', [ImagesController::class, 'details'])->name('exhibit.images.details');
 	
 	# --- Locations ---
 	Route::get('/locations', [LocationController::class, 'overview'])->name('location.overview');

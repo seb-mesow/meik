@@ -24,10 +24,7 @@ const items = [
 </script>
 
 <template>
-
-	<Head title="Exponate" />
 	<AuthenticatedLayout>
-
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
 				<template #item="{ item }">

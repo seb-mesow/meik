@@ -90,7 +90,6 @@ async function save_metadata(event: SubmitEvent) {
 </script>
 
 <template>
-	<Head title="Exponat" />
 	<AuthenticatedLayout>
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
@@ -125,11 +124,13 @@ async function save_metadata(event: SubmitEvent) {
 				/>
 			</Form>
 			<div class="images-form">
-				<img
-					v-if="form.title_image_id"
-					class="title-image"
-					:src="route('ajax.image.get_file', { image_id: form.title_image_id })"
-				>
+				<a :href="route('exhibit.images.details', { exhibit_id: exhibit_id })">
+					<img
+						v-if="form.title_image_id"
+						class="title-image"
+						:src="route('ajax.image.get_file', { image_id: form.title_image_id })"
+					>
+				</a>
 			</div>
 		</div>
 		<FreeTextFields v-if="exhibit_id !== undefined" :init_props="form.val.free_texts" :exhibit_id="exhibit_id" />

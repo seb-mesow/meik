@@ -4,26 +4,58 @@ declare(strict_types=1);
 namespace App\Http\Controllers\AJAX;
 
 use App\Http\Controllers\Controller;
+use App\Models\Image;
+use App\Repository\ImageOrderRepository;
 use App\Repository\ImageRepository;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class ImageAJAXController extends Controller
 {
 	public function __construct(
-		private readonly ImageRepository $image_repository
+		private readonly ImageRepository $image_repository,
+		private readonly ImageOrderRepository $image_order_repository
 	) {}
 	
-	public function create(): JsonResponse {
-		return response()->json();
+	public function create(Request $request, int $exhibit_id): JsonResponse {
+		$index = $request->input('index');
+		$description = $request->input('description');
+		$is_public = $request->input('is_public');
+		
+		$image = new Image(
+			description: $description, 
+			is_public: $is_public,
+		);
+		
+		$this->image_repository->insert($image);
+		$image_id = $image->get_id();
+		$image_order = $this->image_order_repository->get($exhibit_id);
+		$image_order->insert_image_id($image_id, $index);
+		$ids_order = $image_order->get_image_ids();
+		
+		return response()->json([
+			'id' => $image_id,
+			'ids_order' => $ids_order,
+		]);
 	}
 	
-	public function delete(): JsonResponse {
-		return response()->json();
+	public function delete(int $exhibit_id, string $image_id): JsonResponse {
+		$this->image_repository->remove_by_id($image_id);
+		$image_order = $this->image_order_repository->get($exhibit_id);
+		$image_order->remove_image_id($image_id);
+		$this->image_order_repository->update($image_order);
+		$ids_order = $image_order->get_image_ids();
+		return response()->json($ids_order);
 	}
 	
-	public function move(): JsonResponse {
-		return response()->json();
+	public function move(Request $request, int $exhibit_id, string $image_id): JsonResponse {
+		$new_index = $request->input();
+		$image_order = $this->image_order_repository->get($exhibit_id);
+		$image_order->move_image_id($image_id, $new_index);
+		$this->image_order_repository->update($image_order);
+		$ids_order = $image_order->get_image_ids();
+		return response()->json($ids_order);
 	}
 	
 	public function get_meta_data(): JsonResponse {

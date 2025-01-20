@@ -84,7 +84,7 @@ final class ImageRepository
 		return new Image(
 			description: $image_doc->description,
 			is_public: $image_doc->is_public,
-			id: $image_doc->_id, 
+			id: $this->determinate_model_id_from_doc($image_doc), 
 			rev: $image_doc->_rev,
 		);
 	}

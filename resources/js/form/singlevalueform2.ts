@@ -5,11 +5,13 @@ export interface ISingleValueForm2<T, IdType = string> {
 	rollback(): void;
 	commit(): void;
 	errs: readonly string[];
+	on_change_val_in_editing(val: T): void;
 }
 
-export interface ISingleValueForm2ConstructorArgs<T> {
-	val: T;
-	errs?: string[];
+export interface ISingleValueForm2ConstructorArgs<T, IdType = string> {
+	val: T,
+	errs?: string[],
+	on_change?: (form: SingleValueForm2<T, IdType>) => void,
 }
 
 export class SingleValueForm2<T, IdType = string> implements ISingleValueForm2<T, IdType> {
@@ -17,12 +19,20 @@ export class SingleValueForm2<T, IdType = string> implements ISingleValueForm2<T
 	public val: T;
 	public val_in_editing: T;
 	public errs: string[];
+	private readonly on_change: (form: SingleValueForm2<T, IdType>) => void;
 	
-	public constructor(args: ISingleValueForm2ConstructorArgs<T>, id: IdType) {
+	public constructor(args: ISingleValueForm2ConstructorArgs<T, IdType>, id: IdType) {
 		this.id = id;
 		this.val = args.val;
 		this.val_in_editing = this.val;
 		this.errs = args.errs ?? [];
+		this.on_change = args.on_change ?? (() => {});
+	}
+	
+	public on_change_val_in_editing(val: T): void {
+		console.log(`SingleValueForm2: changed ${val}`);
+		this.val_in_editing = val;
+		this.on_change(this);
 	}
 	
 	public rollback(): void {
