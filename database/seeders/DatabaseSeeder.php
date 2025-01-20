@@ -15,8 +15,8 @@ class DatabaseSeeder extends Seeder
 			UserSeeder::class,
 			ExhibitSeeder::class,
 			ImageSeeder::class,
-			// LocationSeeder::class,
-			// PlaceSeeder::class,
+			LocationSeeder::class,
+			PlaceSeeder::class,
 		]);
 	}
 }
