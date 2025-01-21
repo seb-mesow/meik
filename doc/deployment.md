@@ -21,9 +21,13 @@ Hier werden Einstellungen zur Produktiv-Umgebung notiert.
 0. siehe [README](../README.md) — Einrichtung für alle
 ### Prod
 ```bash
+composer install
 artisan key:generate
+artisan config:clear # nach Änderungen der .env-Datei
 artisan ziggy:generate --types
+npm ci
 npm run prod-build
+artisan migrate --quiet
 artisan migrate:fresh --seed
 artisan optimize #(Config, Event-Listener-Mapping, Routes cachen)
 docker_compose_up
@@ -31,9 +35,13 @@ docker_compose_up
 ```
 ### Prod-SSR
 ```bash
+composer install
 artisan key:generate
+artisan config:clear # nach Änderungen der .env-Datei
 artisan ziggy:generate --types
+npm ci
 npm run prod-build-ssr
+artisan migrate --quiet
 artisan migrate:fresh --seed
 artisan optimize #(Config, Event-Listener-Mapping, Routes cachen)
 docker_compose_up
