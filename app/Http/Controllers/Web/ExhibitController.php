@@ -7,10 +7,12 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Models\FreeText;
+use App\Models\Rubric;
 use App\Repository\ExhibitRepository;
 use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
 use App\Service\ImageService;
+use App\Repository\RubricRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -21,10 +23,28 @@ class ExhibitController extends Controller
 		private readonly LocationRepository $location_repository,
 		private readonly PlaceRepository $place_repository,
 		private readonly ImageService $image_service,
+		private readonly RubricRepository $rubric_repository
 	) {}
 
-	public function overview() {
-		$exhibits = $this->exhibit_repository->get_all();
+	public function overview(Request $request)
+	{
+		$rubric_id = $request->input('rubric');
+		$page = $request->input('page', 0);
+		$pageSize = $request->input('pageSize', 10);
+
+		if ($rubric_id) {
+
+			$rubric = $this->rubric_repository->find($rubric_id);
+			$selectors = [
+				'rubric_id' =>  [
+					'$eq' => $rubric_id
+				]
+			];
+		} else {
+			$selectors = null;
+		}
+
+		$exhibits = $this->exhibit_repository->get_exhibits_paginated($selectors, $page, $pageSize);
 		$array = [];
 		foreach ($exhibits as $exhibit) {
 			$array[] = $this->determinate_overview_page_props($exhibit);
@@ -33,10 +53,12 @@ class ExhibitController extends Controller
 			'init_props' => [
 				'exhibits' => $array,
 			],
+			'rubric' => isset($rubric) ? $this->rubric_repository->determinate_rubric_props($rubric) : null
 		]);
 	}
 
-	private function determinate_overview_page_props(Exhibit $exhibit): array {
+	private function determinate_overview_page_props(Exhibit $exhibit): array
+	{
 		$place = $this->place_repository->get($exhibit->get_place_id());
 		$location = $this->location_repository->get($place->get_location_id());
 		
@@ -59,15 +81,17 @@ class ExhibitController extends Controller
 		}
 		return $tile_props;
 	}
-	
+
 	public function details(int $id)
 	{
 		$exhibit = $this->exhibit_repository->get($id);
+		$rubric = $this->rubric_repository->get($exhibit->get_rubric_id());
 		$form = $this->create_form($exhibit, true);
 		return Inertia::render('Exhibit/Exhibit', [
 			'id' => $exhibit->get_id(),
 			'name' => $exhibit->get_name(),
-			'init_props' => $form
+			'init_props' => $form,
+			'rubric' => $this->rubric_repository->determinate_rubric_props($rubric)
 		]);
 	}
 

@@ -9,18 +9,38 @@ import Breadcrumb from 'primevue/breadcrumb';
 
 const props = defineProps<{
 	init_props: IExhibitOverviewInitPageProps,
+	rubric: any
 }>();
-
+console.log(props.init_props)
 const home = {
 	icon: 'pi pi-home',
-	url: route('exhibit.overview'),
+	url: route('category.overview'),
 };
-const items = [
+
+let items = [
 	{
 		label: 'Exponate',
 		url: route('exhibit.overview'),
 	}
 ];
+
+if (props.rubric) {
+	items = [
+		{
+			label: 'Kategorien',
+			url: route('category.overview')
+		},
+		{
+			label: props.rubric.category,
+			url: route('rubric.overview', { category: props.rubric.category ?? '' })
+		},
+		{
+			label: props.rubric.name,
+			url: route('exhibit.overview', { rubric: props.rubric.id }),
+		}
+	];
+}
+
 const exhibits = props.init_props.exhibits;
 </script>
 

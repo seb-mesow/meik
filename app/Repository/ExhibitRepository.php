@@ -76,21 +76,26 @@ final class ExhibitRepository
 
 	/**
 	 * @var string $id
-	 * @return \App\Models\Location[]
+	 * @return \App\Models\Exhibit[]
 	 */
-	public function get_exhibits_paginated(array $selectors = [], int $page = 0, int $page_size = 10,): array
+	public function get_exhibits_paginated(array|null $additonalSelectors = null, int $page = 0, int $page_size = 10,): array
 	{
-		dd($selectors);
+
+		$selectors = [
+			'_id' => [
+				'$beginsWith' => self::MODEL_TYPE_ID
+			]
+		];
+
+		if ($additonalSelectors) {
+			$selectors = array_merge($selectors, $additonalSelectors);
+		}
+
 		$exhibits = $this->client
 			->limit($page_size)
 			->skip($page * $page_size)
 			->find([
 				'$and' => [
-					[
-						'_id' => [
-							'$beginsWith' => self::MODEL_TYPE_ID
-						]
-					],
 					$selectors
 				]
 			])
@@ -162,13 +167,14 @@ final class ExhibitRepository
 	{
 		/** @var ExhibitDoc */
 		$exhibit_doc = $this->create_stub_doc_from_model($exhibit);
-		
+
 		$exhibit_doc->inventory_number = $exhibit->get_inventory_number();
 		$exhibit_doc->name = $exhibit->get_name();
 		$exhibit_doc->manufacturer = $exhibit->get_manufacturer();
 		$exhibit_doc->year_of_manufacture = $exhibit->get_year_of_manufacture();
 		$exhibit_doc->place_id = $exhibit->get_place_id();
-		
+		$exhibit_doc->rubric_id = $exhibit->get_rubric_id();
+
 		$_this = $this;
 		$free_text_docs = array_map(static function (FreeText $free_text) use ($_this): stdClass {
 			return $_this->create_doc_from_free_text($free_text);
@@ -187,7 +193,7 @@ final class ExhibitRepository
 		$free_texts = array_map(static function (stdClass $free_text_doc) use ($_this): FreeText {
 			return $_this->create_free_text_from_doc($free_text_doc);
 		}, $exhibit_doc->free_texts);
-		
+
 		return new Exhibit(
 			inventory_number: $exhibit_doc->inventory_number,
 			name: $exhibit_doc->name,
@@ -195,6 +201,7 @@ final class ExhibitRepository
 			year_of_manufacture: $exhibit_doc->year_of_manufacture,
 			place_id: $exhibit_doc->place_id,
 			free_texts: $free_texts,
+			rubric_id: $exhibit_doc?->rubric_id ?? '',
 			id: $this->determinate_model_id_from_doc($exhibit_doc),
 			rev: $exhibit_doc->_rev,
 		);

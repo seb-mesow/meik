@@ -17,13 +17,14 @@ import Form from '@/Components/Form/Form.vue';
 const props = defineProps<{
 	name?: string,
 	init_props: IExhibitInitPageProps,
+	rubric: any
 }>();
 
 const home = {
 	icon: 'pi pi-home',
-	url: route('exhibit.overview'),
+	url: route('category.overview'),
 };
-const items = [
+let items = [
 	{
 		label: 'Exponate',
 		url: route('exhibit.overview'),
@@ -32,6 +33,48 @@ const items = [
 		label: props?.name ?? 'Neues Exponat',
 	},
 ];
+
+if (props.rubric) {
+	items = [
+		{
+			label: 'Kategorien',
+			url: route('category.overview')
+		},
+		{
+			label: props.rubric.category,
+			url: route('rubric.overview', { category: props.rubric.category })
+		},
+		{
+			label: props.rubric.name,
+			url: route('exhibit.overview', { rubric: props.rubric.id }),
+		},
+		{
+			label: props?.name ?? 'Neues Exponat',
+		},
+	];
+}
+
+
+if (props.rubric) {
+	items = [
+		{
+			label: 'Kategorien',
+			url: route('category.overview')
+		},
+		{
+			label: props.rubric.category,
+			url: route('rubric.overview', { category: props.rubric.category })
+		},
+		{
+			label: props.rubric.name,
+			url: route('exhibit.overview', { rubric: props.rubric.id }),
+		},
+		{
+			label: props?.name ?? 'Neues Exponat',
+		},
+	];
+}
+
 
 // console.log("Exhibit.vue: props.init_props ==");
 // console.log(props.init_props);
@@ -102,37 +145,22 @@ async function save_metadata(event: MouseEvent) {
 				</template>
 			</Breadcrumb>
 		</template>
-		
+
 		<div class="upper-forms">
-			<Form
-				class="metadata-form"
-				:action="route('exhibit.create')"
-				method="post"
-			>
+			<Form class="metadata-form" :action="route('exhibit.create')" method="post">
 				<InputField :form="form.val.inventory_number" label="Inventarnummer" />
 				<InputField :form="form.val.name" label="Bezeichnung" />
 				<InputField :form="form.val.manufacturer" label="Hersteller" />
-				<Button v-if="is_new"
-					:loading="button_save_metadata_is_loading" 
-					type='submit'
-					label='Speichern'
-				/>
-				<Button v-else
-					:loading="button_save_metadata_is_loading" 
-					type='button'
-					@click="save_metadata"
-					label='Metadaten speichern'
-				/>
+				<Button v-if="is_new" :loading="button_save_metadata_is_loading" type='submit' label='Speichern' />
+				<Button v-else :loading="button_save_metadata_is_loading" type='button' @click="save_metadata"
+					label='Metadaten speichern' />
 			</Form>
 			<div class="images-form">
 				<a v-if="form.title_image"
 					:href="route('exhibit.images.details', { exhibit_id: exhibit_id })"
 				>
-					<img
-						v-if="form.title_image"
-						class="title-image"
-						:src="route('ajax.image.get_image', { image_id: form.title_image.id })"
-					>
+					<img v-if="form.title_image_id" class="title-image"
+						:src="route('ajax.image.get_file', { image_id: form.title_image_id })">
 				</a>
 			</div>
 		</div>
@@ -145,12 +173,15 @@ async function save_metadata(event: MouseEvent) {
 	flex-wrap: wrap;
 	column-gap: 1rem;
 }
+
 .metadata-form {
 	flex: 18rem;
 }
+
 .images-form {
 	flex: 18rem;
 }
+
 .title-image {
 	object-fit: inherit;
 }

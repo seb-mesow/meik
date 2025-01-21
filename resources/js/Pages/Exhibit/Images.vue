@@ -11,6 +11,7 @@ import { reactive, Reactive, ShallowReactive, shallowReactive, ShallowRef, shall
 const props = defineProps<{
 	name?: string,
 	init_props: IImagesInitPageProps,
+	rubric: any
 }>();
 
 const home = {
@@ -18,14 +19,24 @@ const home = {
 	url: route('exhibit.overview'),
 };
 const items = [
-	{
-		label: 'Exponate',
-		url: route('exhibit.overview'),
-	},
-	{
-		label: props?.name ?? 'Neues Exponat',
-	},
-];
+		{
+			label: 'Kategorien',
+			url: route('category.overview')
+		},
+		{
+			label: props.rubric.category,
+			url: route('rubric.overview', { category: props.rubric.category })
+		},
+		{
+			label: props.rubric.name,
+			url: route('exhibit.overview', { rubric: props.rubric.id }),
+		},
+		{
+			label: props?.name ?? 'Neues Exponat',
+			url: route('exhibit.details', {id: props.init_props.exhibit_id})
+		},
+	];
+
 
 const images: IImageFormConstructorArgs[] = props.init_props.images.map((_props: IImageInitPageProps): IImageFormConstructorArgs => {
 	return {
