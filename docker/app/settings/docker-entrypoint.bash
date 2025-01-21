@@ -22,14 +22,26 @@ find /var/log/php-fpm -type f -exec chmod u=rw,g=rw,o= {} \;
 
 chown -R www-data:www-data storage;
 chown -R www-data:www-data bootstrap/cache;
-find storage         -type d -exec chmod u=rwx,g=rwxs,o= {} \;
-find bootstrap/cache -type d -exec chmod u=rwx,g=rwxs,o= {} \;
-find storage         -type f -exec chmod u=rw,g=rw,o= {} \;
-find bootstrap/cache -type f -exec chmod u=rw,g=rw,o= {} \;
+find storage         -type d -exec chmod u=rwx,g=rwxs,o= {} \; ;
+find bootstrap/cache -type d -exec chmod u=rwx,g=rwxs,o= {} \; ;
+find storage         -type f -exec chmod u=rw,g=rw,o= {} \; ;
+find bootstrap/cache -type f -exec chmod u=rw,g=rw,o= {} \; ;
 
 chown www-data:www-data /var/www/.env;
 # auch lesbar für init-Routine des DB-Containers.
-# auch bearbeitbar für User normal, der in der Gruppe www-data
+# auch bearbeitbar für User normal, der in der Gruppe www-data ist
 chmod u=rw,g=rw,o= /var/www/.env;
+
+ziggy_dir="/var/www/resources/js/ziggy";
+chown www-data:www-data "$ziggy_dir";
+chmod u=rwx,g=rwxs,o= "$ziggy_dir";
+if [[ -f "$ziggy_dir/ziggy.d.ts" ]] ; then
+	chown www-data:www-data "$ziggy_dir/ziggy.d.ts";
+	chmod u=rw,g=rw,o=      "$ziggy_dir/ziggy.d.ts";
+fi
+if [[ -f "$ziggy_dir/ziggy.js" ]] ; then
+	chown www-data:www-data "$ziggy_dir/ziggy.js";
+	chmod u=rw,g=rw,o=      "$ziggy_dir/ziggy.js";
+fi
 
 exec gosu www-data "$@";

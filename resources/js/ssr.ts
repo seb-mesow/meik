@@ -8,7 +8,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createSSRApp, DefineComponent, h } from 'vue';
 import { route as ziggy_route, RouteList, ZiggyVue } from 'ziggy-js';
 //@ts-ignore
-import { Ziggy as _Ziggy } from './ziggy';
+import { Ziggy as _Ziggy } from './ziggy/ziggy';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import Lara from '@primevue/themes/lara';

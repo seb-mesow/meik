@@ -3,7 +3,7 @@
 ## Starten der Web-App
 0. Docker (Engine) im Host starten
 1. `drb` ("docker restart build")
-2. ggf. `artisan migrate --seed` (Schema für Tabellen in MariaDB aktualisieren)
+2. ggf. `artisan migrate --seed` (Schema für Tabellen in MariaDB aktualisieren und Testdaten einfügen)
 	- alternativ: `artisan migrate:fresh --seed`
 3. [Web-App öffnen (HTTP)](http://meik.localhost:8080)
 4. Im Freifox Cache deaktivieren !
@@ -13,8 +13,10 @@
 [PhpMyAdmin](http://phpmyadmin.localhost:8081)
 
 ## nach Rebasen
-1. `ci`
-2. `npm ci`
+1. `drb`
+2. `ci`
+3. `npm ci`
+4. `artisan ziggy:generate --types resources/js/ziggy/ziggy.js`
 
 ## Einrichtung
 
@@ -32,7 +34,7 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 	2. _PHP Debug_ von _Xdebug_
 	3. _Vue - Offical_ von _Vue_
 	4. _optional:_ _GitLens — Git supercharged_ von _GitKraken_
-	4. _optional:_ [_Docker_ von _Microsoft_](https://code.visualstudio.com/docs/containers/overview)
+	5. _optional:_ [_Docker_ von _Microsoft_](https://code.visualstudio.com/docs/containers/overview)
 3. folgendes Firefox-Addon installieren:
 	1. _Xdebug Helper for Firefox_ von _BrianGilbert_
 	2. Firefox schließen und neustarten
@@ -53,13 +55,15 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 	   Dafür am besten ein separates Profil anlegen.
 8. im Unterordner `docker`
 	1. `.env.dist` zu `.env` kopieren
-	2. `compose.override.dist.yml` zu `compose.overide.yml` kopieren
-	3. `.env` anpassen
-	4. `compose.override.yml` anpassen
+	2. `.env` anpassen
+	3. eine leere Datei `compose.dev.override.yml` anlegen
 9. `.env` (in der Wurzel des Repos)
 	1. `.env.example` zu `.env` kopieren
-	2. `bashapproot`
-		3. darin `chown normal:normal .env`
+	2. sicherstellen, dass folgende Variablen wie folgt gesetzt sind:
+		1. `APP_ENV=local`
+		2. `APP_DEBUG=true`
+	3. `bashapproot`
+		1. darin `chown normal:normal .env`
 10. im Unterordner `.vscode`
 	1. `launch.dist.json` zu `launch.json` kopieren
 	2. `settings.dist.json` zu `settings.json` kopieren
@@ -70,12 +74,14 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 	- (notfalls als Ersatz: `docker_compose_run_normal node npm ci`)
 14. `storage`-Verzeichnis
 	1. im Host == Ubuntu (nicht in einem Docker-Container)
-		1. `id www-data`, sollte u.A. `gid=33` ausgeben (sonst eine weitere Gruppe mit der GID `33` anlegen)
-		2. `sudo usermod -a -G www-data USERNAME` (`USERNAME` durch Benutzernamen im Host ersetzen)
-		3. Terminal schließen und neuöffnen
-		4. VS Code schließen und neustarten
-15. `artisan key:generate`
-16. `artisan db:seed --class=SetupCouchDBSeeder`
+	2. `id www-data`, sollte u.A. `gid=33` ausgeben (sonst eine weitere Gruppe mit der GID `33` anlegen)
+	3. `sudo usermod -a -G www-data USERNAME` (`USERNAME` durch Benutzernamen im Host ersetzen)
+	4. Terminal schließen und neuöffnen
+	5. VS Code schließen und neustarten
+15. `artisan optimize:clear`
+16. `artisan key:generate`
+17. `artisan ziggy:generate --types resources/js/ziggy/ziggy.js`
+18. `artisan db:seed --class=SetupCouchDBSeeder`
 
 **Es ist _zur Zeit_ nicht möglich mit Windows von VS Code in einem Docker-Container ein PHP-Skript zu starten.**<br>Dies geht nur über die Kommandozeile.
 
