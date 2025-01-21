@@ -20,8 +20,9 @@ Hier werden Einstellungen zur Produktiv-Umgebung notiert.
 ## Workflow
 0. siehe [README](../README.md) — Einrichtung für alle
 2. `artisan optimize` (Config, Event-Listener-Mapping, Routes cachen)
-3. `npm run build-prod`
-4. `node resources/ssr/ssr.js`
+3. `php artisan ziggy:generate --types`
+4. `npm run build-prod`
+4. `php artisan inertia:start-ssr`
 
 ## Einloggen
 1. `ssh BENUTZERNAME@DOMAIN_NAME`
