@@ -19,10 +19,27 @@ Hier werden Einstellungen zur Produktiv-Umgebung notiert.
 
 ## Workflow
 0. siehe [README](../README.md) — Einrichtung für alle
-2. `artisan optimize` (Config, Event-Listener-Mapping, Routes cachen)
-3. `php artisan ziggy:generate --types`
-4. `npm run build-prod`
-4. `php artisan inertia:start-ssr`
+### Prod
+```bash
+artisan key:generate
+artisan ziggy:generate --types
+npm run prod-build
+artisan migrate:fresh --seed
+artisan optimize #(Config, Event-Listener-Mapping, Routes cachen)
+docker_compose_up
+	php-fpm
+```
+### Prod-SSR
+```bash
+artisan key:generate
+artisan ziggy:generate --types
+npm run prod-build-ssr
+artisan migrate:fresh --seed
+artisan optimize #(Config, Event-Listener-Mapping, Routes cachen)
+docker_compose_up
+	php-fpm
+	php artisan inertia:start-ssr
+```
 
 ## Einloggen
 1. `ssh BENUTZERNAME@DOMAIN_NAME`

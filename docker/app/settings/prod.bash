@@ -1,9 +1,7 @@
 #!/usr/bin/env -S bash -euo pipefail -O extglob
 
-source "$NVM_DIR/nvm.sh";
-
 declare -a pids;
-php-fpm & pids+=($!)
-# npm run prod-srr & pids+=($!)
+php-fpm & pids+=($!);
+# php artisan ziggy:generate --types; pids+=($!);
 
 wait "${pids[@]}";

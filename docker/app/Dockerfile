@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS dev
+FROM ubuntu:22.04 AS common
 
 SHELL [ "/usr/bin/env", "bash", "-euo", "pipefail", "-O", "extglob", "-c" ]
 
@@ -71,15 +71,17 @@ RUN --mount=source=settings,target=/build_context \
 # USER muss noch root sein
 WORKDIR /var/www
 ENTRYPOINT ["/docker-entrypoint.bash"]
+
+FROM common AS dev
 CMD ["php-fpm"]
 
+FROM common AS prod
+CMD ["php-fpm"]
 
-
-FROM dev as ssr
-
+FROM common AS prod-ssr
 RUN --mount=source=settings,target=/build_context \
-	cp /build_context/prod.bash /; \
-	chmod 0755 /prod.bash;
+	cp /build_context/prod-ssr.bash /; \
+	chmod 0755 /prod-ssr.bash;
 
 ENV NVM_DIR="/usr/local/sbin/.nvm";
 RUN \
@@ -88,4 +90,4 @@ RUN \
 	source "$NVM_DIR/nvm.sh"; \
 	nvm install 20.17.0;
 
-CMD ["/prod.bash"]
+CMD ["/prod-ssr.bash"]

@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:1.26.2-alpine3.20-slim
+FROM nginxinc/nginx-unprivileged:1.26.2-alpine3.20-slim AS common
 
 SHELL [ "/usr/bin/env", "ash", "-eu", "-c" ]
 
@@ -57,12 +57,6 @@ RUN --mount=type=cache,target=/var/cache/apk,sharing=private \
 	gosu nobody true;
 
 RUN --mount=source=.,target=/build_context \
-	cp /build_context/nginx.conf /etc/nginx; \
-	cp /build_context/default.conf /etc/nginx/conf.d; \
-	chown -hR root:nginx /etc/nginx; \
-	find /etc/nginx -type d -exec chmod u=rx,g=rx,o= '{}' +; \
-	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +; \
-	\
 	mkdir /run/nginx; \
 	chown -hR root:nginx /run/nginx; \
 	chmod u=rwx,g=rwx,o= /run/nginx; \
@@ -75,3 +69,19 @@ RUN --mount=source=.,target=/build_context \
 	\
 	addgroup -g 33 www-data-from-app; \
 	addgroup nginx www-data-from-app;
+
+FROM common AS dev
+RUN --mount=source=.,target=/build_context \
+	cp /build_context/nginx.dev.conf /etc/nginx/nginx.conf; \
+	cp /build_context/server.dev.conf /etc/nginx/conf.d; \
+	chown -hR root:nginx /etc/nginx; \
+	find /etc/nginx -type d -exec chmod u=rx,g=rx,o= '{}' +; \
+	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +;
+
+FROM common AS prod
+RUN --mount=source=.,target=/build_context \
+	cp /build_context/nginx.prod.conf /etc/nginx/nginx.conf; \
+	cp /build_context/server.prod.conf /etc/nginx/conf.d; \
+	chown -hR root:nginx /etc/nginx; \
+	find /etc/nginx -type d -exec chmod u=rx,g=rx,o= '{}' +; \
+	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +;

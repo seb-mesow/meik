@@ -1,0 +1,12 @@
+services:
+  web:
+    build:
+      target: dev
+  
+  app:
+    build:
+      target: dev
+  
+  node:
+    build:
+      target: dev

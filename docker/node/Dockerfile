@@ -1,4 +1,4 @@
-FROM node:20.17.0-alpine3.20
+FROM node:20.17.0-alpine3.20 AS prod
 
 SHELL [ "/usr/bin/env", "ash", "-eu", "-c" ]
 
@@ -10,3 +10,11 @@ RUN addgroup normal www-data-from-app;
 
 USER normal
 WORKDIR /var/www
+ENTRYPOINT []
+CMD []
+# prod: Assets einmalig kompilieren NACH php artisan ziggy:generate --types
+# prod-srr: Hier wird der node-Container gar nicht benutzt.
+
+FROM prod AS dev
+CMD ["npm", "run", "dev"]
+# dev: andauernden Vite Dev Server starten

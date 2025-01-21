@@ -1,4 +1,6 @@
 *.env*
 !.env.dist
 *compose*.yml
-!compose.override.dist.yml
+!compose.dev.yml
+!compose.prod.yml
+!compose.prod-ssr.yml

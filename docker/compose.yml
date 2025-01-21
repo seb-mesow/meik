@@ -7,6 +7,7 @@ volumes:
   
 services:
   app:
+    profiles: [dev, prod, prod-ssr]
     build:
       context: app
       args:
@@ -18,16 +19,16 @@ services:
     restart: on-failure:2
   
   node:
+    profiles: [dev, prod]
     build:
       context: node
       args:
         NORMAL_UID_GID: ${NORMAL_UID_GID}
     volumes:
       - ../:/var/www
-    entrypoint: []
-    command: ["npm", "run", "dev"]
   
   web:
+    profiles: [dev, prod, prod-ssr]
     build:
       context: web
     ports:
@@ -40,6 +41,7 @@ services:
     restart: on-failure:2
   
   db:
+    profiles: [dev, prod, prod-ssr]
     build:
       context: db
     #   args:
@@ -52,8 +54,9 @@ services:
     volumes:
       - couchdb_data_persistent:/opt/couchdb/data
       - ../.env:/opt/couchdb/etc/couchdb_credentials.sh
-
+  
   mariadb:
+    profiles: [dev, prod, prod-ssr]
     image: mariadb:11.5.2-noble
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 0
@@ -61,3 +64,22 @@ services:
     volumes:
       - mariadb_data_persistent:/var/lib/mysql
     restart: on-failure:2
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
+      start_period: 1m
+      start_interval: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3
+  
+  phpmyadmin:
+    profiles: [dev]
+    image: phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+    ports:
+      - 8081:80
+    restart: on-failure:2
+    depends_on:
+      mariadb:
+        condition: service_healthy

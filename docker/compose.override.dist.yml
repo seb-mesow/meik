@@ -1,8 +1,0 @@
-services:
-  phpmyadmin:
-    image: phpmyadmin
-    environment:
-      PMA_HOST: mariadb
-    ports:
-      - 8081:80
-    restart: on-failure:2
