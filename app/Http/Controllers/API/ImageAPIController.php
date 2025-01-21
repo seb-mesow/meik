@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Repository\ExhibitRepository;
 use App\Repository\ImageRepository;
 
 class ImageAPIController extends Controller
