@@ -8,14 +8,26 @@ function task_successful_msg() {
 	echo -e "\n${1}\n";
 }
 function task_fail_msg() {
-	echo -e "\n${1}\n";
+	echo -e "\nERROR: ${1}\n";
 }
 
 function check_docker_installed() {
-	if !command -v docker > /dev/null ; then
-		task_fail_msg "no Docker installed";
+	if command -v docker > /dev/null ; then
+		return
+	fi
+	if docker --version > /dev/null ; then
+		return
+	fi
+	task_fail_msg "no Docker installed";
+	exit 1;
+}
+
+function assert_compose_override_yml_exists() {
+	if [[ ! -f "docker/.env" ]] ; then
+		task_fail_msg "docker/.env is missing"
 		exit 1;
 	fi
+	touch "${REPO_DIR}/docker/compose.${compose_profile_file}.override.yml";
 }
 
 function docker_compose() {
@@ -52,9 +64,9 @@ function npm() {
 function deploy_prod() {
 	task_start_msg "deploying prod"
 	
-	# docker_compose build --pull;
-	docker_compose build;
+	assert_compose_override_yml_exists;
 	cp --force .env.prod.dist .env;
+	docker_compose build --pull;
 	docker_compose_run_entrypoint app;
 	composer install;
 	docker_compose up -d --wait --force-recreate --remove-orphans db mariadb;
@@ -87,10 +99,14 @@ function down() {
 	exit 0;
 }
 
-function main() {
+function get_global_vars() {
 	REPO_DIR="$(dirname -- "$( readlink -f -- "$0"; )")";
-	
+	MEIK_DEPLOYMENT_PROFILE="${MEIK_DEPLOYMENT_PROFILE:-prod}";
+}
+
+function main() {
 	check_docker_installed;
+	get_global_vars;
 	
 	if [[ "$MEIK_DEPLOYMENT_PROFILE" = 'prod' ]] ; then
 		compose_profile_file="prod"
