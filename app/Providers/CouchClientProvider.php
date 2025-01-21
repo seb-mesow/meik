@@ -17,15 +17,15 @@ final class CouchClientProvider extends ServiceProvider
 	public function register(): void
 	{
 		$this->app->singleton(CouchClient::class, static function (Application $app): CouchClient {
-			return new CouchClient(env('COUCHDB_URL'), env('COUCHDB_DATABASE'), [
-				'username' => env('COUCHDB_USERNAME'),
-				'password' => env('COUCHDB_PASSWORD'),
+			return new CouchClient(config('couchdb.url'), config('couchdb.database'), [
+				'username' => config('couchdb.username'),
+				'password' => config('couchdb.password'),
 			]);
 		});
 		$this->app->singleton(CouchClient::class.'.admin', static function (Application $app): CouchClient {
-			return new CouchClient(env('COUCHDB_URL'), env('COUCHDB_DATABASE'), [
-				'username' => env('COUCHDB_ADMIN_USERNAME'),
-				'password' => env('COUCHDB_ADMIN_PASSWORD'),
+			return new CouchClient(env('COUCHDB_URL'), config('couchdb.database'), [
+				'username' => config('couchdb.admin_username'),
+				'password' => config('couchdb.admin_password'),
 			]);
 		});
 		$this->app->singleton(StringIdGenerator::class);
