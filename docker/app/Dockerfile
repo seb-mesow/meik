@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:22.04 AS dev
 
 SHELL [ "/usr/bin/env", "bash", "-euo", "pipefail", "-O", "extglob", "-c" ]
 
@@ -72,3 +72,20 @@ RUN --mount=source=settings,target=/build_context \
 WORKDIR /var/www
 ENTRYPOINT ["/docker-entrypoint.bash"]
 CMD ["php-fpm"]
+
+
+
+FROM dev as ssr
+
+RUN --mount=source=settings,target=/build_context \
+	cp /build_context/prod.bash /; \
+	chmod 0755 /prod.bash;
+
+ENV NVM_DIR="/usr/local/sbin/.nvm";
+RUN \
+	mkdir -p "$NVM_DIR"; \
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash; \
+	source "$NVM_DIR/nvm.sh"; \
+	nvm install 20.17.0;
+
+CMD ["/prod.bash"]
