@@ -69,7 +69,7 @@ final class RubricRepository
 		}, $rubrics);
 	}
 
-	public function find(int $id): ?Rubric
+	public function find(string $id): ?Rubric
 	{
 		try {
 			return $this->get($id);
@@ -78,7 +78,7 @@ final class RubricRepository
 		}
 	}
 
-	public function get(int $id): Rubric
+	public function get(string $id): Rubric
 	{
 		$doc_id = $this->determinate_doc_id_from_model_id($id);
 		$rubric_doc = $this->client->getDoc($doc_id);
@@ -122,6 +122,15 @@ final class RubricRepository
 		return array_map(static function (stdClass $doc) use ($_this): Rubric {
 			return $_this->create_rubric_from_doc($doc);
 		}, $docs);
+	}
+
+	public function determinate_rubric_props(Rubric $rubric): array
+	{
+		return [
+			'id' => $rubric->get_id(),
+			'name' => $rubric->get_name(),
+			'category' => $rubric->get_category(),
+		];
 	}
 
 	/**

@@ -30,7 +30,7 @@ class ExhibitAPIController extends Controller
     {
         $page = (int)$request->input('page', 0);
         $pageSize = (int)$request->input('pageSize', 10);
-        $exhibits = $this->exhibit_repository->get_exhibits_paginated($page, $pageSize);
+        $exhibits = $this->exhibit_repository->get_exhibits_paginated(null, $page, $pageSize);
         return new JsonResponse($this->serializer->serialize($exhibits, 'json', (new SerializationContext)));
     }
 
