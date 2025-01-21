@@ -8,6 +8,7 @@ import {
 import { ToastServiceMethods } from "primevue/toastservice";
 import { ConfirmationServiceMethods } from "primevue/confirmationservice";
 import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
+import { route } from "ziggy-js";
 
 export interface IPlaceForm {
 	delete(event: any): void;
@@ -174,6 +175,9 @@ export class PlaceForm implements IPlaceForm {
 	}
 	
 	private ajax_update(): Promise<void> {
+		if (!this.id) {
+			throw new Error("undefined id");
+		}
 		const request_config: AxiosRequestConfig<IUpdatePlaceRequestData> = {
 			method: "put",
 			url: route('ajax.place.update', { place_id: this.id }),
@@ -183,8 +187,11 @@ export class PlaceForm implements IPlaceForm {
 	}
 	
 	private ajax_delete(): Promise<void> {
-		if (!this.is_persisted()) {
-			throw new Error('accept_delete(): Missing id of place');
+		// if (!this.is_persisted()) {
+		// 	throw new Error('accept_delete(): Missing id of place');
+		// }
+		if (!this.id) {
+			throw new Error("undefined id");
 		}
 		const request_config: AxiosRequestConfig<IDeletePlace200ResponseData> = {
 			method: "delete",

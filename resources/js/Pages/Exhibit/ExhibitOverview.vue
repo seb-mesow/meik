@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { route } from 'ziggy-js';
+
 import Button from 'primevue/button';
 import ExhibitTile from '@/Components/Exhibit/ExhibitTile.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -31,7 +33,7 @@ const exhibits = props.init_props.exhibits;
 						<span v-if="item.icon" :class="item.icon"></span>
 						<span v-else>{{ item.label }}</span>
 					</a>
-				</template>
+				</template>Route
 			</Breadcrumb>
 		</template>
 

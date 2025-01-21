@@ -11,8 +11,8 @@ const props = defineProps<{
 	exhibit_id: number,
 	init_props: IFreeTextsInitPageProps;
 }>();
-console.log(`FreeTextFields.vue: props.init_props ==`);
-console.log(props.init_props);
+// console.log(`FreeTextFields.vue: props.init_props ==`);
+// console.log(props.init_props);
 const form: IFreeTextsForm = reactive(new FreeTextsForm({
 	exhibit_id: props.exhibit_id,
 	val: props.init_props.val.map((_init_props: IFreeTextInitPageProps): IFreeTextFormConstructorArgs => {

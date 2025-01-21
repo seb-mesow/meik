@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { route } from 'ziggy-js';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { create_request_data, type IForm } from '@/util/form';
 import axios from 'axios';
@@ -32,8 +33,8 @@ const items = [
 	},
 ];
 
-console.log("Exhibit.vue: props.init_props ==");
-console.log(props.init_props);
+// console.log("Exhibit.vue: props.init_props ==");
+// console.log(props.init_props);
 
 // (interne) Attribute der Seite
 const form: IExhibitForm = {
@@ -68,7 +69,7 @@ const exhibit_id = form.id;
 const is_new = exhibit_id === undefined;
 const button_save_metadata_is_loading = ref(false);
 
-async function save_metadata(event: SubmitEvent) {
+async function save_metadata(event: MouseEvent) {
 	button_save_metadata_is_loading.value = true;
 	if (!is_new) {
 		event.preventDefault();
@@ -76,7 +77,7 @@ async function save_metadata(event: SubmitEvent) {
 			console.log("AJAX Request senden");
 			await axios.request({
 				method: 'patch',
-				url: route('ajax.exhibit.set_metadata', exhibit_id),
+				url: route('ajax.exhibit.set_metadata', { exhibit_id: exhibit_id }),
 				data: create_request_data(form) // TODO sendet unnützerweise auch free_texts
 			});
 			console.log("AJAX Request erfolgreich");

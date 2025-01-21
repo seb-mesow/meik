@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { route } from 'ziggy-js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { Reactive, reactive, ref } from 'vue';

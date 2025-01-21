@@ -1,9 +1,16 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import { route } from 'ziggy-js';
 import isc_logo_url from '../../images/Logo_isc_300x122.jpg';
 import fv_logo_url from '../../images/FV_ISC.jpg';
-import { toggle_dark_mode } from '@/bootstrap-app';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import Button from 'primevue/button';
+import { onBeforeMount } from 'vue';
+import DarkMode from '@/util/dark-mode';
+
+let dark_mode: DarkMode;
+onBeforeMount(() => {
+	dark_mode = new DarkMode();
+});
 </script>
 
 <template>
@@ -51,7 +58,7 @@ import Button from 'primevue/button';
 					</div>
 				</a>
 			</div>
-			<Button @click="toggle_dark_mode">
+			<Button @click="dark_mode?.toggle()">
 				<i id="dark_mode_icon" class="pi pi-sun"/>
 			</Button>
 			<img class="logo" :src="fv_logo_url">

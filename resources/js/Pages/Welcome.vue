@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { route } from 'ziggy-js';
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps<{

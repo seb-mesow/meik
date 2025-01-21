@@ -10,6 +10,7 @@ import {
 } from "@/types/ajax/freetext";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ISingleValueForm, ISingleValueFormConstructorArgs, SingleValueForm } from "./singlevalueform";
+import { route } from "ziggy-js";
 
 export interface IFreeTextForm {
 	readonly id?: number;
@@ -90,6 +91,9 @@ export class FreeTextForm implements IFreeTextForm {
 	}
 	
 	private async ajax_update() {
+		if (!this.id) {
+			throw new Error("undefined id");
+		}
 		console.log(`PUT exhibit.free_text.update ${this.exhibit_id} ${this.id}`);
 		const request_config: AxiosRequestConfig<IUpdateFreeTextRequestData> = {
 			method: "put",
@@ -158,6 +162,9 @@ export class FreeTextForm implements IFreeTextForm {
 	}
 	
 	private async ajax_delete() {
+		if (!this.id) {
+			throw new Error("undefined id");
+		}
 		console.log(`DELETE exhibit.free_text.delete ${this.exhibit_id} ${this.id}`);
 		const request_config: AxiosRequestConfig<IDeleteFreeTextRequestData> = {
 			method: "delete",

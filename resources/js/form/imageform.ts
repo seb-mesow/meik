@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
 import { ICreateImage200ResponseData, ICreateImage422ResponseData, ICreateImageRequestData, IDeleteImage200ResponseData, IDeleteImage422ResponseData, IDeleteImageRequestData, IImageIDsOrder, ISetImageFile200ResponseData, ISetImageFileRequestData, IUpdateImageMetaData200ResponseData, IUpdateImageMetaData422ResponseData, IUpdateImageMetaDataRequestData } from "@/types/ajax/image";
+import { route } from "ziggy-js";
 
 export interface IImageForm {
 	readonly ui_id: number;
@@ -225,6 +226,9 @@ export class ImageForm implements IImageForm {
 	}
 	
 	private async ajax_update_metadata(): Promise<void> {
+		if (!this.id) {
+			throw new Error("undefined id");
+		}
 		const request_config: AxiosRequestConfig<IUpdateImageMetaDataRequestData> = {
 			method: "put",
 			url: route('ajax.exhibit.free_text.delete', [this.parent.exhibit_id, this.id])
@@ -240,6 +244,9 @@ export class ImageForm implements IImageForm {
 	}
 	
 	private async ajax_delete(): Promise<void> {
+		if (!this.id) {
+			throw new Error("undefined id");
+		}
 		const request_config: AxiosRequestConfig<IDeleteImageRequestData> = {
 			method: "delete",
 			url: route('ajax.exhibit.image.delete', { exhibit_id: this.parent.exhibit_id, image_id: this.id })
@@ -256,6 +263,9 @@ export class ImageForm implements IImageForm {
 	}
 	
 	private async ajax_set_file_if_new_file(): Promise<void> {
+		if (!this.id) {
+			throw new Error("undefined id");
+		}
 		if (!this.new_file || !this.file) {
 			return;
 		}

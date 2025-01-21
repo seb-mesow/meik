@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { route } from 'ziggy-js';
 import { IExhibitOverviewExhibitTileInitPageProps } from '@/types/page_props/exhibit_overview';
 
 // (interne) Attribute der Komponente
