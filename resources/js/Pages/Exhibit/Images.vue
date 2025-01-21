@@ -1,10 +1,9 @@
 <script setup lang="ts">
+import { route } from 'ziggy-js';
 import Image from '@/Components/Exhibit/Image.vue';
-import InputField from '@/Components/Form/InputField.vue';
 import { IImageFormConstructorArgs, IImagesForm, ImagesForm } from '@/form/imagesform';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { IImageInitPageProps, IImagesInitPageProps } from '@/types/page_props/images';
-import { Head } from '@inertiajs/vue3';
 import Breadcrumb from 'primevue/breadcrumb';
 import Carousel from 'primevue/carousel';
 import { reactive, Reactive } from 'vue';

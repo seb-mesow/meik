@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { nextTick, ref, Ref } from 'vue';
+import { route } from 'ziggy-js';
+import { nextTick, ref } from 'vue';
 import { AxiosRequestConfig } from 'axios'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';

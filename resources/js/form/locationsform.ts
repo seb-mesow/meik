@@ -13,6 +13,7 @@ import { DataTablePageEvent, DataTableRowEditCancelEvent, DataTableRowEditInitEv
 import { ToastServiceMethods } from "primevue/toastservice";
 import { ConfirmationServiceMethods } from "primevue/confirmationservice";
 import { ILocationInitPageProps } from "@/types/page_props/location";
+import { route } from "ziggy-js";
 
 export interface ILocationsForm {
 	readonly children: Readonly<ILocationForm[]>;

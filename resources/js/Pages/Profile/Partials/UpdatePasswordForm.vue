@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { route } from 'ziggy-js';
 import InputError from '@/Components/Form/InputError.vue';
 import InputLabel from '@/Components/Form/InputLabel.vue';
 import PrimaryButton from '@/Components/Control/PrimaryButton.vue';

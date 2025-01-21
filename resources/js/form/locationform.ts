@@ -8,6 +8,7 @@ import {
 import { ToastServiceMethods } from "primevue/toastservice";
 import { ConfirmationServiceMethods } from "primevue/confirmationservice";
 import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
+import { route } from "ziggy-js";
 
 export interface ILocationForm {
 	get_place_overview_url_path(): string;
@@ -190,6 +191,9 @@ export class LocationForm implements ILocationForm {
 	}
 	
 	private ajax_update(): Promise<void> {
+		if (!this.id) {
+			throw new Error("undefined id");
+		}
 		const request_config: AxiosRequestConfig<IUpdateLocationRequestData> = {
 			method: "put",
 			url: route('ajax.location.update', { location_id: this.id }),
@@ -208,6 +212,9 @@ export class LocationForm implements ILocationForm {
 	}
 	
 	private ajax_delete(): Promise<void> {
+		if (!this.id) {
+			throw new Error("undefined id");
+		}
 		if (!this.is_persisted()) {
 			throw new Error('accept_delete(): Missing id of location');
 		}
@@ -219,6 +226,9 @@ export class LocationForm implements ILocationForm {
 	}
 	
 	public get_place_overview_url_path(): string {
+		if (!this.id) {
+			throw new Error("undefined id");
+		}
 		return route('place.overview', { location_id: this.id });
 	}
 }

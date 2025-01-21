@@ -23,6 +23,7 @@
 		"paths": {
 			"@/*": ["./resources/js/*"],
 			"@/images/*": ["./resources/images/*"],
+			// siehe auch vite.config.json
 			"ziggy-js": ["./vendor/tightenco/ziggy"]
 		}
 	},
