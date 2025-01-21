@@ -11,7 +11,7 @@
         "dev": "vite",
         "dev-debug": "vite -d -l info",
         "prod-build": "vite build",
-        "prod-ssr": "vite build && vite build --ssr"
+        "prod-build-ssr": "vite build && vite build --ssr"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.12"
