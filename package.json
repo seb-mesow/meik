@@ -10,9 +10,8 @@
         "dev-slow": "vue-tsc && vite",
         "dev": "vite",
         "dev-debug": "vite -d -l info",
-        "build-prod": "vite build --ssr",
-        "build-prod-recommended": "vue-tsc && vite build && vite build --ssr",
-        "start-ssr-prod": "node bootstrap/ssr/ssr.js"
+        "prod-build": "vite build",
+        "prod-ssr": "vite build && vite build --ssr"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.12"
