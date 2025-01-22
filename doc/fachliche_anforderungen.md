@@ -21,6 +21,7 @@ Dazu sind wir im engen Austausch mit der Gruppe 2.
   - [Nicht-Funktonale Anforderungen](#nicht-funktonale-anforderungen)
 
 
+
 ## Benutzerverwaltung
 
 - Der Zugriff auf die interne Verwaltungssoftware ist mit einer Anmeldung durch Eingabe von Benutzername und Passwort geschützt.
@@ -130,6 +131,9 @@ Zur Nachvollziehbarkeit wird automatisch erfasst, welcher Benutzer an welchem Ta
 - Datum
 - Art der Änderung
 - welche Teil-Information wurde geändert
+  - Vielleicht nochmal auch im Detail erfassen so wie in der Präsentation vom 06.12.2024 erläutert bzw. beantwortet
+    (inkrementelles Logging)
+
 
 ## MUSS internes Datenblatt erstellen (niedrige Priorität)
 
