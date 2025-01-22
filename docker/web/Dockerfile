@@ -79,9 +79,24 @@ RUN --mount=source=.,target=/build_context \
 	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +;
 
 FROM common AS prod
+ARG PRIVATE_KEY_FILENAME=''
+ARG CERTIFICATE_FILENAME=''
 RUN --mount=source=.,target=/build_context \
+	--mount=type=cache,target=/var/cache/apk,sharing=private \
+	apk --no-interactive --quiet add \
+		gettext \
+	; \
+	\
+	envsubst '\$PRIVATE_KEY_FILENAME,\$CERTIFICATE_FILENAME' \
+	< /build_context/server.prod.conf \
+	> /etc/nginx/conf.d/server.prod.conf; \
+	\
+	apk --no-interactive --quiet del \
+		gettext \
+	; \
+	\
 	cp /build_context/nginx.prod.conf /etc/nginx/nginx.conf; \
-	cp /build_context/server.prod.conf /etc/nginx/conf.d; \
 	chown -hR root:nginx /etc/nginx; \
 	find /etc/nginx -type d -exec chmod u=rx,g=rx,o= '{}' +; \
-	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +;
+	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +; \
+	

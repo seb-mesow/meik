@@ -13,11 +13,36 @@
 2. mit einem **harmlosen** Nutzer in das System einloggen
 3. `git clone https://github.com/seb-mesow/meik.git`
 4. `cd meik`
-5. `docker/.env.dist` nach `docker/.env` kopieren
+5. `docker/.env.dist` nach `docker/.env` kopieren:<br>
+   `cp docker`<br>
+   `cp -T .env.dist .env`
 6. User-ID des aktuellen Nutzers ermitteln: `id`
-7. in der `docker/.env` die User-ID des aktuellen Nutzer als der Wert der Variablen `NORMAL_UID_GID` angeben
-8. ggf. ausloggen und mit root-Rechten im System anmelden
-9.  `./meik up`
+7. in der `docker/.env` die User-ID des aktuellen Nutzer als der Wert der Variablen `NORMAL_UID_GID` angeben:<br>
+   `nano .env`
+8.  Inhalt der `docker/.env` kontrolliern:<br>
+   `cat .env`<br>
+9. TLS-zertifikate und das private Key-File in `docker/certificates` abspeichern
+10. `docker/compose.prod.override.dist.yml` nach `compose.prod.override.yml` kopieren
+    `cp -T compose.prod.override.dist.yml compose.prod.override.yml`
+11. in der `docker/compose.prod.override.yml`<br>
+    den Dateinamen des TLS-zertifiaktes als Wert der Variablen `CERTIFICATE_FILENAME`<br>
+    und den Dateinamen des privaten Key-Files als Wert der Variablen `PRIVATE_KEY_FILENAME` angeben:<br>
+    `nano compose.prod.override.yml`
+12. Inhalt der `docker/compose.prod.override.yml` kontrollieren:<br>
+    `ls -al certificates`<br>
+    `cat compose.prod.override.yml`<br>
+    `cd ..`
+13. ggf. ausloggen und mit root-Rechten im System anmelden (wegen Ausführung von Docker und Port-Belegung)
+14. `./meik up`
 
 ## System herunterfahren
 `./meik down`
+
+## Updaten
+**Großes TODO: Daten exportieren und importieren (Backup)**
+1. ggf. mit root-Rechten einloggen
+2. `./meik down`
+3. ggf. mit **harmlosem** Nutzer einloggen
+4. `git pull`
+5. ggf. mit root-Rechten einloggen
+6. `./meik up`

@@ -3,6 +3,8 @@ services:
   web:
     build:
       target: prod
+    volumes:
+      - ./certificates:/certificates
   
   app:
     build:
