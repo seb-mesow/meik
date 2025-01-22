@@ -31,9 +31,6 @@ services:
     profiles: [dev, prod, prod-ssr]
     build:
       context: web
-    ports:
-      - 8080:80 # HTTP
-      - 444:443 # HTTPS
     volumes:
       - sock:/run/php/fpm/sock
       - ../:/var/www

@@ -5,6 +5,9 @@ services:
       target: prod
     volumes:
       - ./certificates:/certificates
+    ports:
+      - 80:80 # HTTP
+      - 443:443 # HTTPS
   
   app:
     build:

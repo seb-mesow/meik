@@ -2,7 +2,10 @@ services:
   web:
     build:
       target: dev
-  
+    ports:
+      - 8080:80 # HTTP
+      - 444:443 # HTTPS
+    
   app:
     build:
       target: dev
