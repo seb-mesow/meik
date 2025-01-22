@@ -98,5 +98,4 @@ RUN --mount=source=.,target=/build_context \
 	cp /build_context/nginx.prod.conf /etc/nginx/nginx.conf; \
 	chown -hR root:nginx /etc/nginx; \
 	find /etc/nginx -type d -exec chmod u=rx,g=rx,o= '{}' +; \
-	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +; \
-	
+	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +;
