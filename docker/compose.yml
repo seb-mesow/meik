@@ -38,6 +38,7 @@ services:
       - sock:/run/php/fpm/sock
       - ../:/var/www
       - ../log/web:/var/log
+      - ./certificates:/certificates
     restart: on-failure:2
   
   db:

@@ -3,4 +3,5 @@
 *compose*.yml
 !compose.dev.yml
 !compose.prod.yml
+!compose.prod.override.dist.yml
 !compose.prod-ssr.yml
