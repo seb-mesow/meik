@@ -1,16 +1,36 @@
-# Windows ohne Ubuntu-VM mit VS Code Server
-# REPO_DIR_WIN='__VOLLSTAENDIGEN_PFAD_HIER_EINTRAGEN__'
-# alias docker_compose="MSYS_NO_PATHCONV=1 docker compose -f '${REPO_DIR_WIN}\docker\compose.yml' -f '${REPO_DIR_WIN}\docker\compose.override.yml'"
-# MSYS_NO_PATHCONV=1 braucht es in Git-Bash, aber nicht auf Linux-Hosts
-# export HISTFILE="${REPO_DIR_WIN}\.bash_history"
+# ===== Individueller  Teil =====
 
-# Windows mit Ubuntu-VM mit VS Code Server
-REPO_DIR_WSL='/home/USERNAME/meik'
-alias docker_compose="docker compose -f '${REPO_DIR_WSL}/docker/compose.yml' -f '${REPO_DIR_WSL}/docker/compose.override.yml'"
-export HISTFILE="${REPO_DIR_WSL}/.bash_history"
+# Hier MÜSSEN individielle Änderungen vorgenommen werden.
 
-# Linux
-# TODO
+# für Linux, Linux-VM, WSL mit Linux-VM
+# !!!!! !!!!! !!!!! !!!!!
+REPO_DIR='/home/USERNAME/meik'
+# !!!!! !!!!! !!!!! !!!!!
+
+# für detailierte Docker-Ausgabe
+# export BUILDKIT_PROGRESS=plain
+
+# für signierte Commits
+# export GPG_TTY=$(tty)
+
+
+
+# ===== Gemeinsamer Teil =====
+
+# Hier sollten KEINE individielle Änderungen vorgenommen werden.
+
+export MEIK_DEPLOYMENT_PROFILE="dev";
+
+function docker_compose() {
+	docker compose \
+		--profile "${MEIK_DEPLOYMENT_PROFILE}" \
+		-f "${REPO_DIR}/docker/compose.yml" \
+		-f "${REPO_DIR}/docker/compose.${MEIK_DEPLOYMENT_PROFILE}.yml" \
+		-f "${REPO_DIR}/docker/compose.${MEIK_DEPLOYMENT_PROFILE}.override.yml" \
+		"$@";
+}
+
+export HISTFILE="${REPO_DIR}/.bash_history"
 
 shopt -s histappend
 PROMPT_COMMAND="history -a"
@@ -25,32 +45,45 @@ function git_backup_branch() {
     git checkout -b "${cur_branch}_backup_$(date +%+4Y-%m-%d_%H-%M-%S)";
     git checkout "${cur_branch}";
 }
+
 alias gb='git_backup_branch'
 alias gp='git push --force-with-lease --set-upstream origin "$(git rev-parse --abbrev-ref HEAD)"'
 
 alias docker_compose_run='docker_compose run --rm'
 alias docker_compose_exec='docker_compose exec'
-alias dr='docker_compose restart'
-alias drb='docker_compose up --build -d'
+
 alias ddown='docker_compose down'
 alias dps='docker_compose ps'
+alias dr='docker_compose restart'
+alias dra='dr app'
+alias drw='dr web'
+alias drn='dr node'
+alias drb='docker_compose up --build -d'
+alias drba='drb app'
+alias drbw='drb web'
+alias drbn='drb node'
 
-alias docker_compose_run_normal='docker_compose run --user normal --rm'
-alias docker_compose_run_root='docker_compose run --user root --rm'
-alias docker_compose_exec_normal='docker_compose exec --user normal'
-alias docker_compose_exec_root='docker_compose exec --user root'
+alias docker_compose_run_normal='docker_compose_run --user normal'
+alias docker_compose_run_root='docker_compose_run --user root'
+alias docker_compose_exec_normal='docker_compose_exec --user normal'
+alias docker_compose_exec_root='docker_compose_exec --user root'
+
 alias bashapp='docker_compose_exec_normal app bash -i'
 alias bashapproot='docker_compose_exec_root app bash -i'
 alias php-fpm='docker_compose_exec_root app php-fpm'
 alias php='docker_compose_exec_normal app php'
-alias phpd='php -dxdebug.mode=debug -dxdebug.start_with_request'
+alias phpd='php -dxdebug.mode=debug -dxdebug.start_with_request=yes'
 alias artisan='php artisan'
+alias artisand='phpd artisan'
 alias composer='docker_compose_exec_normal app composer'
 alias ci='composer install'
 alias cda='composer dump-autoload'
 
-alias shnode='docker_compose_exec_normal -it --entrypoint sh node -i'
-alias shnoderoot='docker_compose_exec_root -it --entrypoint sh node -i'
+alias shweb='docker_compose_exec --user nginx web sh -i'
+alias shwebroot='docker_compose_exec_root web sh -i'
+
+alias shnode='docker_compose_exec_normal node sh -i'
+alias shnoderoot='docker_compose_exec_root node sh -i'
 alias node='docker_compose_run_normal node'
 alias npm='docker_compose_run_normal node npm'
 alias npx='docker_compose_run_normal node npx'
@@ -95,6 +128,3 @@ alias dbput="curldb_normal PUT"
 alias dbget="curldb_normal GET"
 alias dbpost="curldb_normal POST"
 alias dbdelete="curldb_normal DELETE"
-
-# für signierte Commits
-# export GPG_TTY=$(tty)
