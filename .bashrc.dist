@@ -17,7 +17,7 @@ REPO_DIR='/home/USERNAME/meik'
 
 # ===== Gemeinsamer Teil =====
 
-# Hier sollten KEINE individielle Änderungen vorgenommen werden.
+# Hier sollten KEINE individuellen Änderungen vorgenommen werden.
 
 cd "$REPO_DIR";
 
