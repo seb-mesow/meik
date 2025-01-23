@@ -86,7 +86,7 @@ export class FreeTextForm implements IFreeTextForm {
 		this.parent = args.parent;
 	}
 	
-	private is_persisted(): boolean {
+	private exists_in_db(): boolean {
 		return this.id !== undefined;
 	}
 	
@@ -181,7 +181,7 @@ export class FreeTextForm implements IFreeTextForm {
 	public async click_save() {
 		console.log("click_save");
 		this.is_save_button_loading = true;
-		if (this.is_persisted()) {
+		if (this.exists_in_db()) {
 			await this.ajax_update();
 		} else {
 			await this.ajax_create();
@@ -192,7 +192,7 @@ export class FreeTextForm implements IFreeTextForm {
 	}
 	
 	public async click_delete() {
-		if (this.is_persisted()) {
+		if (this.exists_in_db()) {
 			this.is_delete_button_loading = true;
 			await this.ajax_delete();
 			this.is_delete_button_loading = false;
