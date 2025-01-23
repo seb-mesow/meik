@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { IImageForm } from '@/form/imageform';
-import InputField from '../Form/InputField.vue';
 import Button from 'primevue/button';
 import ToggleButton from 'primevue/togglebutton';
-import { onMounted, reactive, watch } from 'vue';
-import { formToJSON } from 'axios';
+import { onMounted, reactive, shallowReactive, shallowRef, useTemplateRef, watch } from 'vue';
 import InputTextField2 from '../Form/InputTextField2.vue';
 
 // (interne) Attribute der Komponente
@@ -14,11 +12,7 @@ const props = defineProps<{
 onMounted(() => {
 	props.form.on_mounted();
 })
-console.log(`Image.vue: props.form ==`);
-console.log(props.form);
-watch(props.form, (form) => {
-	console.log(`form.has_changes == ${form.has_changes}`);
-})
+const form = shallowReactive(props.form);
 </script>
 
 <template>
@@ -46,13 +40,14 @@ watch(props.form, (form) => {
 			/>
 		</div>
 		<div class="buttons">
+			<p>{{ form.description.val }}</p>
 			<p>{{ form.has_changes }}</p>
 			<Button @click="form.click_save()" label="Speichern"
-				:loading="form.is_save_button_loading"
+				:loading="form.is_save_button_loading.value"
+				:disabled="!(form.has_changes.value)"
 				/>
-				<!-- :disabled="!form.has_changes" -->
 			<Button @click="form.click_delete()" label="Löschen" severity="danger"
-				:loading="form.is_delete_button_loading"
+				:loading="form.is_delete_button_loading.value"
 			/>
 		</div>
 	</div>

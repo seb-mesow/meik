@@ -6,7 +6,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { IImageInitPageProps, IImagesInitPageProps } from '@/types/page_props/images';
 import Breadcrumb from 'primevue/breadcrumb';
 import Carousel from 'primevue/carousel';
-import { reactive, Reactive } from 'vue';
+import { reactive, Reactive, ShallowReactive, shallowReactive } from 'vue';
 
 const props = defineProps<{
 	name?: string,
@@ -43,7 +43,7 @@ const images: IImageFormConstructorArgs[] = props.init_props.images.map((_props:
 images.splice(1);
 images.push({});
 
-const form: Reactive<IImagesForm> = reactive(new ImagesForm({
+const form: IImagesForm = shallowReactive(new ImagesForm({
 	exhibit_id: props.init_props.exhibit_id,
 	images: images,
 }));
