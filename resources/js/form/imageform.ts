@@ -1,19 +1,21 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
+import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
 import { ICreateImage200ResponseData, ICreateImage422ResponseData, ICreateImageRequestData, IDeleteImage200ResponseData, IDeleteImage422ResponseData, IDeleteImageRequestData, IImageIDsOrder, ISetImageFile200ResponseData, ISetImageFileRequestData, IUpdateImageMetaData200ResponseData, IUpdateImageMetaData422ResponseData, IUpdateImageMetaDataRequestData } from "@/types/ajax/image";
 import { route } from "ziggy-js";
+import { ref, Ref } from "vue";
 
 export interface IImageForm {
+	readonly id?: string;
 	readonly ui_id: number;
-	readonly description: SingleValueForm2<string>;
-	readonly is_public: SingleValueForm2<boolean>;
+	readonly description: ISingleValueForm2<string>;
+	readonly is_public: ISingleValueForm2<boolean>;
 	readonly file_url: string;
 	on_mounted(): void;
 	click_save(): void;
 	click_delete(): void;
-	readonly is_save_button_loading: boolean;
-	readonly has_changes: boolean;
-	readonly is_delete_button_loading: boolean;
+	readonly is_save_button_loading: Readonly<Ref<boolean>>;
+	readonly has_changes: Readonly<Ref<boolean>>; // muss reactive sein, damit als Property für Button verwendbar
+	readonly is_delete_button_loading: Readonly<Ref<boolean>>;
 }
 
 // um eine zirkuläre Abhängigkeit zu vermeiden:
@@ -34,17 +36,17 @@ export interface IImageFormConstructorArgs {
 }
 
 export class ImageForm implements IImageForm {
+	public id?: string;
+	public readonly ui_id: number;
 	public description: SingleValueForm2<string>;
 	public is_public: SingleValueForm2<boolean>;
-	public is_save_button_loading: boolean = false;
-	public has_changes: boolean;
-	public is_delete_button_loading: boolean = false;
-	public readonly ui_id: number;
+	public is_save_button_loading: Ref<boolean> = ref(false);
+	public has_changes: Ref<boolean>;
+	public is_delete_button_loading: Ref<boolean> = ref(false);
 	public file_url: string;
 	
 	private errs: string[] = [];
 	
-	private id?: string;
 	private readonly parent: IImageFormParent;
 	private _image_zone?: HTMLElement;
 	private _drop_zone?: HTMLElement;
@@ -58,7 +60,7 @@ export class ImageForm implements IImageForm {
 			errs: args.description?.errs,
 			on_change: () => {
 				console.log(`recieved change from description`);
-				this.has_changes = true;
+				this.has_changes.value = true;
 			},
 		}, 'description');
 		this.is_public = new SingleValueForm2({
@@ -66,14 +68,16 @@ export class ImageForm implements IImageForm {
 			errs: args.is_public?.errs,
 			on_change: () => {
 				console.log(`recieved change from is_public`);
-				this.has_changes = true; 
+				this.has_changes.value = true; 
 			},
 		}, 'is_public');
 		this.parent = args.parent;
 		this.ui_id = args.ui_id;
 		this.file_url = this.determinate_external_file_url();
 		console.log(`construct`);
-		this.has_changes = false;
+		this.has_changes = ref(false);
+		console.log(`construct: this.has_changes ==`);
+		console.log(this.has_changes);
 	}
 	
 	private has_id(): boolean {
@@ -150,7 +154,7 @@ export class ImageForm implements IImageForm {
 				if (file.type?.startsWith('image/')) {
 					this.file = file;
 					this.new_file = true;
-					this.has_changes = true;
+					this.has_changes.value = true;
 					URL.revokeObjectURL(this.file_url);
 					this.file_url = URL.createObjectURL(this.file);
 					this.update_zone_visibility();
@@ -182,17 +186,25 @@ export class ImageForm implements IImageForm {
 	}
 	
 	public async click_save(): Promise<void> {
-		this.is_save_button_loading = true;
-		if (this.is_new()) {
-			await this.ajax_create_metadata();
-			await this.ajax_set_file_if_new_file();
-		} else {
-			await Promise.all([
-				this.ajax_update_metadata,
-				this.ajax_set_file_if_new_file
-			]);
+		// Werte der Zeile im Objekt rows setzen:
+		this.description.commit();
+		this.is_public.commit();
+		this.has_changes.value = false;
+		
+		this.is_save_button_loading.value = true;
+		try {
+			if (this.is_new()) {
+				await this.ajax_create_metadata();
+				await this.ajax_set_file_if_new_file();
+			} else {
+				await Promise.all([
+					this.ajax_update_metadata(),
+					this.ajax_set_file_if_new_file(),
+				]);
+			}
+		} finally {
+			this.is_save_button_loading.value = false;
 		}
-		this.is_save_button_loading = false;
 	}
 	
 	public async click_delete(): Promise<void> {
