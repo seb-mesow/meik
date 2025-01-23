@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
+use View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,6 +59,8 @@ class AppServiceProvider extends ServiceProvider
 			}
 			return $guard;
 		});
+		
+		View::addNamespace('errors', resource_path('views/errors'));
 		
 		Vite::prefetch(concurrency: 3);
 	}
