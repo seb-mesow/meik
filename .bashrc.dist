@@ -19,6 +19,8 @@ REPO_DIR='/home/USERNAME/meik'
 
 # Hier sollten KEINE individielle Änderungen vorgenommen werden.
 
+cd "$REPO_DIR";
+
 export MEIK_DEPLOYMENT_PROFILE="dev";
 
 function docker_compose() {

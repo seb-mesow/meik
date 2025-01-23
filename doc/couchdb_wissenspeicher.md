@@ -5,6 +5,7 @@
 	- [Document IDs](#document-ids)
 		- [Lösung](#lösung)
 		- [endgültiger Aufbau](#endgültiger-aufbau)
+	- [Dokumente mit bestimmten Prefix abrufen](#dokumente-mit-bestimmten-prefix-abrufen)
 
 ## eine Beziehung auflösen
 Mit dem Feature "Linked Documents" können man in einer View (= nur eine DB-Request!)
@@ -75,3 +76,20 @@ Mit den Groß- und Kleinbuchstaben, sowie den dezimalen Ziffern sind mindestens 
 
 Das Präfix darf keine Ziffern beinhalten!
 Beispiel: `exhibit20241229172734a6Bt`
+
+## Dokumente mit bestimmten Prefix abrufen
+1. Für den Abruf ein Design Dokument erstellen
+   Bsp:
+    {
+      "_id": "_design/exhibit_filter",
+      "_rev": "4-22b5d86d59c77befa7f8fb6202b82581",
+      "views": {
+        "by_exhibit_prefix": {
+          "map": "function (doc) {\n  { if (doc._id && doc._id.indexOf('exhibit') === 0) { emit(doc._id, doc); } }\n}"
+        }
+      },
+      "language": "javascript"
+    }
+2. Zum Abrufen die Funktion getView verwenden.
+   Bsp:
+    $this->client->getView('exhibit_filter', 'by_exhibit_prefix')

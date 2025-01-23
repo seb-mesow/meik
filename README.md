@@ -1,10 +1,24 @@
 # MEIK
 
+- [MEIK](#meik)
+	- [Starten der Web-App](#starten-der-web-app)
+	- [nach Rebasen](#nach-rebasen)
+	- [Einrichtung](#einrichtung)
+		- [Einrichtung für alle](#einrichtung-für-alle)
+		- [Empfehlungen für Windows](#empfehlungen-für-windows)
+	- [Tech-Stack](#tech-stack)
+	- [Konventionen](#konventionen)
+		- [Variablen und Klassenschreibweisen](#variablen-und-klassenschreibweisen)
+		- [Quelltext](#quelltext)
+		- [Branch-Konzept](#branch-konzept)
+			- [Rebasen](#rebasen)
+			- [Backup wieder herstellen](#backup-wieder-herstellen)
+
+
 ## Starten der Web-App
 0. Docker (Engine) im Host starten
 1. `drb` ("docker restart build")
-2. ggf. `artisan migrate --seed` (Schema für Tabellen in MariaDB aktualisieren und Testdaten einfügen)
-	- alternativ: `artisan migrate:fresh --seed`
+2. ggf. Schritte wie auch nach Rebases
 3. [Web-App öffnen (HTTP)](http://meik.localhost:8080)
 4. Im Freifox Cache deaktivieren !
 
@@ -16,7 +30,8 @@
 1. `drb`
 2. `ci`
 3. `npm ci`
-4. `artisan ziggy:generate --types resources/js/ziggy/ziggy.js`
+4. `artisan migrate:fresh --seed`
+5. `artisan ziggy:generate --types resources/js/ziggy/ziggy.js`
 
 ## Einrichtung
 
@@ -49,39 +64,39 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 		- sieht z.B. so aus `12345678+username@users.noreply.github.com`
 7. `.bashrc`
 	1. `.bashrc.dist` zu `.bashrc` kopieren
-	2. mit den Aliasen in `.bashrc` vertraut machen. Sie beschleunigen das Arbeiten in der Kommandozeile enorm.
-	3. `.bashrc` anpassen
-	4. Eigenes Terminal so einstellen, dass _diese_ `.bashrc` geladen wird.<br>
-	   Dafür am besten ein separates Profil anlegen.
-8. im Unterordner `docker`
+	2. in der `.bashrc` die Variable `REPO_DIR` anpassen (siehe dort)
+	3. mit den Aliasen in `.bashrc` vertraut machen. Sie beschleunigen das Arbeiten in der Kommandozeile enorm.
+	4. `.bashrc` anpassen
+	5. Eigenes Terminal so einstellen, dass _diese_ `.bashrc` geladen wird.
+		- _Beispiel_-Befehl für Einstellung des Terminals: `bash --init-file /home/username/meik/.bashrc`
+		- Dafür am besten ein separates Profil anlegen.
+8.  `id www-data`, sollte u.A. `gid=33` ausgeben (sonst eine weitere Gruppe mit der GID `33` anlegen)
+9.  `sudo usermod -a -G www-data USERNAME`<br>
+	(`USERNAME` durch Benutzernamen im Host ersetzen)
+10. im Unterordner `docker`
 	1. `.env.dist` zu `.env` kopieren
 	2. `.env` anpassen
 	3. eine leere Datei `compose.dev.override.yml` anlegen
-9. `.env` (in der Wurzel des Repos)
+11. `.env` (in der Wurzel des Repos)
 	1. `.env.example` zu `.env` kopieren
 	2. sicherstellen, dass folgende Variablen wie folgt gesetzt sind:
 		1. `APP_ENV=local`
 		2. `APP_DEBUG=true`
-	3. `bashapproot`
-		1. darin `chown normal:normal .env`
-10. im Unterordner `.vscode`
+12. im Unterordner `.vscode`
 	1. `launch.dist.json` zu `launch.json` kopieren
 	2. `settings.dist.json` zu `settings.json` kopieren
-11. `drb` ("docker restart build")
-12. `ci` ("composer install")
+13. `drb` ("docker restart build")
+14. `ci` ("composer install")
 	- (notfalls als Ersatz: `docker_compose_run_normal app composer install`)
-13. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
+15. `npm ci` (JS/TS-Abhängigkeiten aus `packages.lock` installieren)
 	- (notfalls als Ersatz: `docker_compose_run_normal node npm ci`)
-14. `storage`-Verzeichnis
-	1. im Host == Ubuntu (nicht in einem Docker-Container)
-	2. `id www-data`, sollte u.A. `gid=33` ausgeben (sonst eine weitere Gruppe mit der GID `33` anlegen)
-	3. `sudo usermod -a -G www-data USERNAME` (`USERNAME` durch Benutzernamen im Host ersetzen)
-	4. Terminal schließen und neuöffnen
-	5. VS Code schließen und neustarten
-15. `artisan optimize:clear`
-16. `artisan key:generate`
-17. `artisan ziggy:generate --types resources/js/ziggy/ziggy.js`
-18. `artisan db:seed --class=SetupCouchDBSeeder`
+17. Computer oder VM neustarten
+18. `drb`
+19. `artisan migrate`
+20. `artisan optimize:clear`
+21. `artisan key:generate`
+22. `artisan ziggy:generate --types resources/js/ziggy/ziggy.js`
+23. `artisan db:seed`
 
 **Es ist _zur Zeit_ nicht möglich mit Windows von VS Code in einem Docker-Container ein PHP-Skript zu starten.**<br>Dies geht nur über die Kommandozeile.
 
@@ -131,7 +146,7 @@ https://linuxcapable.com/how-to-install-php-on-linux-mint/
 ### Branch-Konzept
 - `main` ist der einzige Haupt-Branch.
 - Davon zieht sich jeder seinen eigenen Entwicklungs-Branch.
-- Iin den `main`-Branch wird zunächst nur per vorherigem Rebase "gemergt".
+- In den `main`-Branch wird zunächst nur per vorherigem Rebase "gemergt".
 - Git-Tags für funktionierende Versionen
 
 - **Es gibt keinen Grund jemals ein `git pull` zu machen!**
@@ -156,34 +171,3 @@ git branch -D images_in_db
 # neuen normalen Branch aus Backup-Branch erstellen
 git checkout -b images_in_db
 ```
-
-## Docker-Tipps
-
-### Speicherplatz freigeben
-1. `docker system --volumes`
-2. bei WSL zusätzlich:
-   1. _Quit Docker Desktop_ (ca. 1 Minute warten)
-   2. Powershell-Terminal mit Administrator-Rechten starten
-   3. `Optimize-VHD -Path "C:\Users\USERNAME\AppData\Local\Docker\wsl\disk\docker_data.vhdx" -Mode Full`
-
-
-
-## Interaktionen mit CouchDB
-
-### Dokumente mit bestimmten Prefix abrufen
-1. Für den Abruf ein Design Dokument erstellen
-   Bsp:
-    {
-      "_id": "_design/exhibit_filter",
-      "_rev": "4-22b5d86d59c77befa7f8fb6202b82581",
-      "views": {
-        "by_exhibit_prefix": {
-          "map": "function (doc) {\n  { if (doc._id && doc._id.indexOf('exhibit') === 0) { emit(doc._id, doc); } }\n}"
-        }
-      },
-      "language": "javascript"
-    }
-2. Zum Abrufen die Funktion getView verwenden.
-   Bsp:
-    $this->client->getView('exhibit_filter', 'by_exhibit_prefix')
-

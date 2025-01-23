@@ -2,6 +2,18 @@
 
 Wir benutzen erstmal das WSl 2-Backend (statt dem Hyper-V-Backend).
 
+- [Einrichtung von Docker auf Windows 10](#einrichtung-von-docker-auf-windows-10)
+	- [Einrichtung](#einrichtung)
+		- [Vorlage für `.wslconfig`](#vorlage-für-wslconfig)
+	- [Docker - Hilfe](#docker---hilfe)
+		- [Docker-Tipps](#docker-tipps)
+		- [Speicherplatz freigeben](#speicherplatz-freigeben)
+		- [Größe Festplattenspeicher Docker-VM verringern](#größe-festplattenspeicher-docker-vm-verringern)
+		- [nicht mehr Admin-Passwort eingeben müssen](#nicht-mehr-admin-passwort-eingeben-müssen)
+		- [Beobachtungen](#beobachtungen)
+
+## Einrichtung
+
 [empfohlenes Youtube-Video](https://www.youtube.com/watch?v=rATNU0Fr8zs)
 
 1. _empfohlen:_ Docker-Account einrichten
@@ -27,7 +39,7 @@ Wir benutzen erstmal das WSl 2-Backend (statt dem Hyper-V-Backend).
 
 **bei Problemen Sebastian anrufen!**
 
-## Vorlage für `.wslconfig`
+### Vorlage für `.wslconfig`
 
 ```
 # Settings apply across all Linux distros running on WSL 2
@@ -69,9 +81,16 @@ sparseVhd=true
 autoMemoryReclaim=gradual
 ```
 
-# Docker - Hilfe
+## Docker - Hilfe
 
-## Größe Festplattenspeicher Docker-VM verringern
+### Docker-Tipps
+
+### Speicherplatz freigeben
+1. _Quit Docker Desktop_ (ca. 1 Minute warten)
+2. Powershell-Terminal mit Administrator-Rechten starten
+4. `Optimize-VHD -Path $ENV:LOCALAPPDATA\Docker\wsl\disk\docker_data.vhdx -Mode Full`
+
+### Größe Festplattenspeicher Docker-VM verringern
 - gilt für Windows 10
 
 **Einrichtung**
@@ -82,10 +101,11 @@ autoMemoryReclaim=gradual
 2. neustarten
 
 **Verkleinern (immer wieder)**
-1. eine Powershell als Administrator öffnen
-2. `Optimize-VHD -Path $ENV:LOCALAPPDATA\Docker\wsl\disk\docker_data.vhdx -Mode Full`
+1. _Quit Docker Desktop_ (ca. 1 Minute warten)
+2. Powershell-Terminal mit Administrator-Rechten starten
+4. `Optimize-VHD -Path $ENV:LOCALAPPDATA\Docker\wsl\disk\docker_data.vhdx -Mode Full`
 
-## nicht mehr Adminpasswort eingeben müssen
+### nicht mehr Admin-Passwort eingeben müssen
 
 siehe [dockeraccesshelper](https://github.com/tfenster/dockeraccesshelper)
 
@@ -100,7 +120,7 @@ Import-Module dockeraccesshelper
 Add-AccountToDockerAccess "COMPUTERNAME\Benutzername"
 ```
 
-## Beobachtungen
+### Beobachtungen
 - Die Performance von PHP steht und fällt mit der Performance Festplatte zu Docker-VM.<br>
 da bei jeder Request die Metadaten der nötigen PHP-Dateien (je nach Einstellung des OpCache)
 alle x Sekunden abgefragt werden.<br>
