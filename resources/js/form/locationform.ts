@@ -65,7 +65,7 @@ export class LocationForm implements ILocationForm {
 		this.delete_button_enabled = args.delete_button_enabled ?? true;
 	}
 	
-	private is_persisted(): boolean {
+	private exists_in_db(): boolean {
 		return this.id !== undefined;
 	}
 
@@ -113,7 +113,7 @@ export class LocationForm implements ILocationForm {
 		console.log(`this.name.val === ${this.name.val}`);
 		this.name.rollback();
 		this.is_public.rollback();
-		if (this.is_persisted()) {
+		if (this.exists_in_db()) {
 			// war update
 			this.delete_button_enabled = true;
 		} else {
@@ -123,7 +123,7 @@ export class LocationForm implements ILocationForm {
 	}
 	
 	private async save(): Promise<void> {
-		if (this.is_persisted()) {
+		if (this.exists_in_db()) {
 			return this.ajax_update();
 		} else {
 			return this.ajax_create();
@@ -215,7 +215,7 @@ export class LocationForm implements ILocationForm {
 		if (!this.id) {
 			throw new Error("undefined id");
 		}
-		if (!this.is_persisted()) {
+		if (!this.exists_in_db()) {
 			throw new Error('accept_delete(): Missing id of location');
 		}
 		const request_config: AxiosRequestConfig<IDeleteLocation200ResponseData> = {

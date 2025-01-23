@@ -58,7 +58,7 @@ export class PlaceForm implements IPlaceForm {
 		this.delete_button_enabled = args.delete_button_enabled ?? true;
 	}
 	
-	private is_persisted(): boolean {
+	private exists_in_db(): boolean {
 		return this.id !== undefined;
 	}
 
@@ -106,7 +106,7 @@ export class PlaceForm implements IPlaceForm {
 		
 		this.name.rollback();
 		
-		if (this.is_persisted()) {
+		if (this.exists_in_db()) {
 			// war update
 			this.delete_button_enabled = true;
 		} else {
@@ -116,7 +116,7 @@ export class PlaceForm implements IPlaceForm {
 	}
 	
 	private async save(): Promise<void> {
-		if (this.is_persisted()) {
+		if (this.exists_in_db()) {
 			return this.ajax_update();
 		} else {
 			return this.ajax_create();
