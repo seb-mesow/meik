@@ -243,7 +243,11 @@ export class ImageForm implements IImageForm {
 		}
 		const request_config: AxiosRequestConfig<IUpdateImageMetaDataRequestData> = {
 			method: "put",
-			url: route('ajax.exhibit.free_text.delete', [this.parent.exhibit_id, this.id])
+			url: route('ajax.image.update_meta_data', { image_id: this.id }),
+			data: {
+				description: this.description.val,
+				is_public: this.is_public.val,
+			}
 		};
 		console.log('ajax_update_metadata');
 		return axios.request(request_config).then(

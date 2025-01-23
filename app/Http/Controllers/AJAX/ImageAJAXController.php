@@ -58,11 +58,17 @@ class ImageAJAXController extends Controller
 		return response()->json($ids_order);
 	}
 	
-	public function get_meta_data(): JsonResponse {
+	public function get_meta_data(string $image_id): JsonResponse {
 		return response()->json();
 	}
 	
-	public function update_meta_data(): JsonResponse {
+	public function update_meta_data(Request $request, string $image_id): JsonResponse {
+		$description = $request->input('description');
+		$is_public = $request->input('is_public');
+		$image = $this->image_repository->get($image_id);
+		$image->set_description($description);
+		$image->set_is_public($is_public);
+		$this->image_repository->update($image);
 		return response()->json();
 	}
 	
