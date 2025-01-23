@@ -80,4 +80,6 @@ Route::prefix('ajax')->group(static function() {
 	
 	Route::get('/thumbnail/{image_id}', [ImageAJAXController::class, 'get_thumbnail_file'])
 		->name('ajax.thumbnail.get_file');
+
+	Route::get('/qr/{exhibit_id}', [ExhibitAJAXController::class, 'get_qr_code'])->name('ajax.exhibit.qr_code');
 });

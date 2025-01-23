@@ -37,7 +37,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-mysql \
         php${PHP_VERSION}-opcache \
-        php${PHP_VERSION}-xdebug;
+        php${PHP_VERSION}-xdebug \
+        php${PHP_VERSION}-gd;
 
 RUN mkdir -p /run/php/fpm/sock; \
     chown -h -R www-data:www-data /run/php; \

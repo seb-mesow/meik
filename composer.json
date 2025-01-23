@@ -8,13 +8,15 @@
         "php": "~8.3.10",
         "composer": "~2.7.8",
         "dropelikeit/laravel-jms-serializer": "^6.0",
+        "endroid/qr-code": "^6.0",
         "guzzlehttp/guzzle": "~7.9.2",
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "php-on-couch/php-on-couch": "~4.0.2",
-        "tightenco/ziggy": "^2.0"
+        "tightenco/ziggy": "^2.0",
+        "ext-gd": "*"
     },
     "require-dev": {
         "laravel/breeze": "^2.2",
