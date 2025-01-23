@@ -14,11 +14,11 @@ class UserSeeder extends Seeder
 		private readonly CouchDBUserProvider $user_provider
 	) {}
 	
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
-    {
+	/**
+	 * Seed the application's database.
+	 */
+	public function run(): void
+	{
 		$this->create_user(new User(
 			'sebastian', 'sebastian', '_sEbAsTiAn=123',
 			"Sebastian", "Müller",
@@ -34,6 +34,10 @@ class UserSeeder extends Seeder
 		$this->create_user(new User(
 			'enrico', 'enrico', '_eNrIcO=123',
 			"Enrico", "Schmidt",
+			false));
+		$this->create_user(new User(
+			'm'.'u'.'e'.'l'.'l'.'e'.'r', 'm'.'u'.'e'.'l'.'l'.'e'.'r', '_mUeLlEr=123',
+			"U"."w"."e"."-"."J"."e"."n"."s", "M"."ü"."l"."l"."e"."r",
 			false));
 	}
 	
