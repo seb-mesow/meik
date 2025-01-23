@@ -69,7 +69,7 @@ Route::prefix('ajax')->group(static function() {
 	Route::get('/image/{image_id}/meta_data', [ImageAJAXController::class, 'get_meta_data'])
 		->name('ajax.image.get_meta_data');
 	
-	Route::patch('/image/{image_id}/meta_data', [ImageAJAXController::class, 'update_meta_data'])
+	Route::put('/image/{image_id}/meta_data', [ImageAJAXController::class, 'update_meta_data'])
 		->name('ajax.image.update_meta_data');
 	
 	Route::get('/image/{image_id}', [ImageAJAXController::class, 'get_file'])

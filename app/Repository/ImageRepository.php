@@ -102,6 +102,7 @@ final class ImageRepository
 		return new Image(
 			description: $image_doc->description,
 			is_public: $image_doc->is_public,
+			attachments: $image_doc->_attachments,
 			id: $this->determinate_model_id_from_doc($image_doc), 
 			rev: $image_doc->_rev,
 		);
@@ -115,6 +116,9 @@ final class ImageRepository
 		$image_doc = $this->create_stub_doc_from_model($image);
 		$image_doc->description = $image->get_description();
 		$image_doc->is_public = $image->get_is_public();
+		if ($attachments = $image->get_attachments()) {
+			$image_doc->_attachments = $attachments;
+		}
 		return $image_doc;
 	}
 	
