@@ -14,21 +14,24 @@ if (exhibit.title_image) {
 
 <template>
 	<a :href="route('exhibit.details', exhibit.id)">
-		<div class="exhibit-tile">
+		<div class="exhibit-tile flex">
 			<img v-if="exhibit.title_image" 
 				:src="route('ajax.image.get_thumbnail', { image_id: exhibit.title_image.id })"
-				:width="exhibit.title_image.thumbnail_width"
-				:height="exhibit.title_image.thumbnail_height"
 			>
-			<p>{{ exhibit.name }}</p>
+			<div class="flex flex-col">
+			<p>{{ "" + exhibit.name, exhibit.inventory_number}}</p>
+			<p>{{ "Baujahr: " + exhibit.year_of_manufacture }}</p>
+			<p>{{ "Hersteller: " + exhibit.manufacturer }}</p>
+			<p>{{ "Standort: " + exhibit.location_name, exhibit.place_name }}</p>
+			</div>
 		</div>
 	</a>
 </template>
 
 <style lang="css" scoped>
 .exhibit-tile {
-	width: 300px !important;
-	height: 100px;
+	min-width:20rem;
+	height: auto;
 	border-radius: 20px;
 	padding: 20px;
 	margin: 10px;
