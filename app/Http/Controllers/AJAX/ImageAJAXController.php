@@ -73,7 +73,7 @@ class ImageAJAXController extends Controller
 	}
 	
 	public function get_file(string $image_id): Response {
-		[ 'content_type' => $content_type, 'file' => $file ] = $this->image_repository->get_file($image_id);
+		[ 'content_type' => $content_type, 'file' => $file ] = $this->image_repository->get_internal_file($image_id);
 		return response($file)
 			->header('Content-Type', $content_type);
 	}
@@ -83,7 +83,7 @@ class ImageAJAXController extends Controller
 	}
 	
 	public function get_thumbnail_file(string $image_id): Response {
-		[ 'content_type' => $content_type, 'file' => $file ] = $this->image_repository->get_thumbnail($image_id);
+		[ 'content_type' => $content_type, 'file' => $file ] = $this->image_repository->get_internal_file($image_id);
 		return response($file)
 			->header('Content-Type', $content_type);
 	}

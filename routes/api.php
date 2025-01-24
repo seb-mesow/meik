@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\API\ExhibitAPIController;
 use App\Http\Controllers\API\ImageAPIController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 # Das Prefix '/api' wird automatisch ergänzt.
@@ -16,5 +15,5 @@ Route::get('/exhibits/filter', [ExhibitAPIController::class, 'find_exhibits_by_f
 Route::get('/search/{query}', [ExhibitAPIController::class, 'search_exhibits']);
 Route::get('/exhibit/{id}', [ExhibitAPIController::class, 'get_exhibit_by_id']);
 
-Route::get('/image/{id}', [ImageAPIController::class, 'get_image']);
-Route::get('/thumbnail/{id}', [ImageAPIController::class, 'get_thumbnail']);
+Route::get('/image/{image_id}', [ImageAPIController::class, 'get_image']);
+Route::get('/thumbnail/{image_id}', [ImageAPIController::class, 'get_thumbnail']);
