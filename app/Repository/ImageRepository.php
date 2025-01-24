@@ -78,6 +78,24 @@ final class ImageRepository
 	}
 	
 	/**
+	 * @param int $exhibit_id
+	 * @return Image[]
+	 */
+	public function get_images(int $exhibit_id): array {
+		$response = $this->client
+			->startkey([$exhibit_id]) // @phpstan-ignore-line
+			->endkey([$exhibit_id+1]) // @phpstan-ignore-line
+			->inclusive_end(false)
+			->include_docs(true) // @phpstan-ignore-line
+			->getView(ImageOrderRepository::MODEL_TYPE_ID, 'by-exhibit-id-to-image-docs');
+		$images = [];
+		foreach ($response->rows as $image_doc) {
+			$images[] = $this->create_image_from_doc($image_doc->doc);
+		}
+		return $images;
+	}
+	
+	/**
 	 * @param ImageDoc $image_doc
 	 */
 	public function create_image_from_doc(stdClass $image_doc): Image {
@@ -128,13 +146,7 @@ final class ImageRepository
 		return [ 'content_type' => $content_type, 'file' => $file ];
 	}
 	
-	public function get_title_image_id(int $exhibit_id): ?string {
-		$response = $this->client
-			->key([$exhibit_id, 0]) // @phpstan-ignore-line
-			->include_docs(true) // @phpstan-ignore-line
-			->getView(ImageOrderRepository::MODEL_TYPE_ID, 'by-exhibit-id-to-image-docs');
-		return $response->rows[0]?->value->_id;
-	}
+
 	
 	// TODO always retrieve image type from user's file
 	

@@ -36,6 +36,9 @@ export interface IExhibitForm {
 		},
 		free_texts: IFreeTextsForms,
 	},
-	title_image_id?: string,
+	title_image?: {
+		id: string,
+		description: string,
+	},
 }
 

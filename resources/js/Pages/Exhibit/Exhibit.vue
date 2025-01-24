@@ -62,7 +62,7 @@ const form: IExhibitForm = {
 		}
 	},
 	errs: props.init_props.errs ?? [],
-	title_image_id: props.init_props.title_image_id,
+	title_image: props.init_props.title_image,
 }
 
 const exhibit_id = form.id;
@@ -125,13 +125,13 @@ async function save_metadata(event: MouseEvent) {
 				/>
 			</Form>
 			<div class="images-form">
-				<a v-if="exhibit_id"
+				<a v-if="form.title_image"
 					:href="route('exhibit.images.details', { exhibit_id: exhibit_id })"
 				>
 					<img
-						v-if="form.title_image_id"
+						v-if="form.title_image"
 						class="title-image"
-						:src="route('ajax.image.get_file', { image_id: form.title_image_id })"
+						:src="route('ajax.image.get_file', { image_id: form.title_image.id })"
 					>
 				</a>
 			</div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
+use App\Models\Image;
 use App\Repository\ExhibitRepository;
 use App\Repository\ImageOrderRepository;
 use App\Repository\ImageRepository;
@@ -42,19 +43,12 @@ class ImagesController extends Controller
 	 * @return ImageInitPageProps[]
 	 */
 	private function create_images_page_props(Exhibit $exhibit): array {
-		$images_order = $this->image_order_repository->get($exhibit->get_id());
-		/** @var ImageInitPageProps[] */
-		$page_props = [];
-		foreach ($images_order->get_image_ids() as $image_id) {
-			// potential performance bottleneck
-			$image = $this->image_repository->get($image_id);
-			$page_props[] = [
-				'id' => $image->get_id(),
-				'description' => $image->get_description(),
-				'is_public' => $image->get_is_public(),
-			];
-		}
-		return $page_props;
+		$images = $this->image_repository->get_images($exhibit->get_id());
+		return array_map(static fn(Image $image): array => [
+			'id' => $image->get_id(),
+			'description' => $image->get_description(),
+			'is_public' => $image->get_is_public(),
+		], $images);
 	}
 
 }

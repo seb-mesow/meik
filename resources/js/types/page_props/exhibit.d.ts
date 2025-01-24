@@ -21,5 +21,8 @@ export interface IExhibitInitPageProps {
 		}
 	},
 	errs?: string[],
-	title_image_id?: string,
+	title_image?: {
+		id: string,
+		description: string,
+	},
 }

@@ -7,12 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
-use App\Repository\ImageRepository;
 use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
+use App\Service\ImageService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use JMS\Serializer\Serializer;
 
 class ExhibitController extends Controller
 {
@@ -20,7 +19,7 @@ class ExhibitController extends Controller
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly LocationRepository $location_repository,
 		private readonly PlaceRepository $place_repository,
-		private readonly ImageRepository $image_repository,
+		private readonly ImageService $image_service,
 	) {}
 
 	public function overview() {
@@ -39,14 +38,23 @@ class ExhibitController extends Controller
 	private function determinate_overview_page_props(Exhibit $exhibit): array {
 		$place = $this->place_repository->get($exhibit->get_place_id());
 		$location = $this->location_repository->get($place->get_location_id());
-		return [
+		
+		$tile_props = [
 			'id' => $exhibit->get_id(),
 			'name' => $exhibit->get_name(),
 			'inventory_number' => $exhibit->get_inventory_number(),
 			'year_of_manufacture' => $exhibit->get_year_of_manufacture(),
+			'manufacturer' => $exhibit->get_manufacturer(),
 			'location_name' => $location->get_name(),
 			'place_name' => $place->get_name(),
 		];
+		if ($title_image = $this->image_service->get_internal_title_image($exhibit)) {
+			$tile_props ['title_image'] = [
+				'id' => $title_image->get_id(),
+				'description' => $title_image->get_description(),
+			];	
+		}
+		return $tile_props;
 	}
 	
 	public function details(int $id) {
@@ -75,6 +83,8 @@ class ExhibitController extends Controller
 			inventory_number: $inventory_number,
 			name: $name,
 			manufacturer: $manufacturer,
+			year_of_manufacture: 9999, // TODO Baujahr im Frontend implementieren
+			place_id: '0', // TODO Platzangabe im Frontend implementieren
 		);
 		$this->exhibit_repository->insert($exhibit);
 		// sleep(5); // TODO entfernen
@@ -129,7 +139,12 @@ class ExhibitController extends Controller
 		if ($exhibit) {
 			$exhibit_id = $exhibit->get_id();
 			$exhibit_form['id'] = $exhibit_id;
-			$exhibit_form['title_image_id'] = $this->image_repository->get_title_image_id($exhibit_id);
+			if ($title_image = $this->image_service->get_internal_title_image($exhibit)) {
+				$exhibit_form['title_image'] = [
+					'id' => $title_image->get_id(),
+					'description' => $title_image->get_description(),
+				];
+			}
 		}
 		return $exhibit_form;
 	}
