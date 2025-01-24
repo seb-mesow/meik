@@ -40,7 +40,6 @@ const images: IImageFormConstructorArgs[] = props.init_props.images.map((_props:
 		},
 	};
 });
-images.splice(1);
 images.push({});
 
 const form: IImagesForm = shallowReactive(new ImagesForm({

@@ -1,4 +1,4 @@
-export type IImageIDsOrder = number[];
+export type IImageIDsOrder = string[];
 
 export interface ICreateImageRequestData {
 	index: number,
@@ -41,6 +41,6 @@ export interface IUpdateImageMetaData422ResponseData {
 	is_public: string[], // errs
 }
 
-export type ISetImageFileRequestData = File;
+export type ISetImageFileRequestData = FormData; // file in multipart/form-data
 export type ISetImageFile200ResponseData = never;
 export type ISetImageFile422ResponseData = string[];

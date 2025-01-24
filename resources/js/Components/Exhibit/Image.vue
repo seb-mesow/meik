@@ -18,7 +18,7 @@ const form = shallowReactive(props.form);
 <template>
 	<div class="page">
 		<img :id="`image-zone-${form.ui_id}`" class="image"
-			:src="form.file_url"
+			:src="form.file_url.value"
 			draggable="true"
 		>
 		<!-- TODO use v-show -->

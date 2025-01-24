@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use App\Exceptions\AttachmentNotFoundException;
-use App\Http\Middleware\NotFoundMiddleware;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

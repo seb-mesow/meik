@@ -9,10 +9,11 @@ export interface IImageForm {
 	readonly ui_id: number;
 	readonly description: ISingleValueForm2<string>;
 	readonly is_public: ISingleValueForm2<boolean>;
-	readonly file_url: string;
+	readonly file_url: Readonly<Ref<string>>;
 	on_mounted(): void;
 	click_save(): void;
 	click_delete(): void;
+	exists_in_db(): boolean;
 	readonly is_save_button_loading: Readonly<Ref<boolean>>;
 	readonly has_changes: Readonly<Ref<boolean>>; // muss reactive sein, damit als Property für Button verwendbar
 	readonly is_delete_button_loading: Readonly<Ref<boolean>>;
@@ -23,8 +24,9 @@ export interface IImageForm {
 export interface IImageFormParent {
 	readonly exhibit_id: number;
 	get_index_for_persisting(form: IImageForm): number;
-	delete_form(args: { form: IImageForm, ids_order: IImageIDsOrder }): void;
-	update_ids_order(ids_order: IImageIDsOrder ): void;
+	delete_form(form: IImageForm): void;
+	delete_form_and_update_order(args: { form: IImageForm, new_ids_order: IImageIDsOrder }): void;
+	update_order(new_ids_order: IImageIDsOrder ): void;
 }
 
 export interface IImageFormConstructorArgs {
@@ -43,7 +45,7 @@ export class ImageForm implements IImageForm {
 	public is_save_button_loading: Ref<boolean> = ref(false);
 	public has_changes: Ref<boolean>;
 	public is_delete_button_loading: Ref<boolean> = ref(false);
-	public file_url: string;
+	public file_url: Ref<string>;
 	
 	private errs: string[] = [];
 	
@@ -73,19 +75,13 @@ export class ImageForm implements IImageForm {
 		}, 'is_public');
 		this.parent = args.parent;
 		this.ui_id = args.ui_id;
-		this.file_url = this.determinate_external_file_url();
-		console.log(`construct`);
+		console.log(`construct: this.ui_id == ${this.ui_id}`);
+		this.file_url = ref(this.determinate_external_file_url());
 		this.has_changes = ref(false);
-		console.log(`construct: this.has_changes ==`);
-		console.log(this.has_changes);
 	}
 	
-	private has_id(): boolean {
-		return typeof this.id === 'string';
-	}
-	
-	private is_new(): boolean {
-		return typeof this.id !== 'string';
+	public exists_in_db(): boolean {
+		return (typeof this.id === 'string') && (this.id.length > 0);
 	}
 	
 	private image_zone(): HTMLElement {
@@ -155,8 +151,8 @@ export class ImageForm implements IImageForm {
 					this.file = file;
 					this.new_file = true;
 					this.has_changes.value = true;
-					URL.revokeObjectURL(this.file_url);
-					this.file_url = URL.createObjectURL(this.file);
+					URL.revokeObjectURL(this.file_url.value);
+					this.file_url.value = URL.createObjectURL(this.file);
 					this.update_zone_visibility();
 					return;
 				}
@@ -165,7 +161,7 @@ export class ImageForm implements IImageForm {
 	}
 	
 	private update_zone_visibility(): void {
-		if (this.file_url) {
+		if (this.file_url.value) {
 			this.image_zone().style.display = 'block';
 			this.image_zone().hidden = false;
 			this.drop_zone().style.display = 'none';
@@ -193,14 +189,14 @@ export class ImageForm implements IImageForm {
 		
 		this.is_save_button_loading.value = true;
 		try {
-			if (this.is_new()) {
-				await this.ajax_create_metadata();
-				await this.ajax_set_file_if_new_file();
-			} else {
+			if (this.exists_in_db()) {
 				await Promise.all([
 					this.ajax_update_metadata(),
 					this.ajax_set_file_if_new_file(),
 				]);
+			} else {
+				await this.ajax_create_metadata();
+				await this.ajax_set_file_if_new_file();
 			}
 		} finally {
 			this.is_save_button_loading.value = false;
@@ -208,7 +204,18 @@ export class ImageForm implements IImageForm {
 	}
 	
 	public async click_delete(): Promise<void> {
-		
+		console.log("Klick delete");
+		if (this.exists_in_db()) {
+			this.is_delete_button_loading.value = true;
+			try {
+				await this.ajax_delete();
+			} finally {
+				this.is_delete_button_loading.value = false;
+			}
+		} else {
+			console.log("delete from");
+			this.parent.delete_form(this);
+		}
 	}
 	
 	private async ajax_create_metadata(): Promise<void> {
@@ -225,14 +232,15 @@ export class ImageForm implements IImageForm {
 		return axios.request(request_config).then(
 			(response: AxiosResponse<ICreateImage200ResponseData>) => {
 				this.id = response.data.id;
-				this.parent.update_ids_order(response.data.ids_order);
+				this.parent.update_order(response.data.ids_order);
+				console.log('ajax_create_metadata success');
 			},
 			(err) => {
-				console.log(err);
 				const response: AxiosResponse<ICreateImage422ResponseData> = err.response;
 				this.errs = response.data.errs;
 				this.description.errs = response.data.description;
 				this.is_public.errs = response.data.is_public;
+				console.log('ajax_create_metadata fail');
 			}
 		);
 	}
@@ -270,7 +278,7 @@ export class ImageForm implements IImageForm {
 		console.log('ajax_delete');
 		return axios.request(request_config).then(
 			(response: AxiosResponse<IDeleteImage200ResponseData>) => {
-				this.parent.delete_form({ form: this, ids_order: response.data });
+				this.parent.delete_form_and_update_order({ form: this, new_ids_order: response.data });
 			},
 			(response: AxiosResponse<IDeleteImage422ResponseData>) => {
 				this.errs = response.data;
@@ -285,13 +293,12 @@ export class ImageForm implements IImageForm {
 		if (!this.new_file || !this.file) {
 			return;
 		}
+		const form_data = new FormData();
+		form_data.append('image', this.file);
 		const request_config: AxiosRequestConfig<ISetImageFileRequestData> = {
-			method: "put",
+			method: "post",
 			url: route('ajax.image.set_file', { image_id: this.id }),
-			headers: {
-				"Content-Type": this.file.type
-			},
-			data: this.file,
+			data: form_data,
 		};
 		console.log('ajax_set_file');
 		return axios.request(request_config).then(

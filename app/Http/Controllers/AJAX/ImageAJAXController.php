@@ -22,18 +22,16 @@ class ImageAJAXController extends Controller
 		$index = $request->input('index');
 		$description = $request->input('description');
 		$is_public = $request->input('is_public');
-		
 		$image = new Image(
 			description: $description, 
 			is_public: $is_public,
 		);
-		
 		$this->image_repository->insert($image);
 		$image_id = $image->get_id();
 		$image_order = $this->image_order_repository->get($exhibit_id);
 		$image_order->insert_image_id($image_id, $index);
+		$this->image_order_repository->update($image_order);
 		$ids_order = $image_order->get_image_ids();
-		
 		return response()->json([
 			'id' => $image_id,
 			'ids_order' => $ids_order,
@@ -78,7 +76,9 @@ class ImageAJAXController extends Controller
 			->header('Content-Type', $content_type);
 	}
 	
-	public function set_file(string $image_id): JsonResponse {
+	public function set_file(Request $request, string $image_id): JsonResponse {
+		$file = $request->file('image');
+		$this->image_repository->set_file($image_id, $file->getContent(), $file->getClientMimeType());
 		return response()->json();
 	}
 	
