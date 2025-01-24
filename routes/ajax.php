@@ -7,6 +7,8 @@ use App\Http\Controllers\AJAX\UserAJAXController;
 use App\Http\Controllers\AJAX\LocationAJAXController;
 use App\Http\Controllers\AJAX\PlaceAJAXController;
 use App\Http\Controllers\AJAX\ExhibitAJAXController;
+use App\Http\Controllers\AJAX\RubricAJAXController;
+use App\Models\Rubric;
 
 Route::prefix('ajax')->group(static function() {
 	# --- Benutzerverwaltung ---
@@ -83,4 +85,10 @@ Route::prefix('ajax')->group(static function() {
 	// --- Exporte ---
 	Route::get('/exhibit/{exhibit_id}/qr', [ExhibitAJAXController::class, 'get_qr_code'])
 		->name('ajax.exhibit.get_qr_code');
+
+		Route::post('/rubric', [RubricAJAXController::class, 'create'])
+		->name('ajax.rubric.create');
+	
+	Route::put('/rubric/{rubric_id}', [RubricAJAXController::class, 'update'])
+		->name('ajax.rubric.update');
 });

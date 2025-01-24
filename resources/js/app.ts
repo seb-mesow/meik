@@ -12,6 +12,7 @@ import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import Lara from '@primevue/themes/lara';
 import ToastService from 'primevue/toastservice';
+import DialogService from 'primevue/dialogservice';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -45,6 +46,7 @@ createInertiaApp({
 		});
 		app.use(ConfirmationService);
 		app.use(ToastService);
+		app.use(DialogService);
 		
 		app.mount(el);
 	},
