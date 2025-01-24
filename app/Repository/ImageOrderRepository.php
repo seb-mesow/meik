@@ -78,5 +78,4 @@ final class ImageOrderRepository
 		$image_order_doc->image_ids = $image_order->get_image_ids();
 		return $image_order_doc;
 	}
-
 }

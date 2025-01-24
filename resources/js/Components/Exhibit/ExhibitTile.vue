@@ -12,6 +12,7 @@ const exhibit: IExhibitOverviewExhibitTileInitPageProps = props.exhibit;
 <template>
 	<a :href="route('exhibit.details', exhibit.id)">
 		<div class="exhibit-tile">
+			<img v-if="exhibit.title_image" :src="route('ajax.image.get_file', { image_id: exhibit.title_image.id })">
 			<p>{{ exhibit.name }}</p>
 		</div>
 	</a>
