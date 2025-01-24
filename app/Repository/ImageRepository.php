@@ -3,11 +3,16 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Exceptions\AttachmentNotFoundException;
 use App\Models\Image;
 use App\Repository\Traits\StringIdRepositoryTrait;
 use App\Util\StringIdGenerator;
+use Illuminate\Auth\Access\AuthorizationException;
 use PHPOnCouch\CouchClient;
+use PHPOnCouch\Exceptions\CouchException;
+use PHPOnCouch\Exceptions\CouchUnauthorizedException;
 use stdClass;
+use PHPOnCouch\Exceptions\CouchNotFoundException;
 
 /**
  * @phpstan-type AttachmentDoc object{
@@ -48,7 +53,12 @@ final class ImageRepository
 		$this->client = $client;
 		$this->string_id_generator = $string_id_generator;
 	}
-
+	
+	/**
+	 * @param string $image_id
+	 * @return Image
+	 * @throws CouchNotFoundException
+	 */
 	public function get(string $image_id): Image {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
 		$image_doc = $this->client->getDoc($doc_id);
@@ -102,7 +112,7 @@ final class ImageRepository
 		return new Image(
 			description: $image_doc->description,
 			is_public: $image_doc->is_public,
-			attachments: $image_doc->_attachments,
+			attachments: property_exists($image_doc, '_attachments') ? $image_doc->_attachments : null,
 			id: $this->determinate_model_id_from_doc($image_doc), 
 			rev: $image_doc->_rev,
 		);
@@ -123,34 +133,70 @@ final class ImageRepository
 	}
 	
 	/**
+	 * @throws CouchNotFoundException
+	 * @throws AttachmentNotFoundException
 	 * @return FileInfos
 	 */
-	public function get_file(string $image_id): array {
-		// TODO fork php-on-couch and request only once (The Content-Type is in the header of the response of couchdb,)
-		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
-		/** @var ImageDoc */
-		$image_doc = $this->client->getDoc($doc_id);
-		$content_type = $image_doc->_attachments->image->content_type;
-		$image_stub_doc = $this->create_stub_doc_from_doc_id($doc_id);
-		$file = $this->client->getAttachment($image_stub_doc, self::ORIGINAL_IMAGE_ATTACHMENT_NAME);
-		return [ 'content_type' => $content_type, 'file' => $file ];
+	public function get_internal_file(string $image_id): array {
+		return $this->get_attachment($image_id, self::ORIGINAL_IMAGE_ATTACHMENT_NAME, false);
 	}
 	
 	/**
+	 * @throws CouchNotFoundException
+	 * @throws AttachmentNotFoundException
 	 * @return FileInfos
 	 */
-	public function get_thumbnail(string $image_id): array {
+	public function get_internal_thumbnail(string $image_id): array {
+		return $this->get_attachment($image_id, self::THUMBNAIL_ATTACHMENT_NAME, false);
+	}
+	
+	/**
+	 * @throws AuthorizationException
+	 * @throws CouchNotFoundException
+	 * @throws AttachmentNotFoundException
+	 * @return FileInfos
+	 */
+	public function get_public_file(string $image_id): array {
+		return $this->get_attachment($image_id, self::ORIGINAL_IMAGE_ATTACHMENT_NAME, true);
+	}
+	
+	/**
+	 * @throws AuthorizationException
+	 * @throws CouchNotFoundException
+	 * @throws AttachmentNotFoundException
+	 * @return FileInfos
+	 */
+	public function get_public_thumbnail(string $image_id): array {
+		return $this->get_attachment($image_id, self::THUMBNAIL_ATTACHMENT_NAME, true);
+	}
+	
+	/**
+	 * @throws AuthorizationException
+	 * @throws CouchNotFoundException
+	 * @throws AttachmentNotFoundException
+	 * @return FileInfos
+	 */
+	private function get_attachment(string $image_id, string $attachment_name, bool $must_be_public): array {
 		// TODO fork php-on-couch and request only once (The Content-Type is in the header of the response of couchdb,)
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
 		/** @var ImageDoc */
 		$image_doc = $this->client->getDoc($doc_id);
-		$content_type = $image_doc->_attachments->thumbnail->content_type;
+		if ($must_be_public && !$image_doc->is_public) {
+			throw new AuthorizationException("Image $image_id is not public");
+		}
+		if (!property_exists($image_doc, '_attachments')
+		|| !property_exists($image_doc->_attachments, $attachment_name)) {
+			throw new AttachmentNotFoundException($image_id, $attachment_name);
+		}
+		$content_type = $image_doc->_attachments->$attachment_name->content_type;
 		$image_stub_doc = $this->create_stub_doc_from_doc_id($doc_id);
-		$file = $this->client->getAttachment($image_stub_doc, self::THUMBNAIL_ATTACHMENT_NAME);
+		try {
+			$file = $this->client->getAttachment($image_stub_doc, $attachment_name);
+		} catch (CouchNotFoundException $e) {
+			throw new AttachmentNotFoundException($image_id, $attachment_name);
+		}
 		return [ 'content_type' => $content_type, 'file' => $file ];
 	}
-	
-
 	
 	// TODO always retrieve image type from user's file
 	
@@ -159,7 +205,8 @@ final class ImageRepository
 	 */
 	public function insert_file(string $image_id, string $image_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
-		$image_doc = $this->client->getDoc($doc_id);
+		// $image_doc = $this->client->getDoc($doc_id); // required to get latest revision-ID
+		$image_doc = $this->create_stub_doc_from_model_id($image_id);
 		$this->client->storeAsAttachment(
 			doc: $image_doc,
 			data: $image_data,

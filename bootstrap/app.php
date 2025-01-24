@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use App\Exceptions\AttachmentNotFoundException;
 use App\Http\Middleware\NotFoundMiddleware;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -31,6 +32,15 @@ return Application::configure(basePath: dirname(__DIR__))
 		// $middleware->append(NotFoundMiddleware::class);
 	})
 	->withExceptions(function (Exceptions $exceptions) {
+		$exceptions->render(static function(AuthorizationException $e, Request $request) {
+			$path = $request->getRequestUri();
+			if (str_starts_with($path, '/ajax')) {
+				return response(status: 403); // only forbidden
+			} elseif (str_starts_with($path, '/api')) {
+				return response(status: 404); // hiding: not found
+			}
+			return response()->view('errors.403', [], 403);
+		});
 		$exceptions->render(static function(CouchNotFoundException $e, Request $request) {
 			$path = $request->getRequestUri();
 			if (str_starts_with($path, '/ajax') || str_starts_with($path, '/api')) {
