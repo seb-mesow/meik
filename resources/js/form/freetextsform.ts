@@ -71,11 +71,11 @@ export class FreeTextsForm implements IFreeTextsForm, IFreeTextFormParent {
 
 	public get_index_for_persisting(args: { form: IFreeTextForm; }): number {
 		let index = 0;
-		for (const form of this.children) {
-			if (form === args.form) {
+		for (const child_form of this.children) {
+			if (child_form === args.form) {
 				return index;
 			}
-			if (form.id) {
+			if (child_form.id) {
 				index++;
 			}
 		}
@@ -100,7 +100,7 @@ export class FreeTextsForm implements IFreeTextsForm, IFreeTextFormParent {
 			t++;
 		}
 		temp.splice(0, t);
-		// update with new indices form argument
+		// update with new indices from argument
 		args.new_indices_order.forEach((id) => {
 			// loop until find index from argument and append that form
 			let t_begin = 0;

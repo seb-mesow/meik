@@ -203,11 +203,11 @@ final class ImageRepository
 	/**
 	 * Image-Doc muss bereits in DB vorhanden sein!
 	 */
-	public function insert_file(string $image_id, string $image_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
+	public function set_file(string $image_id, string $image_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
-		// $image_doc = $this->client->getDoc($doc_id); // required to get latest revision-ID
-		$image_doc = $this->create_stub_doc_from_model_id($image_id);
-		$this->client->storeAsAttachment(
+		$image_doc = $this->client->getDoc($doc_id); // nötig. um aktuelle rev zu bekommen
+		// storeAttachment wirft KEINE Exception, wenn es zu einem Update-Konflikt kommt
+		$response = $this->client->storeAsAttachment(
 			doc: $image_doc,
 			data: $image_data,
 			filename: self::ORIGINAL_IMAGE_ATTACHMENT_NAME,
@@ -218,37 +218,10 @@ final class ImageRepository
 	/**
 	 * Image-Doc muss bereits in DB vorhanden sein!
 	 */
-	public function update_file(string $image_id, string $image_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
+	public function set_thumbnail(string $image_id, string $thumbnail_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
-		$image_doc = $this->client->getDoc($doc_id);
-		$this->client->storeAsAttachment(
-			doc: $image_doc,
-			data: $image_data,
-			filename: self::ORIGINAL_IMAGE_ATTACHMENT_NAME,
-			contentType: $content_type,
-		);
-	}
-	
-	/**
-	 * Image-Doc muss bereits in DB vorhanden sein!
-	 */
-	public function insert_thumbnail(string $image_id, string $thumbnail_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
-		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
-		$image_doc = $this->client->getDoc($doc_id);
-		$this->client->storeAsAttachment(
-			doc: $image_doc,
-			data: $thumbnail_data,
-			filename: self::THUMBNAIL_ATTACHMENT_NAME,
-			contentType: $content_type,
-		);
-	}
-	
-	/**
-	 * Image-Doc muss bereits in DB vorhanden sein!
-	 */
-	public function update_thumbnail(string $image_id, string $thumbnail_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
-		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
-		$image_doc = $this->client->getDoc($doc_id);
+		$image_doc = $this->client->getDoc($doc_id); // nötig. um aktuelle rev zu bekommen
+		// storeAttachment wirft KEINE Exception, wenn es zu einem Update-Konflikt kommt
 		$this->client->storeAsAttachment(
 			doc: $image_doc,
 			data: $thumbnail_data,

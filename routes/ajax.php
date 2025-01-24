@@ -75,7 +75,8 @@ Route::prefix('ajax')->group(static function() {
 	Route::get('/image/{image_id}', [ImageAJAXController::class, 'get_file'])
 		->name('ajax.image.get_file');
 	
-	Route::put('/image/{image_id}', [ImageAJAXController::class, 'set_file'])
+	// muss wohl aus HTML-Spec-Gründen POST sein, sollte aber eigentlich PUT sein
+	Route::post('/image/{image_id}', [ImageAJAXController::class, 'set_file'])
 		->name('ajax.image.set_file');
 	
 	Route::get('/thumbnail/{image_id}', [ImageAJAXController::class, 'get_thumbnail_file'])
