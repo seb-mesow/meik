@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use App\Repository\LocationRepository;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\App;
 use PHPOnCouch\CouchClient;
@@ -18,10 +17,10 @@ return new class extends Migration
 	public function __construct() {
 		$this->client = App::make(CouchClient::class.'.admin');
 		
-		$model_type_id = LocationRepository::MODEL_TYPE_ID;
+		$id_prefix = 'location:';
 		$this->map_function = <<<END
 		function(doc) {
-			if (doc._id.startsWith('$model_type_id')) {
+			if (doc._id.startsWith('$id_prefix')) {
 				emit(doc.name, null);
 				// no value specified
 				// retrieve by seperate lookup or include_docs parameter

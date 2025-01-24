@@ -17,15 +17,15 @@ return new class extends Migration
 	public function __construct() {
 		$this->client = App::make(CouchClient::class.'.admin');
 		
-		$model_type_id = 'imageorder';
-		$image_model_type_id = 'image';
-		$model_type_id_length = strlen($model_type_id);
+		$id_prefix = 'imageorder:';
+		$image_id_prefix = 'image:';
+		$id_prefix_length = strlen($id_prefix);
 		$this->map_function = <<<END
 		function(doc) {
-			if (doc._id.startsWith('$model_type_id')) {
-				exhibit_id = parseInt(doc._id.substring($model_type_id_length), 10);
+			if (doc._id.startsWith('$id_prefix')) {
+				exhibit_id = parseInt(doc._id.substring($id_prefix_length), 10);
 				for (const index in doc.image_ids) {
-					emit([exhibit_id, parseInt(index, 10)], { _id: '$image_model_type_id' + doc.image_ids[index] });
+					emit([exhibit_id, parseInt(index, 10)], { _id: '$image_id_prefix' + doc.image_ids[index] });
 				}
 			}
 		}
