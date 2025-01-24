@@ -61,10 +61,6 @@ trait StringIdRepositoryTrait
 		return $stub_main_model_doc;
 	}
 	
-	private function generate_new_model_id(): string {
-		return (self::MODEL_TYPE_ID);
-	}
-	
 	/**
 	 * für `delete()`-Funktion
 	 */
@@ -76,7 +72,7 @@ trait StringIdRepositoryTrait
 	 * für `get()`-Funktion
 	 */
 	private function determinate_doc_id_from_model_id(string $model_id): string {
-		return self::MODEL_TYPE_ID . $model_id;
+		return self::MODEL_TYPE_ID. ':' . $model_id;
 	}
 	
 	/**
@@ -84,6 +80,6 @@ trait StringIdRepositoryTrait
 	 * @return string
 	 */
 	private function determinate_model_id_from_doc(stdClass $main_model_doc): string {
-		return substr($main_model_doc->_id, strlen(self::MODEL_TYPE_ID));
+		return substr($main_model_doc->_id, strlen(self::MODEL_TYPE_ID)+1);
 	}
 }
