@@ -56,3 +56,6 @@
 4. `git pull`
 5. ggf. mit root-Rechten einloggen
 6. `./meik up`
+
+## Hinweise
+Nach Standardeinstellungen ist die Größe von hochzuladenden Dateien auf auf 7 MB beschränkt.
