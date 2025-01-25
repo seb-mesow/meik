@@ -1,6 +1,16 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
-import { ICreateImage200ResponseData, ICreateImage422ResponseData, ICreateImageRequestData, IDeleteImage200ResponseData, IDeleteImage422ResponseData, IDeleteImageRequestData, IImageIDsOrder, ISetImageFile200ResponseData, ISetImageFileRequestData, IUpdateImageMetaData200ResponseData, IUpdateImageMetaData422ResponseData, IUpdateImageMetaDataRequestData } from "@/types/ajax/image";
+import {
+	IImageIDsOrder,
+	ICreateImageRequestData,
+	ICreateImage200ResponseData,
+	ICreateImage422ResponseData,
+	IDeleteImageRequestData,
+	IDeleteImage200ResponseData,
+	IDeleteImage422ResponseData,
+	IUpdateImageRequestData,
+	IUpdateImage422ResponseData 
+} from "@/types/ajax/image";
 import { route } from "ziggy-js";
 import { ref, Ref } from "vue";
 
@@ -9,7 +19,7 @@ export interface IImageForm {
 	readonly ui_id: number;
 	readonly description: ISingleValueForm2<string>;
 	readonly is_public: ISingleValueForm2<boolean>;
-	readonly file_url: Readonly<Ref<string>>;
+	readonly file_url: string;
 	on_mounted(): void;
 	click_save(): void;
 	click_delete(): void;
@@ -45,7 +55,7 @@ export class ImageForm implements IImageForm {
 	public is_save_button_loading: Ref<boolean> = ref(false);
 	public has_changes: Ref<boolean>;
 	public is_delete_button_loading: Ref<boolean> = ref(false);
-	public file_url: Ref<string>;
+	public file_url: string;
 	
 	private errs: string[] = [];
 	
@@ -76,7 +86,7 @@ export class ImageForm implements IImageForm {
 		this.parent = args.parent;
 		this.ui_id = args.ui_id;
 		console.log(`construct: this.ui_id == ${this.ui_id}`);
-		this.file_url = ref(this.determinate_external_file_url());
+		this.file_url = this.determinate_external_file_url();
 		this.has_changes = ref(false);
 	}
 	
@@ -151,8 +161,8 @@ export class ImageForm implements IImageForm {
 					this.file = file;
 					this.new_file = true;
 					this.has_changes.value = true;
-					URL.revokeObjectURL(this.file_url.value);
-					this.file_url.value = URL.createObjectURL(this.file);
+					URL.revokeObjectURL(this.file_url);
+					this.file_url = URL.createObjectURL(this.file);
 					this.update_zone_visibility();
 					return;
 				}
@@ -161,7 +171,7 @@ export class ImageForm implements IImageForm {
 	}
 	
 	private update_zone_visibility(): void {
-		if (this.file_url.value) {
+		if (this.file_url) {
 			this.image_zone().style.display = 'block';
 			this.image_zone().hidden = false;
 			this.drop_zone().style.display = 'none';
@@ -190,13 +200,9 @@ export class ImageForm implements IImageForm {
 		this.is_save_button_loading.value = true;
 		try {
 			if (this.exists_in_db()) {
-				await Promise.all([
-					this.ajax_update_metadata(),
-					this.ajax_set_file_if_new_file(),
-				]);
+				await this.ajax_update();
 			} else {
-				await this.ajax_create_metadata();
-				await this.ajax_set_file_if_new_file();
+				await this.ajax_create();
 			}
 		} finally {
 			this.is_save_button_loading.value = false;
@@ -218,51 +224,73 @@ export class ImageForm implements IImageForm {
 		}
 	}
 	
-	private async ajax_create_metadata(): Promise<void> {
+	private async ajax_create(): Promise<void> {
+		if (!this.file || !this.new_file) {
+			throw new Error("no file to upload");
+		}
+		const request_data: ICreateImageRequestData = {
+			index: this.parent.get_index_for_persisting(this),
+			description: this.description.val,
+			is_public: this.is_public.val,
+			image: this.file,
+		}
 		const request_config: AxiosRequestConfig<ICreateImageRequestData> = {
 			method: "post",
-			url: route('ajax.exhibit.image.create', [this.parent.exhibit_id]),
-			data: {
-				index: this.parent.get_index_for_persisting(this),
-				description: this.description.val,
-				is_public: this.is_public.val,
-			}
+			url: route('ajax.exhibit.image.create', { exhibit_id: this.parent.exhibit_id }),
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			},
+			data: request_data,
 		};
-		console.log('ajax_create_metadata');
+		console.log('ajax_create');
 		return axios.request(request_config).then(
 			(response: AxiosResponse<ICreateImage200ResponseData>) => {
 				this.id = response.data.id;
 				this.parent.update_order(response.data.ids_order);
-				console.log('ajax_create_metadata success');
+				console.log('ajax_create success');
 			},
 			(err) => {
 				const response: AxiosResponse<ICreateImage422ResponseData> = err.response;
 				this.errs = response.data.errs;
 				this.description.errs = response.data.description;
 				this.is_public.errs = response.data.is_public;
-				console.log('ajax_create_metadata fail');
+				console.log('ajax_create fail');
 			}
 		);
 	}
 	
-	private async ajax_update_metadata(): Promise<void> {
+	private async ajax_update(): Promise<void> {
 		if (!this.id) {
 			throw new Error("undefined id");
 		}
-		const request_config: AxiosRequestConfig<IUpdateImageMetaDataRequestData> = {
-			method: "put",
-			url: route('ajax.image.update_meta_data', { image_id: this.id }),
-			data: {
-				description: this.description.val,
-				is_public: this.is_public.val,
-			}
+		const request_data: IUpdateImageRequestData = {
+			description: this.description.val,
+			is_public: this.is_public.val,
+		}
+		if (this.new_file && this.file) {
+			request_data.image = this.file;
+		}
+		const request_config: AxiosRequestConfig<IUpdateImageRequestData> = {
+			method: "post",
+			url: route('ajax.image.update', { image_id: this.id }),
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			},
+			data: request_data,
 		};
-		console.log('ajax_update_metadata');
+		console.log('ajax_update');
 		return axios.request(request_config).then(
-			() => {},
-			(response: AxiosResponse<IUpdateImageMetaData422ResponseData>) => {
-				this.description.errs = response.data.description;
-				this.is_public.errs = response.data.is_public;
+			(response: AxiosResponse) => {
+				console.log('ajax_update success');
+			},
+			(err: AxiosError<IUpdateImage422ResponseData>) => {
+				const response: AxiosResponse<IUpdateImage422ResponseData>|undefined = err.response;
+				if (response) {
+					this.errs = response.data.errs;
+					this.description.errs = response.data.description;
+					this.is_public.errs = response.data.is_public;
+				}
+				console.log('ajax_update fail');
 			}
 		);
 	}
@@ -279,31 +307,6 @@ export class ImageForm implements IImageForm {
 		return axios.request(request_config).then(
 			(response: AxiosResponse<IDeleteImage200ResponseData>) => {
 				this.parent.delete_form_and_update_order({ form: this, new_ids_order: response.data });
-			},
-			(response: AxiosResponse<IDeleteImage422ResponseData>) => {
-				this.errs = response.data;
-			}
-		);
-	}
-	
-	private async ajax_set_file_if_new_file(): Promise<void> {
-		if (!this.id) {
-			throw new Error("undefined id");
-		}
-		if (!this.new_file || !this.file) {
-			return;
-		}
-		const form_data = new FormData();
-		form_data.append('image', this.file);
-		const request_config: AxiosRequestConfig<ISetImageFileRequestData> = {
-			method: "post",
-			url: route('ajax.image.set_file', { image_id: this.id }),
-			data: form_data,
-		};
-		console.log('ajax_set_file');
-		return axios.request(request_config).then(
-			(response: AxiosResponse) => {
-				this.new_file = false;
 			},
 			(response: AxiosResponse<IDeleteImage422ResponseData>) => {
 				this.errs = response.data;
