@@ -131,7 +131,7 @@ async function save_metadata(event: MouseEvent) {
 					<img
 						v-if="form.title_image"
 						class="title-image"
-						:src="route('ajax.image.get_file', { image_id: form.title_image.id })"
+						:src="route('ajax.image.get_image', { image_id: form.title_image.id })"
 					>
 				</a>
 			</div>

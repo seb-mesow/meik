@@ -71,11 +71,11 @@ Route::prefix('ajax')->group(static function() {
 	Route::patch('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'move'])
 		->name('ajax.exhibit.image.move');
 	
-	Route::get('/image/{image_id}', [ImageAJAXController::class, 'get_file'])
-		->name('ajax.image.get_file');
+	Route::get('/image/{image_id}', [ImageAJAXController::class, 'get_image'])
+		->name('ajax.image.get_image');
 	
-	Route::get('/thumbnail/{image_id}', [ImageAJAXController::class, 'get_thumbnail_file'])
-		->name('ajax.thumbnail.get_file');
+	Route::get('/thumbnail/{image_id}', [ImageAJAXController::class, 'get_thumbnail'])
+		->name('ajax.image.get_thumbnail');
 	
 	// --- Exporte ---
 	Route::get('/exhibit/{exhibit_id}/qr', [ExhibitAJAXController::class, 'get_qr_code'])

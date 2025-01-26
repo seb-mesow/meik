@@ -9,6 +9,8 @@ export interface IExhibitOverviewExhibitTileInitPageProps {
 	title_image?: {
 		id: string,
 		description: string,
+		thumbnail_width: number,
+		thumbnail_height: number,
 	}
 }
 

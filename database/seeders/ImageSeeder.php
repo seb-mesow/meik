@@ -82,7 +82,7 @@ class ImageSeeder extends Seeder
 		$this->image_repository->insert($image);
 		usleep(100);
 		$image_data = file_get_contents($this->determinate_image_filepath($rel_filepath));
-		$this->image_service->set_file_and_thumbnail($image->get_id(), $mime_type, $image_data);
+		$this->image_service->set_file_and_thumbnail($image->get_id(), $image_data, $mime_type);
 		$index = count($image_order->get_image_ids());
 		$image_order->insert_image_id($image->get_id(), $index);
 	}
