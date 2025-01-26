@@ -4,12 +4,11 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Exhibit;
-use App\Models\FreeText;
 use App\Models\Image;
 use App\Models\ImageOrder;
-use App\Repository\ExhibitRepository;
 use App\Repository\ImageOrderRepository;
 use App\Repository\ImageRepository;
+use App\Service\ImageService;
 use Illuminate\Database\Seeder;
 use RuntimeException;
 
@@ -21,6 +20,7 @@ class ImageSeeder extends Seeder
 	public function __construct(
 		private readonly ImageOrderRepository $image_order_repository,
 		private readonly ImageRepository $image_repository,
+		private readonly ImageService $image_service,
 		private readonly ExhibitSeeder $exhibit_seeder,
 	) {}
 	
@@ -49,7 +49,7 @@ class ImageSeeder extends Seeder
 		$this->insert_next_dummy_image($image_order);
 		$this->insert_image_order($image_order);
 		
-		// fourth exhibit without images
+		// 4th exhibit without images
 	}
 	
 	private function create_image_order(Exhibit $exhibit): ImageOrder {
@@ -82,7 +82,7 @@ class ImageSeeder extends Seeder
 		$this->image_repository->insert($image);
 		usleep(100);
 		$image_data = file_get_contents($this->determinate_image_filepath($rel_filepath));
-		$this->image_repository->set_file($image->get_id(), $image_data, $mime_type);
+		$this->image_service->set_file_and_thumbnail($image->get_id(), $mime_type, $image_data);
 		$index = count($image_order->get_image_ids());
 		$image_order->insert_image_id($image->get_id(), $index);
 	}
