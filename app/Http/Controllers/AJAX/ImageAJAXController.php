@@ -106,12 +106,14 @@ class ImageAJAXController extends Controller
 	public function get_image(string $image_id): Response {
 		[ 'content_type' => $content_type, 'file' => $file ] = $this->image_repository->get_internal_file($image_id);
 		return response($file)
-			->header('Content-Type', $content_type);
+			->header('Content-Type', $content_type)
+			->header('Cache-Control', "max-age=7889238, public");
 	}
 	
 	public function get_thumbnail(string $image_id): Response {
 		[ 'content_type' => $content_type, 'file' => $file ] = $this->image_repository->get_internal_thumbnail($image_id);
 		return response($file)
-			->header('Content-Type', $content_type);
+			->header('Content-Type', $content_type)
+			->header('Cache-Control', "max-age=7889238, public");
 	}
 }
