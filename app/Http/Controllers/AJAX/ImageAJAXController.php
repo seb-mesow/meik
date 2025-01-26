@@ -26,7 +26,7 @@ class ImageAJAXController extends Controller
 		$is_public = $request->input('is_public') === "true";
 		
 		$image = new Image(
-			description: $description, 
+			description: $description,
 			is_public: $is_public,
 		);
 
@@ -47,19 +47,40 @@ class ImageAJAXController extends Controller
 		]);
 	}
 	
-	public function update(Request $request, string $image_id): Response {
+	public function replace(Request $request, int $exhibit_id, string $image_id): JsonResponse {
 		$description = $request->input('description');
-		$is_public = $request->input('is_public') === "true";
+		$is_public = $request->input('is_public') === "true"; // wegen multipart/form-data
+		$file = $request->file('image');
+		
+		// altes Image löschen
+		$this->image_repository->remove_by_id($image_id);
+		
+		// neues Image erstellen
+		$image = new Image(
+			description: $description,
+			is_public: $is_public,
+		);
+		$this->image_repository->insert($image);
+		$new_image_id = $image->get_id();
+		$this->image_service->set_file_and_thumbnail($new_image_id, $file->getContent(), $file->getClientMimeType());
+		
+		// Image-Order anpassen
+		$image_order = $this->image_order_repository->get($exhibit_id);
+		$image_order->replace_image_id($image_id, $new_image_id);
+		$this->image_order_repository->update($image_order);
+		
+		// neue Image-ID zurücksenden
+		return response()->json($new_image_id);
+	}
+	
+	public function update_meta_data(Request $request, string $image_id): Response {
+		$description = $request->input('description');
+		$is_public = $request->input('is_public');
 		
 		$image = $this->image_repository->get($image_id);
 		$image->set_description($description);
 		$image->set_is_public($is_public);
 		$this->image_repository->update($image);
-		
-		if ($request->hasFile('image')) {
-			$file = $request->file('image');
-			$this->image_service->set_file_and_thumbnail($image_id, $file->getContent(), $file->getClientMimeType());
-		}
 		
 		return response()->make();
 	}
