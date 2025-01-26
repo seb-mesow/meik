@@ -52,6 +52,8 @@ class ExhibitController extends Controller
 			$tile_props ['title_image'] = [
 				'id' => $title_image->get_id(),
 				'description' => $title_image->get_description(),
+				'thumbnail_width' => $title_image->get_thumbnail_width(),
+				'thumbnail_height' => $title_image->get_thumbnail_height(),
 			];	
 		}
 		return $tile_props;
@@ -143,6 +145,8 @@ class ExhibitController extends Controller
 				$exhibit_form['title_image'] = [
 					'id' => $title_image->get_id(),
 					'description' => $title_image->get_description(),
+					'image_width' => $title_image->get_image_width(),
+					'image_height' => $title_image->get_image_height(),
 				];
 			}
 		}

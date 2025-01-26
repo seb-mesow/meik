@@ -103,7 +103,7 @@ autoMemoryReclaim=gradual
 **Verkleinern (immer wieder)**
 1. _Quit Docker Desktop_ (ca. 1 Minute warten)
 2. Powershell-Terminal mit Administrator-Rechten starten
-4. `Optimize-VHD -Path $ENV:LOCALAPPDATA\Docker\wsl\disk\docker_data.vhdx -Mode Full`
+4. `Optimize-VHD -Path C:\Users\USERNAME\AppData\Local\Docker\wsl\disk\docker_data.vhdx -Mode Full`
 
 ### nicht mehr Admin-Passwort eingeben müssen
 

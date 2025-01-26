@@ -7,10 +7,9 @@ use App\Exceptions\AttachmentNotFoundException;
 use App\Models\Image;
 use App\Repository\Traits\StringIdRepositoryTrait;
 use App\Util\StringIdGenerator;
+use App\VO\ImageInfos;
 use Illuminate\Auth\Access\AuthorizationException;
 use PHPOnCouch\CouchClient;
-use PHPOnCouch\Exceptions\CouchException;
-use PHPOnCouch\Exceptions\CouchUnauthorizedException;
 use stdClass;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 
@@ -27,6 +26,14 @@ use PHPOnCouch\Exceptions\CouchNotFoundException;
  *     _rev?: string,
  *     description: string,
  *     is_public: string,
+ *     image?: object{
+ *         width: int,
+ *         height: int,
+ *     },
+ *     thumbnail?: object{
+ *         width: int,
+ *         height: int,
+ *     },
  *     _attachments?: object{
  *         image: AttachmentDoc,
  *         thumbnail: AttachmentDoc,
@@ -42,7 +49,7 @@ final class ImageRepository
 	use StringIdRepositoryTrait;
 	
 	private const string MODEL_TYPE_ID = "image";
-	private const string ORIGINAL_IMAGE_ATTACHMENT_NAME = 'image';
+	private const string IMAGE_ATTACHMENT_NAME = 'image';
 	private const string THUMBNAIL_ATTACHMENT_NAME = 'thumbnail';
 	public const string DEFAULT_IMAGE_CONTENT_TYPE = 'application/octet-stream';
 	
@@ -109,9 +116,27 @@ final class ImageRepository
 	 * @param ImageDoc $image_doc
 	 */
 	public function create_image_from_doc(stdClass $image_doc): Image {
+		if (property_exists($image_doc, 'image')) {
+			$image_width = $image_doc->image->width;
+			$image_height = $image_doc->image->height;
+		} else {
+			$image_width = null;
+			$image_height = null;
+		}
+		if (property_exists($image_doc, 'thumbnail')) {
+			$thumbnail_width = $image_doc->thumbnail->width;
+			$thumbnail_height = $image_doc->thumbnail->height;
+		} else {
+			$thumbnail_width = null;
+			$thumbnail_height = null;
+		}
 		return new Image(
 			description: $image_doc->description,
 			is_public: $image_doc->is_public,
+			image_width: $image_width,
+			image_height: $image_height,
+			thumbnail_width: $thumbnail_width,
+			thumbnail_height: $thumbnail_height,
 			attachments: property_exists($image_doc, '_attachments') ? $image_doc->_attachments : null,
 			id: $this->determinate_model_id_from_doc($image_doc), 
 			rev: $image_doc->_rev,
@@ -124,8 +149,20 @@ final class ImageRepository
 	public function create_doc_from_image(Image $image): stdClass {
 		/** @var ImageDoc */
 		$image_doc = $this->create_stub_doc_from_model($image);
+		
 		$image_doc->description = $image->get_description();
 		$image_doc->is_public = $image->get_is_public();
+		
+		if (($image_width = $image->get_nullable_image_width()) !== null) {
+			$image_doc->image = new stdClass();
+			$image_doc->image->width = $image_width;
+			$image_doc->image->height = $image->get_image_height();
+		}
+		if (($thumbnail_width = $image->get_nullable_thumbnail_width()) !== null) {
+			$image_doc->thumbnail = new stdClass();
+			$image_doc->thumbnail->width = $thumbnail_width;
+			$image_doc->thumbnail->height = $image->get_thumbnail_height();
+		}
 		if ($attachments = $image->get_attachments()) {
 			$image_doc->_attachments = $attachments;
 		}
@@ -138,7 +175,7 @@ final class ImageRepository
 	 * @return FileInfos
 	 */
 	public function get_internal_file(string $image_id): array {
-		return $this->get_attachment($image_id, self::ORIGINAL_IMAGE_ATTACHMENT_NAME, false);
+		return $this->get_attachment($image_id, self::IMAGE_ATTACHMENT_NAME, false);
 	}
 	
 	/**
@@ -157,7 +194,7 @@ final class ImageRepository
 	 * @return FileInfos
 	 */
 	public function get_public_file(string $image_id): array {
-		return $this->get_attachment($image_id, self::ORIGINAL_IMAGE_ATTACHMENT_NAME, true);
+		return $this->get_attachment($image_id, self::IMAGE_ATTACHMENT_NAME, true);
 	}
 	
 	/**
@@ -205,32 +242,46 @@ final class ImageRepository
 	 * 
 	 * Achtung! Lieber ImageService::set_file_and_thumbnail() nutzen
 	 */
-	public function set_file(string $image_id, string $image_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
+	public function set_image(string $image_id, ImageInfos $image_infos): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
 		$image_doc = $this->client->getDoc($doc_id); // nötig. um aktuelle rev zu bekommen
+		
 		// storeAttachment wirft KEINE Exception, wenn es zu einem Update-Konflikt kommt
-		$response = $this->client->storeAsAttachment(
+		$this->client->storeAsAttachment(
 			doc: $image_doc,
-			data: $image_data,
-			filename: self::ORIGINAL_IMAGE_ATTACHMENT_NAME,
-			contentType: $content_type,
+			data: $image_infos->file_data,
+			filename: self::IMAGE_ATTACHMENT_NAME,
+			contentType: $image_infos->content_type,
 		);
+		$image_doc = $this->client->getDoc($doc_id); // nötig. um aktuelle _attachments zu bekommen
+		
+		$image_doc->image = new stdClass();
+		$image_doc->image->width = $image_infos->width;
+		$image_doc->image->height = $image_infos->height;
+		
+		$this->client->storeDoc($image_doc);
 	}
 	
 	/**
 	 * Image-Doc muss bereits in DB vorhanden sein!
 	 */
-	public function set_thumbnail(string $image_id, string $thumbnail_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
-		$time_begin = microtime(true);
+	public function set_thumbnail(string $image_id, ImageInfos $thumbnail_infos): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
 		$image_doc = $this->client->getDoc($doc_id); // nötig. um aktuelle rev zu bekommen
+		
 		// storeAttachment wirft KEINE Exception, wenn es zu einem Update-Konflikt kommt
 		$this->client->storeAsAttachment(
 			doc: $image_doc,
-			data: $thumbnail_data,
+			data: $thumbnail_infos->file_data,
 			filename: self::THUMBNAIL_ATTACHMENT_NAME,
-			contentType: $content_type,
+			contentType: $thumbnail_infos->content_type,
 		);
-		print("ImageRepository::set_thumbnail() took ".(microtime(true)-$time_begin)." s \n");
+		$image_doc = $this->client->getDoc($doc_id); // nötig. um aktuelle _attachments zu bekommen
+		
+		$image_doc->thumbnail = new stdClass();
+		$image_doc->thumbnail->width = $thumbnail_infos->width;
+		$image_doc->thumbnail->height = $thumbnail_infos->height;
+		
+		$this->client->storeDoc($image_doc);
 	}
 }

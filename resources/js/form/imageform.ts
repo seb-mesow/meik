@@ -186,7 +186,7 @@ export class ImageForm implements IImageForm {
 	
 	private determinate_external_file_url(): string {
 		if (this.id) {
-			return route('ajax.image.get_file', { image_id: this.id });
+			return route('ajax.image.get_image', { image_id: this.id });
 		}
 		return '';
 	}

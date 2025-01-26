@@ -24,5 +24,7 @@ export interface IExhibitInitPageProps {
 	title_image?: {
 		id: string,
 		description: string,
+		image_width: number,
+		image_height: number,
 	},
 }
