@@ -202,6 +202,8 @@ final class ImageRepository
 	
 	/**
 	 * Image-Doc muss bereits in DB vorhanden sein!
+	 * 
+	 * Achtung! Lieber ImageService::set_file_and_thumbnail() nutzen
 	 */
 	public function set_file(string $image_id, string $image_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
@@ -219,6 +221,7 @@ final class ImageRepository
 	 * Image-Doc muss bereits in DB vorhanden sein!
 	 */
 	public function set_thumbnail(string $image_id, string $thumbnail_data, string $content_type = self::DEFAULT_IMAGE_CONTENT_TYPE): void {
+		$time_begin = microtime(true);
 		$doc_id = $this->determinate_doc_id_from_model_id($image_id);
 		$image_doc = $this->client->getDoc($doc_id); // nötig. um aktuelle rev zu bekommen
 		// storeAttachment wirft KEINE Exception, wenn es zu einem Update-Konflikt kommt
@@ -228,5 +231,6 @@ final class ImageRepository
 			filename: self::THUMBNAIL_ATTACHMENT_NAME,
 			contentType: $content_type,
 		);
+		print("ImageRepository::set_thumbnail() took ".(microtime(true)-$time_begin)." s \n");
 	}
 }
