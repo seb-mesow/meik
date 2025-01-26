@@ -22,8 +22,9 @@ export interface IImageForm {
 	readonly ui_id: number;
 	readonly description: ISingleValueForm2<string>;
 	readonly is_public: ISingleValueForm2<boolean>;
-	readonly file_url: string;
-	on_mounted(): void;
+	readonly file_url: Readonly<Ref<string>>;
+	on_dragover(e: DragEvent): void;
+	on_drop(e: DragEvent): void;
 	click_save(): void;
 	click_delete(): void;
 	exists_in_db(): boolean;
@@ -58,13 +59,12 @@ export class ImageForm implements IImageForm {
 	public is_save_button_loading: Ref<boolean> = ref(false);
 	public has_changes: Ref<boolean>;
 	public is_delete_button_loading: Ref<boolean> = ref(false);
-	public file_url: string;
+	public file_url: Ref<string>;
 	
 	private errs: string[] = [];
 	
 	private readonly parent: IImageFormParent;
-	private _image_zone?: HTMLElement;
-	private _drop_zone?: HTMLElement;
+	
 	private file?: File;
 	private new_file: boolean = false;
 	
@@ -89,43 +89,15 @@ export class ImageForm implements IImageForm {
 		this.parent = args.parent;
 		this.ui_id = args.ui_id;
 		console.log(`construct: this.ui_id == ${this.ui_id}`);
-		this.file_url = this.determinate_external_file_url();
+		this.file_url = ref(this.determinate_external_file_url());
 		this.has_changes = ref(false);
+		
+		// this.dragover_event_listener = (e: DragEvent) => { this.on_dragover(e); };
+		// this.drop_event_listener = (e: DragEvent) => { this.on_drop(e); };
 	}
 	
 	public exists_in_db(): boolean {
 		return (typeof this.id === 'string') && (this.id.length > 0);
-	}
-	
-	private image_zone(): HTMLElement {
-		if (this._image_zone) {
-			return this._image_zone;
-		}
-		throw new Error('Image zone still undefinied');
-	}
-	private drop_zone(): HTMLElement {
-		if (this._drop_zone) {
-			return this._drop_zone;
-		}
-		throw new Error('Drop zone still undefinied');
-	}
-	
-	public on_mounted(): void {
-		const image_zone = document.getElementById(`image-zone-${this.ui_id}`);
-		const drop_zone = document.getElementById(`drop-zone-${this.ui_id}`);
-		if (!image_zone) {
-			throw new Error(`Image zone ${this.ui_id} not found`);
-		}
-		if (!drop_zone) {
-			throw new Error(`Drop zone ${this.ui_id} not found`);
-		}
-		this._image_zone = image_zone;
-		this._drop_zone = drop_zone;
-		this.update_zone_visibility();
-		this._image_zone.addEventListener('dragover', (e: DragEvent) => { this.on_dragover(e); });
-		this._image_zone.addEventListener('drop', (e: DragEvent) => { this.on_drop(e); });
-		this._drop_zone.addEventListener('dragover', (e: DragEvent) => { this.on_dragover(e); });
-		this._drop_zone.addEventListener('drop', (e: DragEvent) => { this.on_drop(e); });
 	}
 	
 	/**
@@ -133,7 +105,7 @@ export class ImageForm implements IImageForm {
 	 * @param e 
 	 * @returns 
 	 */
-	private on_dragover(e: DragEvent): void {
+	public on_dragover(e: DragEvent): void {
 		e.preventDefault(); // mark as a drop target
 		if (e.dataTransfer) {
 			for (const i in e.dataTransfer.files) {
@@ -150,7 +122,7 @@ export class ImageForm implements IImageForm {
 		}
 	}
 	
-	private on_drop(e: DragEvent): void {
+	public on_drop(e: DragEvent): void {
 		if (e.dataTransfer) {
 			if (e.dataTransfer.files.length) {
 				// Auch für falsche Dateien soll verhindert werden,
@@ -164,26 +136,11 @@ export class ImageForm implements IImageForm {
 					this.file = file;
 					this.new_file = true;
 					this.has_changes.value = true;
-					URL.revokeObjectURL(this.file_url);
-					this.file_url = URL.createObjectURL(this.file);
-					this.update_zone_visibility();
+					URL.revokeObjectURL(this.file_url.value);
+					this.file_url.value = URL.createObjectURL(this.file);
 					return;
 				}
 			}
-		}
-	}
-	
-	private update_zone_visibility(): void {
-		if (this.file_url) {
-			this.image_zone().style.display = 'block';
-			this.image_zone().hidden = false;
-			this.drop_zone().style.display = 'none';
-			this.drop_zone().hidden = true;
-		} else {
-			this.image_zone().style.display = 'none';
-			this.drop_zone().hidden = true;
-			this.drop_zone().style.display = 'flex';
-			this.drop_zone().hidden = false;
 		}
 	}
 	
@@ -314,13 +271,15 @@ export class ImageForm implements IImageForm {
 			method: "delete",
 			url: route('ajax.exhibit.image.delete', { exhibit_id: this.parent.exhibit_id, image_id: this.id })
 		};
-		console.log('ajax_delete');
+		console.log('ajax_delete() begin');
 		return axios.request(request_config).then(
 			(response: AxiosResponse<IDeleteImage200ResponseData>) => {
 				this.parent.delete_form_and_update_order({ form: this, new_ids_order: response.data });
+				console.log('ajax_delete() success');
 			},
 			(response: AxiosResponse<IDeleteImage422ResponseData>) => {
 				this.errs = response.data;
+				console.log('ajax_delete() fail');
 			}
 		);
 	}

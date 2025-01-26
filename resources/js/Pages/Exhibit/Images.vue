@@ -6,7 +6,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { IImageInitPageProps, IImagesInitPageProps } from '@/types/page_props/images';
 import Breadcrumb from 'primevue/breadcrumb';
 import Carousel from 'primevue/carousel';
-import { reactive, Reactive, ShallowReactive, shallowReactive } from 'vue';
+import { reactive, Reactive, ShallowReactive, shallowReactive, ShallowRef, shallowRef, watch } from 'vue';
 
 const props = defineProps<{
 	name?: string,
@@ -42,10 +42,17 @@ const images: IImageFormConstructorArgs[] = props.init_props.images.map((_props:
 });
 images.push({});
 
-const form: IImagesForm = shallowReactive(new ImagesForm({
+const form: ShallowReactive<IImagesForm> = shallowReactive(new ImagesForm({
 	exhibit_id: props.init_props.exhibit_id,
 	images: images,
 }));
+// const children = form.children
+// watch(children, (children) => {
+// 	const new_order: string = children.reduce((acc, cur) => {
+// 		return acc + ", " + cur.ui_id;
+// 	}, '');
+// 	console.log(`watch: new_order == ${new_order}`);
+// });
 </script>
 <template>
 	<AuthenticatedLayout>
