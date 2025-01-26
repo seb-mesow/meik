@@ -56,14 +56,17 @@ Route::prefix('ajax')->group(static function() {
 	Route::patch('/exhibit/{exhibit_id}/free_text/{free_text_id}', [ExhibitAJAXController::class, 'move_free_text'])
 		->name('ajax.exhibit.free_text.move');
 	
-	// --- Image ---
+	// --- Bilder ---
 	// siehe images.d.ts
 	Route::post('/exhibit/{exhibit_id}/image', [ImageAJAXController::class, 'create'])
 		->name('ajax.exhibit.image.create');
 	
-	// muss aus HTML-Spec-Gründen POST sein, da FormDate versendet wird, sollte aber eigentlich PUT sein
-	Route::post('/image/{image_id}', [ImageAJAXController::class, 'update'])
-		->name('ajax.image.update');
+	Route::patch('/image/{image_id}', [ImageAJAXController::class, 'update_meta_data'])
+		->name('ajax.image.update_meta_data');
+	
+	// muss aus HTML-Spec-Gründen POST sein, da FormDate versendet wird, ist aber auch sonst gut so
+	Route::post('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'replace'])
+		->name('ajax.exhibit.image.replace');
 	
 	Route::delete('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'delete'])
 		->name('ajax.exhibit.image.delete');

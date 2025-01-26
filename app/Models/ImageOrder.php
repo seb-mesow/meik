@@ -62,7 +62,23 @@ class ImageOrder implements IntIdentifiable, Revisionable
 		// This may result in unexpected behavior when using an object or null replacement."
 		array_splice($this->image_ids, $index, 0, [$image_id]);
 	}
-		
+	
+	/**
+	 * @throws RuntimeException
+	 */
+	public function replace_image_id(string $old_image_id, string $new_image_id): void {
+		foreach ($this->image_ids as $index => $existent_image_id) {
+			if ($existent_image_id === $old_image_id) {
+				$this->image_ids[$index] = $new_image_id;
+				return;
+			}
+		}
+		throw new RuntimeException("Image ID not found");
+	}
+	
+	/**
+	 * @throws RuntimeException
+	 */
 	public function remove_image_id(string $image_id): void {
 		foreach ($this->image_ids as $index => $existent_image_id) {
 			if ($existent_image_id === $image_id) {

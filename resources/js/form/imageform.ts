@@ -8,8 +8,11 @@ import {
 	IDeleteImageRequestData,
 	IDeleteImage200ResponseData,
 	IDeleteImage422ResponseData,
-	IUpdateImageRequestData,
-	IUpdateImage422ResponseData 
+	IReplaceImageRequestData,
+	IReplaceImage422ResponseData,
+	IReplaceImage200ResponseData,
+	IUpdateImageMetaDataRequestData,
+	IUpdateImageMetaData422ResponseData
 } from "@/types/ajax/image";
 import { route } from "ziggy-js";
 import { ref, Ref } from "vue";
@@ -200,7 +203,11 @@ export class ImageForm implements IImageForm {
 		this.is_save_button_loading.value = true;
 		try {
 			if (this.exists_in_db()) {
-				await this.ajax_update();
+				if (this.new_file) {
+					await this.ajax_replace();
+				} else {
+					await this.ajax_update_metadata();
+				}
 			} else {
 				await this.ajax_create();
 			}
@@ -259,45 +266,49 @@ export class ImageForm implements IImageForm {
 		);
 	}
 	
-	private async ajax_update(): Promise<void> {
+	private async ajax_replace(): Promise<void> {
 		if (!this.id) {
-			throw new Error("undefined id");
+			throw new Error("undefined ID");
 		}
-		const request_data: IUpdateImageRequestData = {
-			description: this.description.val,
-			is_public: this.is_public.val,
+		if (!this.new_file) {
+			throw new Error("tried to replace image, but file is not new");
 		}
-		if (this.new_file && this.file) {
-			request_data.image = this.file;
+		if (!this.file) {
+			throw new Error("no file to upload");
 		}
-		const request_config: AxiosRequestConfig<IUpdateImageRequestData> = {
+		const request_config: AxiosRequestConfig<IReplaceImageRequestData> = {
 			method: "post",
-			url: route('ajax.image.update', { image_id: this.id }),
+			url: route('ajax.exhibit.image.replace', { exhibit_id: this.parent.exhibit_id, image_id: this.id }),
 			headers: {
 				'Content-Type': 'multipart/form-data'
 			},
-			data: request_data,
-		};
-		console.log('ajax_update');
-		return axios.request(request_config).then(
-			(response: AxiosResponse) => {
-				console.log('ajax_update success');
+			data: {
+				description: this.description.val,
+				is_public: this.is_public.val,
+				image: this.file,
 			},
-			(err: AxiosError<IUpdateImage422ResponseData>) => {
-				const response: AxiosResponse<IUpdateImage422ResponseData>|undefined = err.response;
+		};
+		console.log('ajax_replace() begin');
+		return axios.request(request_config).then(
+			(response: AxiosResponse<IReplaceImage200ResponseData>) => {
+				this.id = response.data;
+				console.log('ajax_replace() success');
+			},
+			(err: AxiosError<IReplaceImage422ResponseData>) => {
+				const response: AxiosResponse<IReplaceImage422ResponseData>|undefined = err.response;
 				if (response) {
 					this.errs = response.data.errs;
 					this.description.errs = response.data.description;
 					this.is_public.errs = response.data.is_public;
 				}
-				console.log('ajax_update fail');
+				console.log('ajax_replace() fail');
 			}
 		);
 	}
 	
 	private async ajax_delete(): Promise<void> {
 		if (!this.id) {
-			throw new Error("undefined id");
+			throw new Error("undefined ID");
 		}
 		const request_config: AxiosRequestConfig<IDeleteImageRequestData> = {
 			method: "delete",
@@ -310,6 +321,32 @@ export class ImageForm implements IImageForm {
 			},
 			(response: AxiosResponse<IDeleteImage422ResponseData>) => {
 				this.errs = response.data;
+			}
+		);
+	}
+	
+	private async ajax_update_metadata(): Promise<void> {
+		if (!this.id) {
+			throw new Error("undefined ID");
+		}
+		const request_config: AxiosRequestConfig<IUpdateImageMetaDataRequestData> = {
+			method: "patch",
+			url: route('ajax.image.update_meta_data', { image_id: this.id }),
+			data: {
+				description: this.description.val,
+				is_public: this.is_public.val,
+			}
+		};
+		console.log('ajax_update_metadata()');
+		return axios.request(request_config).then(
+			(response: AxiosResponse) => {
+				console.log('ajax_update_meta_data() success');
+			},
+			(response: AxiosResponse<IUpdateImageMetaData422ResponseData>) => {
+				this.errs = response.data.errs;
+				this.description.errs = response.data.description;
+				this.is_public.errs = response.data.is_public;
+				console.log('ajax_update_meta_data() fail');
 			}
 		);
 	}
