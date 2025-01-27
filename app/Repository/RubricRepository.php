@@ -89,7 +89,7 @@ final class RubricRepository
 	{
 		assert(!$rubric->get_nullable_id());
 		assert(!$rubric->get_nullable_rev());
-		$doc = $this->create_doc_from_rubric($rubric); // setzt neue ID
+		$doc = $this->create_doc_from_rubric($rubric); // setzt neue I
 		$response = $this->client->storeDoc($doc);
 		$rubric->set_rev($response->rev);
 	}
@@ -150,7 +150,7 @@ final class RubricRepository
 	/**
 	 * @param RubricDoc $rubric_doc
 	 */
-	private function create_rubric_from_doc(stdClass $rubric_doc): Rubric
+	public function create_rubric_from_doc(stdClass $rubric_doc): Rubric
 	{
 		return new Rubric(
 			name: $rubric_doc->name,

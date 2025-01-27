@@ -10,12 +10,12 @@ export interface IGetRubricsPaginated200ResponseData {
 	total_count: number,
 };
 
-export type ICreateRubricRequestData = string; // name
+export type ICreateRubricRequestData = {name: string, category: string}; // name
 
 export type ICreateRubric200ResponseData = string; // new ID
 export type ICreateRubric422ResponseData = string[]; // errs
 
-export type IUpdateRubricRequestData = string; // new name
+export type IUpdateRubricRequestData = {id: string, name: string, category: string};; // new name
 export type IUpdateRubric200ResponseData = never;
 export type IUpdateRubric422ResponseData = string[]; // errs
 
