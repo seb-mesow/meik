@@ -4,3 +4,7 @@ services:
       args:
         PRIVATE_KEY_FILENAME: filename.key
         CERTIFICATE_FILENAME: filename.cer
+  
+  # db:
+  #   ports:
+  #     - 5984:5984

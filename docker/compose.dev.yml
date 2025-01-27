@@ -13,3 +13,7 @@ services:
   node:
     build:
       target: dev
+  
+  db:
+    ports:
+      - 5984:5984

@@ -43,8 +43,6 @@ services:
     build:
       context: db
     hostname: couchdb
-    ports:
-      - 5984:5984
     restart: on-failure:2
     volumes:
       - couchdb_data_persistent:/opt/couchdb/data
