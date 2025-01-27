@@ -66,7 +66,7 @@ final class ExhibitRepository
 	public function get_all(): array
 	{
 		$res = $this->client->find([
-			'_id' => ['$beginsWith' => self::MODEL_TYPE_ID],
+			'_id' => ['$beginsWith' => self::MODEL_TYPE_ID . ':'],
 		]);
 		$_this = $this;
 		return array_map(static function (stdClass $doc) use ($_this): Exhibit {
