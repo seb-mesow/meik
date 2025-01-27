@@ -2,6 +2,7 @@ services:
   web:
     build:
       args:
+        DOMAIN_NAME: meik-gr3.industrieschule.de
         PRIVATE_KEY_FILENAME: filename.key
         CERTIFICATE_FILENAME: filename.cer
   
