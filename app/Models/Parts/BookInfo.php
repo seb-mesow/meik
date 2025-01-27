@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
@@ -7,15 +6,23 @@ namespace App\Models;
 class BookInfo
 {
 	/**
-	 *  @Accessor(getter="get_author") 
+	 * Autoren (öffentlich)
+	 * 
+	 * @Accessor(getter="get_author") 
 	 */
 	private ?string $author = null;
+	
 	/**
-	 *  @Accessor(getter="get_isbn")
-	 *  */
+	 * ISBN (öffentlich)
+	 * 
+	 * @Accessor(getter="get_isbn")
+	 */
 	private ?string $isbn = null;
+	
 	/**
-	 *  @Accessor(getter="language")
+	 * Sprache des Buches nach ISO 6393 (öffentlich)
+	 * 
+	 * @Accessor(getter="language")
 	 */
 	private ?string $language = null;
 

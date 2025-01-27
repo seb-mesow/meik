@@ -1,15 +1,23 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\Currency;
+
 class Price
 {
-	/** @Accessor(getter="get_amount") */
-	private ?float $amount = null;
-	/** @Accessor(getter="get_currency") */
-	private ?Currency $currency = null;
+	/**
+	 * Währungsbetrag in der kleinsten Einheit der Währung (z.B. Pfennig) (öffentlich)
+	 */
+	private int $amount;
+	
+	/**
+	 * historische Währung (öffentlich)
+	 * 
+	 * @Accessor(getter="get_currency")
+	 */
+	private Currency $currency;
 
 	/**
 	 * Get the value of amount

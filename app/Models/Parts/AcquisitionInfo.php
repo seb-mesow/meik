@@ -1,20 +1,44 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
 
-use DateTime;
+use Illuminate\Support\Carbon;
 
-class Acquisation
+class AcquisitionInfo
 {
-	/** @Accessor(getter="get_kind") */
+	/** 
+	 * Zugangsdatum (intern)
+	 * 
+	 * @Accessor(getter="get_date") 
+	 * @Type("DateTime")
+	 */
+	#[Expose]
+	private Carbon $date;
+	
+	/**
+	 * Art des Zugangs (intern)
+	 * 
+	 * Eine dieser Möglichkieten: Schenkung, Kauf, Fund, Überlassung
+	 * 
+	 * @Accessor(getter="get_kind")
+	 */
 	private ?string $kind = null;
-	/** @Accessor(getter="get_date") */
-	private ?DateTime $date = null;
-	/** @Accessor(getter="get_purchasing_price") */
-	private bool $purchasing_price = false;
-
+	
+	/**
+	 * Angaben zur Herkunft (zunächst intern, könnte auch öffentlich sein)
+	 * 
+	 * (Von wem kommt das Exponat in das Museum?)
+	 */
+	private string $source;
+	 
+	/**
+	 * Kaufpreis in Cent (intern)
+	 * 
+	 * @Accessor(getter="get_purchasing_price")
+	 */
+	private int $purchasing_price = false;
+	
 	/**
 	 * Get the value of kind
 	 */
