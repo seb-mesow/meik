@@ -5,6 +5,8 @@ services:
         DOMAIN_NAME: meik-gr3.industrieschule.de
         PRIVATE_KEY_FILENAME: filename.key
         CERTIFICATE_FILENAME: filename.cer
+    ports:
+      - 443:443 # nur HTTPS
   
   # db:
   #   ports:
