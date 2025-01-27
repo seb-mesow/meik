@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
+use App\Service\WordService;
 use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PdfWriter;
@@ -22,7 +23,8 @@ class ExhibitAJAXController extends Controller
 	private Serializer $serializer;
 
 	public function __construct(
-		private readonly ExhibitRepository $exhibit_repository
+		private readonly ExhibitRepository $exhibit_repository,
+		private readonly WordService $word_service
 	) {
 		$this->serializer = SerializerBuilder::create()->build();
 	}
@@ -148,5 +150,12 @@ class ExhibitAJAXController extends Controller
 		return response()->json([
 			'exhibits' => $exhibits_json
 		]);
+	}
+
+	public function get_data_sheet(int $exhibit_id)
+	{
+		$exhibit = $this->exhibit_repository->get($exhibit_id);
+		return $this->word_service->get_data_sheet($exhibit);
+		
 	}
 }

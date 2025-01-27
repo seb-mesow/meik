@@ -70,7 +70,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 	/**
 	 *  @Accessor(getter="get_original_price") 
 	 */
-	private ?price $original_price = null;
+	private ?Price $original_price = null;
 
 	/**
 	 *  @Accessor(getter="get_current_value") 
