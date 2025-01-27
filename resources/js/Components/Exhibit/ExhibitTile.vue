@@ -14,15 +14,17 @@ if (exhibit.title_image) {
 
 <template>
 	<a :href="route('exhibit.details', exhibit.id)">
-		<div class="exhibit-tile flex">
-			<img v-if="exhibit.title_image" 
-				:src="route('ajax.image.get_thumbnail', { image_id: exhibit.title_image.id })"
-			>
-			<div class="flex flex-col">
-			<p>{{ "" + exhibit.name, exhibit.inventory_number}}</p>
-			<p>{{ "Baujahr: " + exhibit.year_of_manufacture }}</p>
-			<p>{{ "Hersteller: " + exhibit.manufacturer }}</p>
-			<p>{{ "Standort: " + exhibit.location_name, exhibit.place_name }}</p>
+		<div class="exhibit-tile flex justify-between">
+			<div class="w-48 h-28 flex">
+				<img v-if="exhibit.title_image" 
+					:src="route('ajax.image.get_thumbnail', { image_id: exhibit.title_image.id })"
+				>
+			</div>
+			<div class="flex flex-col pl-4">
+				<p style="font-size: x-large;">{{ "" + exhibit.name, exhibit.inventory_number}}</p>
+				<p>{{ "Baujahr: " + exhibit.year_of_manufacture }}</p>
+				<p>{{ "Hersteller: " + exhibit.manufacturer }}</p>
+				<p>{{ "Standort: " + exhibit.location_name, exhibit.place_name }}</p>
 			</div>
 		</div>
 	</a>
