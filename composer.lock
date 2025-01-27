@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9f31d9ac262099723935fa8a3b4abece",
+    "content-hash": "aae22e95b700d266d40b7e7d94312e57",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -59,6 +59,50 @@
                 "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.1"
             },
             "time": "2024-10-01T13:55:55+00:00"
+        },
+        {
+            "name": "bersyatina/htmltoopenxml",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bersyatina/HTMLtoOpenXML.git",
+                "reference": "fa198a219b01681336c31f4e7291af3f2f2c5a1c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bersyatina/HTMLtoOpenXML/zipball/fa198a219b01681336c31f4e7291af3f2f2c5a1c",
+                "reference": "fa198a219b01681336c31f4e7291af3f2f2c5a1c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.4 || ^7.0 || ^7.1 || ^7.2 || ^8.3"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HTMLtoOpenXML\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrey Apanasenko",
+                    "email": "aw_apanasenko@mail.ru"
+                }
+            ],
+            "description": "Convert HTML to OpenOfficeXML",
+            "keywords": [
+                "OOXML",
+                "html"
+            ],
+            "support": {
+                "source": "https://github.com/bersyatina/HTMLtoOpenXML/tree/master"
+            },
+            "time": "2024-08-15T16:43:21+00:00"
         },
         {
             "name": "brick/math",
@@ -6928,7 +6972,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
