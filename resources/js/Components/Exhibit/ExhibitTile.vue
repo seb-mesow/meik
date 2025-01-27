@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { route } from 'ziggy-js';
 import { IExhibitOverviewExhibitTileInitPageProps } from '@/types/page_props/exhibit_overview';
+import Block from 'quill/blots/block';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
@@ -14,17 +15,17 @@ if (exhibit.title_image) {
 
 <template>
 	<a :href="route('exhibit.details', exhibit.id)">
-		<div class="exhibit-tile flex justify-between">
+		<div class="exhibit-tile flex justify-between" style="align-items: center;">
 			<div class="w-48 h-28 flex">
-				<img v-if="exhibit.title_image" 
+				<img v-if="exhibit.title_image"
 					:src="route('ajax.image.get_thumbnail', { image_id: exhibit.title_image.id })"
 				>
 			</div>
 			<div class="flex flex-col pl-4">
-				<p style="font-size: x-large;">{{exhibit.name, exhibit.inventory_number}}</p>
+				<p style="font-size: larger;">{{exhibit.name + " (" + exhibit.inventory_number + ")" }}</p>
 				<p>{{ "Baujahr: " + exhibit.year_of_manufacture }}</p>
 				<p>{{ "Hersteller: " + exhibit.manufacturer }}</p>
-				<p>{{ "Standort: " + exhibit.location_name, exhibit.place_name }}</p>
+				<p>{{ "Standort: " + exhibit.location_name + " - " + exhibit.place_name}}</p>
 			</div>
 		</div>
 	</a>
