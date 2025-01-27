@@ -21,7 +21,7 @@ if (exhibit.title_image) {
 				>
 			</div>
 			<div class="flex flex-col pl-4">
-				<p style="font-size: x-large;">{{ "" + exhibit.name, exhibit.inventory_number}}</p>
+				<p style="font-size: x-large;">{{exhibit.name, exhibit.inventory_number}}</p>
 				<p>{{ "Baujahr: " + exhibit.year_of_manufacture }}</p>
 				<p>{{ "Hersteller: " + exhibit.manufacturer }}</p>
 				<p>{{ "Standort: " + exhibit.location_name, exhibit.place_name }}</p>
