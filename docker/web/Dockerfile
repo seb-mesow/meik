@@ -79,6 +79,7 @@ RUN --mount=source=.,target=/build_context \
 	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +;
 
 FROM common AS prod
+ARG DOMAIN_NAME=''
 ARG PRIVATE_KEY_FILENAME=''
 ARG CERTIFICATE_FILENAME=''
 RUN --mount=source=.,target=/build_context \
@@ -87,7 +88,7 @@ RUN --mount=source=.,target=/build_context \
 		gettext \
 	; \
 	\
-	envsubst '\$PRIVATE_KEY_FILENAME,\$CERTIFICATE_FILENAME' \
+	envsubst '\$DOMAIN_NAME,\$PRIVATE_KEY_FILENAME,\$CERTIFICATE_FILENAME' \
 	< /build_context/server.prod.conf \
 	> /etc/nginx/conf.d/server.prod.conf; \
 	\
