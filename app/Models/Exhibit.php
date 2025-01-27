@@ -26,34 +26,67 @@ class Exhibit implements IntIdentifiable, Revisionable
 	use IntIdentifiableTrait;
 	use RevisionableTrait;
 	
-	/** @Accessor(getter="get_inventor_number") */
+	#region Attribute
+	
+	/**
+	 * Inventarnummer (intern)
+	 * 
+	 * @Accessor(getter="get_inventor_number")
+	 */
 	#[Expose]
 	private string $inventory_number;
 	
-	/** @Accessor(getter="get_name") */
+	/**
+	 * Name/Titel (öffentlich)
+	 * 
+	 * @Accessor(getter="get_name")
+	 */
 	#[Expose]
 	private string $name;
-
-	/** @Accessor(getter="get_manufacturer") 
+	
+	/**
+	 * Rubrik (öffentlich)
+	 * 
+	 * Daraus ergibt sich die Kategorie
+	 */
+	
+	/**
+	 * bei Geräte: Hersteller (öffentlich)
+	 * 
+	 * bei Bücher: Verlag (öffentlich)
+	 * 
+	 * @Accessor(getter="get_manufacturer") 
 	 */
 	#[Expose]
 	private ?string $manufacturer = null;
 
-	/** @Accessor(getter="get_year_of_construction") */
-	#[Expose]
-	private int $year_of_manufacture;
-
-	/** @Accessor(getter="get_place_id") */
-	#[Expose]
-	private string $place_id;
-
-	/** @Accessor(getter="get_aquiry_date") 
-	 * @Type("DateTime")
+	/**
+	 * bei Geräten: Baujahr des konkreten Exponates (öffentlich)
+	 * 
+	 * bei Büchern: Erscheinungsjahr der konkreten Auflage/Jahr des Druckes (öffentlich)
+	 * 
+	 * @Accessor(getter="get_year_of_construction")
 	 */
 	#[Expose]
-	private ?DateTime $aquiry_date = null;
-
-	/** 
+	private int $year_of_manufacture;
+	
+	/**
+	 * Platz (öffentlich)
+	 * 
+	 * daraus ergibt sich der Standort (Location)
+	 * 
+	 * @Accessor(getter="get_place_id")
+	 */
+	#[Expose]
+	private string $place_id;
+	
+	/**
+	 * Zustand (intern)
+	 */
+	
+	/**
+	 * Freitexte (teils öffentlich, teils intern)
+	 * 
 	 * @var FreeText[]
 	 * 
 	 * @Accessor(getter="get_free_texts") 
@@ -62,21 +95,49 @@ class Exhibit implements IntIdentifiable, Revisionable
 	#[SerializedName('freetexts')]
 	private array $free_texts;
 
-	/** @Accessor(getter="get_connected_exhibits") 
+	/**
+	 * in Verbindung stehende Exponate (öffentlich)
+	 * 
+	 * @var int[]
+	 * 
+	 * @Accessor(getter="get_connected_exhibits") 
 	 */
 	#[Expose]
 	private ?array $connected_exhibits = [];
 
 	/**
-	 *  @Accessor(getter="get_original_price") 
+	 * Originalpreis in historischer Währung (öffentlich)
+	 * 
+	 * @Accessor(getter="get_original_price") 
 	 */
 	private ?Price $original_price = null;
 
 	/**
-	 *  @Accessor(getter="get_current_value") 
+	 * Zeitwert in Cent (intern)
+	 * 
+	 * @Accessor(getter="get_current_value") 
 	 */
-	private ?float $current_value = 0;
-
+	private ?int $current_value = 0;
+	
+	/**
+	 * Zugangsinformationen (meist intern)
+	 */
+	private AcquisitionInfo $acquisition_info;
+	
+	/**
+	 * bei Geräten: Geräteinformationen (meist öffentlich)
+	 */
+	private ?DeviceInfo $device_info;
+	
+	/**
+	 * bei Büchern: Buchinformationen (meist öffentlich)
+	 */
+	private ?BookInfo $book_info;
+	
+	#endregion
+	
+	#region constructor
+	
 	/**
 	 *  @Accessor(getter="get_rubric_id") 
 	 */
@@ -104,7 +165,11 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->free_texts = $free_texts;
 		$this->rubric_id = $rubric_id;
 	}
-		
+	
+	#endregion
+	
+	#region Getter und Setter
+	
 	public function get_inventory_number(): string {
 		return $this->inventory_number;
 	}
@@ -141,15 +206,49 @@ class Exhibit implements IntIdentifiable, Revisionable
 	}
 	
 	public function get_aquiry_date(){
-		return $this->aquiry_date;
+		return $this->aquistion_date;
 	}
 
 	public function set_aquiry_date($aquiry_date){
-		$this->aquiry_date = $aquiry_date;
+		$this->aquistion_date = $aquiry_date;
+
+		return $this;
+	}
+	
+	public function get_connected_exhibits(){
+		return $this->connected_exhibits;
+	}
+
+	public function set_connected_exhibits($connected_exhibits){
+		$this->connected_exhibits = $connected_exhibits;
 
 		return $this;
 	}
 
+	public function get_original_price(){
+		return $this->original_price;
+	}
+
+	public function set_original_price($original_price){
+		$this->original_price = $original_price;
+
+		return $this;
+	}
+
+	public function get_current_value(){
+		return $this->current_value;
+	}
+
+	public function set_current_value($current_value){
+		$this->current_value = $current_value;
+
+		return $this;
+	}
+	
+	#endregion
+	
+	#region Freitexte
+	
 	/**
 	 * @return FreeText[]
 	 */
@@ -242,49 +341,5 @@ class Exhibit implements IntIdentifiable, Revisionable
 		throw new RuntimeException("No FreeText with the specified ID found");
 	}
 	
-	public function get_connected_exhibits(){
-		return $this->connected_exhibits;
-	}
-
-	public function set_connected_exhibits($connected_exhibits){
-		$this->connected_exhibits = $connected_exhibits;
-
-		return $this;
-	}
-
-	public function get_original_price(){
-		return $this->original_price;
-	}
-
-	public function set_original_price($original_price){
-		$this->original_price = $original_price;
-
-		return $this;
-	}
-
-	public function get_current_value(){
-		return $this->current_value;
-	}
-
-	public function set_current_value($current_value){
-		$this->current_value = $current_value;
-
-		return $this;
-	}
-
-
-	public function get_rubric_id()
-	{
-		return $this->rubric_id;
-	}
-
-	/**
-	 * @return  self
-	 */ 
-	public function set_rubric_id($rubric_id)
-	{
-		$this->rubric_id = $rubric_id;
-
-		return $this;
-	}
+	#endregion
 }
