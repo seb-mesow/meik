@@ -4,17 +4,19 @@ import { route } from 'ziggy-js';
 import { useDialog } from 'primevue/usedialog';
 import DynamicDialog from 'primevue/dynamicdialog';
 import Button from 'primevue/button';
-import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent, reactive } from 'vue';
 const RubricDialog = defineAsyncComponent(() => import('./RubricDialog.vue'));
 // (interne) Attribute der Komponente
 const props = defineProps<{
-	rubric: { id: string, name: string, category: string };
+	rubric: { id: string, name: string };
+    category: string
 }>();
-const rubric = props.rubric;
+let rubric = reactive(props.rubric);
 
 const dialog = useDialog();
 
-const createOrEdit = () => {
+const edit = () => {
+    console.log(rubric)
     const dialogRef = dialog.open(RubricDialog, {
         props: {
             header: 'TEST',
@@ -29,16 +31,13 @@ const createOrEdit = () => {
         },
 		data: {
 			rubric: rubric,
-			category: rubric.category	
+			category: props.category	
 		},
         onClose: (options) => {
-            // const data = options.data;
-            // if (data) {
-            //     const buttonType = data.buttonType;
-            //     const summary_and_detail = buttonType ? { summary: 'No Product Selected', detail: `Pressed '${buttonType}' button` } : { summary: 'Product Selected', detail: data.name };
-
-            //     toast.add({ severity:'info', ...summary_and_detail, life: 3000 });
-            // }
+            const data = options?.data;
+            if (data) {
+                rubric.name = data.data.name
+            }
         }
     });
 }
@@ -49,7 +48,7 @@ const createOrEdit = () => {
 
 <template>
 	<div>
-		<Button @click="createOrEdit">Edit</Button>
+		<Button @click="edit">Edit</Button>
 		<a :href="route('exhibit.overview', { rubric: rubric.id })">
 			<div class="rubric-tile">
 				<p>{{ rubric.name }}</p>
