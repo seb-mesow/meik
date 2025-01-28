@@ -21,7 +21,7 @@ class DeviceInfo
 	 */
 	private string $manufactured_to_date;
 	
-	public function __constructor(
+	public function __construct(
 		string $manufactured_from_date,
 		string $manufactured_to_date,
 	) {

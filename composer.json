@@ -10,6 +10,7 @@
         "composer": "~2.7.8",
         "dropelikeit/laravel-jms-serializer": "^6.0",
         "endroid/qr-code": "^6.0",
+        "fakerphp/faker": "^1.24",
         "guzzlehttp/guzzle": "~7.9.2",
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/framework": "^11.9",
