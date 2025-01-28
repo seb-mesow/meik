@@ -36,8 +36,8 @@ class ExhibitController extends Controller
 	}
 
 	private function determinate_overview_page_props(Exhibit $exhibit): array {
-		$place = $this->place_repository->get($exhibit->get_place_id());
-		$location = $this->location_repository->get($place->get_location_id());
+		$place = $this->place_repository->find($exhibit->get_place_id());
+		$location = $this->location_repository->find($place?->get_location_id() ?? '');
 		
 		$tile_props = [
 			'id' => $exhibit->get_id(),
@@ -45,8 +45,8 @@ class ExhibitController extends Controller
 			'inventory_number' => $exhibit->get_inventory_number(),
 			'year_of_manufacture' => $exhibit->get_year_of_manufacture(),
 			'manufacturer' => $exhibit->get_manufacturer(),
-			'location_name' => $location->get_name(),
-			'place_name' => $place->get_name(),
+			'location_name' => $location?->get_name(),
+			'place_name' => $place?->get_name(),
 		];
 		if ($title_image = $this->image_service->get_internal_title_image($exhibit)) {
 			$tile_props ['title_image'] = [

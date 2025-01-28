@@ -187,7 +187,7 @@ final class ExhibitRepository
 			name: $exhibit_doc->name,
 			manufacturer: $exhibit_doc->manufacturer,
 			year_of_manufacture: $exhibit_doc->year_of_manufacture,
-			place_id: $exhibit_doc->place_id,
+			place_id: (string)$exhibit_doc->place_id,
 			free_texts: $free_texts,
 			id: $this->determinate_model_id_from_doc($exhibit_doc),
 			rev: $exhibit_doc->_rev,

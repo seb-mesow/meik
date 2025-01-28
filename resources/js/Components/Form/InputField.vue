@@ -15,7 +15,7 @@ const form = props.form;
 		<p><label :for="form.id">{{ props.label }}</label></p>
 		<InputText
 			class="w-full"
-			type=text :id="form.id" :name="form.id" v-model="form.val"
+			type=text :id="form.id" :pt:root:name="form.id" v-model="form.val"
 		/>
 		<div v-show="form.errs">
 			<p v-for="error in form.errs">{{ error }}</p>

@@ -4,8 +4,8 @@ export interface IExhibitOverviewExhibitTileInitPageProps {
 	inventory_number: string,
 	year_of_manufacture: number,
 	manufacturer: string,
-	location_name: string,
-	place_name: string,
+	location_name: ?string,
+	place_name: ?string,
 	title_image?: {
 		id: string,
 		description: string,

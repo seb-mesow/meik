@@ -109,7 +109,7 @@ async function save_metadata(event: MouseEvent) {
 				:action="route('exhibit.create')"
 				method="post"
 			>
-				<InputField :form="form.val.inventory_number" label="Inventarnummer" />
+				<InputField :name :form="form.val.inventory_number" label="Inventarnummer" />
 				<InputField :form="form.val.name" label="Bezeichnung" />
 				<InputField :form="form.val.manufacturer" label="Hersteller" />
 				<Button v-if="is_new"

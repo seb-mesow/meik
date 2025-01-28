@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, onUpdated, ref } from 'vue';
 
 defineProps<{
 	method: string;
 	action: string;
 }>();
 
-let token: string|null|undefined = null;
-onMounted(() => {
-	token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-});
+const token: any = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
 </script>
 
 <template>
