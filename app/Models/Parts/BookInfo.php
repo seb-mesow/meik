@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Models\Parts;
+
+use App\Models\Enum\Language;
 
 class BookInfo
 {
@@ -24,7 +26,7 @@ class BookInfo
 	 * 
 	 * @Accessor(getter="language")
 	 */
-	private ?string $language = null;
+	private Language $language = null;
 
 	/**
 	 * Get the value of author

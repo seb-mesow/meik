@@ -24,6 +24,11 @@ enum Currency: string
 	case GBP = 'GBP';
 	
 	/**
+	 * Schweizer Franken
+	 */
+	case CHF = 'CHF';
+	
+	/**
 	 * (neuer) Russischer Rubel, seit 1998
 	 */
 	case RUB = 'RUB';
@@ -44,6 +49,26 @@ enum Currency: string
 	case GBP = 'GBP';
 	
 	/**
+	 * Chinesischer Renminbi Yuan, seit 1949
+	 */
+	case CNY = 'CNY';
+	
+	/**
+	 * Neuer Taiwan-Dollar
+	 */
+	case CNY = 'TWD';
+	
+	/**
+	 * Japanischer Yen
+	 */
+	case JPY = 'JPY';
+	
+	/**
+	 * Südkoreanischer Won
+	 */
+	case KRW = 'KRW';
+	
+	/**
 	 * Deutsche Mark (1948–1999/2002)
 	 */
 	case DEM = 'DEM';
@@ -54,14 +79,19 @@ enum Currency: string
 	case DDM = 'DDM';
 	
 	/**
-	 * Sowjetischer Rubel (1923–1992)
-	 */
-	case SUR = 'SUR';
-	
-	/**
 	 * österreichischer Schilling (1947–1999/2002)
 	 */
 	case ATS = 'ATS';
+	
+	/**
+	 * Französische Franc (1958–1999/2002)
+	 */
+	case FRF = 'FRF';
+	
+	/**
+	 * Sowjetischer Rubel (1923–1992)
+	 */
+	case SUR = 'SUR';
 	
 	/**
 	 * Tschechoslowakische Krone (1953–1993)
