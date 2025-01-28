@@ -18,44 +18,32 @@ class Price
 	 * @Accessor(getter="get_currency")
 	 */
 	private Currency $currency;
-
-	/**
-	 * Get the value of amount
-	 */ 
-	public function get_amount()
+	
+	public function __construct(
+		int $amount,
+		Currency $currency,
+	) {
+		$this->amount = $amount;
+		$this->currency = $currency;
+	}
+	
+	public function get_amount(): int
 	{
 		return $this->amount;
 	}
 
-	/**
-	 * Set the value of amount
-	 *
-	 * @return  self
-	 */ 
-	public function set_amount($amount)
+	public function set_amount($amount): void
 	{
 		$this->amount = $amount;
-
-		return $this;
 	}
-
-	/**
-	 * Get the value of currency
-	 */ 
-	public function get_currency()
+	
+	public function get_currency(): Currency
 	{
 		return $this->currency;
 	}
 
-	/**
-	 * Set the value of currency
-	 *
-	 * @return  self
-	 */ 
-	public function set_currency(Currency $currency)
+	public function set_currency(Currency $currency): void
 	{
 		$this->currency = $currency;
-
-		return $this;
 	}
 }
