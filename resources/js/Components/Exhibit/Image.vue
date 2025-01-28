@@ -72,7 +72,7 @@ const props = defineProps<{
 	width: 32rem;
 	height: 18rem;
 	border: 0.2rem dashed;
-	border-color: black;
+	border-color: rgb(0, 0, 0);
 	display: flex;
 	justify-content: center;
 	align-items: center;

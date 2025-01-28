@@ -11,6 +11,8 @@ import Breadcrumb from 'primevue/breadcrumb';
 import { IExhibitInitPageProps } from '@/types/page_props/exhibit';
 import InputField from '@/Components/Form/InputField.vue';
 import Form from '@/Components/Form/Form.vue';
+import ExportButton from '@/Components/Control/ExportButton.vue';
+
 // versch. Interface für typsicheres Programmieren
 
 // Argumente an die Seite (siehe Controller)
@@ -131,6 +133,7 @@ async function save_metadata(event: MouseEvent) {
 		button_save_metadata_is_loading.value = false;
 	}
 }
+
 </script>
 
 <template>
@@ -155,18 +158,28 @@ async function save_metadata(event: MouseEvent) {
 				<Button v-else :loading="button_save_metadata_is_loading" type='button' @click="save_metadata"
 					label='Metadaten speichern' />
 			</Form>
-			<div class="images-form">
-				<a v-if="form.title_image"
-					:href="route('exhibit.images.details', { exhibit_id: exhibit_id })"
-				>
-					<img v-if="form.title_image_id" class="title-image"
-						:src="route('ajax.image.get_file', { image_id: form.title_image_id })">
+				
+
+			<div class="images-form flex items-start justify-between p-4">
+				
+				
+				<a :href="route('exhibit.images.details', { exhibit_id: exhibit_id })">
+					<img
+						v-if="form.title_image"
+						class="title-image"
+						:src="route('ajax.image.get_image', { image_id: form.title_image.id })"
+					>
 				</a>
+
+				<!-- Button oben rechts -->
+				<ExportButton class="bg-blue-500 text-white rounded" />
 			</div>
 		</div>
 		<FreeTextFields v-if="exhibit_id !== undefined" :init_props="form.val.free_texts" :exhibit_id="exhibit_id" />
 	</AuthenticatedLayout>
 </template>
+
+
 <style lang="css" scoped>
 .upper-forms {
 	display: flex;

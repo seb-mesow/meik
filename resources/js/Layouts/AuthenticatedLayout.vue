@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<{
 				<!-- Page Heading -->
 				<header class="bg-white h-fit min-h-16 shadow dark:bg-gray-800" v-if="$slots.header">
 					<div class="pl-4 items-center flex">
-						<slot name="header" />
+						<slot name="header"/>					
 					</div>
 				</header>
 			</div>
