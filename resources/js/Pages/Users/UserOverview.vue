@@ -9,6 +9,7 @@ import Button from 'primevue/button';
 import ToggleSwitch from 'primevue/toggleswitch';
 import AJAXConfirmationPopup from '@/Components/AJAXConfirmationPopup.vue';
 import Breadcrumb from 'primevue/breadcrumb';
+import Select from 'primevue/select';
 
 // versch. Interface für typsicheres Programmieren
 interface PropUser {
@@ -44,6 +45,12 @@ const items = [
 	},
 ];
 
+const roles = [
+	{name: 'Admin'},
+	{name: 'Editor'},
+	{name: 'Leser'}
+]
+
 // (interne) Attribute der Komponente
 const ajax_confirmation_popup = ref<InstanceType<typeof AJAXConfirmationPopup>>();
 const users_ref = ref<User[]>(props.users.map((prop_user: PropUser): User => {
@@ -59,24 +66,45 @@ const users_ref = ref<User[]>(props.users.map((prop_user: PropUser): User => {
 }));
 const admin_state_toggles_readonly = ref(false);
 
-async function toggle_admin_state(user: User, event: Event): Promise<void> {
+// async function toggle_admin_state(user: User, event: Event): Promise<void> {
+// 	const request_cfg: AxiosRequestConfig = {
+// 		url: route('ajax.user.set_admin', { username: user.username }),
+// 		method: 'patch',
+// 		data: {
+// 			'is_admin': user.is_admin.in_ui,
+// 		}
+// 	};
+	
+// 	await nextTick();
+// 	ajax_confirmation_popup.value?.show(event, request_cfg, {
+// 		fullfied() {
+// 			user.is_admin.actual = user.is_admin.in_ui;
+// 		},
+// 		rejected() {
+// 			user.is_admin.in_ui = user.is_admin.actual;
+// 		},
+// 	});
+// }
+
+async function onChange(user: any): Promise<any> {
+	console.log(user)
 	const request_cfg: AxiosRequestConfig = {
-		url: route('ajax.user.set_admin', { username: user.username }),
+		url: route('ajax.user', { user: user.username }),
 		method: 'patch',
 		data: {
-			'is_admin': user.is_admin.in_ui,
+			'role': user.role,
 		}
 	};
 	
 	await nextTick();
-	ajax_confirmation_popup.value?.show(event, request_cfg, {
-		fullfied() {
-			user.is_admin.actual = user.is_admin.in_ui;
-		},
-		rejected() {
-			user.is_admin.in_ui = user.is_admin.actual;
-		},
-	});
+	// ajax_confirmation_popup.value?.show(event, request_cfg, {
+	// 	fullfied() {
+	// 		user.is_admin.actual = user.is_admin.in_ui;
+	// 	},
+	// 	rejected() {
+	// 		user.is_admin.in_ui = user.is_admin.actual;
+	// 	},
+	// });
 }
 
 </script>
@@ -100,11 +128,7 @@ async function toggle_admin_state(user: User, event: Event): Promise<void> {
 			<Column field="surname" header="Nachname"/>
 			<Column field="is_admin" header="ist Admin?">
 				<template #body='{ data }'>
-					<ToggleSwitch 
-						v-model="data.is_admin.in_ui"
-						:readonly="admin_state_toggles_readonly"
-						@change.prevent="toggle_admin_state(data, $event)"
-					/>
+					<Select @change="onChange(data)" v-model="data.role" :options="roles" optionLabel="name" placeholder="Rolle auswählen" class="w-full md:w-56" />
 				</template>
 			</Column>
 		</DataTable>
