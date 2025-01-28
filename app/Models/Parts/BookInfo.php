@@ -12,79 +12,59 @@ class BookInfo
 	 * 
 	 * @Accessor(getter="get_author") 
 	 */
-	private ?string $author = null;
+	private string $authors;
 	
 	/**
 	 * ISBN (öffentlich)
 	 * 
 	 * @Accessor(getter="get_isbn")
 	 */
-	private ?string $isbn = null;
+	private string $isbn;
 	
 	/**
 	 * Sprache des Buches nach ISO 6393 (öffentlich)
 	 * 
 	 * @Accessor(getter="language")
 	 */
-	private Language $language = null;
+	private Language $language;
 
-	/**
-	 * Get the value of author
-	 */
-	public function get_author()
+	public function __construct(
+		string $authors,
+		string $isbn,
+		Language $language,
+	) {
+		$this->authors = $authors;
+		$this->isbn = $isbn;
+		$this->language = $language;
+	}
+	
+	public function get_authors(): string
 	{
-		return $this->author;
+		return $this->authors;
 	}
 
-	/**
-	 * Set the value of author
-	 *
-	 * @return  self
-	 */
-	public function set_author($author)
+	public function set_authors(string $authors): void
 	{
-		$this->author = $author;
-
-		return $this;
+		$this->authors = $authors;
 	}
 
-	/**
-	 * Get the value of isbn
-	 */
-	public function get_isbn()
+	public function get_isbn(): string
 	{
 		return $this->isbn;
 	}
 
-	/**
-	 * Set the value of isbn
-	 *
-	 * @return  self
-	 */
-	public function set_isbn($isbn)
+	public function set_isbn(string $isbn): void
 	{
 		$this->isbn = $isbn;
-
-		return $this;
 	}
 
-	/**
-	 * Get the value of language
-	 */
-	public function get_language()
+	public function get_language(): Language
 	{
 		return $this->language;
 	}
 
-	/**
-	 * Set the value of language
-	 *
-	 * @return  self
-	 */
-	public function set_language($language)
+	public function set_language(Language $language): void
 	{
 		$this->language = $language;
-
-		return $this;
 	}
 }
