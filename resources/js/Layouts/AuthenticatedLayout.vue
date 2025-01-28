@@ -6,7 +6,7 @@ import NavBar from '@/Components/NavBar.vue';
 	<div class="page">
 		<NavBar/>
 		<!-- Page Content -->
-		<div class="content">
+		<div class="content flex flex-col h-screen">
 			<div class="bg-white h-16">
 				<!-- Page Heading -->
 				<header class="bg-white h-fit min-h-16 shadow dark:bg-gray-800" v-if="$slots.header">
@@ -15,7 +15,7 @@ import NavBar from '@/Components/NavBar.vue';
 					</div>
 				</header>
 			</div>
-			<main class="p-4">
+			<main class="p-4 h-full">
 				<slot/>
 			</main>
 		</div>

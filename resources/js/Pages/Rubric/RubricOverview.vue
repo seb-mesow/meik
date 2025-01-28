@@ -8,6 +8,7 @@ import { defineAsyncComponent, ref } from 'vue';
 import Breadcrumb from 'primevue/breadcrumb';
 import { route } from 'ziggy-js';
 import { useDialog } from 'primevue/usedialog';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 const RubricDialog = defineAsyncComponent(() => import('../../Components/Rubric/RubricDialog.vue'));
 
 const props = defineProps<{
@@ -16,6 +17,11 @@ const props = defineProps<{
 }>();
 
 const dialog = useDialog();
+
+let rubrics = ref(props.rubrics)
+let page = ref(0);
+let pageSize = ref(50);
+let isLoading = ref(false);
 
 const home = {
 	icon: 'pi pi-home',
@@ -33,29 +39,71 @@ const items = [
 ];
 
 const create = () => {
-    const dialogRef = dialog.open(RubricDialog, {
-        props: {
-            header: 'Rubrik anlegen',
-            style: {
-                width: '50vw',
-            },
-            breakpoints:{
-                '960px': '75vw',
-                '640px': '90vw'
-            },
-            modal: true,
-        },
+	const dialogRef = dialog.open(RubricDialog, {
+		props: {
+			header: 'Rubrik anlegen',
+			style: {
+				width: '50vw',
+			},
+			breakpoints: {
+				'960px': '75vw',
+				'640px': '90vw'
+			},
+			modal: true,
+		},
 		data: {
 			rubric: null,
-			category: props.category_name	
+			category: props.category_name
 		},
-        onClose: (options) => {
-            const data = options?.data;
-            if (data) {
-            //    TODO: Reload einfügen
-            }
-        }
-    });
+		onClose: (options) => {
+			const data = options?.data;
+			if (data) {
+				reload()
+			}
+		}
+	});
+
+}
+
+const reload = () => {
+	page.value = 0
+	load_rubrics()
+}
+
+const load_rubrics = (): void => {
+	if (isLoading.value) return;  // Verhindert mehrere Anfragen gleichzeitig
+	isLoading.value = true;
+
+	ajax_get_paginated()
+}
+
+const ajax_get_paginated = (): Promise<void> => {
+	const request_config: AxiosRequestConfig = {
+		method: "get",
+		url: route('ajax.rubric.get_paginated'),
+		params: {
+			category: props.category_name,
+			page: page.value,
+			page_size: pageSize.value
+		}
+	};
+	return axios.request(request_config).then(
+		(response: AxiosResponse) => {
+			isLoading.value = false;
+			rubrics.value.push(...response.data.rubrics)
+		}
+	);
+}
+
+const handleScroll = (event: Event) => {
+	const container = event.target as HTMLElement;
+	const bottomReached = container.scrollHeight === container.scrollTop + container.clientHeight;
+	console.log('trigger', bottomReached, !isLoading.value)
+	if (bottomReached && !isLoading.value) {
+
+		page.value = page.value + 1;
+		load_rubrics();  // Lädt die nächste Seite, wenn der Benutzer den unteren Rand erreicht
+	}
 }
 
 </script>
@@ -75,13 +123,18 @@ const create = () => {
 				</template>
 			</Breadcrumb>
 		</template>
-		
-		<div class="flex flex-wrap">
-			<RubricTile v-for="rubric in rubrics" :category="category_name" :rubric="rubric" />
-		</div>
 
-		<div class="absolute bottom-4 right-4">
-			<Button @click="create">Neu</Button>
+		<div class="flex h-full">
+			<!-- Wrapper für den Scroll-Bereich -->
+			<div class="relative grow w-full h-full">
+				<div class="flex flex-wrap absolute left-0 right-0 top-0 overflow-auto justify-start items-start"
+					@scroll="handleScroll($event)">
+					<RubricTile @reload="reload" v-for="rubric in rubrics" :category="category_name" :rubric="rubric" />
+				</div>
+			</div>
+			<div class="absolute bottom-4 right-4">
+				<Button @click="create">Neu</Button>
+			</div>
 		</div>
 	</AuthenticatedLayout>
 </template>

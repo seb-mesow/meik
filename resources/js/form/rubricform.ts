@@ -2,7 +2,6 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
 	ICreateRubric200ResponseData,
 	ICreateRubricRequestData,
-	IDeleteRubric200ResponseData,
 	IUpdateRubricRequestData
 } from "@/types/ajax/rubric";
 import { ToastServiceMethods } from "primevue/toastservice";
@@ -38,14 +37,12 @@ export class RubricForm implements IRubricForm {
 		this.dialog_ref = args.dialog_ref
 
 		const name_args: ISingleValueForm2ConstructorArgs<string> = {
-			val: args.name?.val ?? '',
+			val: args.name.val ?? '',
 			errs: args.name?.errs
 		};
 		this.id = args.id;
 		this.name = new SingleValueForm2(name_args, 'name');
-		this.category = args.category ?? ''
-
-		console.log(args);
+		this.category = args.category ?? '';
 	}
 
 	private is_persisted(): boolean {
@@ -58,7 +55,7 @@ export class RubricForm implements IRubricForm {
 		} else {
 			return this.ajax_create();
 		}
-	}
+	} 
 
 	private ajax_create(): Promise<void> {
 		const request_config: AxiosRequestConfig<ICreateRubricRequestData> = {

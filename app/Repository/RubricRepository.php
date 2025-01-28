@@ -47,26 +47,31 @@ final class RubricRepository
 	/**
 	 * @var string $id
 	 */
-	public function get_rubrics_paginated(array $selectors, int $page = 0, int $page_size = 10,): array
+	public function get_rubrics_paginated(string $category, int $page = 0, int $page_size = 10): array
 	{
-		$rubrics = $this->client
+		$response = $this->client
+			->key($category)
+			->reduce(false)
 			->limit($page_size)
 			->skip($page * $page_size)
-			->find([
-				'$and' => [
-					[
-						'_id' => [
-							'$beginsWith' => self::MODEL_TYPE_ID
-						]
-					],
-					$selectors
-				],
-			])
-			->docs;
+			->include_docs(true)
+			->getView(self::MODEL_TYPE_ID, 'by-category-name');
 		$_this = $this;
-		return array_map(static function (stdClass $doc) use ($_this): Rubric {
-			return $_this->create_rubric_from_doc($doc);
-		}, $rubrics);
+		$rubrics = array_map(static function (stdClass $row) use ($_this): Rubric {
+			return $_this->create_rubric_from_doc($row->doc);
+		}, $response->rows);
+
+		$response = $this->client
+			->key($category)
+			->limit($page_size)
+			->skip($page * $page_size)
+			->getView(self::MODEL_TYPE_ID, 'by-category-name');
+		$total_count = $response->rows[0]?->value ?? 0;
+
+		return [
+			'rubrics' => $rubrics,
+			'total_count' => $total_count,
+		];
 	}
 
 	public function find(string $id): ?Rubric
