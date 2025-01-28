@@ -3,34 +3,126 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Models\Enum\Currency;
+use App\Models\Enum\KindOfAcquistion;
+use App\Models\Enum\KindOfProperty;
+use App\Models\Enum\Language;
+use App\Models\Enum\PreservationState;
 use App\Models\Exhibit;
 use App\Models\FreeText;
+use App\Models\Parts\AcquisitionInfo;
+use App\Models\Parts\BookInfo;
+use App\Models\Parts\DeviceInfo;
+use App\Models\Parts\Price;
 use App\Repository\ExhibitRepository;
+use App\Repository\PlaceRepository;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class ExhibitSeeder extends Seeder
 {
+	/**
+	 * @var string[]
+	 */
+	private const array MANUFACTURES = [
+		'Acer',
+		'Amiga',
+		'Apple',
+		'Asus',
+		'Commodore International',
+		'Compaq',
+		'Dell',
+		'Digital Equipment Corporation (DEC)',
+		'Elektronika',
+		'Fujitsu',
+		'HP (Hewlett-Packard)',
+		'IBM',
+		'Lenovo',
+		'MCC',
+		'Microsoft',
+		'NEC',
+		'Nixdorf',
+		'Nokia',
+		'Proton',
+		'RAE',
+		'Razer',
+		'Rubin',
+		'Samsung',
+		'Siemens',
+		'Sord',
+		'Thales',
+		'Toshiba',
+		'Unis',
+		'VEB Elektronikwerke Leipzig',
+		'VEB Gerätewerk „Falkenstein“',
+		'VEB Hallesche Gerätewerke',
+		'VEB Mikroelektronik „Karl Marx“',
+		'VEB Robotron'
+	];
+	
+	/**
+	 * @var string[]
+	 */
+	private const array SOURCES = [
+		'Ankauf Förderverein',
+		'Ankauf Förderverein',
+		'MBN — Museum hist. Bürotechnik Naunhof',
+		'MBN — Museum hist. Bürotechnik Naunhof',
+		'VEB Chemiewerk Nünchritz',
+		'Comenius-Grundschule Chemnitz',
+		'Norbert Waldheim',
+		'Uwe Müller',
+		'Karlheinz Schmidt',
+		'Martha Röbenack'
+	];
+	
+	/**
+	 * @var string[]
+	 */
+	private const array AUTHORS = [
+		'Donald Knuth',
+		'Alan Turing',
+		'Brian W. Kernighan',
+		'Dennis Ritchie',
+		'Grace Hopper',
+		'Douglas Engelbart',
+		'Richard Stallman',
+		'Steve Wozniak',
+		'Tim Berners-Lee',
+		'Vint Cerf',
+		'John von Neumann',
+		'Andrew S. Tanenbaum',
+		'Katherine Johnson',
+		'Shafi Goldwasser',
+		'Barbara Liskov',
+		'Ada Lovelace',
+		'Frances Allen'
+	];
+	
 	/**
 	 * @var Exhibit[]
 	 */
 	private array $exhibits = [];
 	
+	private readonly array $all_place_ids = [];
+	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
-		private readonly PlaceSeeder $place_seeder,
-	) {}
+		private readonly PlaceRepository $place_repository,
+	) {
+		$this->all_place_ids = array_map(static fn(Place $place): string => $place->get_id(), $this->place_repository->get_all());
+	}
 	
 	/**
 	 * Seed the application's database.
 	 */
 	public function run(): void {
-		$places = $this->place_seeder->get_places();
-		
 		$all_exhibits = $this->exhibit_repository->get_all();
 		foreach ($all_exhibits as $exhibit) {
 			$this->exhibit_repository->remove($exhibit);
 		}
 		
+		/*
 		$this->create_exhibit(new Exhibit(
 			inventory_number: 'N-12345',
 			name: 'Nixdorf BA42',
@@ -107,6 +199,7 @@ class ExhibitSeeder extends Seeder
 				),
 			],
 		));
+		*/
 
 		for($i = 0; $i < 100; $i++) {
 			$this->create_exhibit(new Exhibit(
@@ -121,7 +214,62 @@ class ExhibitSeeder extends Seeder
 		}
 	}
 	
-	private function create_exhibit(Exhibit $exhibit): void {
+	private function create_exhibit(
+		string $inventory_number,
+		string $name,
+		?string $manufacturer = null,
+		?int $year_of_manufacture  = null,
+		?PreservationState $preservation_state = null,
+		?Price $original_price = null,
+		?int $current_value = null,
+		?AcquisitionInfo $acquisition_info = null,
+		?KindOfProperty $kind_of_property = null,
+		?DeviceInfo $device_info = null,
+		?BookInfo $book_info = null,
+		?string $place_id = null,
+		?array $connected_exhibit_ids = null,
+		?array $free_texts = null,
+	): void {
+		if ($device_info) {
+			$is_device = true;
+			$book_info = null;
+		} else {
+			$is_device = false;
+			$device_info = null;
+		}
+		
+		$exhibit = new Exhibit(
+			inventory_number: $inventory_number,
+			name: $name,
+			manufacturer: $manufacturer ?? fake()->randomElement(self::MANUFACTURES),
+			year_of_manufacture: $year_of_manufacture ?? fake()->numberBetween(1930, Carbon::now()->year),
+			preservation_state: $preservation_state ?? fake()->randomElement(PreservationState::cases()),
+			original_price: $original_price ?? new Price(
+				amount: fake()->numberBetween(100,5000000),
+				currency: fake()->randomElement(Currency::cases())
+			),
+			current_value: $current_value ?? fake()->numberBetween(0,1000000),
+			acquisition_info: $acquisition_info ?? new AcquisitionInfo(
+				date: Carbon::create(fake()->dateTimeBetween(Carbon::parse('1930-01-01 00:00:00'))),
+				source: fake()->randomElement(self::SOURCES),
+				kind: fake()->randomElement(KindOfAcquistion::cases()),
+				purchasing_price: fake()->numberBetween(1,1000000),
+			),
+			kind_of_property: $kind_of_property ?? fake()->randomElement(KindOfProperty::cases()),
+			device_info: ($is_device ? ($device_info ?? new DeviceInfo(
+				manufactured_from_date: $this->determinate_random_partial_date(),
+				manufactured_to_date: $this->determinate_random_partial_date()
+			)) : null),
+			book_info: (!$is_device ? ($book_info ?? new BookInfo(
+				authors: join(fake()->randomElements(self::AUTHORS, fake()->numberBetween(1,3)), '; '),
+				isbn: fake()->isbn10(),
+				language: fake()->randomElement(Language::cases()),
+			)) : null),
+			place_id: $place_id ?? fake()->randomElement($this->all_place_ids),
+			connected_exhibit_ids: $connected_exhibit_ids ?? [],
+			free_texts: $free_texts ?? [],
+		);
+		
 		$this->exhibit_repository->insert($exhibit);
 		$this->exhibits[] = $exhibit;
 	}
@@ -131,5 +279,19 @@ class ExhibitSeeder extends Seeder
 	 */
 	public function get_exhibits(): array {
 		return $this->exhibits;	
+	}
+	
+	private function determinate_random_partial_date(): string {
+		$time = fake()->dateTimeBetween(Carbon::parse('1930-01-01 00:00:00'));
+		$variant = fake()->randomElement([0,1,2]);
+		$str = $time->format('Y');
+		if ($variant === 0) {
+			return $str;
+		}
+		$str .= '-'.$time->format('m');
+		if ($variant === 1) {
+			return $str;
+		}
+		return $str . '-' . $time->format('d');
 	}
 }
