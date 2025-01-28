@@ -3,22 +3,22 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\KindOfProperty;
+use App\Models\Enum\PreservationState;
 use App\Models\Interfaces\IntIdentifiable;
 use App\Models\Interfaces\Revisionable;
+use App\Models\Parts\AcquisitionInfo;
+use App\Models\Parts\DeviceInfo;
+use App\Models\Parts\BookInfo;
+use App\Models\Parts\Price;
+use App\Models\Parts\FreeText;
 use App\Models\Traits\IntIdentifiableTrait;
 use App\Models\Traits\RevisionableTrait;
-use DateTime;
 use OutOfBoundsException;
 use RuntimeException;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use JMS\Serializer\Annotation\SerializedName;
-
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-// use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Illuminate\Foundation\Auth\User as Authenticatable;
-// use Illuminate\Notifications\Notifiable;
-
 
 #[ExclusionPolicy("all")]
 class Exhibit implements IntIdentifiable, Revisionable
@@ -58,7 +58,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 * @Accessor(getter="get_manufacturer") 
 	 */
 	#[Expose]
-	private ?string $manufacturer = null;
+	private string $manufacturer;
 
 	/**
 	 * bei Geräten: Baujahr des konkreten Exponates (öffentlich)
@@ -71,6 +71,45 @@ class Exhibit implements IntIdentifiable, Revisionable
 	private int $year_of_manufacture;
 	
 	/**
+	 * Zustand (intern)
+	 */
+	private PreservationState $preservation_state;
+	 
+	/**
+	 * Originalpreis in historischer Währung (öffentlich)
+	 * 
+	 * @Accessor(getter="get_original_price") 
+	 */
+	private price $original_price;
+
+	/**
+	 * Zeitwert in Cent (intern)
+	 * 
+	 * @Accessor(getter="get_current_value") 
+	 */
+	private int $current_value = 0;
+	
+	/**
+	 * Zugangsinformationen (meist intern)
+	 */
+	private AcquisitionInfo $acquisition_info;
+	
+	/**
+	 * Art des Besitzes (öffentlich)
+	 */
+	private KindOfProperty $kind_of_property;
+	
+	/**
+	 * bei Geräten: Geräteinformationen (meist öffentlich)
+	 */
+	private ?DeviceInfo $device_info;
+	
+	/**
+	 * bei Büchern: Buchinformationen (meist öffentlich)
+	 */
+	private ?BookInfo $book_info;
+	
+	/**
 	 * Platz (öffentlich)
 	 * 
 	 * daraus ergibt sich der Standort (Location)
@@ -81,8 +120,14 @@ class Exhibit implements IntIdentifiable, Revisionable
 	private string $place_id;
 	
 	/**
-	 * Zustand (intern)
+	 * in Verbindung stehende Exponate (öffentlich)
+	 * 
+	 * @var int[]
+	 * 
+	 * @Accessor(getter="get_connected_exhibit_ids") 
 	 */
+	#[Expose]
+	private array $connected_exhibit_ids = [];
 	
 	/**
 	 * Freitexte (teils öffentlich, teils intern)
@@ -94,45 +139,6 @@ class Exhibit implements IntIdentifiable, Revisionable
 	#[Expose]
 	#[SerializedName('freetexts')]
 	private array $free_texts;
-
-	/**
-	 * in Verbindung stehende Exponate (öffentlich)
-	 * 
-	 * @var int[]
-	 * 
-	 * @Accessor(getter="get_connected_exhibits") 
-	 */
-	#[Expose]
-	private ?array $connected_exhibits = [];
-
-	/**
-	 * Originalpreis in historischer Währung (öffentlich)
-	 * 
-	 * @Accessor(getter="get_original_price") 
-	 */
-	private ?Price $original_price = null;
-
-	/**
-	 * Zeitwert in Cent (intern)
-	 * 
-	 * @Accessor(getter="get_current_value") 
-	 */
-	private ?int $current_value = 0;
-	
-	/**
-	 * Zugangsinformationen (meist intern)
-	 */
-	private AcquisitionInfo $acquisition_info;
-	
-	/**
-	 * bei Geräten: Geräteinformationen (meist öffentlich)
-	 */
-	private ?DeviceInfo $device_info;
-	
-	/**
-	 * bei Büchern: Buchinformationen (meist öffentlich)
-	 */
-	private ?BookInfo $book_info;
 	
 	#endregion
 	
@@ -148,7 +154,15 @@ class Exhibit implements IntIdentifiable, Revisionable
 		string $name,
 		string $manufacturer,
 		int $year_of_manufacture,
+		PreservationState $preservation_state,
+		Price $original_price,
+		int $current_value,
+		AcquisitionInfo $acquisition_info,
+		KindOfProperty $kind_of_property,
+		?DeviceInfo $device_info = null,
+		?BookInfo $book_info = null,
 		string $place_id,
+		array $connected_exhibit_ids,
 		array $free_texts = [],
 		string $rubric_id,
 		int|null $id = null,
@@ -161,6 +175,14 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->name = $name;
 		$this->manufacturer = $manufacturer;
 		$this->year_of_manufacture = $year_of_manufacture;
+		$this->preservation_state = $preservation_state;
+		$this->original_price = $original_price;
+		$this->current_value = $current_value;
+		$this->acquisition_info = $acquisition_info;
+		$this->kind_of_property = $kind_of_property;
+		$this->device_info = $device_info;
+		$this->book_info = $book_info;
+		$this->connected_exhibit_ids = $connected_exhibit_ids;
 		$this->place_id = $place_id;
 		$this->free_texts = $free_texts;
 		$this->rubric_id = $rubric_id;
@@ -192,57 +214,95 @@ class Exhibit implements IntIdentifiable, Revisionable
 		return $this->manufacturer;
 	}
 
-	public function set_manufacturer($manufacturer): self {
+	public function set_manufacturer(string $manufacturer): void {
 		$this->manufacturer = $manufacturer;
-		return $this;
 	}
-
-	public function get_place_id(){
-		return $this->place_id;
-	}
-
+	
 	public function get_year_of_manufacture(): int {
 		return $this->year_of_manufacture;
 	}
 	
-	public function get_aquiry_date(){
-		return $this->aquistion_date;
-	}
-
-	public function set_aquiry_date($aquiry_date){
-		$this->aquistion_date = $aquiry_date;
-
-		return $this;
+	public function set_year_of_manufacture(int $year_of_manufcture): void {
+		$this->year_of_manufacture = $year_of_manufcture;
 	}
 	
-	public function get_connected_exhibits(){
-		return $this->connected_exhibits;
+	public function get_preservation_state(): PreservationState {
+		return $this->preservation_state;
 	}
-
-	public function set_connected_exhibits($connected_exhibits){
-		$this->connected_exhibits = $connected_exhibits;
-
-		return $this;
+	
+	public function set_preservation_state(PreservationState $preservation_state): void {
+		$this->preservation_state = $preservation_state;
 	}
-
-	public function get_original_price(){
+	
+	
+	public function get_original_price(): Price {
 		return $this->original_price;
 	}
 
-	public function set_original_price($original_price){
+	public function set_original_price(Price $original_price): void {
 		$this->original_price = $original_price;
-
-		return $this;
 	}
-
-	public function get_current_value(){
+	
+	public function get_current_value(): int {
 		return $this->current_value;
 	}
 
-	public function set_current_value($current_value){
+	public function set_current_value(int $current_value): void {
 		$this->current_value = $current_value;
+	}
+	
+	public function get_acquistion_info(): AcquisitionInfo {
+		return $this->acquisition_info;
+	}
 
-		return $this;
+	public function set_acquistion_info(AcquisitionInfo $acquistion_info): void {
+		$this->acquistion_info = $acquistion_info;
+	}
+	
+	public function get_kind_of_property(): KindOfProperty {
+		return $this->kind_of_property;
+	}
+
+	public function set_kind_of_property(KindOfProperty $kind_of_property): void {
+		$this->kind_of_property = $kind_of_property;
+	}
+	
+	public function get_device_info(): DeviceInfo {
+		return $this->device_info;
+	}
+
+	public function set_device_info(DeviceInfo $device_info): void {
+		$this->device_info = $device_info;
+	}
+	
+	public function get_book_info(): BookInfo {
+		return $this->book_info;
+	}
+
+	public function set_book_info(BookInfo $book_info): void {
+		$this->book_info = $book_info;
+	}
+	
+	public function get_place_id(): string{
+		return $this->place_id;
+	}
+	
+	public function set_place_id(string $place_id): void{
+		$this->place_id = $place_id;
+	}
+
+	/**
+	 * @return int[]
+	 */
+	public function get_connected_exhibit_ids(): array {
+		return $this->connected_exhibit_ids;
+	}
+	
+	/**
+	 * @param int[] $connected_exhibit_ids
+	 */
+	public function set_connected_exhibit_ids(array $connected_exhibit_ids): void{
+		$this->connected_exhibit_ids = $connected_exhibit_ids;
 	}
 	
 	#endregion
@@ -257,18 +317,18 @@ class Exhibit implements IntIdentifiable, Revisionable
 	}
 	
 	/**
-	 * @return int[]
-	 */
-	public function determinate_indices_order(): array {
-		return array_map(static fn (FreeText $free_text): int => $free_text->get_id(), $this->free_texts);
-	}
-	
-	/**
 	 * @param FreeText[] $free_texts
 	 */
 	public function set_free_texts(array $free_texts): self {
 		$this->free_texts = $free_texts;
 		return $this;
+	}
+	
+	/**
+	 * @return int[]
+	 */
+	public function determinate_indices_order(): array {
+		return array_map(static fn (FreeText $free_text): int => $free_text->get_id(), $this->free_texts);
 	}
 	
 	/**

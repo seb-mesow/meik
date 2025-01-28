@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Models\Parts;
 
 use App\Models\Interfaces\IntIdentifiable;
 use App\Models\Traits\IntIdentifiableTrait;
