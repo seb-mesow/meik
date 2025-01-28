@@ -5,6 +5,7 @@ namespace App\Models\Parts;
 
 use App\Models\Enum\KindOfAcquistion;
 use Illuminate\Support\Carbon;
+use JMS\Serializer\Annotation\Expose;
 
 class AcquisitionInfo
 {
@@ -12,9 +13,8 @@ class AcquisitionInfo
 	 * Zugangsdatum (intern)
 	 * 
 	 * @Accessor(getter="get_date") 
-	 * @Type("DateTime")
 	 */
-	#[Expose]
+	#[Expose()]
 	private Carbon $date;
 	
 	/**

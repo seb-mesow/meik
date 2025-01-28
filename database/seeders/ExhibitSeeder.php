@@ -9,11 +9,12 @@ use App\Models\Enum\KindOfProperty;
 use App\Models\Enum\Language;
 use App\Models\Enum\PreservationState;
 use App\Models\Exhibit;
-use App\Models\FreeText;
+use App\Models\Parts\FreeText;
 use App\Models\Parts\AcquisitionInfo;
 use App\Models\Parts\BookInfo;
 use App\Models\Parts\DeviceInfo;
 use App\Models\Parts\Price;
+use App\Models\Place;
 use App\Repository\ExhibitRepository;
 use App\Repository\PlaceRepository;
 use Illuminate\Database\Seeder;
@@ -104,7 +105,7 @@ class ExhibitSeeder extends Seeder
 	 */
 	private array $exhibits = [];
 	
-	private readonly array $all_place_ids = [];
+	private readonly array $all_place_ids;
 	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
@@ -122,8 +123,7 @@ class ExhibitSeeder extends Seeder
 			$this->exhibit_repository->remove($exhibit);
 		}
 		
-		/*
-		$this->create_exhibit(new Exhibit(
+		$this->create_exhibit(
 			inventory_number: 'N-12345',
 			name: 'Nixdorf BA42',
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
@@ -141,10 +141,9 @@ class ExhibitSeeder extends Seeder
 					html: '<ol><li data-list="ordered"><span class="ql-ui" contenteditable="false"></span>Wackelkontakt Seite</li><li data-list="ordered"><span class="ql-ui" contenteditable="false"></span>Blende locker</li></ol>',
 					is_public: false
 				),
-				]
-			)
+			]
 		);
-		$this->create_exhibit(new Exhibit(
+		$this->create_exhibit(
 			inventory_number: 'T-12345', 
 			name: 'Tiumphator CRN1',
 			manufacturer: 'Triumphator Leipzig (Mölkau) DDR',
@@ -163,8 +162,8 @@ class ExhibitSeeder extends Seeder
 					is_public: true
 				),
 			]
-		));
-		$this->create_exhibit(new Exhibit(
+		);
+		$this->create_exhibit(
 			inventory_number: 'N-98765',
 			name: 'Nixdorf 8810 M55',
 			manufacturer: 'Nixdorf Computer AG Paderborn',
@@ -183,8 +182,8 @@ class ExhibitSeeder extends Seeder
 					is_public: true
 				),
 			],
-		));
-		$this->create_exhibit(new Exhibit(
+		);
+		$this->create_exhibit(
 			inventory_number: 'NB-42',
 			name: 'Nixdorf BA42',
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
@@ -261,7 +260,7 @@ class ExhibitSeeder extends Seeder
 				manufactured_to_date: $this->determinate_random_partial_date()
 			)) : null),
 			book_info: (!$is_device ? ($book_info ?? new BookInfo(
-				authors: join(fake()->randomElements(self::AUTHORS, fake()->numberBetween(1,3)), '; '),
+				authors: join('; ', fake()->randomElements(self::AUTHORS, fake()->numberBetween(1,3))),
 				isbn: fake()->isbn10(),
 				language: fake()->randomElement(Language::cases()),
 			)) : null),

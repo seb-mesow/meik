@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
-use App\Models\FreeText;
+use App\Models\Parts\FreeText;
 use App\Models\Rubric;
 use App\Repository\ExhibitRepository;
 use App\Repository\LocationRepository;
