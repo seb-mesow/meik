@@ -24,11 +24,12 @@ class RubricAJAXController extends Controller
 
 	public function get_paginated(Request $request): JsonResponse
 	{
-		$page_number = (int) $request->query('page_number');
-		$count_per_page = (int) $request->query('count_per_page');
+		$page = (int) $request->query('page');
+		$page_size = (int) $request->query('page_size');
+		$category = $request->query('category');
 
 		['rubrics' => $rubrics, 'total_count' => $total_count] =
-			$this->rubric_repository->get_rubrics_paginated([], $page_number, $count_per_page);
+			$this->rubric_repository->get_rubrics_paginated($category, $page, $page_size);
 		/** @var Rubric[] $rubrics */
 		/** @var int $total_count */
 		$rubrics_json = array_map(static fn(Rubric $rubric): array => [
@@ -62,7 +63,8 @@ class RubricAJAXController extends Controller
 		return response()->json($this->serializer->serialize($rubric, 'json'));
 	}
 
-	// public function delete(string $rubric_id): void {
-	// 	$this->rubric_repository->remove_by_id($rubric_id);
-	// }
+	public function delete(string $rubric_id): void {
+		$rubric = $this->rubric_repository->get($rubric_id);
+		$this->rubric_repository->remove($rubric);
+	}
 }
