@@ -1,13 +1,21 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\Enum\Currency;
+use App\Models\Enum\KindOfAcquistion;
+use App\Models\Enum\KindOfProperty;
+use App\Models\Enum\Language;
+use App\Models\Enum\PreservationState;
 use App\Models\Exhibit;
-use App\Models\FreeText;
+use App\Models\Parts\AcquisitionInfo;
+use App\Models\Parts\BookInfo;
+use App\Models\Parts\DeviceInfo;
+use App\Models\Parts\FreeText;
+use App\Models\Parts\Price;
 use App\Repository\Traits\IntIdRepositoryTrait;
-use Dotenv\Util\Regex;
+use Illuminate\Support\Carbon;
 use PHPOnCouch\CouchClient;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
@@ -23,8 +31,39 @@ use stdClass;
  *     name: string,
  *     manufacturer: string,
  *     year_of_manufacture: int,
+ *     preservation_state: string,
+ *     original_price: PriceDoc,
+ *     current_value: int,
+ *     acquisition_info: AcquisitionInfoDoc,
+ *     kind_of_property: string,
+ *     device_info?: DeviceInfoDoc,
+ *     book_info?: BookInfoDoc,
  *     place_id: int,
+ *     connected_exhibit_ids: int[],
  *     free_texts: FreeTextDoc[]
+ * }
+ * 
+ * @phpstan-type PriceDoc object{
+ *    amount: int,
+ *    currency: string
+ * }
+ * 
+ * @phpstan-type AcquisitionInfoDoc object{
+ *    date: string,
+ *    source: string,
+ *    kind: string,
+ *    purchasing_price: int
+ * }
+ * 
+ * @phpstan-type DeviceInfoDoc object{
+ *    manufactured_from_date: string,
+ *    manufactured_to_date: string
+ * }
+ * 
+ * @phpstan-type BookInfoDoc object{
+ *    authors: string,
+ *    isbn: string,
+ *    language: string
  * }
  * 
  * Die _id wird bei neuen Docs sofort gesetzt.
@@ -46,19 +85,32 @@ final class ExhibitRepository
 {
 	use IntIdRepositoryTrait;
 
-	private const MODEL_TYPE_ID = "exhibit";
-
-	private Serializer $serializer;
-
+	private const string MODEL_TYPE_ID = "exhibit";
+	private const string ISO_8601 = 'Y-m-d\\TH:i:sp';
+	
 	public function __construct(
 		CouchClient $client
 	) {
 		$this->client = $client;
 		$this->meta_doc = $this->get_meta_doc();
-
-		$this->serializer = SerializerBuilder::create()->build();
 	}
-
+	
+	public function find(int $id): ?Exhibit
+	{
+		try {
+			return $this->get($id);
+		} catch (CouchNotFoundException $e) {
+			return null;
+		}
+	}
+	
+	public function get(int $id): Exhibit
+	{
+		$doc_id = $this->determinate_doc_id_from_model_id($id);
+		$exhibit_doc = $this->client->getDoc($doc_id);
+		return $this->create_exhibit_from_doc($exhibit_doc);
+	}
+	
 	/**
 	 * @var string $id
 	 * @return array<Exhibit>
@@ -105,23 +157,19 @@ final class ExhibitRepository
 			return $_this->create_exhibit_from_doc($doc);
 		}, $exhibits);
 	}
-
-	public function find(int $id): ?Exhibit
+	
+	public function get_by_selectors(array $selectors): array
 	{
-		try {
-			return $this->get($id);
-		} catch (CouchNotFoundException $e) {
-			return null;
-		}
-	}
+		$docs = $this->client->find(
+			$selectors
+		)->docs;
 
-	public function get(int $id): Exhibit
-	{
-		$doc_id = $this->determinate_doc_id_from_model_id($id);
-		$exhibit_doc = $this->client->getDoc($doc_id);
-		return $this->create_exhibit_from_doc($exhibit_doc);
+		$_this = $this;
+		return array_map(static function (stdClass $doc) use ($_this): Exhibit {
+			return $_this->create_exhibit_from_doc($doc);
+		}, $docs);
 	}
-
+	
 	public function insert(Exhibit $exhibit): void
 	{
 		assert(!$exhibit->get_nullable_id());
@@ -148,18 +196,6 @@ final class ExhibitRepository
 		$this->client->deleteDoc($delete_doc);
 	}
 
-	public function get_by_selectors(array $selectors): array
-	{
-		$docs = $this->client->find(
-			$selectors
-		)->docs;
-
-		$_this = $this;
-		return array_map(static function (stdClass $doc) use ($_this): Exhibit {
-			return $_this->create_exhibit_from_doc($doc);
-		}, $docs);
-	}
-
 	/**
 	 * @return ExhibitDoc
 	 */
@@ -172,8 +208,50 @@ final class ExhibitRepository
 		$exhibit_doc->name = $exhibit->get_name();
 		$exhibit_doc->manufacturer = $exhibit->get_manufacturer();
 		$exhibit_doc->year_of_manufacture = $exhibit->get_year_of_manufacture();
+		$exhibit_doc->preservation_state = $exhibit->get_preservation_state()->value;
+		
+		$original_price = $exhibit->get_original_price();
+		/** @var PriceDoc */
+		$original_price_doc = new stdClass();
+		$original_price_doc->amount = $original_price->get_amount();
+		$original_price_doc->currency = $original_price->get_currency();
+		$exhibit_doc->original_price = $original_price_doc;
+		
+		$exhibit_doc->current_value = $exhibit->get_current_value();
+		
+		$acquistion_info = $exhibit->get_acquistion_info();
+		/** @var AcquisitionInfoDoc */
+		$acquistion_info_doc = new stdClass(); 
+		$acquistion_info_doc->date = $acquistion_info->get_date()->format(self::ISO_8601);
+		$acquistion_info_doc->source = $acquistion_info->get_source();
+		$acquistion_info_doc->kind = $acquistion_info->get_kind()->value;
+		$acquistion_info_doc->purchasing_price = $acquistion_info->get_purchasing_price();
+		$exhibit_doc->acquisition_info = $acquistion_info_doc;
+		
+		$exhibit_doc->kind_of_property = $exhibit->get_kind_of_property()->value;
+		
+		if ($exhibit->is_device()) {
+			$device_info = $exhibit->get_device_info();
+			/** @var DeviceInfoDoc */
+			$device_info_doc = new stdClass();
+			$device_info_doc->manufactured_from_date = $device_info->get_manufactured_from_date();
+			$device_info_doc->manufactured_to_date = $device_info->get_manufactured_to_date();
+			$exhibit_doc->device_info = $device_info_doc;
+			// $exhibit_doc->book_info = null
+		} else {
+			$book_info = $exhibit->get_book_info();
+			/** @var BookInfoDoc */
+			$book_info_doc = new stdClass();
+			$book_info_doc->authors = $book_info->get_authors();
+			$book_info_doc->isbn = $book_info->get_isbn();
+			$book_info_doc->language = $book_info->get_language()->value;
+			$exhibit_doc->book_info = $book_info_doc;
+			// $exhibit_doc->device_info = null
+		}
+		
 		$exhibit_doc->place_id = $exhibit->get_place_id();
 		$exhibit_doc->rubric_id = $exhibit->get_rubric_id();
+		$exhibit_doc->connected_exhibit_ids = $exhibit->get_connected_exhibit_ids();
 
 		$_this = $this;
 		$free_text_docs = array_map(static function (FreeText $free_text) use ($_this): stdClass {
@@ -189,6 +267,41 @@ final class ExhibitRepository
 	 */
 	private function create_exhibit_from_doc(stdClass $exhibit_doc): Exhibit
 	{
+		/** @var AcquisitionInfoDoc */
+		$acquisition_info_doc = $exhibit_doc->acquisition_info;
+		$acquisition_info = new AcquisitionInfo(
+			date: Carbon::createFromFormat(self::ISO_8601, $acquisition_info_doc->date),
+			source: $acquisition_info_doc->source,
+			kind: KindOfAcquistion::from($acquisition_info_doc->kind),
+			purchasing_price: $acquisition_info_doc->purchasing_price,
+		);
+		
+		/** @var PriceDoc */
+		$original_price_doc = $exhibit_doc->original_price;
+		$original_price = new Price(
+			amount: $original_price_doc->amount,
+			currency: Currency::from($original_price_doc->currency),
+		);
+		
+		if (property_exists($exhibit_doc, 'device_info')) {
+			/** @var DeviceInfoDoc */
+			$device_info_doc = $exhibit_doc->device_info;
+			$device_info = new DeviceInfo(
+				manufactured_from_date: $device_info_doc->manufactured_from_date,
+				manufactured_to_date: $device_info_doc->manufactured_to_date,
+			);
+			$book_info = null;
+		} else {
+			/** @var BookInfoDoc */
+			$book_info_doc = $exhibit_doc->book_info;
+			$book_info = new BookInfo(
+				authors: $book_info_doc->authors,
+				isbn: $book_info_doc->isbn,
+				language: Language::from($book_info_doc->language),
+			);
+			$device_info = null;
+		}
+		
 		$_this = $this;
 		$free_texts = array_map(static function (stdClass $free_text_doc) use ($_this): FreeText {
 			return $_this->create_free_text_from_doc($free_text_doc);
@@ -199,7 +312,15 @@ final class ExhibitRepository
 			name: $exhibit_doc->name,
 			manufacturer: $exhibit_doc->manufacturer,
 			year_of_manufacture: $exhibit_doc->year_of_manufacture,
+			preservation_state: PreservationState::from($exhibit_doc->preservation_state),
+			original_price: $original_price,
+			current_value: $exhibit_doc->current_value,
+			acquisition_info: $acquisition_info,
+			kind_of_property: KindOfProperty::from($exhibit_doc->kind_of_property),
+			device_info: $device_info,
+			book_info: $book_info,
 			place_id: $exhibit_doc->place_id,
+			connected_exhibit_ids: $exhibit_doc->connected_exhibit_ids,
 			free_texts: $free_texts,
 			rubric_id: $exhibit_doc?->rubric_id ?? '',
 			id: $this->determinate_model_id_from_doc($exhibit_doc),

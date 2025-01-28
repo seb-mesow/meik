@@ -44,11 +44,6 @@ enum Currency: string
 	case PLN = 'PLN';
 	
 	/**
-	 * Britisches Pfund
-	 */
-	case GBP = 'GBP';
-	
-	/**
 	 * Chinesischer Renminbi Yuan, seit 1949
 	 */
 	case CNY = 'CNY';
@@ -56,7 +51,7 @@ enum Currency: string
 	/**
 	 * Neuer Taiwan-Dollar
 	 */
-	case CNY = 'TWD';
+	case TWD = 'TWD';
 	
 	/**
 	 * Japanischer Yen

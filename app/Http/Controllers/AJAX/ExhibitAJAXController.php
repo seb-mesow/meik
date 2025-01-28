@@ -6,12 +6,11 @@ namespace App\Http\Controllers\AJAX;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
-use App\Models\FreeText;
+use App\Models\Parts\FreeText;
 use App\Repository\ExhibitRepository;
 use App\Service\WordService;
 use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PdfWriter;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

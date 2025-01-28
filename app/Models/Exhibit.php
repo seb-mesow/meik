@@ -80,7 +80,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 * 
 	 * @Accessor(getter="get_original_price") 
 	 */
-	private price $original_price;
+	private Price $original_price;
 
 	/**
 	 * Zeitwert in Cent (intern)
@@ -180,8 +180,11 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->current_value = $current_value;
 		$this->acquisition_info = $acquisition_info;
 		$this->kind_of_property = $kind_of_property;
-		$this->device_info = $device_info;
-		$this->book_info = $book_info;
+		if ($device_info) {
+			$this->set_device_info($device_info);
+		} else {
+			$this->set_book_info($book_info);
+		}
 		$this->connected_exhibit_ids = $connected_exhibit_ids;
 		$this->place_id = $place_id;
 		$this->free_texts = $free_texts;
@@ -267,12 +270,21 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->kind_of_property = $kind_of_property;
 	}
 	
+	public function is_device(): bool {
+		return $this->device_info !== null;
+	}
+	
+	public function is_book(): bool {
+		return $this->book_info !== null;
+	}
+	
 	public function get_device_info(): DeviceInfo {
 		return $this->device_info;
 	}
 
 	public function set_device_info(DeviceInfo $device_info): void {
 		$this->device_info = $device_info;
+		$this->book_info = null;
 	}
 	
 	public function get_book_info(): BookInfo {
@@ -281,6 +293,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 
 	public function set_book_info(BookInfo $book_info): void {
 		$this->book_info = $book_info;
+		$this->device_info = null;
 	}
 	
 	public function get_place_id(): string{

@@ -34,7 +34,18 @@ final class PlaceRepository
 		$this->client = $client;
 		$this->string_id_generator = $string_id_generator;
 	}
-
+	
+	/**
+	 * @return Place[]
+	 */
+	public function get_all(): array
+	{
+		$res = $this->client->find([
+			'_id' => ['$beginsWith' => self::MODEL_TYPE_ID . ':'],
+		]);
+		return $this->create_places_from_docs($res->docs);
+	}
+	
 	/**
 	 * @return array{
 	 *     places: Place[],
