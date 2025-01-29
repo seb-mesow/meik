@@ -48,7 +48,7 @@ final class ImageRepository
 {
 	use StringIdRepositoryTrait;
 	
-	private const string MODEL_TYPE_ID = "image";
+	public const string MODEL_TYPE_ID = "image";
 	private const string IMAGE_ATTACHMENT_NAME = 'image';
 	private const string THUMBNAIL_ATTACHMENT_NAME = 'thumbnail';
 	public const string DEFAULT_IMAGE_CONTENT_TYPE = 'application/octet-stream';
