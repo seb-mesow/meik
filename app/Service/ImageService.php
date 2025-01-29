@@ -11,7 +11,7 @@ use App\Util\ImageUtil;
 final class ImageService {
 	public function __construct(
 		private readonly ImageRepository $image_repository,
-		private readonly ImageUtil $image_resizer,
+		private readonly ImageUtil $image_util,
 	) {}
 	
 	/**
@@ -57,10 +57,10 @@ final class ImageService {
 	}
 	
 	public function set_file_and_thumbnail(string $image_id, string $image_data, string $content_type) {
-		$image_infos = $this->image_resizer->create_image_infos($image_data, $content_type);
+		$image_infos = $this->image_util->create_image_infos($image_data, $content_type);
 		$this->image_repository->set_image($image_id, $image_infos);
 		
-		$thumbnail_infos = $this->image_resizer->create_thumbnail($image_infos);
+		$thumbnail_infos = $this->image_util->create_thumbnail($image_infos);
 		$this->image_repository->set_thumbnail($image_id, $thumbnail_infos);
 	}
 }

@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Models\Parts;
 
+use App;
 use App\Exceptions\InvalidPartialDateString;
+use App\Util\PartialDateValidator;
 
 class DeviceInfo
 {
@@ -57,15 +59,6 @@ class DeviceInfo
 	 * @throws InvalidPartialDateString
 	 */
 	private function validate_partial_date_string(string $partial_date_string): void {
-		if (preg_match('/^\d\d\d\d-\d\d-\d\d$/', $partial_date_string) === 1) {
-			return;
-		}
-		if (preg_match('/^\d\d\d\d-\d\d$/', $partial_date_string) === 1) {
-			return;
-		}
-		if (preg_match('/^\d\d\d\d$/', $partial_date_string) === 1) {
-			return;
-		}
-		throw new InvalidPartialDateString($partial_date_string);
+		App::make(PartialDateValidator::class)->validate_string($partial_date_string);
 	}
 }

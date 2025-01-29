@@ -17,8 +17,6 @@ use App\Models\Parts\Price;
 use App\Repository\Traits\IntIdRepositoryTrait;
 use Illuminate\Support\Carbon;
 use PHPOnCouch\CouchClient;
-use JMS\Serializer\Serializer;
-use JMS\Serializer\SerializerBuilder;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 use stdClass;
 
@@ -29,8 +27,9 @@ use stdClass;
  *     _rev?: string,
  *     inventory_number: string,
  *     name: string,
+ *     short_description: string,
  *     manufacturer: string,
- *     year_of_manufacture: int,
+ *     manufacture_date: string,
  *     preservation_state: string,
  *     original_price: PriceDoc,
  *     current_value: int,
@@ -85,8 +84,9 @@ final class ExhibitRepository
 {
 	use IntIdRepositoryTrait;
 
-	private const string MODEL_TYPE_ID = "exhibit";
-	private const string ISO_8601 = 'Y-m-d\\TH:i:sp';
+	public const string MODEL_TYPE_ID = "exhibit";
+	private const string ISO_8601_DATE_FORMAT = 'Y-m-d';
+	private const string ISO_8601_DATETIME_FORMAT = 'Y-m-d\\TH:i:sp';
 	
 	public function __construct(
 		CouchClient $client
@@ -160,6 +160,10 @@ final class ExhibitRepository
 		}, $exhibits);
 	}
 	
+	/**
+	 * @param array $selectors
+	 * @return Exhibit[]
+	 */
 	public function get_by_selectors(array $selectors): array
 	{
 		$docs = $this->client->find(
@@ -208,8 +212,9 @@ final class ExhibitRepository
 
 		$exhibit_doc->inventory_number = $exhibit->get_inventory_number();
 		$exhibit_doc->name = $exhibit->get_name();
+		$exhibit_doc->short_description = $exhibit->get_short_description();
 		$exhibit_doc->manufacturer = $exhibit->get_manufacturer();
-		$exhibit_doc->year_of_manufacture = $exhibit->get_year_of_manufacture();
+		$exhibit_doc->manufacture_date = $exhibit->get_manufacture_date();
 		$exhibit_doc->preservation_state = $exhibit->get_preservation_state()->value;
 		
 		$original_price = $exhibit->get_original_price();
@@ -224,7 +229,7 @@ final class ExhibitRepository
 		$acquistion_info = $exhibit->get_acquistion_info();
 		/** @var AcquisitionInfoDoc */
 		$acquistion_info_doc = new stdClass(); 
-		$acquistion_info_doc->date = $acquistion_info->get_date()->format(self::ISO_8601);
+		$acquistion_info_doc->date = $acquistion_info->get_date()->format(self::ISO_8601_DATE_FORMAT);
 		$acquistion_info_doc->source = $acquistion_info->get_source();
 		$acquistion_info_doc->kind = $acquistion_info->get_kind()->value;
 		$acquistion_info_doc->purchasing_price = $acquistion_info->get_purchasing_price();
@@ -272,7 +277,7 @@ final class ExhibitRepository
 		/** @var AcquisitionInfoDoc */
 		$acquisition_info_doc = $exhibit_doc->acquisition_info;
 		$acquisition_info = new AcquisitionInfo(
-			date: Carbon::createFromFormat(self::ISO_8601, $acquisition_info_doc->date),
+			date: Carbon::createFromFormat(self::ISO_8601_DATE_FORMAT, $acquisition_info_doc->date),
 			source: $acquisition_info_doc->source,
 			kind: KindOfAcquistion::from($acquisition_info_doc->kind),
 			purchasing_price: $acquisition_info_doc->purchasing_price,
@@ -312,8 +317,9 @@ final class ExhibitRepository
 		return new Exhibit(
 			inventory_number: $exhibit_doc->inventory_number,
 			name: $exhibit_doc->name,
+			short_description: $exhibit_doc->short_description,
 			manufacturer: $exhibit_doc->manufacturer,
-			year_of_manufacture: $exhibit_doc->year_of_manufacture,
+			manufacture_date: $exhibit_doc->manufacture_date,
 			preservation_state: PreservationState::from($exhibit_doc->preservation_state),
 			original_price: $original_price,
 			current_value: $exhibit_doc->current_value,
