@@ -107,6 +107,18 @@ class ExhibitSeeder extends Seeder
 				),
 			],
 		));
+
+		for($i = 0; $i < 100; $i++) {
+			$this->create_exhibit(new Exhibit(
+				inventory_number: (string)$i,
+				name: 'Exhibit '.$i,
+				manufacturer: 'Standard',
+				year_of_manufacture: 2000,
+				place_id: $places[3]->get_id(),
+				rubric_id: 'sonstiges',
+				free_texts: [],
+			));
+		}
 	}
 	
 	private function create_exhibit(Exhibit $exhibit): void {

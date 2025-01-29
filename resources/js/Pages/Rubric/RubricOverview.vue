@@ -13,15 +13,17 @@ const RubricDialog = defineAsyncComponent(() => import('../../Components/Rubric/
 
 const props = defineProps<{
 	rubrics: IRubricForTile[],
-	category_name: string
+	category_name: string,
+	total_count: number
 }>();
 
 const dialog = useDialog();
 
 let rubricArray = ref(props.rubrics)
 let page = ref(0);
-let pageSize = ref(50);
+const pageSize = ref(50);
 let isLoading = ref(false);
+let total_count = ref(props.total_count)
 
 const home = {
 	icon: 'pi pi-home',
@@ -39,30 +41,31 @@ const items = [
 ];
 
 const create = () => {
-	const dialogRef = dialog.open(RubricDialog, {
-		props: {
-			header: 'Rubrik anlegen',
-			style: {
-				width: '50vw',
+	if (dialog) {
+		dialog.open(RubricDialog, {
+			props: {
+				header: 'Rubrik anlegen',
+				style: {
+					width: '50vw',
+				},
+				breakpoints: {
+					'960px': '75vw',
+					'640px': '90vw'
+				},
+				modal: true,
 			},
-			breakpoints: {
-				'960px': '75vw',
-				'640px': '90vw'
+			data: {
+				rubric: null,
+				category: props.category_name
 			},
-			modal: true,
-		},
-		data: {
-			rubric: null,
-			category: props.category_name
-		},
-		onClose: (options) => {
-			const data = options?.data;
-			if (data) {
-				reload()
+			onClose: (options) => {
+				const data = options?.data;
+				if (data) {
+					reload()
+				}
 			}
-		}
-	});
-
+		});
+	}
 }
 
 const reload = () => {
@@ -93,9 +96,11 @@ const ajax_get_paginated = (): Promise<void> => {
 			if (page.value === 0) {
 				rubricArray.value = []
 				rubricArray.value = response.data.rubrics
+				total_count = response.data.total_count
 				console.log('replace', rubricArray.value)
 			} else {
 				rubricArray.value.push(...response.data.rubrics)
+				total_count = response.data.total_count
 				console.log('append')
 			}
 		}
@@ -130,10 +135,9 @@ const handleScroll = (event: Event) => {
 				</template>
 			</Breadcrumb>
 		</template>
-
 		<div class="flex h-full">
 			<!-- Wrapper für den Scroll-Bereich -->
-			<div class="overflow-y-auto flex flex-wrap flex-grow">
+			<div class="overflow-y-auto flex flex-wrap flex-grow content-start" @scroll="handleScroll($event)">
 				<RubricTile @reload="reload" v-for="rubric in rubricArray" :key="rubric.id" :category="category_name"
 					:rubric="rubric" />
 			</div>
