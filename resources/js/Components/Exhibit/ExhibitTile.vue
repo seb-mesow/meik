@@ -22,10 +22,10 @@ if (exhibit.title_image) {
 				>
 			</div>
 			<div class="flex flex-col pl-4">
-				<p style="font-size: larger;">{{exhibit.name + " (" + exhibit.inventory_number + ")" }}</p>
-				<p>{{ "Baujahr: " + exhibit.year_of_manufacture }}</p>
-				<p>{{ "Hersteller: " + exhibit.manufacturer }}</p>
-				<p>{{ "Standort: " + exhibit.location_name + " - " + exhibit.place_name}}</p>
+				<p class="truncate w-[90%]" style="font-size: larger;">{{exhibit.name + " (" + exhibit.inventory_number + ")" }}</p>
+				<p class="truncate w-[90%]"> {{ "Baujahr: " + exhibit.year_of_manufacture }}</p>
+				<p class="truncate w-[90%]"> {{ "Hersteller: " + exhibit.manufacturer }}</p>
+				<p class="truncate w-[90%]"> {{ "Standort: " + exhibit.location_name + " - " + exhibit.place_name}}</p>
 			</div>
 		</div>
 	</a>
