@@ -18,7 +18,7 @@ const props = defineProps<{
 
 const dialog = useDialog();
 
-let rubrics = ref(props.rubrics)
+let rubricArray = ref(props.rubrics)
 let page = ref(0);
 let pageSize = ref(50);
 let isLoading = ref(false);
@@ -90,7 +90,14 @@ const ajax_get_paginated = (): Promise<void> => {
 	return axios.request(request_config).then(
 		(response: AxiosResponse) => {
 			isLoading.value = false;
-			rubrics.value.push(...response.data.rubrics)
+			if (page.value === 0) {
+				rubricArray.value = []
+				rubricArray.value = response.data.rubrics
+				console.log('replace', rubricArray.value)
+			} else {
+				rubricArray.value.push(...response.data.rubrics)
+				console.log('append')
+			}
 		}
 	);
 }
@@ -111,7 +118,7 @@ const handleScroll = (event: Event) => {
 <template>
 
 	<Head title="Kategorien" />
-	<AuthenticatedLayout>
+	<AuthenticatedLayout :disable_overflow="true">
 
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
@@ -126,11 +133,9 @@ const handleScroll = (event: Event) => {
 
 		<div class="flex h-full">
 			<!-- Wrapper für den Scroll-Bereich -->
-			<div class="relative grow w-full h-full">
-				<div class="flex flex-wrap absolute left-0 right-0 top-0 overflow-auto justify-start items-start"
-					@scroll="handleScroll($event)">
-					<RubricTile @reload="reload" v-for="rubric in rubrics" :category="category_name" :rubric="rubric" />
-				</div>
+			<div class="overflow-y-auto flex flex-wrap flex-grow">
+				<RubricTile @reload="reload" v-for="rubric in rubricArray" :key="rubric.id" :category="category_name"
+					:rubric="rubric" />
 			</div>
 			<div class="absolute bottom-4 right-4">
 				<Button @click="create">Neu</Button>
