@@ -55,6 +55,14 @@ class RubricSeeder extends Seeder
 			category: 'Buch'
 		));
 
+		// Einkommentieren wenn benötigt
+		for($i = 1; $i < 100; $i++) {
+			$this->create_rubric(new Rubric(
+				name: 'Rubrik'.$i,
+				category: 'Sonstiges'
+			));
+		}
+
 		$this->create_rubric(new Rubric(
 			name: 'Sonstiges',
 			category: 'Sonstiges',

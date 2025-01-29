@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-	return redirect()->route('exhibit.overview'); // redirekt mit 302
+	return redirect()->route('category.overview'); // redirekt mit 302
 })->name('root');
 
 Route::get('/dashboard', function () {

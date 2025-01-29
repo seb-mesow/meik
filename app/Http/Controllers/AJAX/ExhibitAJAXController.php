@@ -120,4 +120,33 @@ class ExhibitAJAXController extends Controller
 
 		return response($result->getString(), 200)->header('Content-Type', 'image/png');
 	}
+
+	public function get_paginated(Request $request): JsonResponse
+	{
+		$page = (int) $request->query('page');
+		$page_size = (int) $request->query('page_size');
+		$rubric_id = $request->query('rubric');
+
+		if ($rubric_id) {
+			$selectors = [
+				'rubric_id' =>  [
+					'$eq' => $rubric_id
+				]
+			];
+		} else {
+			$selectors = null;
+		}
+
+		$exhibits =
+			$this->exhibit_repository->get_exhibits_paginated($selectors, $page, $page_size);
+		/** @var Exhibit[] $exhibits */
+		/** @var int $total_count */
+		$exhibits_json = array_map(static fn(Exhibit $exhibit): array => [
+			'id' => $exhibit->get_id(),
+			'name' => $exhibit->get_name(),
+		], $exhibits);
+		return response()->json([
+			'exhibits' => $exhibits_json
+		]);
+	}
 }

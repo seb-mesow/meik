@@ -29,7 +29,7 @@ const edit = () => {
     console.log(rubric)
     const dialogRef = dialog.open(RubricDialog, {
         props: {
-            header: 'TEST',
+            header: 'Rubrik bearbeiten',
             style: {
                 width: '50vw',
             },
@@ -110,8 +110,6 @@ const reload = () => {
 </script>
 
 <template>
-    <Toast />
-    <ConfirmPopup />
     <div class="h-fit">
         <Button @click="edit">Edit</Button>
         <Button @click="delete_rubric($event, rubric)">Delete</Button>
@@ -121,7 +119,6 @@ const reload = () => {
             </div>
         </a>
     </div>
-    <DynamicDialog />
 </template>
 
 <style lang="css" scoped>

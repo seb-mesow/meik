@@ -103,4 +103,7 @@ Route::prefix('ajax')->group(static function () {
 
 	Route::delete('/rubric/{rubric_id}', [RubricAJAXController::class, 'delete'])
 		->name('ajax.rubric.delete');
+
+	Route::get('/exhibit', [ExhibitAJAXController::class, 'get_paginated'])
+		->name('ajax.exhibit.get_paginated');
 });

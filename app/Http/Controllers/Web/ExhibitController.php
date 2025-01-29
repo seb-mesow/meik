@@ -30,7 +30,7 @@ class ExhibitController extends Controller
 	{
 		$rubric_id = $request->input('rubric');
 		$page = $request->input('page', 0);
-		$pageSize = $request->input('pageSize', 10);
+		$pageSize = $request->input('pageSize', 50);
 
 		if ($rubric_id) {
 
