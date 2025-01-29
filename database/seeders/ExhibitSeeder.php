@@ -23,6 +23,17 @@ use Illuminate\Support\Carbon;
 class ExhibitSeeder extends Seeder
 {
 	/**
+	 * @var string
+	 */
+	private const array NAME_REGEXS = [
+		'/[A-Z]{1,3} \\d{1,3}/',
+		'/\\d{3,5} [A-Z]{1,2}/',
+		'/\\d{2,3}[A-Z]/',
+		'/[A-Z] \\d{2} (Lite|Small|Big)/',
+		'/(Pixa|Quedo|Common|Toll|Galaxy|Phone|Nexus) \\d{1,2}/',
+	];
+	
+	/**
 	 * @var string[]
 	 */
 	private const array MANUFACTURES = [
@@ -106,6 +117,16 @@ class ExhibitSeeder extends Seeder
 	private array $exhibits = [];
 	
 	private readonly array $all_place_ids;
+	
+	/**
+	 * @var string[]
+	 */
+	private array $used_inventory_numbers = [];
+	
+	/**
+	 * @var string[]
+	 */
+	private array $used_names = [];
 	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
@@ -197,25 +218,16 @@ class ExhibitSeeder extends Seeder
 					is_public: true
 				),
 			],
-		));
-		*/
-
-		for($i = 0; $i < 100; $i++) {
-			$this->create_exhibit(new Exhibit(
-				inventory_number: (string)$i,
-				name: 'Exhibit '.$i,
-				manufacturer: 'Standard',
-				year_of_manufacture: 2000,
-				place_id: $places[3]->get_id(),
-				rubric_id: 'sonstiges',
-				free_texts: [],
-			));
+		);
+		
+		for ($i = 0; $i < 100; $i++) {
+			$this->create_exhibit();
 		}
 	}
 	
 	private function create_exhibit(
-		string $inventory_number,
-		string $name,
+		?string $inventory_number = null,
+		?string $name = null,
 		?string $manufacturer = null,
 		?int $year_of_manufacture  = null,
 		?PreservationState $preservation_state = null,
@@ -238,8 +250,8 @@ class ExhibitSeeder extends Seeder
 		}
 		
 		$exhibit = new Exhibit(
-			inventory_number: $inventory_number,
-			name: $name,
+			inventory_number: $inventory_number ?? $this->determinate_random_inventory_number(),
+			name: $name ?? $this->determinate_random_name(),
 			manufacturer: $manufacturer ?? fake()->randomElement(self::MANUFACTURES),
 			year_of_manufacture: $year_of_manufacture ?? fake()->numberBetween(1930, Carbon::now()->year),
 			preservation_state: $preservation_state ?? fake()->randomElement(PreservationState::cases()),
@@ -278,6 +290,23 @@ class ExhibitSeeder extends Seeder
 	 */
 	public function get_exhibits(): array {
 		return $this->exhibits;	
+	}
+	
+	private function determinate_random_name(): string {
+		do {
+			$variant = fake()->randomElement(self::NAME_REGEXS);
+			$name = fake()->regexify($variant);
+		} while (in_array($name, $this->used_names));
+		$this->used_names[] = $name;
+		return $name;
+	}
+	
+	private function determinate_random_inventory_number(): string {
+		do {
+			$inventory_number = fake()->regexify('/[A-Z][A-Z]-\d{8}/');
+		} while (in_array($inventory_number, $this->used_inventory_numbers));
+		$this->used_inventory_numbers[] = $inventory_number;
+		return $inventory_number;
 	}
 	
 	private function determinate_random_partial_date(): string {

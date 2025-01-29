@@ -117,7 +117,9 @@ final class ExhibitRepository
 	 */
 	public function get_all(): array
 	{
-		$res = $this->client->find([
+		$res = $this->client
+			->limit(PHP_INT_MAX)
+			->find([
 			'_id' => ['$beginsWith' => self::MODEL_TYPE_ID . ':'],
 		]);
 		$_this = $this;
