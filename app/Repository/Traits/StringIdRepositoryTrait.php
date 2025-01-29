@@ -16,12 +16,15 @@ use stdClass;
  *     _id: string,
  *     _rev?: string,
  * }
+ * 
+ * @template T
  */
 trait StringIdRepositoryTrait
 {
 	private readonly CouchClient $client;
 	private readonly stdClass $meta_doc;
 	private readonly StringIdGenerator $string_id_generator;
+	private array $cache = [];
 	
 	/**
 	 * setzt als Nebeneffekt bei neuen Models die ID
@@ -81,5 +84,20 @@ trait StringIdRepositoryTrait
 	 */
 	private function determinate_model_id_from_doc(stdClass $main_model_doc): string {
 		return substr($main_model_doc->_id, strlen(self::MODEL_TYPE_ID)+1);
+	}
+	
+	/**
+	 * @param string $function `__FUNCTION__`
+	 * @param string|int $cache_key
+	 * @param callable $getter
+	 * @param mixed[] $args
+	 * @return T
+	 */
+	private function cached(string $function, string|int $cache_key, callable $getter, mixed ...$args): mixed {
+		if (array_key_exists($function, $this->cache)
+		&& array_key_exists($cache_key, $entries = $this->cache[$function])) {
+			return $entries[$cache_key];
+		}
+		return $this->cache[$function][$cache_key] = $getter(...$args);
 	}
 }

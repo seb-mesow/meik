@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Repository\CouchDBUserProvider;
+use App\Repository\LocationRepository;
+use App\Repository\PlaceRepository;
 use Database\Seeders\ExhibitSeeder;
 use Database\Seeders\ImageSeeder;
 use Database\Seeders\LocationSeeder;
@@ -32,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
 		$this->app->singleton(Serializer::class, static function(Application $app) {
 			return $app->make(SerializerBuilder::class)->build();
 		});
+		
+		$this->app->singleton(LocationRepository::class);
+		$this->app->singleton(PlaceRepository::class);
+		
 		$this->app->singleton(UserSeeder::class);
 		$this->app->singleton(LocationSeeder::class);
 		$this->app->singleton(PlaceSeeder::class);

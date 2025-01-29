@@ -19,6 +19,7 @@ if (exhibit.title_image) {
 			<div class="w-48 h-28 flex">
 				<img v-if="exhibit.title_image"
 					:src="route('ajax.image.get_thumbnail', { image_id: exhibit.title_image.id })"
+					loading="lazy"
 				>
 			</div>
 			<div class="flex flex-col pl-4">
