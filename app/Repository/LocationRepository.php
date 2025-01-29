@@ -77,9 +77,13 @@ final class LocationRepository
 	}
 	
 	public function get(string $id): Location {
-		$doc_id = $this->determinate_doc_id_from_model_id($id);
-		$location_doc = $this->client->getDoc($doc_id);
-		return $this->create_location_from_doc($location_doc);
+		// Das Caching bei Places und Locations erspart ca. 750 ms .
+		$_this = $this;
+		return $this->cached(__FUNCTION__, $id, static function(string $_id) use ($_this): Location {
+			$doc_id = $_this->determinate_doc_id_from_model_id($_id);
+			$location_doc = $_this->client->getDoc($doc_id);
+			return $_this->create_location_from_doc($location_doc);
+		}, $id);
 	}
 	
 	public function insert(Location $location): void {
