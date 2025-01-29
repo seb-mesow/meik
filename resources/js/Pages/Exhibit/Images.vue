@@ -79,7 +79,7 @@ const form: ShallowReactive<IImagesForm> = shallowReactive(new ImagesForm({
 		</template>
 		<div class="carousel">
 			<Carousel
-				:value="form.children"
+				:value="form.children.value"
 				>
 				<template #item="{ data }">
 					<Image :form="data"/>
