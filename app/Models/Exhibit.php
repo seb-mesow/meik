@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App;
 use App\Models\Enum\KindOfProperty;
 use App\Models\Enum\PreservationState;
 use App\Models\Interfaces\IntIdentifiable;
@@ -14,6 +15,8 @@ use App\Models\Parts\Price;
 use App\Models\Parts\FreeText;
 use App\Models\Traits\IntIdentifiableTrait;
 use App\Models\Traits\RevisionableTrait;
+use App\Util\PartialDateValidator;
+use App\Exceptions\InvalidPartialDateString;
 use OutOfBoundsException;
 use RuntimeException;
 use JMS\Serializer\Annotation\ExclusionPolicy;
@@ -45,6 +48,12 @@ class Exhibit implements IntIdentifiable, Revisionable
 	private string $name;
 	
 	/**
+	 * Kurzbeschreibung (öffentlich)
+	 */
+	#[Expose]
+	private string $short_description;
+	
+	/**
 	 * Rubrik (öffentlich)
 	 * 
 	 * Daraus ergibt sich die Kategorie
@@ -68,7 +77,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 * @Accessor(getter="get_year_of_construction")
 	 */
 	#[Expose]
-	private int $year_of_manufacture;
+	private string $manufacture_date;
 	
 	/**
 	 * Zustand (intern)
@@ -152,8 +161,9 @@ class Exhibit implements IntIdentifiable, Revisionable
 	public function __construct(
 		string $inventory_number,
 		string $name,
+		string $short_description,
 		string $manufacturer,
-		int $year_of_manufacture,
+		string $manufacture_date,
 		PreservationState $preservation_state,
 		Price $original_price,
 		int $current_value,
@@ -173,8 +183,9 @@ class Exhibit implements IntIdentifiable, Revisionable
 		
 		$this->inventory_number = $inventory_number;
 		$this->name = $name;
+		$this->short_description = $short_description;
 		$this->manufacturer = $manufacturer;
-		$this->year_of_manufacture = $year_of_manufacture;
+		$this->set_manufacture_date($manufacture_date);
 		$this->preservation_state = $preservation_state;
 		$this->original_price = $original_price;
 		$this->current_value = $current_value;
@@ -199,21 +210,27 @@ class Exhibit implements IntIdentifiable, Revisionable
 		return $this->inventory_number;
 	}
 	
-	public function set_inventory_number(string $inventory_number): self {
+	public function set_inventory_number(string $inventory_number): void {
 		$this->inventory_number = $inventory_number;
-		return $this;
 	}
 
 	public function get_name(): string {
 		return $this->name;
 	}
 
-	public function set_name(string $name): self {
+	public function set_name(string $name): void {
 		$this->name = $name;
-		return $this;
+	}
+	
+	public function get_short_description(): string {
+		return $this->short_description;
 	}
 
-	public function get_manufacturer() {
+	public function set_short_description(string $short_description): void {
+		$this->short_description = $short_description;
+	}
+
+	public function get_manufacturer(): string {
 		return $this->manufacturer;
 	}
 
@@ -221,12 +238,16 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->manufacturer = $manufacturer;
 	}
 	
-	public function get_year_of_manufacture(): int {
-		return $this->year_of_manufacture;
+	public function get_manufacture_date(): string {
+		return $this->manufacture_date;
 	}
 	
-	public function set_year_of_manufacture(int $year_of_manufcture): void {
-		$this->year_of_manufacture = $year_of_manufcture;
+	/**
+	 * @throws InvalidPartialDateString
+	 */
+	public function set_manufacture_date(string $manufacture_date): void {
+		App::make(PartialDateValidator::class)->validate_string($manufacture_date);
+		$this->manufacture_date = $manufacture_date;
 	}
 	
 	public function get_preservation_state(): PreservationState {

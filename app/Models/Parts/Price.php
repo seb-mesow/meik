@@ -31,6 +31,11 @@ class Price
 	{
 		return $this->amount;
 	}
+	
+	public function get_amount_in_main_unit(): float
+	{
+		return $this->amount / (float) 100;
+	}
 
 	public function set_amount($amount): void
 	{

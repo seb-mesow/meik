@@ -66,7 +66,7 @@ class ExhibitController extends Controller
 			'id' => $exhibit->get_id(),
 			'name' => $exhibit->get_name(),
 			'inventory_number' => $exhibit->get_inventory_number(),
-			'year_of_manufacture' => $exhibit->get_year_of_manufacture(),
+			'manufacture_date' => $exhibit->get_manufacture_date(),
 			'manufacturer' => $exhibit->get_manufacturer(),
 			'location_name' => $location->get_name(),
 			'place_name' => $place->get_name(),
@@ -113,7 +113,7 @@ class ExhibitController extends Controller
 			inventory_number: $inventory_number,
 			name: $name,
 			manufacturer: $manufacturer,
-			year_of_manufacture: 9999, // TODO Baujahr im Frontend implementieren
+			manufacture_date: '9999', // TODO Baujahr im Frontend implementieren
 			place_id: '0', // TODO Platzangabe im Frontend implementieren
 		);
 		$this->exhibit_repository->insert($exhibit);

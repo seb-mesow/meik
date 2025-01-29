@@ -2,7 +2,7 @@ export interface IExhibitOverviewExhibitTileInitPageProps {
 	id: number,
 	name: string,
 	inventory_number: string,
-	year_of_manufacture: number,
+	manufacture_date: string,
 	manufacturer: string,
 	location_name: string,
 	place_name: string,

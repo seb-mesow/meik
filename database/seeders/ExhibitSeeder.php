@@ -17,11 +17,15 @@ use App\Models\Parts\Price;
 use App\Models\Place;
 use App\Repository\ExhibitRepository;
 use App\Repository\PlaceRepository;
+use Database\Seeders\Traits\SeederTrait;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use PHPOnCouch\CouchClient;
 
 class ExhibitSeeder extends Seeder
 {
+	use SeederTrait;
+	
 	/**
 	 * @var string
 	 */
@@ -31,6 +35,27 @@ class ExhibitSeeder extends Seeder
 		'/\\d{2,3}[A-Z]/',
 		'/[A-Z] \\d{2} (Lite|Small|Big)/',
 		'/(Pixa|Quedo|Common|Toll|Galaxy|Phone|Nexus) \\d{1,2}/',
+	];
+	
+	private const array DEVICE_TYPES = [
+		'Computer',
+		'Computer',
+		'Computer',
+		'Großrechner',
+		'Tischcomputer',
+		'Tischcomputer',
+		'Laptop',
+		'Laptop',
+		'Monitor',
+		'Mainframe',
+		'Taschenrechner',
+		'Lochkartenrechner',
+		'HDD',
+		'SSD',
+		'Diskette',
+		'CD-Laufwerk',
+		'Magentband',
+		'LISP-Machine',
 	];
 	
 	/**
@@ -129,9 +154,11 @@ class ExhibitSeeder extends Seeder
 	private array $used_names = [];
 	
 	public function __construct(
+		CouchClient $client,
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly PlaceRepository $place_repository,
 	) {
+		$this->client = $client;
 		$this->all_place_ids = array_map(static fn(Place $place): string => $place->get_id(), $this->place_repository->get_all());
 	}
 	
@@ -139,17 +166,13 @@ class ExhibitSeeder extends Seeder
 	 * Seed the application's database.
 	 */
 	public function run(): void {
-		$all_exhibits = $this->exhibit_repository->get_all();
-		foreach ($all_exhibits as $exhibit) {
-			$this->exhibit_repository->remove($exhibit);
-		}
+		$this->remove_all_documents_by_model_type_id(ExhibitRepository::MODEL_TYPE_ID);
 		
 		$this->create_exhibit(
 			inventory_number: 'N-12345',
 			name: 'Nixdorf BA42',
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
-			year_of_manufacture: 1961,
-			place_id: $places[0]->get_id(),
+			manufacture_date: '1961',
 			rubric_id: 'sonstiges',
 			free_texts: [
 				new FreeText(
@@ -168,8 +191,7 @@ class ExhibitSeeder extends Seeder
 			inventory_number: 'T-12345', 
 			name: 'Tiumphator CRN1',
 			manufacturer: 'Triumphator Leipzig (Mölkau) DDR',
-			year_of_manufacture: 1962,
-			place_id: $places[1]->get_id(),
+			manufacture_date: '1962',
 			rubric_id: 'sonstiges',
 			free_texts: [
 				new FreeText(
@@ -188,8 +210,7 @@ class ExhibitSeeder extends Seeder
 			inventory_number: 'N-98765',
 			name: 'Nixdorf 8810 M55',
 			manufacturer: 'Nixdorf Computer AG Paderborn',
-			year_of_manufacture: 1963,
-			place_id: $places[2]->get_id(),
+			manufacture_date: '1963',
 			rubric_id: 'sonstiges',
 			free_texts: [
 				new FreeText(
@@ -208,8 +229,7 @@ class ExhibitSeeder extends Seeder
 			inventory_number: 'NB-42',
 			name: 'Nixdorf BA42',
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
-			year_of_manufacture: 1964,
-			place_id: $places[3]->get_id(),
+			manufacture_date: '1964',
 			rubric_id: 'sonstiges',
 			free_texts: [
 				new FreeText(
@@ -228,8 +248,9 @@ class ExhibitSeeder extends Seeder
 	private function create_exhibit(
 		?string $inventory_number = null,
 		?string $name = null,
+		?string $short_description = null,
 		?string $manufacturer = null,
-		?int $year_of_manufacture  = null,
+		?string $manufacture_date  = null,
 		?PreservationState $preservation_state = null,
 		?Price $original_price = null,
 		?int $current_value = null,
@@ -241,19 +262,25 @@ class ExhibitSeeder extends Seeder
 		?array $connected_exhibit_ids = null,
 		?array $free_texts = null,
 	): void {
+		$is_device = false;
+		$is_book = false;
 		if ($device_info) {
 			$is_device = true;
 			$book_info = null;
-		} else {
-			$is_device = false;
+		} elseif ($book_info) {
+			$is_book = true;
 			$device_info = null;
+		} else {
+			$is_book = fake()->boolean(25);
+			$is_device = !$is_book;
 		}
 		
 		$exhibit = new Exhibit(
 			inventory_number: $inventory_number ?? $this->determinate_random_inventory_number(),
 			name: $name ?? $this->determinate_random_name(),
+			short_description: $short_description ?? fake()->words(7, true),
 			manufacturer: $manufacturer ?? fake()->randomElement(self::MANUFACTURES),
-			year_of_manufacture: $year_of_manufacture ?? fake()->numberBetween(1930, Carbon::now()->year),
+			manufacture_date: $manufacture_date ?? $this->determinate_random_partial_date(),
 			preservation_state: $preservation_state ?? fake()->randomElement(PreservationState::cases()),
 			original_price: $original_price ?? new Price(
 				amount: fake()->numberBetween(100,5000000),
@@ -271,7 +298,7 @@ class ExhibitSeeder extends Seeder
 				manufactured_from_date: $this->determinate_random_partial_date(),
 				manufactured_to_date: $this->determinate_random_partial_date()
 			)) : null),
-			book_info: (!$is_device ? ($book_info ?? new BookInfo(
+			book_info: ($is_book ? ($book_info ?? new BookInfo(
 				authors: join('; ', fake()->randomElements(self::AUTHORS, fake()->numberBetween(1,3))),
 				isbn: fake()->isbn10(),
 				language: fake()->randomElement(Language::cases()),
@@ -296,6 +323,10 @@ class ExhibitSeeder extends Seeder
 		do {
 			$variant = fake()->randomElement(self::NAME_REGEXS);
 			$name = fake()->regexify($variant);
+			$type_propability = fake()->randomFloat(min: 0, max: 1);
+			if ($type_propability < 0.5) {
+				$name = fake()->randomElement(self::DEVICE_TYPES) . ' ' . $name;
+			}
 		} while (in_array($name, $this->used_names));
 		$this->used_names[] = $name;
 		return $name;
