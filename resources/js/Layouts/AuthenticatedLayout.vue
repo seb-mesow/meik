@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import NavBar from '@/Components/NavBar.vue';
+const props = withDefaults(defineProps<{
+	disable_overflow: boolean
+}>(), {disable_overflow: false})
 </script>
 
 <template>
@@ -15,7 +18,7 @@ import NavBar from '@/Components/NavBar.vue';
 					</div>
 				</header>
 			</div>
-			<main class="p-4 h-full">
+			<main class="p-4 h-full" :class="{'overflow-y-hidden': props.disable_overflow}">
 				<slot/>
 			</main>
 		</div>
