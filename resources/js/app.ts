@@ -49,8 +49,8 @@ createInertiaApp({
 		app.use(DialogService);
 		
 		app.mount(el);
-	},
-	progress: {
-		color: '#4B5563',
-	},
-});
+		},
+		progress: {
+			color: '#4B5563',
+		},
+	});
