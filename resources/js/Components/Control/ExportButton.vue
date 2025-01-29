@@ -2,7 +2,7 @@
 <template>
     <div class="card flex justify-center">
         <Toast />
-        <ExportButton label="Exportiere..." @click="save" :model="items" />
+        <ExportButton label="Exportiere QR-Code ..." @click="save" :model="items" />
     </div>
 </template>
 
@@ -16,14 +16,14 @@ const items = [
     {
         label: 'Exportiere QR-Code1',
         command: () => {
-            toast.add({ severity: 'success', summary: 'Exportiere QR-Code1', detail: 'Data Updated', life: 3000 });
+            toast.add({ severity: 'success', summary: 'Exportiere QR-Code1', detail: 'Qr-Code1 Export erfolgreich', life: 3000 });
             // url:;
         }
     },
     {
         label: 'Exportier QR-Code2',
         command: () => {
-            toast.add({ severity: 'warn', summary: 'Exportier QR-Code2', detail: 'Data Deleted', life: 3000 });
+            toast.add({ severity: 'success', summary: 'Exportier QR-Code2', detail: 'Qr-Code2 Export erfolgreich', life: 3000 });
             // url:;
         }
     },
@@ -33,7 +33,7 @@ const items = [
     {
         label: 'Exportiere Barcode',
         command: () => {
-            toast.add({ severity: 'warn', summary: 'Exportiere Barcode', detail: 'export Barcode', life:3000 });
+            toast.add({ severity: 'success', summary: 'Exportiere Barcode', detail: 'export Barcode', life:3000 });
             // url:;
         }
 
@@ -44,6 +44,8 @@ const items = [
 const save = () => {
     toast.add({ severity: 'success', summary: 'Success', detail: 'Data Saved', life: 3000 });
 };
+
+
 </script>
 
 

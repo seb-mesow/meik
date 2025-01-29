@@ -160,9 +160,10 @@ async function save_metadata(event: MouseEvent) {
 			</Form>
 				
 
-			<div class="images-form flex items-start justify-between p-4">
+			<div class="images-form flex flex-col items-start p-4">
 				
-				
+				<!-- Button oben rechts -->
+				<ExportButton class="bg-blue-500 text-white rounded" />
 				<a :href="route('exhibit.images.details', { exhibit_id: exhibit_id })">
 					<img
 						v-if="form.title_image"
@@ -171,8 +172,7 @@ async function save_metadata(event: MouseEvent) {
 					>
 				</a>
 
-				<!-- Button oben rechts -->
-				<ExportButton class="bg-blue-500 text-white rounded" />
+				
 			</div>
 		</div>
 		<FreeTextFields v-if="exhibit_id !== undefined" :init_props="form.val.free_texts" :exhibit_id="exhibit_id" />
