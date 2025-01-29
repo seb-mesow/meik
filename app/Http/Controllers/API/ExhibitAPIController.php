@@ -9,6 +9,8 @@ use App\Models\Image;
 use App\Http\Controllers\Controller;
 use App\Models\Parts\FreeText;
 use App\Repository\ExhibitRepository;
+use App\Repository\LocationRepository;
+use App\Repository\PlaceRepository;
 use App\Service\ImageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -86,6 +88,8 @@ class ExhibitAPIController extends Controller
 
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
+		private readonly PlaceRepository $place_repository,
+		private readonly LocationRepository $location_repository,
 		private readonly ImageService $image_service,
 	) {
 		$this->serializer = SerializerBuilder::create()->build();
@@ -191,10 +195,12 @@ class ExhibitAPIController extends Controller
 			'connected_exhibits' => array_map(static fn(int $id): string => (string) $id, $exhibit->get_connected_exhibit_ids()),
 		];
 		
-		// TODO location
-		// TODO place
 		// TODO category
 		// TODO rubric
+		
+		// TODO location
+		$place = $this->place_repository->get($exhibit->get_place_id());
+		$api_exhibit['place'] = $place->get_name();
 		
 		$original_price = $exhibit->get_original_price();
 		$api_exhibit['original_price'] = [
