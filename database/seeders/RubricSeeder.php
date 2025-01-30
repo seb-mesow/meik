@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Rubric;
-use App\Models\FreeText;
 use App\Repository\RubricRepository;
 use Illuminate\Database\Seeder;
 
@@ -56,7 +55,7 @@ class RubricSeeder extends Seeder
 		));
 
 		// Einkommentieren wenn benötigt
-		for($i = 1; $i < 100; $i++) {
+		for ($i = 1; $i < 100; $i++) {
 			$this->create_rubric(new Rubric(
 				name: 'Rubrik'.$i,
 				category: 'Sonstiges'

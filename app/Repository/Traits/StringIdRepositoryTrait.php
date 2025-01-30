@@ -21,6 +21,8 @@ use stdClass;
  */
 trait StringIdRepositoryTrait
 {
+	public const string ID_PREFIX = self::MODEL_TYPE_ID . ':';
+	
 	private readonly CouchClient $client;
 	private readonly stdClass $meta_doc;
 	private readonly StringIdGenerator $string_id_generator;

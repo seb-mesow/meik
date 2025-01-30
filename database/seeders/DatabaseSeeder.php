@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
 			UserSeeder::class,
 			LocationSeeder::class,
 			PlaceSeeder::class,
+			RubricSeeder::class,
 			ExhibitSeeder::class,
 			ImageSeeder::class,
-			RubricSeeder::class
 		]);
 	}
 }
