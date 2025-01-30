@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { route } from 'ziggy-js';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{

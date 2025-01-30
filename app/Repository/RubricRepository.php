@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Repository;
@@ -9,10 +8,17 @@ use App\Repository\Traits\StringIdRepositoryTrait;
 use App\Util\StringIdGenerator;
 use PHPOnCouch\CouchClient;
 use JMS\Serializer\Serializer;
-use JMS\Serializer\SerializerBuilder;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 use stdClass;
 
+/**
+ * @phpstan-type RubricDoc object{
+ *    _id: string,
+ *    _rev?: string,
+ *    category: string,
+ *    name: string,
+ *}
+ */
 final class RubricRepository
 {
 	use StringIdRepositoryTrait;
@@ -36,7 +42,9 @@ final class RubricRepository
 	public function get_all(): array
 	{
 		$res = $this->client->find([
-			'_id' => ['$beginsWith' => self::MODEL_TYPE_ID],
+			'_id' => [
+				'$beginsWith' => self::ID_PREFIX
+			],
 		]);
 		$_this = $this;
 		return array_map(static function (stdClass $doc) use ($_this): Rubric {

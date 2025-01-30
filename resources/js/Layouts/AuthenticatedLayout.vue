@@ -3,9 +3,11 @@ import NavBar from '@/Components/NavBar.vue';
 import ConfirmPopup from 'primevue/confirmpopup';
 import DynamicDialog from 'primevue/dynamicdialog';
 import Toast from 'primevue/toast';
-const props = withDefaults(defineProps<{
-	disable_overflow: boolean
-}>(), { disable_overflow: false })
+
+const props = defineProps<{
+	disable_overflow?: boolean
+}>();
+const disable_overflow: boolean = props.disable_overflow ?? false;
 </script>
 
 <template>
@@ -24,7 +26,7 @@ const props = withDefaults(defineProps<{
 					</div>
 				</header>
 			</div>
-			<main class="p-4 h-full" :class="{ 'overflow-y-hidden': props.disable_overflow }">
+			<main class="p-4 h-full" :class="{ 'overflow-y-hidden': disable_overflow }">
 				<slot />
 			</main>
 		</div>

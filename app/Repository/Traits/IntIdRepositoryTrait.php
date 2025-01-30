@@ -27,6 +27,8 @@ use stdClass;
  */
 trait IntIdRepositoryTrait
 {
+	public const string ID_PREFIX = self::MODEL_TYPE_ID . ':';
+	
 	protected const string META_DOC_ID = 'meta:' . self::MODEL_TYPE_ID;
 	
 	protected readonly CouchClient $client;

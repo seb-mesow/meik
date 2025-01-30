@@ -15,8 +15,10 @@ use App\Models\Parts\BookInfo;
 use App\Models\Parts\DeviceInfo;
 use App\Models\Parts\Price;
 use App\Models\Place;
+use App\Models\Rubric;
 use App\Repository\ExhibitRepository;
 use App\Repository\PlaceRepository;
+use App\Repository\RubricRepository;
 use Database\Seeders\Traits\SeederTrait;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
@@ -143,6 +145,8 @@ class ExhibitSeeder extends Seeder
 	
 	private readonly array $all_place_ids;
 	
+	private readonly array $all_rubric_ids;
+	
 	/**
 	 * @var string[]
 	 */
@@ -157,9 +161,11 @@ class ExhibitSeeder extends Seeder
 		CouchClient $client,
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly PlaceRepository $place_repository,
+		private readonly RubricRepository $rubric_repository,
 	) {
 		$this->client = $client;
 		$this->all_place_ids = array_map(static fn(Place $place): string => $place->get_id(), $this->place_repository->get_all());
+		$this->all_rubric_ids = array_map(static fn(Rubric $rubric): string => $rubric->get_id(), $this->rubric_repository->get_all());
 	}
 	
 	/**
@@ -259,6 +265,7 @@ class ExhibitSeeder extends Seeder
 		?DeviceInfo $device_info = null,
 		?BookInfo $book_info = null,
 		?string $place_id = null,
+		?string $rubric_id = null,
 		?array $connected_exhibit_ids = null,
 		?array $free_texts = null,
 	): void {
@@ -304,6 +311,7 @@ class ExhibitSeeder extends Seeder
 				language: fake()->randomElement(Language::cases()),
 			)) : null),
 			place_id: $place_id ?? fake()->randomElement($this->all_place_ids),
+			rubric_id: $rubric_id ?? fake()->randomElement($this->all_rubric_ids),
 			connected_exhibit_ids: $connected_exhibit_ids ?? [],
 			free_texts: $free_texts ?? [],
 		);

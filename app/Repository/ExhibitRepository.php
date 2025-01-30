@@ -38,6 +38,7 @@ use stdClass;
  *     device_info?: DeviceInfoDoc,
  *     book_info?: BookInfoDoc,
  *     place_id: int,
+ *     rubric_id: string,
  *     connected_exhibit_ids: int[],
  *     free_texts: FreeTextDoc[]
  * }
@@ -112,15 +113,16 @@ final class ExhibitRepository
 	}
 	
 	/**
-	 * @var string $id
-	 * @return array<Exhibit>
+	 * @return Exhibit[]
 	 */
 	public function get_all(): array
 	{
 		$res = $this->client
 			->limit(PHP_INT_MAX)
 			->find([
-			'_id' => ['$beginsWith' => self::MODEL_TYPE_ID . ':'],
+			'_id' => [
+				'$beginsWith' => self::ID_PREFIX
+			],
 		]);
 		$_this = $this;
 		return array_map(static function (stdClass $doc) use ($_this): Exhibit {
@@ -129,15 +131,13 @@ final class ExhibitRepository
 	}
 
 	/**
-	 * @var string $id
-	 * @return \App\Models\Exhibit[]
+	 * @return Exhibit[]
 	 */
 	public function get_exhibits_paginated(array|null $additonalSelectors = null, int $page = 0, int $page_size = 10,): array
 	{
-
 		$selectors = [
 			'_id' => [
-				'$beginsWith' => self::MODEL_TYPE_ID
+				'$beginsWith' => self::ID_PREFIX
 			]
 		];
 
@@ -330,7 +330,7 @@ final class ExhibitRepository
 			place_id: $exhibit_doc->place_id,
 			connected_exhibit_ids: $exhibit_doc->connected_exhibit_ids,
 			free_texts: $free_texts,
-			rubric_id: $exhibit_doc?->rubric_id ?? '',
+			rubric_id: $exhibit_doc?->rubric_id,
 			id: $this->determinate_model_id_from_doc($exhibit_doc),
 			rev: $exhibit_doc->_rev,
 		);

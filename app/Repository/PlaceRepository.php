@@ -7,8 +7,6 @@ use App\Models\Place;
 use App\Repository\Traits\StringIdRepositoryTrait;
 use App\Util\StringIdGenerator;
 use PHPOnCouch\CouchClient;
-use Exception;
-use PHPOnCouch\Exceptions\CouchException;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 use stdClass;
 

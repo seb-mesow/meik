@@ -129,6 +129,15 @@ class Exhibit implements IntIdentifiable, Revisionable
 	private string $place_id;
 	
 	/**
+	 * Rubric (öffentlich)
+	 * 
+	 * daraus ergibt sich die Kategorie
+	 * 
+	 *  @Accessor(getter="get_rubric_id") 
+	 */
+	private string $rubric_id;
+	
+	/**
 	 * in Verbindung stehende Exponate (öffentlich)
 	 * 
 	 * @var int[]
@@ -153,11 +162,6 @@ class Exhibit implements IntIdentifiable, Revisionable
 	
 	#region constructor
 	
-	/**
-	 *  @Accessor(getter="get_rubric_id") 
-	 */
-	private string $rubric_id;
-	
 	public function __construct(
 		string $inventory_number,
 		string $name,
@@ -172,9 +176,9 @@ class Exhibit implements IntIdentifiable, Revisionable
 		?DeviceInfo $device_info = null,
 		?BookInfo $book_info = null,
 		string $place_id,
+		string $rubric_id,
 		array $connected_exhibit_ids,
 		array $free_texts = [],
-		string $rubric_id,
 		int|null $id = null,
 		?string $rev = null
 	) {
@@ -321,10 +325,18 @@ class Exhibit implements IntIdentifiable, Revisionable
 		return $this->place_id;
 	}
 	
-	public function set_place_id(string $place_id): void{
+	public function set_place_id(string $place_id): void {
 		$this->place_id = $place_id;
 	}
-
+	
+	public function get_rubric_id(): string {
+		return $this->rubric_id;
+	}
+	
+	public function set_rubric_id(string $rubric_id): void {
+		$this->rubric_id = $rubric_id;
+	}
+	
 	/**
 	 * @return int[]
 	 */
