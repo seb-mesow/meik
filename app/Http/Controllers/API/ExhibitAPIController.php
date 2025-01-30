@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\API;
 
 use App\Models\Exhibit;
-use App\Models\ImageOrder;
 use App\Models\Image;
 use App\Http\Controllers\Controller;
 use App\Models\Parts\FreeText;
@@ -234,6 +233,7 @@ class ExhibitAPIController extends Controller
 		$api_exhibit['images'] = $this->create_api_full_image_infos_from_images($public_images);
 		
 		$public_free_texts = array_filter($exhibit->get_free_texts(), static fn(FreeText $free_text): bool => $free_text->get_is_public());
+		$public_free_texts = array_values($public_free_texts);
 		$api_exhibit['free_text_fields'] = $this->create_api_free_texts_from_free_texts($public_free_texts);
 		
 		return $api_exhibit;
