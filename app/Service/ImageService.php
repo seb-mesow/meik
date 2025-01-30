@@ -19,8 +19,9 @@ final class ImageService {
 	 * @return Image[]
 	 */
 	public function get_all_public_images(Exhibit $exhibit): array {
-		$images = $this->image_repository->get_images($exhibit->get_id());
-		return array_filter($images, static fn(Image $image): bool => $image->get_is_public());
+		$all_images = $this->image_repository->get_images($exhibit->get_id());
+		$public_images = array_filter($all_images, static fn(Image $image): bool => $image->get_is_public());
+		return array_values($public_images);
 	}
 	
 	public function get_public_title_image(Exhibit $exhibit): ?Image {
