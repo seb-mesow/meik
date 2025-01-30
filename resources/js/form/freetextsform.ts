@@ -93,7 +93,7 @@ export class FreeTextsForm implements IFreeTextsForm, IFreeTextFormParent {
 		// copy unsaved forms at the front
 		while (t < temp.length) {
 			const form = temp[t];
-			if (form.id) {
+			if (form.id !== undefined) {
 				break;
 			}
 			new_children.push(form);

@@ -91,7 +91,7 @@ export class FreeTextForm implements IFreeTextForm {
 	}
 	
 	private async ajax_update() {
-		if (!this.id) {
+		if (this.id === undefined) {
 			throw new Error("undefined id");
 		}
 		console.log(`PUT exhibit.free_text.update ${this.exhibit_id} ${this.id}`);
