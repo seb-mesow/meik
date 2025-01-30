@@ -1,33 +1,25 @@
 <script setup lang="ts">
-import Button from 'primevue/button';
+import { route } from 'ziggy-js';
 import CategoryTile from '@/Components/Category/CategoryTile.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { ICategoryForTile } from '@/types/meik/models';
 import { Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
 import Breadcrumb from 'primevue/breadcrumb';
+import { ICategoryTileProps } from '@/types/page_props/category_overview';
 
 const props = defineProps<{
-	categorys: ICategoryForTile[]
+	categories: ICategoryTileProps[]
 }>();
 
 const home = {
 	icon: 'pi pi-home',
 	url: route('category.overview'),
 };
-const items = [
-	{
-		label: 'Kategorien',
-		url: route('category.overview'),
-	}
-];
+const items:{ label: string, url?: string }[] = [];
 </script>
 
 <template>
-
 	<Head title="Kategorien" />
 	<AuthenticatedLayout>
-
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
 				<template #item="{ item }">
@@ -41,7 +33,7 @@ const items = [
 		
 		<div class="flex flex-wrap">
 			<!-- <div class="border-black border-solid border-2 w-[20%] min-w-[20rem]" v-for="category in categorys"> -->
-			<CategoryTile v-for="category in categorys" :category="category" />
+			<CategoryTile v-for="category in props.categories" :category="category" />
 			<!-- </div> -->
 		</div>
 	</AuthenticatedLayout>

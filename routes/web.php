@@ -33,23 +33,28 @@ Route::middleware('auth')->group(function () {
 	Route::get('/exhibits', [ExhibitController::class, 'overview'])->name('exhibit.overview');
 	Route::get('/exhibit', [ExhibitController::class, 'new'])->name('exhibit.new');
 	Route::post('/exhibit', [ExhibitController::class, 'create'])->name('exhibit.create');
-	Route::get('/exhibit/{id}', [ExhibitController::class, 'details'])->name('exhibit.details');
-	Route::delete('/exhibit/{id}', [ExhibitController::class, 'delete'])->name('exhibit.delete');
+	Route::get('/exhibit/{exhibit_id}', [ExhibitController::class, 'details'])->name('exhibit.details');
+	Route::delete('/exhibit/{exhibit_id}', [ExhibitController::class, 'delete'])->name('exhibit.delete');
 	
 	# --- Images ---
-	Route::get('/exhibit/{exhibit_id}/images', [ImagesController::class, 'details'])->name('exhibit.images.details');
+	Route::get('/exhibit/{exhibit_id}/images', [ImagesController::class, 'details'])
+		->name('exhibit.images.details');
 
 	# --- Locations ---
-	Route::get('/locations', [LocationController::class, 'overview'])->name('location.overview');
+	Route::get('/locations', [LocationController::class, 'overview'])
+		->name('location.overview');
 
 	# --- Places ---
-	Route::get('/location/{location_id}/places', [PlaceController::class, 'overview'])->name('place.overview');
+	Route::get('/locations/{location_id}/places', [PlaceController::class, 'overview'])
+		->name('place.overview');
 
 	# --- Categories ---
-	Route::get('/categories', [CategoryController::class, 'overview'])->name('category.overview');
+	Route::get('/categories', [CategoryController::class, 'overview'])
+		->name('category.overview');
 
 	# --- Rubric ---
-	Route::get('/categories/{category}/rubrics', [RubricController::class, 'overview'])->name('rubric.overview');
+	Route::get('/categories/{category_id}', [RubricController::class, 'overview'])
+		->name('rubric.overview');
 });
 
 require __DIR__ . '/auth.php';

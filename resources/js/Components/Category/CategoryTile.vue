@@ -1,21 +1,17 @@
 <script setup lang="ts">
+import { ICategoryTileProps } from '@/types/page_props/category_overview';
 import { route } from 'ziggy-js';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
-	category: string;
+	category: ICategoryTileProps;
 }>();
-const category = props.category;
-// const manufacturer: string = '';
-// const site: string = '';
-// const place: string = '';
-
 </script>
 
 <template>
-	<a :href="route('rubric.overview', category)">
+	<a :href="route('rubric.overview', { category_id: props.category.id })">
 		<div class="category-tile">
-			<p>{{ category }}</p>
+			<p>{{ props.category.name }}</p>
 		</div>
 	</a>
 </template>

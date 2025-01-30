@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Models\Enum\Category;
 use App\Models\Rubric;
 use App\Repository\RubricRepository;
 use Illuminate\Database\Seeder;
@@ -26,45 +27,45 @@ class RubricSeeder extends Seeder
 
 		$this->create_rubric(new Rubric(
 			name: 'PC',
-			category: 'Hardware'
+			category: Category::HARDWARE
 		));
 
 		$this->create_rubric(new Rubric(
 			name: 'Taschenrechner',
-			category: 'Hardware'
+			category: Category::HARDWARE
 		));
 
 		$this->create_rubric(new Rubric(
 			name: 'Spiele',
-			category: 'Software'
+			category: Category::SOFTWARE
 		));
 
 		$this->create_rubric(new Rubric(
 			name: 'Office',
-			category: 'Software'
+			category: Category::SOFTWARE
 		));
 
 		$this->create_rubric(new Rubric(
 			name: 'Bedienungsanleitungen',
-			category: 'Buch'
+			category: Category::BOOK
 		));
 
 		$this->create_rubric(new Rubric(
-			name: 'Fachbuch',
-			category: 'Buch'
+			name: 'Fachbücher',
+			category: Category::BOOK
 		));
-
+		
 		// Einkommentieren wenn benötigt
 		for ($i = 1; $i < 100; $i++) {
 			$this->create_rubric(new Rubric(
-				name: 'Rubrik'.$i,
-				category: 'Sonstiges'
+				name: "Rubrik $i",
+				category: Category::OTHER
 			));
 		}
-
+		
 		$this->create_rubric(new Rubric(
 			name: 'Sonstiges',
-			category: 'Sonstiges',
+			category: Category::OTHER,
 			id: 'sonstiges'
 		));
 	}

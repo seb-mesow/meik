@@ -11,6 +11,7 @@ use App\Models\Parts\FreeText;
 use App\Repository\ExhibitRepository;
 use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
+use App\Repository\RubricRepository;
 use App\Service\ImageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -90,6 +91,7 @@ class ExhibitAPIController extends Controller
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly PlaceRepository $place_repository,
 		private readonly LocationRepository $location_repository,
+		private readonly RubricRepository $rubric_repository,
 		private readonly ImageService $image_service,
 	) {
 		$this->serializer = SerializerBuilder::create()->build();
@@ -195,12 +197,15 @@ class ExhibitAPIController extends Controller
 			'connected_exhibits' => array_map(static fn(int $id): string => (string) $id, $exhibit->get_connected_exhibit_ids()),
 		];
 		
-		// TODO category
-		// TODO rubric
-		
-		// TODO location
 		$place = $this->place_repository->get($exhibit->get_place_id());
 		$api_exhibit['place'] = $place->get_name();
+		$location = $this->location_repository->get($place->get_location_id());
+		$api_exhibit['location'] = $location->get_name();
+
+		$rubric = $this->rubric_repository->get($exhibit->get_rubric_id());
+		$api_exhibit['rubric'] = $rubric->get_name();
+		$category = $rubric->get_category();
+		$api_exhibit['category'] = $category->get_pretty_name();
 		
 		$original_price = $exhibit->get_original_price();
 		$api_exhibit['original_price'] = [

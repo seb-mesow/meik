@@ -179,7 +179,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 		string $rubric_id,
 		array $connected_exhibit_ids,
 		array $free_texts = [],
-		int|null $id = null,
+		?int $id = null,
 		?string $rev = null
 	) {
 		$this->id = $id;

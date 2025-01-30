@@ -4,16 +4,25 @@ import { route } from 'ziggy-js';
 import Button from 'primevue/button';
 import ExhibitTile from '@/Components/Exhibit/ExhibitTile.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { IExhibitOverviewInitPageProps } from '@/types/page_props/exhibit_overview';
+import type { IExhibitOverviewPageProps } from '@/types/page_props/exhibit_overview';
 import Breadcrumb from 'primevue/breadcrumb';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ref } from 'vue';
 
 const props = defineProps<{
-	init_props: IExhibitOverviewInitPageProps,
-	rubric: any,
+	breadcrumb: {
+		category?: {
+			id: string,
+			name: string,
+		},
+		rubric?: {
+			id: string,
+			name: string,
+		}
+	},
+	main: IExhibitOverviewPageProps,
 }>();
-console.log(props.init_props)
+console.log(props.main)
 
 let page = ref(0);
 const pageSize = ref(50);
@@ -24,28 +33,25 @@ const home = {
 	url: route('category.overview'),
 };
 
-let items = [
+let items: { label: string, url?: string }[] = [
 	{
 		label: 'Exponate',
 		url: route('exhibit.overview'),
 	}
 ];
 
-if (props.rubric) {
-	items = [
-		{
-			label: 'Kategorien',
-			url: route('category.overview')
-		},
-		{
-			label: props.rubric.category,
-			url: route('rubric.overview', { category: props.rubric.category ?? '' })
-		},
-		{
-			label: props.rubric.name,
-			url: route('exhibit.overview', { rubric: props.rubric.id }),
-		}
-	];
+if (props.breadcrumb.category) {
+	items = [];
+	items.push({
+		label: props.breadcrumb.category.name,
+		url: route('rubric.overview', { category_id: props.breadcrumb.category.id })
+	});
+}
+if (props.breadcrumb.rubric) {
+	items.push({
+		label: props.breadcrumb.rubric.name,
+		// url: route('exhibit.overview', { rubric: props.breadcrumb.rubric.id }),
+	});
 }
 
 const load_exhibits = (): void => {
@@ -56,23 +62,26 @@ const load_exhibits = (): void => {
 }
 
 const ajax_get_paginated = (): Promise<void> => {
+	const query_params: { page: number, page_size: number, rubric?: string } = {
+		page: page.value,
+		page_size: pageSize.value,
+	};
+	if (props.main.rubric) {
+		query_params.rubric = props.main.rubric.id;
+	}
 	const request_config: AxiosRequestConfig = {
 		method: "get",
 		url: route('ajax.exhibit.get_paginated'),
-		params: {
-			rubric: props.rubric.id,
-			page: page.value,
-			page_size: pageSize.value
-		}
+		params: query_params
 	};
 	return axios.request(request_config).then(
 		(response: AxiosResponse) => {
 			isLoading.value = false;
 			if (page.value === 0) {
 				exhibits.value = []
-				exhibits.value = response.data.exhibits
+				exhibits.value = response.data
 			} else {
-				exhibits.value.push(...response.data.exhibits)
+				exhibits.value.push(...response.data)
 			}
 		}
 	);
@@ -83,13 +92,12 @@ const handleScroll = (event: Event) => {
 	const bottomReached = container.scrollHeight === container.scrollTop + container.clientHeight;
 	console.log('trigger', bottomReached, !isLoading.value)
 	if (bottomReached && !isLoading.value) {
-
 		page.value = page.value + 1;
 		load_exhibits();  // Lädt die nächste Seite, wenn der Benutzer den unteren Rand erreicht
 	}
 }
 
-const exhibits = ref(props.init_props.exhibits);
+const exhibits = ref(props.main.exhibits);
 </script>
 
 <template>

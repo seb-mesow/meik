@@ -44,7 +44,7 @@ Route::prefix('ajax')->group(static function () {
 
 	# --- Exponate ---
 	Route::get('/exhibit', [ExhibitAJAXController::class, 'get_paginated'])
-	->name('ajax.exhibit.get_paginated');
+		->name('ajax.exhibit.get_paginated');
 	
 	Route::patch('/exhibit/{exhibit_id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])
 		->name('ajax.exhibit.set_metadata');

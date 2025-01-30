@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\Enum\Category;
 use App\Models\Rubric;
 use App\Repository\Traits\StringIdRepositoryTrait;
 use App\Util\StringIdGenerator;
@@ -137,15 +138,6 @@ final class RubricRepository
 		}, $docs);
 	}
 
-	public function determinate_rubric_props(Rubric $rubric): array
-	{
-		return [
-			'id' => $rubric->get_id(),
-			'name' => $rubric->get_name(),
-			'category' => $rubric->get_category(),
-		];
-	}
-
 	/**
 	 * @return RubricDoc
 	 */
@@ -155,7 +147,7 @@ final class RubricRepository
 		$rubric_doc = $this->create_stub_doc_from_model($rubric);
 
 		$rubric_doc->name = $rubric->get_name();
-		$rubric_doc->category = $rubric->get_category();
+		$rubric_doc->category = $rubric->get_category()->value;
 
 		return $rubric_doc;
 	}
@@ -167,7 +159,7 @@ final class RubricRepository
 	{
 		return new Rubric(
 			name: $rubric_doc->name,
-			category: $rubric_doc->category,
+			category: Category::from($rubric_doc->category),
 			id: $this->determinate_model_id_from_doc($rubric_doc),
 			rev: $rubric_doc->_rev,
 		);

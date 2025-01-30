@@ -1,15 +1,14 @@
 <script lang="ts" setup>
 import { route } from 'ziggy-js';
-import { IExhibitOverviewExhibitTileInitPageProps } from '@/types/page_props/exhibit_overview';
+import { IExhibitTileProps } from '@/types/page_props/exhibit_overview';
 import { sprint_pretty_partial_date } from '@/util/partial-date';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
-	exhibit: IExhibitOverviewExhibitTileInitPageProps;
+	exhibit: IExhibitTileProps;
 }>();
 
 const exhibit_manufacture_date = sprint_pretty_partial_date(props.exhibit.manufacture_date);
-console.log(`partial_date: ${props.exhibit.manufacture_date} -> ${exhibit_manufacture_date}`);
 </script>
 
 <template>

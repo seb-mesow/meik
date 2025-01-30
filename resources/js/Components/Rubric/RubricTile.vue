@@ -105,8 +105,6 @@ const ajax_delete = (rubric: any): Promise<void> => {
 const reload = () => {
     emit('reload')
 }
-
-
 </script>
 
 <template>
