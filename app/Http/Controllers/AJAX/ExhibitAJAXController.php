@@ -5,28 +5,22 @@ declare(strict_types=1);
 namespace App\Http\Controllers\AJAX;
 
 use App\Http\Controllers\Controller;
-use App\Models\Exhibit;
 use App\Models\Parts\FreeText;
 use App\Repository\ExhibitRepository;
+use App\Service\ExhibitService;
 use App\Service\WordService;
-use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use JMS\Serializer\Serializer;
-use JMS\Serializer\SerializerBuilder;
 
 class ExhibitAJAXController extends Controller
 {
-	private Serializer $serializer;
-
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
+		private readonly ExhibitService $exhibit_service,
 		private readonly WordService $word_service
-	) {
-		$this->serializer = SerializerBuilder::create()->build();
-	}
+	) {}
 
 	public function set_metadata(Request $request, int $exhibit_id): void
 	{
@@ -104,12 +98,6 @@ class ExhibitAJAXController extends Controller
 		return response()->json($indices_order);
 	}
 
-	public function update(Request $request): void
-	{
-		$exhibit = $this->serializer->deserialize($request->getContent(), Exhibit::class, 'json');
-		$this->exhibit_repository->update($exhibit);
-	}
-
 	public function get_qr_code(string $exhibit_id)
 	{
 		$text = $exhibit_id;
@@ -137,24 +125,17 @@ class ExhibitAJAXController extends Controller
 		} else {
 			$selectors = null;
 		}
-
-		$exhibits =
-			$this->exhibit_repository->get_exhibits_paginated($selectors, $page, $page_size);
-		/** @var Exhibit[] $exhibits */
-		/** @var int $total_count */
-		$exhibits_json = array_map(static fn(Exhibit $exhibit): array => [
-			'id' => $exhibit->get_id(),
-			'name' => $exhibit->get_name(),
-		], $exhibits);
-		return response()->json([
-			'exhibits' => $exhibits_json
-		]);
+		
+		$exhibits = $this->exhibit_repository->get_exhibits_paginated($selectors, $page, $page_size);
+		
+		$exhibits_json = $this->exhibit_service->determinate_tiles_props($exhibits);
+		
+		return response()->json( $exhibits_json);
 	}
 
 	public function get_data_sheet(int $exhibit_id)
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		return $this->word_service->get_data_sheet($exhibit);
-		
 	}
 }

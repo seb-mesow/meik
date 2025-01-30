@@ -9,12 +9,16 @@ import Breadcrumb from 'primevue/breadcrumb';
 import { route } from 'ziggy-js';
 import { useDialog } from 'primevue/usedialog';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { IRubricTileProps } from '@/types/page_props/rubric_overview';
 const RubricDialog = defineAsyncComponent(() => import('../../Components/Rubric/RubricDialog.vue'));
 
 const props = defineProps<{
-	rubrics: IRubricForTile[],
-	category_name: string,
-	total_count: number
+	category: {
+		id: string,
+		name: string,
+	},
+	rubrics: IRubricTileProps[],
+	// total_count: number
 }>();
 
 const dialog = useDialog();
@@ -23,7 +27,7 @@ let rubricArray = ref(props.rubrics)
 let page = ref(0);
 const pageSize = ref(50);
 let isLoading = ref(false);
-let total_count = ref(props.total_count)
+// let total_count = ref(props.total_count)
 
 const home = {
 	icon: 'pi pi-home',
@@ -31,12 +35,8 @@ const home = {
 };
 const items = [
 	{
-		label: 'Kategorien',
-		url: route('category.overview')
-	},
-	{
-		label: props.category_name,
-		url: route('rubric.overview', props.category_name),
+		label: props.category.name,
+		// url: route('rubric.overview', { category_id: props.category.id }),
 	}
 ];
 
@@ -56,7 +56,7 @@ const create = () => {
 			},
 			data: {
 				rubric: null,
-				category: props.category_name
+				category: props.category.name
 			},
 			onClose: (options) => {
 				const data = options?.data;
@@ -85,7 +85,7 @@ const ajax_get_paginated = (): Promise<void> => {
 		method: "get",
 		url: route('ajax.rubric.get_paginated'),
 		params: {
-			category: props.category_name,
+			category: props.category.id,
 			page: page.value,
 			page_size: pageSize.value
 		}
@@ -96,11 +96,11 @@ const ajax_get_paginated = (): Promise<void> => {
 			if (page.value === 0) {
 				rubricArray.value = []
 				rubricArray.value = response.data.rubrics
-				total_count = response.data.total_count
+				// total_count = response.data.total_count
 				console.log('replace', rubricArray.value)
 			} else {
 				rubricArray.value.push(...response.data.rubrics)
-				total_count = response.data.total_count
+				// total_count = response.data.total_count
 				console.log('append')
 			}
 		}
@@ -138,7 +138,7 @@ const handleScroll = (event: Event) => {
 		<div class="flex h-full">
 			<!-- Wrapper für den Scroll-Bereich -->
 			<div class="overflow-y-auto flex flex-wrap flex-grow content-start" @scroll="handleScroll($event)">
-				<RubricTile @reload="reload" v-for="rubric in rubricArray" :key="rubric.id" :category="category_name"
+				<RubricTile @reload="reload" v-for="rubric in rubricArray" :key="rubric.id" :category="props.category.name"
 					:rubric="rubric" />
 			</div>
 			<div class="absolute bottom-4 right-4">

@@ -3,7 +3,7 @@ import { IRubricForm, RubricForm } from "@/form/rubricform";
 import Button from "primevue/button";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
-import { inject, onMounted, reactive, Reactive } from "vue";
+import { inject, reactive, Reactive } from "vue";
 import InputField from "../Form/InputField.vue";
 
 const dialogRef: any = inject('dialogRef');
@@ -24,9 +24,6 @@ const form: Reactive<IRubricForm> = reactive(new RubricForm({
 	confirm_service: confirm_service,
 	dialog_ref: dialogRef
 }));
-
-
-
 </script>
 
 <template>

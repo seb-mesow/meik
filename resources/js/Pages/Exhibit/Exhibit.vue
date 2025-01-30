@@ -19,64 +19,36 @@ import ExportButton from '@/Components/Control/ExportButton.vue';
 const props = defineProps<{
 	name?: string,
 	init_props: IExhibitInitPageProps,
-	rubric: any
+	category?: {
+		id: string,
+		name: string,
+	},
+	rubric?: {
+		id: string,
+		name: string,
+	}
 }>();
 
 const home = {
 	icon: 'pi pi-home',
 	url: route('category.overview'),
 };
-let items = [
-	{
-		label: 'Exponate',
-		url: route('exhibit.overview'),
-	},
-	{
-		label: props?.name ?? 'Neues Exponat',
-	},
-];
-
-if (props.rubric) {
-	items = [
-		{
-			label: 'Kategorien',
-			url: route('category.overview')
-		},
-		{
-			label: props.rubric.category,
-			url: route('rubric.overview', { category: props.rubric.category })
-		},
-		{
-			label: props.rubric.name,
-			url: route('exhibit.overview', { rubric: props.rubric.id }),
-		},
-		{
-			label: props?.name ?? 'Neues Exponat',
-		},
-	];
+let items: { label: string, url?: string }[] = [];
+if (props.category) {
+	items.push({
+		label: props.category.name,
+		url: route('rubric.overview', { category_id: props.category.id })
+	});
 }
-
-
 if (props.rubric) {
-	items = [
-		{
-			label: 'Kategorien',
-			url: route('category.overview')
-		},
-		{
-			label: props.rubric.category,
-			url: route('rubric.overview', { category: props.rubric.category })
-		},
-		{
-			label: props.rubric.name,
-			url: route('exhibit.overview', { rubric: props.rubric.id }),
-		},
-		{
-			label: props?.name ?? 'Neues Exponat',
-		},
-	];
+	items.push({
+		label: props.rubric.name,
+		url: route('exhibit.overview', { rubric: props.rubric.id }),
+	});
 }
-
+items.push({
+	label: props?.name ?? 'Neues Exponat',
+});
 
 // console.log("Exhibit.vue: props.init_props ==");
 // console.log(props.init_props);

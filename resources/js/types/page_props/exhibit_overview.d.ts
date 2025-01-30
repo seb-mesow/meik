@@ -1,4 +1,4 @@
-export interface IExhibitOverviewExhibitTileInitPageProps {
+export interface IExhibitTileProps {
 	id: number,
 	name: string,
 	inventory_number: string,
@@ -14,6 +14,9 @@ export interface IExhibitOverviewExhibitTileInitPageProps {
 	}
 }
 
-export interface IExhibitOverviewInitPageProps {
-	exhibits: IExhibitOverviewExhibitTileInitPageProps[],
+export interface IExhibitOverviewPageProps {
+	rubric?: {
+		id: string
+	},
+	exhibits: IExhibitTileProps[],
 }

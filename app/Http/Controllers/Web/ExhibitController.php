@@ -7,14 +7,16 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Models\Parts\FreeText;
-use App\Models\Rubric;
 use App\Repository\ExhibitRepository;
 use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
+use App\Service\ExhibitService;
 use App\Service\ImageService;
 use App\Repository\RubricRepository;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class ExhibitController extends Controller
 {
@@ -23,79 +25,81 @@ class ExhibitController extends Controller
 		private readonly LocationRepository $location_repository,
 		private readonly PlaceRepository $place_repository,
 		private readonly ImageService $image_service,
-		private readonly RubricRepository $rubric_repository
+		private readonly RubricRepository $rubric_repository,
+		private readonly ExhibitService $exhibit_service,
 	) {}
 
-	public function overview(Request $request)
+	public function overview(Request $request): InertiaResponse
 	{
 		$rubric_id = $request->input('rubric');
 		$page = $request->input('page', 0);
 		$pageSize = $request->input('pageSize', 50);
-
+		
+		$breadcrumbs = [];
+		$main_props = [];
+		
 		if ($rubric_id) {
-
-			$rubric = $this->rubric_repository->find($rubric_id);
 			$selectors = [
 				'rubric_id' =>  [
 					'$eq' => $rubric_id
 				]
 			];
+			
+			$rubric = $this->rubric_repository->get($rubric_id);
+			$category = $rubric->get_category();
+			$main_props['rubric'] = [
+				'id' => $rubric->get_id(),
+			];
+			
+			$breadcrumbs = [
+				'category' => [
+					'id' => $category->value,
+					'name' => $category->get_pretty_name(),
+				],
+				'rubric' => [
+					'id' => $rubric->get_id(),
+					'name' => $rubric->get_name(),
+				],
+			];
 		} else {
 			$selectors = null;
 		}
-
+		
 		$exhibits = $this->exhibit_repository->get_exhibits_paginated($selectors, $page, $pageSize);
-		$array = [];
-		foreach ($exhibits as $exhibit) {
-			$array[] = $this->determinate_overview_page_props($exhibit);
-		}
+		$main_props['exhibits'] = $this->exhibit_service->determinate_tiles_props($exhibits);
+		
 		return Inertia::render('Exhibit/ExhibitOverview', [
-			'init_props' => [
-				'exhibits' => $array,
-			],
-			'rubric' => isset($rubric) ? $this->rubric_repository->determinate_rubric_props($rubric) : null
+			'main' => $main_props,
+			'breadcrumb' => $breadcrumbs
 		]);
 	}
 
-	private function determinate_overview_page_props(Exhibit $exhibit): array
-	{
-		$place = $this->place_repository->get($exhibit->get_place_id());
-		$location = $this->location_repository->get($place->get_location_id());
-		
-		$tile_props = [
-			'id' => $exhibit->get_id(),
-			'name' => $exhibit->get_name(),
-			'inventory_number' => $exhibit->get_inventory_number(),
-			'manufacture_date' => $exhibit->get_manufacture_date(),
-			'manufacturer' => $exhibit->get_manufacturer(),
-			'location_name' => $location->get_name(),
-			'place_name' => $place->get_name(),
-		];
-		if ($title_image = $this->image_service->get_internal_title_image($exhibit)) {
-			$tile_props ['title_image'] = [
-				'id' => $title_image->get_id(),
-				'description' => $title_image->get_description(),
-				'thumbnail_width' => $title_image->get_thumbnail_width(),
-				'thumbnail_height' => $title_image->get_thumbnail_height(),
-			];	
-		}
-		return $tile_props;
-	}
 
-	public function details(int $id)
+
+	public function details(int $exhibit_id): InertiaResponse
 	{
-		$exhibit = $this->exhibit_repository->get($id);
-		$rubric = $this->rubric_repository->get($exhibit->get_rubric_id());
+		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$form = $this->create_form($exhibit, true);
+		
+		$rubric = $this->rubric_repository->get($exhibit->get_rubric_id());
+		$category = $rubric->get_category();
+		
 		return Inertia::render('Exhibit/Exhibit', [
 			'id' => $exhibit->get_id(),
 			'name' => $exhibit->get_name(),
 			'init_props' => $form,
-			'rubric' => $this->rubric_repository->determinate_rubric_props($rubric)
+			'category' => [
+				'id' => $category->value,
+				'name' => $category->get_pretty_name(),
+			],
+			'rubric' => [
+				'id' => $rubric->get_id(),
+				'name' => $rubric->get_name(),
+			],
 		]);
 	}
 
-	public function new()
+	public function new(): InertiaResponse
 	{
 		$form = $this->create_form(null, false);
 		return Inertia::render('Exhibit/Exhibit', [
@@ -104,7 +108,7 @@ class ExhibitController extends Controller
 		]);
 	}
 
-	public function create(Request $request)
+	public function create(Request $request): RedirectResponse
 	{
 		$inventory_number = $request->input('inventory_number');
 		$name = $request->input('name');
