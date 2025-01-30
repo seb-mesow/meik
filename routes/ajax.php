@@ -115,5 +115,8 @@ Route::prefix('ajax')->group(static function () {
 		->name('ajax.exhibit.get_qr_code');
 
 	Route::get('/exhibit/{exhibit_id}/data-sheet', [ExhibitAJAXController::class, 'get_data_sheet'])
-		->name('ajax.exhibit.get_data_sheet');;
+		->name('ajax.exhibit.get_data_sheet');
+
+	Route::get('/exhibit/{query}', [ExhibitAJAXController::class, 'search_exhibits'])
+		->name('ajax.exhibit.search');
 });

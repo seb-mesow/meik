@@ -2,7 +2,7 @@
 import { route } from 'ziggy-js';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { create_request_data, type IForm } from '@/util/form';
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import Button from 'primevue/button';
 import { ref } from 'vue';
 import FreeTextFields from '@/Components/Exhibit/FreeTextFields.vue';
@@ -13,6 +13,7 @@ import InputField from '@/Components/Form/InputField.vue';
 import Form from '@/Components/Form/Form.vue';
 import ExportButton from '@/Components/Control/ExportButton.vue';
 
+import AutoComplete, { AutoCompleteCompleteEvent } from 'primevue/autocomplete';
 // versch. Interface für typsicheres Programmieren
 
 // Argumente an die Seite (siehe Controller)
@@ -21,6 +22,9 @@ const props = defineProps<{
 	init_props: IExhibitInitPageProps,
 	rubric: any
 }>();
+
+const suggested_exhibits = ref();
+const connected_exhibits = ref();
 
 const home = {
 	icon: 'pi pi-home',
@@ -114,6 +118,10 @@ const exhibit_id = form.id;
 const is_new = exhibit_id === undefined;
 const button_save_metadata_is_loading = ref(false);
 
+const select_suggestion = (event) => {
+	console.log(event)
+}
+
 async function save_metadata(event: MouseEvent) {
 	button_save_metadata_is_loading.value = true;
 	if (!is_new) {
@@ -132,6 +140,21 @@ async function save_metadata(event: MouseEvent) {
 		}
 		button_save_metadata_is_loading.value = false;
 	}
+}
+
+
+async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> {
+	console.log(event)
+	const query = event.query
+	const request_config: AxiosRequestConfig = {
+		method: "get",
+		url: route(`ajax.exhibit.search`, {'query': query})
+	};
+	return axios.request(request_config).then(
+		(response: AxiosResponse) => {
+			suggested_exhibits.value = response.data
+		}
+	);
 }
 
 </script>
@@ -154,6 +177,10 @@ async function save_metadata(event: MouseEvent) {
 				<InputField :form="form.val.inventory_number" label="Inventarnummer" />
 				<InputField :form="form.val.name" label="Bezeichnung" />
 				<InputField :form="form.val.manufacturer" label="Hersteller" />
+				<div class="card flex justify-center">
+					<AutoComplete @option-select="select_suggestion" optionLabel="name" :suggestions="suggested_exhibits"
+						@complete="search_exhibits" />
+				</div>
 				<Button v-if="is_new" :loading="button_save_metadata_is_loading" type='submit' label='Speichern' />
 				<Button v-else :loading="button_save_metadata_is_loading" type='button' @click="save_metadata"
 					label='Metadaten speichern' />

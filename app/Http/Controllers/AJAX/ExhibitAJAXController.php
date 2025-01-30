@@ -158,4 +158,45 @@ class ExhibitAJAXController extends Controller
 		return $this->word_service->get_data_sheet($exhibit);
 		
 	}
+
+	public function search_exhibits(string $query)
+    {
+        $queryParts = explode(' ', $query);
+        $selectors = [];
+        foreach ($queryParts as $queryPart) {
+            $selector = [
+                '$or' => [
+                    [
+                        'manufacturer' => [
+                            '$regex' => '(?i)' . $queryPart // Regex für manufacturer
+                        ]
+                    ],
+                    [
+                        'name' => [
+                            '$regex' => '(?i)' . $queryPart // Regex für name
+                        ]
+                    ],
+                    [
+                        'inventory_number' => [
+                            '$eq' => $queryPart // Exakte Übereinstimmung für inventory_number
+                        ]
+                    ]
+                ]
+            ];
+            $selectorParts[] = $selector;
+        }
+
+        $selectors = [
+            '$and' => $selectorParts
+        ];
+
+        $exhibits = $this->exhibit_repository->get_by_selectors($selectors);
+
+		$exhibits_json = array_map(static fn(Exhibit $exhibit): array => [
+			'id' => $exhibit->get_id(),
+			'name' => $exhibit->get_name(),
+		], $exhibits);
+
+		return $exhibits_json;
+    }
 }
