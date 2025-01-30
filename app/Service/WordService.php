@@ -59,23 +59,4 @@ final class WordService
 		// Schicke das verarbeitete Dokument als Response
 		return response()->download($processedPath)->deleteFileAfterSend(true);
 	}
-
-	private function fix()
-	{
-		// Dein kaputtes HTML
-		$brokenHtml = "<html><body><div><p>This is a <b>broken HTML";
-
-		// Erstelle eine Instanz von DOMDocument
-		$dom = new DOMDocument();
-
-		// Lade das HTML und repariere es
-		libxml_use_internal_errors(true);  // Verhindert Fehlerausgaben
-		$dom->loadHTML($brokenHtml);
-
-		// Repariertes HTML holen
-		$repairedHtml = $dom->saveHTML();
-
-		// Gib das reparierte HTML aus
-		return $repairedHtml;
-	}
 }
