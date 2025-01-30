@@ -90,7 +90,7 @@ Route::prefix('ajax')->group(static function () {
 		->name('ajax.image.set_file');
 
 	Route::get('/thumbnail/{image_id}', [ImageAJAXController::class, 'get_thumbnail_file'])
-		->name('ajax.thumbnail.get_file');
+		->name('ajax.image.get_thumbnail');
 
 	Route::get('/rubric', [RubricAJAXController::class, 'get_paginated'])
 		->name('ajax.rubric.get_paginated');
