@@ -77,7 +77,7 @@ trait StringIdRepositoryTrait
 	 * für `get()`-Funktion
 	 */
 	private function determinate_doc_id_from_model_id(string $model_id): string {
-		return self::MODEL_TYPE_ID. ':' . $model_id;
+		return self::MODEL_TYPE_ID . ':' . $model_id;
 	}
 	
 	/**
