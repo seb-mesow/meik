@@ -9,7 +9,6 @@ interface StringIdentifiable
 	
 	public function get_id(): string;
 	
-		
 	/** 
 	 * kann dazu beitragen es sich zu ersparen
 	 * in `insert()`-Funktionen von Repositories 

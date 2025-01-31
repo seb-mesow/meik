@@ -5,54 +5,66 @@ namespace App\Repository;
 
 use App;
 use App\Models\User;
+use App\Repository\Traits\StringIdRepositoryTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use PHPOnCouch\CouchClient;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 use Random\Randomizer;
-use \stdClass;
+use Illuminate\Contracts\Hashing\Hasher;
+use stdClass;
+
 
 /**
  * @phpstan-type UserDoc object{
  *     _id: string,
  *     _rev?: string,
  *     username: string,
- *     password: string,
- * 	   forename: string,
+ *     password_hash: string,
+ *     forename: string,
  *     surname: string,
  *     is_admin: bool,
  *     remember_token: string
  * }
  */
 final class CouchDBUserProvider implements UserProvider {
+	use StringIdRepositoryTrait;
+	
 	public const MODEL_TYPE_ID = 'user';
-	public const string ID_PREFIX = 'user:';
 	private const int REMEMBER_TOKEN_LENGTH = 64;
 	
 	private ?Randomizer $randomizer;
 	
 	public function __construct(
-		private readonly CouchClient $client
-	) {
-		return;
-	}
+		private readonly CouchClient $client,
+		private readonly Hasher $hasher,
+	) {}
 	
 	public function insert(User $user) {
-		assert(!$user->rev);
+		assert(!$user->get_nullable_id());
+		assert(!$user->get_rev());
 		$user_doc = $this->create_doc_from_user($user);
 		$this->client->storeDoc($user_doc);
 	}
 	
 	public function update(User $user) {
-		assert($user->rev);
+		assert($user->get_nullable_id());
+		assert($user->get_rev());
 		$user_doc = $this->create_doc_from_user($user);
 		$this->client->storeDoc($user_doc);
 	}
 	
-	public function delete(User $user) {
-		assert($user->rev);
+	public function remove(User $user) {
+		assert($user->get_id());
+		assert($user->get_rev());
 		$user_doc = $this->create_doc_from_user($user);
 		$this->client->deleteDoc($user_doc);
+	}
+	
+	public function remove_by_id(string $user_id): void {
+		$doc_id = $this->determinate_doc_id_from_model_id($user_id);
+		$doc = $this->client->getDoc($doc_id); // retrieves _rev
+		$this->client->deleteDoc($doc);
 	}
 	
 	/**
@@ -60,7 +72,9 @@ final class CouchDBUserProvider implements UserProvider {
 	 */
 	public function get_all(): array {
 		$res = $this->client->find([
-			'_id' => [ '$beginsWith' => self::ID_PREFIX ],
+			'_id' => [
+				'$beginsWith' => self::ID_PREFIX
+			],
 		]);
 		$_this = $this;
 		return array_map(static function (stdClass $doc) use ($_this): User {
@@ -121,10 +135,12 @@ final class CouchDBUserProvider implements UserProvider {
 	 * @return ?User
 	 */
 	public function retrieveByCredentials(array $credentials): ?User {
+		$username = $credentials['username'];
+		
 		$res = $this->client
-			->key([$credentials['username'], $credentials['password']])
+			->key($username)
 			->include_docs(true)
-			->getView('user', 'by-credentials');
+			->getView('user', 'by-username');
 		$rows = $res->rows;
 		if ($rows) {
 			$first = $rows[0]->doc;
@@ -133,11 +149,12 @@ final class CouchDBUserProvider implements UserProvider {
 		return null;
 	}
 	
-    public function validateCredentials(Authenticatable $user, array $credentials): bool {
-		return true;
+	public function validateCredentials(Authenticatable $user, #[\SensitiveParameter] array $credentials): bool {
+		assert($user instanceof User);
+		return $this->hasher->check($credentials['password'], $user->get_password_hash());
 	}
 	
-    public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false): string {
+	public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false): string {
 		return $credentials['password'];
 	}
 	
@@ -158,16 +175,15 @@ final class CouchDBUserProvider implements UserProvider {
 	 */
 	private function create_user_from_doc(object $doc): User
 	{
-		$original_name = substr($doc->_id, strlen(self::ID_PREFIX));
+		$original_name = $this->determinate_model_id_from_doc($doc);
 		return new User(
-			$original_name, 
-			$doc->username,
-			$doc->password,
-			$doc->forename,
-			$doc->surname,
-			$doc->is_admin,
-			$doc->remember_token,
-			$doc->_rev
+			username: $doc->username,
+			password_hash: $doc->password_hash,
+			forename: $doc->forename,
+			surname: $doc->surname,
+			is_admin: $doc->is_admin,
+			original_username: $original_name,
+			rev: $doc->_rev,
 		);
 	}
 	
@@ -176,17 +192,34 @@ final class CouchDBUserProvider implements UserProvider {
 	 */
 	private function create_doc_from_user(User $user): stdClass {
 		/** @var UserDoc */
-		$user_doc = new stdClass();
-		$user_doc->_id = self::ID_PREFIX . $user->original_username;
-		if ($user->rev) {
-			$user_doc->_rev = $user->rev;
-		}
-		$user_doc->username = $user->username;
-		$user_doc->password = $user->password;
-		$user_doc->forename = $user->forename;
-		$user_doc->surname = $user->surname;
-		$user_doc->is_admin = $user->is_admin;
-		$user_doc->remember_token = $user->remember_token;
+		$user_doc = $this->create_stub_doc_from_model($user);
+		
+		$user_doc->username = $user->get_username();
+		$user_doc->password_hash = $user->get_password_hash();
+		$user_doc->forename = $user->get_forename();
+		$user_doc->surname = $user->get_surname();
+		$user_doc->is_admin = $user->is_admin();
+		$user_doc->remember_token = $user->getRememberToken();
+		
 		return $user_doc;
+	}
+	
+	/**
+	 * setzt als Nebeneffekt bei neuen Models die ID
+	 * 
+	 * @param User $user
+	 * @return UserDoc
+	 */
+	private function create_stub_doc_from_model(User $user): stdClass {
+		$stub_main_model_doc = new stdClass();
+		if (is_null($user->get_nullable_id())) {
+			// Die ID ist immer der erste Username, den der User je hatte.
+			$user->set_id($user->get_username());
+		}
+		$stub_main_model_doc->_id = $this->determinate_doc_id_from_model($user);
+		if ($rev = $user->get_nullable_rev()) {
+			$stub_main_model_doc->_rev = $rev;
+		}
+		return $stub_main_model_doc;
 	}
 }

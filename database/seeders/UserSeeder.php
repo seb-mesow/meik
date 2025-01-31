@@ -5,56 +5,75 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Repository\CouchDBUserProvider;
+use Database\Seeders\Traits\SeederTrait;
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\Seeder;
 use PHPOnCouch\CouchClient;
 
 class UserSeeder extends Seeder
 {
+	use SeederTrait;
+	
 	public function __construct(
-		private readonly CouchDBUserProvider $user_provider
-	) {}
+		CouchClient $client,
+		private readonly CouchDBUserProvider $user_provider,
+		private readonly Hasher $hasher,
+	) {
+		$this->client = $client;
+	}
 	
 	/**
 	 * Seed the application's database.
 	 */
 	public function run(): void
 	{
-		$this->create_user(new User(
-			'sebastian', 'sebastian', '_sEbAsTiAn=123',
-			"Sebastian", "Müller",
-			true));
-		$this->create_user(new User(
-			'niklas', 'niklas', '_nIkLaS=123',
-			"Niklas", "Haustein",
-			false));
-		$this->create_user(new User(
-			'pepe', 'pepe', '_pEpE=123', 
-			"Pepe", "Sievert",
-			false));
-		$this->create_user(new User(
-			'enrico', 'enrico', '_eNrIcO=123',
-			"Enrico", "Schmidt",
-			false));
-		$this->create_user(new User(
-			'm'.'u'.'e'.'l'.'l'.'e'.'r', 'm'.'u'.'e'.'l'.'l'.'e'.'r', '_mUeLlEr=123',
-			"U"."w"."e"."-"."J"."e"."n"."s", "M"."ü"."l"."l"."e"."r",
-			false));
+		$this->remove_all_documents_by_model_type_id(CouchDBUserProvider::MODEL_TYPE_ID);
+		
+		$this->create_user(
+			username: 'sebastian',
+			password: '_sEbAsTiAn=123',
+			is_admin: true,
+			forename: "Sebastian",
+			surname: "Müller",
+		);
+		$this->create_user(
+			username: 'niklas',
+			password: '_nIkLaS=123',
+			is_admin: true,
+			forename: "Niklas",
+			surname: "Haustein",
+		);
+		$this->create_user(
+			username: 'pepe',
+			password: '_pEpE=123',
+			is_admin: true,
+			forename: "Pepe",
+			surname: "Sievert",
+		);
+		$this->create_user(
+			username: 'enrico',
+			password: '_eNrIcO=123',
+			is_admin: true,
+			forename: "Enrico",
+			surname: "Schmidt",
+		);
+		$this->create_user(
+			username: 'm'.'u'.'e'.'l'.'l'.'e'.'r',
+			password: '_'.'m'.'U'.'e'.'L'.'l'.'E'.'r'.'='.'1'.'2'.'3',
+			is_admin: true,
+			forename: "U"."w"."e"."-"."J"."e"."n"."s",
+			surname: "M"."ü"."l"."l"."e"."r",
+		);
 	}
 	
-	private function create_user(User $user) {
-		$existing_user = $this->user_provider->retrieveById($user->getAuthIdentifier());
-		if ($existing_user) {
-			$user = new User(
-				$user->original_username,
-				$user->username, 
-				$user->password,
-				$user->forename,
-				$user->surname,
-				$user->is_admin, 
-				$user->remember_token, 
-				$existing_user->rev
-			);
-		}
+	private function create_user(string $username,	string $password, bool $is_admin, string $forename,	string $surname): void {
+		$user = new User(
+			username: $username,
+			password_hash: $this->hasher->make($password),
+			is_admin: $is_admin,
+			forename: $forename,
+			surname: $surname,
+		);
 		$this->user_provider->insert($user);
 	}
 }

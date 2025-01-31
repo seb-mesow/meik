@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use App\Repository\CouchDBUserProvider;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\App;
 use PHPOnCouch\CouchClient;
@@ -10,7 +9,7 @@ use PHPOnCouch\Exceptions\CouchNotFoundException;
 return new class extends Migration
 {
 	private const string DESIGN_DOC_ID = '_design/user';
-	private const string VIEW = 'by-credentials';
+	private const string VIEW = 'by-username';
 	
 	private readonly CouchClient $client;
 	private readonly string $map_function;
@@ -18,11 +17,11 @@ return new class extends Migration
 	public function __construct() {
 		$this->client = App::make(CouchClient::class.'.admin');
 		
-		$id_prefix = CouchDBUserProvider::ID_PREFIX;
+		$id_prefix = 'username:';
 		$this->map_function = <<<END
 		function (doc) {
 			if (doc._id.startsWith('$id_prefix')) {
-				emit([doc.username, doc.password], null);
+				emit(doc.username, null);
 			}
 		}
 		END;
