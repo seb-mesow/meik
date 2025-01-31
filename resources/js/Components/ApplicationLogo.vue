@@ -35,7 +35,7 @@ const imageAltTwo = 'Beschreibung des zweiten Bildes'; // Alternativer Text für
 	align-items: center;
 	border: 0px solid #ccc; /* Optional: Rahmen um Container */
 	padding: 0px; /* Optional: Abstand innerhalb des Containers */
-	max-width: 290%; /* Container passt sich der Breite des Viewports an */
+	max-width: 20%; /* Container passt sich der Breite des Viewports an */
 	position: relative;
 }
 /* Bild-Stile */
@@ -48,11 +48,11 @@ const imageAltTwo = 'Beschreibung des zweiten Bildes'; // Alternativer Text für
 	background-color: #f9f9f9; /* Beispiel: individueller Hintergrund */
 	position: relative;
 	height: 110%;
-	left: -220%;
+	left: 20%;
 }
 .image-one {
 	width: 5rem;
-	max-width: 260rem; /* Individuelle Breite für Bild 1 */
+	max-width: 20rem; /* Individuelle Breite für Bild 1 */
 	height: auto;
 }
 /* Spezifische Anpassungen für Bild 2 */
@@ -60,11 +60,11 @@ const imageAltTwo = 'Beschreibung des zweiten Bildes'; // Alternativer Text für
 	background-color: #e0e0e0; /* Beispiel: individueller Hintergrund */
 	position: relative;
 	height: 132%;
-	left: -131.4%;
+	right: -310%;
 }
 .image-two {
 	width: 16rem;
-	max-width: 260rem; /* Individuelle Breite für Bild 2 */
+	max-width: 12rem; /* Individuelle Breite für Bild 2 */
 	height: auto;
 }
 </style>
