@@ -17,10 +17,14 @@ import MEIK_HeadLine from '@/Components/MEIK_HeadLine.vue';
 			class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg dark:bg-gray-400"
 		>
 			<slot />
+
+			<div
+			class="mt-2 w-full overflow-hidden bg-white px-6 py-4 shadow sm:max-w-md sm:rounded-lg dark:bg-gray-400"	
+			>
+				<ApplicationLogo class="h-20 w-20 fill-current text-blue-500" />
+			</div>
 		</div>
 
-		<div>
-			<ApplicationLogo class="h-20 w-20 fill-current text-blue-500" />
-		</div>
+
 	</div>
 </template>
