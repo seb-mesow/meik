@@ -164,9 +164,16 @@ class ExhibitController extends Controller
 					'val' => $free_text_forms,
 					'errs' => [],
 				],
+				'connected_exhibits' => array_map(function(int $id): array {
+					$connected_exhibit = $this->exhibit_repository->find($id);
+					return [
+					'id' => $exhibit->get_id(),
+					'name' => $exhibit->get_name()
+					]}, $exhibit->get_connected_exhibits());
 			],
 			'errs' => [],
 		];
+		// dd('free_text_forms: ', $free_text_forms);
 		if ($exhibit) {
 			$exhibit_id = $exhibit->get_id();
 			$exhibit_form['id'] = $exhibit_id;

@@ -22,6 +22,22 @@ export interface IExhibitForm {
 			id: 'free_texts',
 			val: IFreeTextForm[],
 			errs: string[]
+		},
+		connected_exhibits: {
+			id: 'connected_exhibits',
+			val: IConnectedExhibitForm[],
+			errs?: string[],
 		}
 	}
+}
+
+export interface IConnectedExhibitForm {
+	id: number,
+	errs?: string[],
+	val: {
+		name: {
+			val: string,
+			errs?: string[]
+		},
+	},
 }

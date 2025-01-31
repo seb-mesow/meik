@@ -13,7 +13,7 @@ import InputField from '@/Components/Form/InputField.vue';
 import Form from '@/Components/Form/Form.vue';
 import ExportButton from '@/Components/Control/ExportButton.vue';
 
-import AutoComplete, { AutoCompleteCompleteEvent } from 'primevue/autocomplete';
+import AutoComplete, { AutoCompleteCompleteEvent, AutoCompleteOptionSelectEvent } from 'primevue/autocomplete';
 // versch. Interface für typsicheres Programmieren
 
 // Argumente an die Seite (siehe Controller)
@@ -23,8 +23,8 @@ const props = defineProps<{
 	rubric: any
 }>();
 
-const suggested_exhibits = ref();
-const connected_exhibits = ref();
+const suggested_exhibits = ref([]);
+const connected_exhibits = ref(props.init_props.val.connected_exhibits);
 
 const home = {
 	icon: 'pi pi-home',
@@ -108,7 +108,7 @@ const form: IExhibitForm = {
 			id: 'free_texts',
 			val: props.init_props.val.free_texts.val,
 			errs: props.init_props.val.free_texts.errs,
-		}
+		},
 	},
 	errs: props.init_props.errs ?? [],
 	title_image: props.init_props.title_image,
@@ -118,20 +118,22 @@ const exhibit_id = form.id;
 const is_new = exhibit_id === undefined;
 const button_save_metadata_is_loading = ref(false);
 
-const select_suggestion = (event) => {
-	console.log(event)
-}
-
 async function save_metadata(event: MouseEvent) {
 	button_save_metadata_is_loading.value = true;
 	if (!is_new) {
 		event.preventDefault();
 		try {
 			console.log("AJAX Request senden");
+			console.log(`form ==`);
+			console.log(form);
+			const request_data = create_request_data(form);
+			console.log(`request_data ==`);
+			console.log(request_data);
+			request_data.connected_exhibits = connected_exhibits.value.map((ce) => ce.id);
 			await axios.request({
 				method: 'patch',
 				url: route('ajax.exhibit.set_metadata', { exhibit_id: exhibit_id }),
-				data: create_request_data(form) // TODO sendet unnützerweise auch free_texts
+				data: request_data // TODO sendet unnützerweise auch free_texts
 			});
 			console.log("AJAX Request erfolgreich");
 		} catch (e) {
@@ -144,15 +146,19 @@ async function save_metadata(event: MouseEvent) {
 
 
 async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> {
-	console.log(event)
 	const query = event.query
 	const request_config: AxiosRequestConfig = {
 		method: "get",
-		url: route(`ajax.exhibit.search`, {'query': query})
+		url: route(`ajax.exhibit.search`, { 'query': query }),
+		// Hier könnten auch weitere exhibit id eingebracht werden. 
+		params: {
+			'excluded': [exhibit_id] 
+		}
 	};
 	return axios.request(request_config).then(
 		(response: AxiosResponse) => {
 			suggested_exhibits.value = response.data
+			console.log(suggested_exhibits.value)
 		}
 	);
 }
@@ -177,29 +183,25 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 				<InputField :form="form.val.inventory_number" label="Inventarnummer" />
 				<InputField :form="form.val.name" label="Bezeichnung" />
 				<InputField :form="form.val.manufacturer" label="Hersteller" />
-				<div class="card flex justify-center">
-					<AutoComplete @option-select="select_suggestion" optionLabel="name" :suggestions="suggested_exhibits"
-						@complete="search_exhibits" />
-				</div>
+				<label for="multiple-ac-1">Verknüpfte Exponate</label>
+				<AutoComplete v-model="connected_exhibits" inputId="multiple-ac-1" multiple fluid :suggestions="suggested_exhibits"
+					@complete="search_exhibits" optionLabel="name" />
 				<Button v-if="is_new" :loading="button_save_metadata_is_loading" type='submit' label='Speichern' />
 				<Button v-else :loading="button_save_metadata_is_loading" type='button' @click="save_metadata"
 					label='Metadaten speichern' />
 			</Form>
-				
+
 
 			<div class="images-form flex flex-col items-start p-4">
-				
+
 				<!-- Button oben rechts -->
 				<ExportButton class="bg-blue-500 text-white rounded" />
 				<a :href="route('exhibit.images.details', { exhibit_id: exhibit_id })">
-					<img
-						v-if="form.title_image"
-						class="title-image"
-						:src="route('ajax.image.get_image', { image_id: form.title_image.id })"
-					>
+					<img v-if="form.title_image" class="title-image"
+						:src="route('ajax.image.get_image', { image_id: form.title_image.id })">
 				</a>
 
-				
+
 			</div>
 		</div>
 		<FreeTextFields v-if="exhibit_id !== undefined" :init_props="form.val.free_texts" :exhibit_id="exhibit_id" />

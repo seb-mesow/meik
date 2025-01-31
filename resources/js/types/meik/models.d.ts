@@ -1,4 +1,5 @@
 import { IValueForm as IValueForm, IForm, FormSpec, IFormSpec, CheckFormSpec } from "@/util/form";
+import { IConnectedExhibitForm } from "./exhibit";
 
 export interface IRubricForTile {
 	id: string;

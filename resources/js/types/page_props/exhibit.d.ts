@@ -19,6 +19,10 @@ export interface IExhibitInitPageProps {
 			val: IFreeTextsInitPageProps[],
 			errs?: string[]
 		}
+		connected_exhibits: {
+			id: number,
+			name: string
+		}[]
 	},
 	errs?: string[],
 	title_image?: {
@@ -26,5 +30,16 @@ export interface IExhibitInitPageProps {
 		description: string,
 		image_width: number,
 		image_height: number,
+	},
+}
+
+export interface IConnectedExhibitProps {
+	id: number,
+	errs?: string[],
+	val: {
+		name: {
+			val: string,
+			errs?: string[]
+		},
 	},
 }

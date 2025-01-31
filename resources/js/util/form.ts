@@ -220,10 +220,10 @@ export function create_request_data(form: any) {
 	const form_val = form.val;
 	// console.log(form_val)
 	if (Array.isArray(form_val)) {
-		// console.log("array")
+		console.log("array")
 		return create_request_json_array(form_val);
 	} else if (typeof form_val === 'object' && form_val !== null) {
-		// console.log("object")
+		console.log("object", form_val)
 		return create_request_json_record(form_val);
 	} else {
 		// console.log("simple")
@@ -242,6 +242,7 @@ function create_request_json_array(array_like_obj: any) {
 	for (const index in array_like_obj) {
 		//@ts-ignore
 		arr[index] = create_request_data(array_like_obj[index]);
+		console.log('hier', array_like_obj)
 	}
 	return arr;
 }

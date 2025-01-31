@@ -34,11 +34,13 @@ class ExhibitAJAXController extends Controller
 		$inventory_number = $request->input('inventory_number');
 		$name = $request->input('name');
 		$manufacturer = $request->input('manufacturer');
+		$connected_exhibits = $request->input('connected_exhibits');
 
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$exhibit->set_inventory_number($inventory_number);
 		$exhibit->set_name($name);
 		$exhibit->set_manufacturer($manufacturer);
+		$exhibit->set_connected_exhibits($connected_exhibits);
 		$this->exhibit_repository->update($exhibit);
 		//sleep(5); // TODO entfernen
 	}
@@ -156,47 +158,61 @@ class ExhibitAJAXController extends Controller
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		return $this->word_service->get_data_sheet($exhibit);
-		
 	}
 
-	public function search_exhibits(string $query)
-    {
-        $queryParts = explode(' ', $query);
-        $selectors = [];
-        foreach ($queryParts as $queryPart) {
-            $selector = [
-                '$or' => [
-                    [
-                        'manufacturer' => [
-                            '$regex' => '(?i)' . $queryPart // Regex für manufacturer
-                        ]
-                    ],
-                    [
-                        'name' => [
-                            '$regex' => '(?i)' . $queryPart // Regex für name
-                        ]
-                    ],
-                    [
-                        'inventory_number' => [
-                            '$eq' => $queryPart // Exakte Übereinstimmung für inventory_number
-                        ]
-                    ]
-                ]
-            ];
-            $selectorParts[] = $selector;
-        }
+	public function search_exhibits(Request $request, string $query)
+	{
+		$queryParts = explode(' ', $query);
+		$excluded_ids = $request->query('excluded');
+		$selectors = [];
+		foreach ($queryParts as $queryPart) {
+			$selector = [
+				'$or' => [
+					[
+						'manufacturer' => [
+							'$regex' => '(?i)' . $queryPart // Regex für manufacturer
+						]
+					],
+					[
+						'name' => [
+							'$regex' => '(?i)' . $queryPart // Regex für name
+						]
+					],
+					[
+						'inventory_number' => [
+							'$eq' => $queryPart // Exakte Übereinstimmung für inventory_number
+						]
+					]
+				]
+			];
 
-        $selectors = [
-            '$and' => $selectorParts
-        ];
+			$selectorParts[] = $selector;
+		}
+		// Das ist derzeitig etwas unnötig da wir nur 1 exhibit mitgeben
+		foreach ($excluded_ids as $excluded_exhibit) {
+			$excluded = [
+				'$and' => [
+					[
+						'_id' => [
+							'$not' => [
+								'$eq' => 'exhibit:' . $excluded_exhibit
+							]
+						]
+					]
+				]
+			];
+			$selectorParts[] = $excluded;
+		}
 
-        $exhibits = $this->exhibit_repository->get_by_selectors($selectors);
+		$selectors = [
+			'$and' => $selectorParts
+		];
 
+		$exhibits = $this->exhibit_repository->get_by_selectors($selectors);
 		$exhibits_json = array_map(static fn(Exhibit $exhibit): array => [
 			'id' => $exhibit->get_id(),
 			'name' => $exhibit->get_name(),
 		], $exhibits);
-
 		return $exhibits_json;
-    }
+	}
 }

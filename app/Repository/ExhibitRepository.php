@@ -174,6 +174,7 @@ final class ExhibitRepository
 		$exhibit_doc->year_of_manufacture = $exhibit->get_year_of_manufacture();
 		$exhibit_doc->place_id = $exhibit->get_place_id();
 		$exhibit_doc->rubric_id = $exhibit->get_rubric_id();
+		$exhibit_doc->connected_exhibits = $exhibit->get_connected_exhibits();
 
 		$_this = $this;
 		$free_text_docs = array_map(static function (FreeText $free_text) use ($_this): stdClass {
