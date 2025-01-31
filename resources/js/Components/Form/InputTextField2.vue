@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import InputText from 'primevue/inputtext';
-import { ISingleValueForm } from '@/form/singlevalueform';
 import { ISingleValueForm2 } from '@/form/singlevalueform2';
 
 const props = defineProps<{

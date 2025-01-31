@@ -41,31 +41,47 @@ const items = [
 ];
 
 const create = () => {
-	if (dialog) {
-		dialog.open(RubricDialog, {
-			props: {
-				header: 'Rubrik anlegen',
-				style: {
-					width: '50vw',
-				},
-				breakpoints: {
-					'960px': '75vw',
-					'640px': '90vw'
-				},
-				modal: true,
+	dialog.open(RubricDialog, {
+		props: {
+			header: 'Rubrik anlegen',
+			style: {
+				width: '50vw',
 			},
-			data: {
-				rubric: null,
-				category: props.category.name
+			breakpoints: {
+				'960px': '75vw',
+				'640px': '90vw'
 			},
-			onClose: (options) => {
-				const data = options?.data;
-				if (data) {
-					reload()
-				}
+			modal: true,
+		},
+		data: {
+			rubric: null,
+			category: props.category.id,
+			on_created: (tile: IRubricTileProps): void => append_tile(tile),
+		},
+		onClose: (options) => {
+			const data = options?.data;
+			if (data) {
+				reload()
 			}
-		});
+		}
+	});
+}
+
+const append_tile = (tile: IRubricTileProps) => {
+	rubricArray.value.push(tile);
+}
+
+const update_tile = (tile: IRubricTileProps) => {
+	for (const rubric of rubricArray.value) {
+		if (rubric.id === tile.id) {
+			rubric.name = tile.name
+			return;
+		}
 	}
+}
+
+const delete_tile = (id: string) => {
+	rubricArray.value = rubricArray.value.filter((rubric_tile: IRubricTileProps): boolean => rubric_tile.id !== id);
 }
 
 const reload = () => {
@@ -138,8 +154,11 @@ const handleScroll = (event: Event) => {
 		<div class="flex h-full">
 			<!-- Wrapper für den Scroll-Bereich -->
 			<div class="overflow-y-auto flex flex-wrap flex-grow content-start" @scroll="handleScroll($event)">
-				<RubricTile @reload="reload" v-for="rubric in rubricArray" :key="rubric.id" :category="props.category.name"
-					:rubric="rubric" />
+				<RubricTile v-for="rubric in rubricArray" :key="rubric.id" 	
+					:rubric="rubric"
+					:category="props.category.id"
+					@delete_tile="delete_tile"
+				/>
 			</div>
 			<div class="absolute bottom-4 right-4">
 				<Button @click="create">Neu</Button>
