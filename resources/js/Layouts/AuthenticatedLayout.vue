@@ -21,8 +21,12 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 			<div class="bg-white h-16">
 				<!-- Page Heading -->
 				<header class="bg-white h-fit min-h-16 shadow dark:bg-gray-800" v-if="$slots.header">
-					<div class="pl-4 items-center flex">
-						<slot name="header"/>					
+					<div class="items-center flex">
+						<slot name="header"/>
+						<!-- Darkmode-Toogle: neue Platzierung-->
+						<Button class="pl-4 pr-4 py-2 px-2 shadow-md" @click="dark_mode?.toggle()"> <!-- TODO: Funktion aus Navbar.vue noch übertragen -->
+							<i id="dark_mode_icon" class="pi pi-sun"/>
+						</Button>
 					</div>
 				</header>
 			</div>

@@ -90,8 +90,9 @@ onBeforeMount(() => {
 }
 .link {
 	width: 7.5rem;
-	height: 2rem;
+	height: 3rem;
 	display: flow-root;
+	color: rgb(255, 255, 255);
 }
 .icon-box {
 	display: inline flow-root;
