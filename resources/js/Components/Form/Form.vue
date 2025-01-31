@@ -6,15 +6,16 @@ defineProps<{
 	action: string;
 }>();
 
-let token: string|null|undefined = null;
-onMounted(() => {
-	token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-});
+// let token: string|null|undefined = null;
+// onMounted(() => {
+	// token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+	// });
+const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 </script>
 
 <template>
 	<form :method :action>
-		<input type="hidden" name="_token" :value="token" />
+		<input type="hidden" name="_token" :value="token"/>
 		<slot/>
 	</form>
 </template>
