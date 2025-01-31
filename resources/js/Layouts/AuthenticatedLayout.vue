@@ -3,6 +3,12 @@ import NavBar from '@/Components/NavBar.vue';
 import ConfirmPopup from 'primevue/confirmpopup';
 import DynamicDialog from 'primevue/dynamicdialog';
 import Toast from 'primevue/toast';
+import DarkMode from '@/util/dark-mode';
+import { onBeforeMount } from 'vue';
+import Button from 'primevue/button';
+import DarkMode from '@/util/dark-mode';
+import { onBeforeMount } from 'vue';
+import Button from 'primevue/button';
 
 const props = defineProps<{
 	disable_overflow?: boolean
