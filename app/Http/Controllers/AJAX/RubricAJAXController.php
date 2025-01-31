@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\AJAX;
 
 use App\Http\Controllers\Controller;
+use App\Models\Enum\Category;
 use App\Models\Rubric;
 use App\Repository\RubricRepository;
 use Illuminate\Http\JsonResponse;
@@ -44,27 +45,32 @@ class RubricAJAXController extends Controller
 
 	public function create(Request $request): JsonResponse
 	{
-		$data = $request->json()->all();
+		$name = $request->input('name');
+		$category = $request->input('category');
+		
+		$category = Category::from($category);
 		$rubric = new Rubric(
-			name: $data['name'],
-			category: $data['category']
+			name: $name,
+			category: $category
 		);
 		$this->rubric_repository->insert($rubric);
-		return response()->json($this->serializer->serialize($rubric, 'json'));
+		
+		return response()->json($rubric->get_id());
 	}
 
-	public function update(Request $request, string $rubric_id): JsonResponse
+	public function update(Request $request, string $rubric_id): void
 	{
-		$rubric = $this->serializer->deserialize(json_encode($request->json()->all()), Rubric::class, 'json');
-
-		$existing_rubric = $this->rubric_repository->get($rubric_id);
-		$rubric->set_rev($existing_rubric->get_rev());
+		$name = $request->input('name');
+		$category = $request->input('category');
+		
+		$category = Category::from($category);
+		$rubric = $this->rubric_repository->get($rubric_id);
+		$rubric->set_name($name);
+		$rubric->set_category($category);
 		$this->rubric_repository->update($rubric);
-		return response()->json($this->serializer->serialize($rubric, 'json'));
 	}
 
 	public function delete(string $rubric_id): void {
-		$rubric = $this->rubric_repository->get($rubric_id);
-		$this->rubric_repository->remove($rubric);
+		$this->rubric_repository->remove_by_id($rubric_id);
 	}
 }

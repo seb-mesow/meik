@@ -4,60 +4,62 @@ import {
 	ICreateRubricRequestData,
 	IUpdateRubricRequestData
 } from "@/types/ajax/rubric";
-import { ToastServiceMethods } from "primevue/toastservice";
-import { ConfirmationServiceMethods } from "primevue/confirmationservice";
-import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
+import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
 import { route } from "ziggy-js";
+import { IRubricTileProps } from "@/types/page_props/rubric_overview";
 
 export interface IRubricForm {
+	readonly name: ISingleValueForm2<string>;
 	save(): void
 };
 
 export interface IRubricFormConstructorArgs {
 	id?: string,
 	name?: ISingleValueForm2ConstructorArgs<string>,
-	category?: string,
-	toast_service: ToastServiceMethods,
-	confirm_service: ConfirmationServiceMethods,
-	dialog_ref: any
+	category: string,
+	dialog_ref: any,
+	on_created?: (tile: IRubricTileProps) => void
+	on_updated?: (tile: IRubricTileProps) => void
 };
 
 export class RubricForm implements IRubricForm {
-	public id?: string;
+	private id?: string;
 	public name: SingleValueForm2<string>;
-	public category: string;
-	public dialog_ref: any;
-
-	private readonly toast_service: ToastServiceMethods;
-	private readonly confirm_service: ConfirmationServiceMethods;
+	private category: string;
+	private dialog_ref: any;
+	private on_created: (tile: IRubricTileProps) => void; 
+	private on_updated: (tile: IRubricTileProps) => void; 
 
 	public constructor(args: IRubricFormConstructorArgs) {
-		this.toast_service = args.toast_service;
-		this.confirm_service = args.confirm_service;
-		this.dialog_ref = args.dialog_ref
-
+		this.id = args.id;
+		
 		const name_args: ISingleValueForm2ConstructorArgs<string> = {
-			val: args.name.val ?? '',
+			val: args.name?.val ?? '',
 			errs: args.name?.errs
 		};
-		this.id = args.id;
 		this.name = new SingleValueForm2(name_args, 'name');
 		this.category = args.category ?? '';
+		
+		this.dialog_ref = args.dialog_ref;
+		this.on_created = args.on_created ?? (() => {});
+		this.on_updated = args.on_updated ?? (() => {});
 	}
 
-	private is_persisted(): boolean {
+	private exists_in_db(): boolean {
 		return this.id !== undefined;
 	}
 
 	public async save(): Promise<void> {
-		if (this.is_persisted()) {
+		if (this.exists_in_db()) {
 			return this.ajax_update();
 		} else {
 			return this.ajax_create();
 		}
 	} 
 
-	private ajax_create(): Promise<void> {
+	private async ajax_create(): Promise<void> {
+		console.log(`ajax_update(): this.category == ${this.category}`);
+		
 		const request_config: AxiosRequestConfig<ICreateRubricRequestData> = {
 			method: "post",
 			url: route('ajax.rubric.create'),
@@ -68,30 +70,41 @@ export class RubricForm implements IRubricForm {
 		};
 		return axios.request(request_config).then(
 			(response: AxiosResponse<ICreateRubric200ResponseData>) => {
+				const new_rubric_id = response.data;
+				this.on_created({ id: new_rubric_id, name: this.name.val });
 				this.dialog_ref.close({
-					data: JSON.parse(response.data)
-				})
+					data: {
+						id: new_rubric_id,
+						name: this.name.val,
+					}
+				});
 			}
 		);
 	}
 
-	private ajax_update(): Promise<void> {
-		if (!this.id) {
+	private async ajax_update(): Promise<void> {
+		if (this.id === undefined) {
 			throw new Error("undefined id");
 		}
 		const request_config: AxiosRequestConfig<IUpdateRubricRequestData> = {
 			method: "put",
 			url: route('ajax.rubric.update', { rubric_id: this.id }),
 			data: {
-				id: this.id,
 				name: this.name.val,
 				category: this.category
 			},
 		};
-		return axios.request(request_config).then((response) => {
+		return axios.request(request_config).then(() => {
+			if (this.id === undefined) {
+				throw new Error("undefined id");
+			}
+			this.on_updated({ id: this.id, name: this.name.val });
 			this.dialog_ref.close({
-				data: JSON.parse(response.data)
-			})
+				data: {
+					id: this.id,
+					name: this.name.val,
+				}
+			});
 		});
 	}
 }

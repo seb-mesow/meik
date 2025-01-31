@@ -124,10 +124,15 @@ final class RubricRepository
 		$delete_doc = $this->create_stub_doc_from_model($rubric);
 		$this->client->deleteDoc($delete_doc);
 	}
+	
+	public function remove_by_id(string $rubric_id): void {
+		$doc_id = $this->determinate_doc_id_from_model_id($rubric_id);
+		$doc = $this->client->getDoc($doc_id); // retrieves _rev
+		$this->client->deleteDoc($doc);
+	}
 
 	public function get_by_selectors(array $selectors): array
 	{
-
 		$docs = $this->client->find(
 			$selectors
 		)->docs;
