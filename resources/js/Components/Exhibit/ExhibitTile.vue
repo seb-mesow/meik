@@ -16,7 +16,7 @@ if (exhibit.title_image) {
 <template>
 	<a :href="route('exhibit.details', exhibit.id)">
 		<div class="exhibit-tile flex justify-between" style="align-items: center;">
-			<div class="w-48 h-28 flex">
+			<div class="w-52 h-32 flex">
 				<img v-if="exhibit.title_image"
 					:src="route('ajax.image.get_thumbnail', { image_id: exhibit.title_image.id })"
 				>
