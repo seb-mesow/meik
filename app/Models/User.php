@@ -23,7 +23,11 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 	private string $forename;
 	private string $surname;
 	private bool $is_admin = false;
-	private string $remember_token = '';
+	
+	/**
+	 * ist optional: nur wenn der User sich beim letzten Einloggen mit "Remember Me" angemeldet hat, ist er gesetzt 
+	 */
+	private ?string $remember_token = null;
 	
 	public function __construct(
 		string $username,
@@ -44,35 +48,49 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 		$this->rev = $rev;
 	}
 	
+	/**
+	 * returns the attribute name for the primary keys
+	 * @return string
+	 */
 	public function getAuthIdentifierName(): string {
-		return 'original_name';
+		return '_id';
 	}
 	
+	/**
+	 * returns the primary key
+	 */
 	public function getAuthIdentifier(): string {
-		return $this->username;
+		assert($this->id !== null);
+		return $this->id;
 	}
 	
+	/**
+	 * returns the attribute name for the password hashes
+	 */
 	public function getAuthPasswordName(): string {
-		throw new RuntimeException('not implemented by intention');
-		// return 'password';
+		return 'password_hash';
 	}
 	
+	/**
+	 * returns the password hash
+	 */
 	public function getAuthPassword(): string {
-		throw new RuntimeException('not implemented by intention');
+		return $this->get_password_hash();
 	}
 	
 	/**
 	 * @return string
 	 */
-	public function getRememberToken(): string {
+	public function getRememberToken(): ?string {
 		return $this->remember_token;
 	}
 	
 	/**
-	 * @param mixed $new_remember_token
+	 * @param string $new_remember_token
 	 * @return void
 	 */
 	public function setRememberToken($new_remember_token) {
+		assert(is_string($new_remember_token));
 		$this->remember_token = $new_remember_token;
 	}
 	

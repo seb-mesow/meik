@@ -125,7 +125,7 @@ final class CouchDBUserProvider implements UserProvider {
 		return null;
 	}
 	
-    public function updateRememberToken(Authenticatable $user, $token) {
+	public function updateRememberToken(Authenticatable $user, $token) {
 		assert($user->getRememberToken() === $token);
 		$this->insert($user);
 	}
