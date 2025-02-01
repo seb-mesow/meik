@@ -22,10 +22,10 @@ final class UserController extends Controller
 		
 		$user_arr = array_map(static function(User $user): array {
 			return [
-				'username' => $user->username,
-				'forename' => $user->forename,
-				'surname' => $user->surname,
-				'is_admin' => $user->is_admin,
+				'username' => $user->get_username(),
+				'forename' => $user->get_forename(),
+				'surname' => $user->get_surname(),
+				'is_admin' => $user->is_admin(),
 			];
 		}, $users);
 		
