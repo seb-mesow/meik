@@ -10,12 +10,15 @@ use App\Http\Controllers\Web\ExhibitController;
 use App\Http\Controllers\Web\LocationController;
 use App\Http\Controllers\Web\PlaceController;
 use App\Http\Controllers\Web\RubricController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-	return redirect()->route('category.overview'); // redirekt mit 302
+	if (Auth::check()) {
+		return redirect()->route('category.overview'); // Redirect mit HTTP-Status 302
+	} else {
+		return redirect()->route('login.form'); /// Redirect mit HTTP-Status 302
+	}
 })->name('root');
 
 Route::get('/dashboard', function () {

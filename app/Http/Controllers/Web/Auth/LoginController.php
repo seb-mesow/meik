@@ -42,13 +42,13 @@ class LoginController extends Controller
 	 */
 	public function logout(Request $request): RedirectResponse
 	{
-		Auth::guard('web')->logout();
+		Auth::logout(); // use default session guard which is 'couchdb' !
 
 		$request->session()->invalidate();
 		
 		// CSRF token neusetzen
 		$request->session()->regenerateToken();
 
-		return redirect('/');
+		return redirect()->route('login.form');
 	}
 }
