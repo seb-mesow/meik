@@ -15,7 +15,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'couchdb'),
+        'guard' => env('AUTH_GUARD', 'web'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -39,10 +39,6 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
-        ],
-        'couchdb' => [
-            'driver' => 'couchdb',
             'provider' => 'users',
         ],
     ],
@@ -69,11 +65,6 @@ return [
             'driver' => 'couchdb',
             // 'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
