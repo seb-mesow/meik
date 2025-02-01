@@ -9,7 +9,6 @@ use App\Http\Controllers\AJAX\LocationAJAXController;
 use App\Http\Controllers\AJAX\PlaceAJAXController;
 use App\Http\Controllers\AJAX\ExhibitAJAXController;
 use App\Http\Controllers\AJAX\RubricAJAXController;
-use App\Models\Rubric;
 
 Route::prefix('ajax')->group(static function () {
 	# --- Benutzerverwaltung ---
