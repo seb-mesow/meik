@@ -109,12 +109,13 @@ final class CouchDBUserProvider implements UserProvider {
 	}
 	
 	/**
-	 * @param string $identifier original_name
+	 * @param string $user_id User-ID
+	 * @param string $remember_token
 	 * @return ?User
 	 */
-    public function retrieveByToken($identifier, $token): ?User {
+    public function retrieveByToken($user_id, $remember_token): ?User {
 		$res = $this->client
-			->key($token)
+			->key($remember_token)
 			->include_docs(true)
 			->getView('user', 'by-remember_token');
 		$rows = $res->rows;

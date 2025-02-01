@@ -6,7 +6,6 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Illuminate\Http\Request;
 use PHPOnCouch\Exceptions\CouchNotFoundException;
 
@@ -22,12 +21,19 @@ return Application::configure(basePath: dirname(__DIR__))
 	)
 	->withMiddleware(function (Middleware $middleware) {
 		$middleware->remove([
-			ConvertEmptyStringsToNull::class
+			// Illuminate\Foundation\Http\Middleware\TrimStrings::class,
+			Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
 		]);
-		$middleware->web(append: [
-			\App\Http\Middleware\HandleInertiaRequests::class,
-			\Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-		]);
+		$middleware->web(
+			append: [
+				App\Http\Middleware\HandleInertiaRequests::class,
+				Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+			],
+			// remove: [
+			// 	Illuminate\Cookie\Middleware\EncryptCookies::class,
+			// 	Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+			// ]
+		);
 		// $middleware->append(NotFoundMiddleware::class);
 	})
 	->withExceptions(function (Exceptions $exceptions) {
