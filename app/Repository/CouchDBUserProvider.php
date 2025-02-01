@@ -154,8 +154,16 @@ final class CouchDBUserProvider implements UserProvider {
 		return $this->hasher->check($credentials['password'], $user->get_password_hash());
 	}
 	
-	public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false): string {
-		return $credentials['password'];
+	/**
+	 * @param array{username: string, password: string} $credentials
+	 */
+	public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false): void {
+		assert($user instanceof User);
+		if ($force || $this->hasher->needsRehash($user->get_password_hash())) {
+			$password = $credentials['password'];
+			$user->set_password_hash($this->hasher->make($password));
+			$this->update($user);
+		}
 	}
 	
 	/**

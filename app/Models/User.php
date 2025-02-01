@@ -108,7 +108,7 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 	}
 	
 	public function get_surname(): string {
-		return $this->forename;
+		return $this->surname;
 	}
 	
 	public function set_surname(string $surname): void {
