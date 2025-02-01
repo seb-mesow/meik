@@ -31,10 +31,11 @@ class LoginController extends Controller
 	public function login(LoginRequest $request): RedirectResponse
 	{
 		$request->authenticate();
-
+		
 		$request->session()->regenerate();
-
-		return redirect()->intended(route('exhibit.overview', absolute: false));
+		
+		// !!! Ändere auch in web.php für die Route 'root' !!!
+		return redirect()->route('category.overview');
 	}
 
 	/**

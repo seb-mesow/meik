@@ -15,9 +15,10 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
 	if (Auth::check()) {
-		return redirect()->route('category.overview'); // Redirect mit HTTP-Status 302
+		// !!! Ändere auch in LoginController::login() !!!
+		return redirect()->route('category.overview');
 	} else {
-		return redirect()->route('login.form'); /// Redirect mit HTTP-Status 302
+		return redirect()->route('login.form');
 	}
 })->name('root');
 
