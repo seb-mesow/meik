@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Exhibit;
 use App\Models\FreeText;
 use App\Repository\ExhibitRepository;
+use App\Repository\RubricRepository;
 use App\Service\WordService;
 use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\QrCode;
@@ -15,8 +16,10 @@ use Endroid\QrCode\Writer\PdfWriter;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
+use stdClass;
 
 class ExhibitAJAXController extends Controller
 {
@@ -24,6 +27,7 @@ class ExhibitAJAXController extends Controller
 
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
+		private readonly RubricRepository $rubric_repository,
 		private readonly WordService $word_service
 	) {
 		$this->serializer = SerializerBuilder::create()->build();
@@ -35,14 +39,14 @@ class ExhibitAJAXController extends Controller
 		$name = $request->input('name');
 		$manufacturer = $request->input('manufacturer');
 		$connected_exhibits = $request->input('connected_exhibits');
-
+		$rubric_id = $request->input('rubric');
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$exhibit->set_inventory_number($inventory_number);
 		$exhibit->set_name($name);
 		$exhibit->set_manufacturer($manufacturer);
 		$exhibit->set_connected_exhibits($connected_exhibits);
+		$exhibit->set_rubric_id($rubric_id);
 		$this->exhibit_repository->update($exhibit);
-		//sleep(5); // TODO entfernen
 	}
 
 	public function create_free_text(Request $request, int $exhibit_id): JsonResponse
@@ -160,12 +164,16 @@ class ExhibitAJAXController extends Controller
 		return $this->word_service->get_data_sheet($exhibit);
 	}
 
-	public function search_exhibits(Request $request, string $query)
+	public function search_exhibits(Request $request)
 	{
+		$query = $request->query('query');
 		$queryParts = explode(' ', $query);
 		$excluded_ids = $request->query('excluded');
 		$selectors = [];
 		foreach ($queryParts as $queryPart) {
+			if(!$queryPart) {
+				continue;
+			}
 			$selector = [
 				'$or' => [
 					[
@@ -203,6 +211,12 @@ class ExhibitAJAXController extends Controller
 			];
 			$selectorParts[] = $excluded;
 		}
+
+		$selectorParts[] = [
+			'_id' => [
+				'$beginsWith' => 'exhibit:'
+			]
+		];
 
 		$selectors = [
 			'$and' => $selectorParts

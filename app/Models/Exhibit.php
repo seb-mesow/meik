@@ -91,7 +91,8 @@ class Exhibit implements IntIdentifiable, Revisionable
 		array $free_texts = [],
 		string $rubric_id,
 		int|null $id = null,
-		?string $rev = null
+		?string $rev = null,
+		array $connected_exhibits = []
 	) {
 		$this->id = $id;
 		$this->rev = $rev;
@@ -103,6 +104,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->place_id = $place_id;
 		$this->free_texts = $free_texts;
 		$this->rubric_id = $rubric_id;
+		$this->connected_exhibits = $connected_exhibits;
 	}
 		
 	public function get_inventory_number(): string {

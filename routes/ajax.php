@@ -117,6 +117,9 @@ Route::prefix('ajax')->group(static function () {
 	Route::get('/exhibit/{exhibit_id}/data-sheet', [ExhibitAJAXController::class, 'get_data_sheet'])
 		->name('ajax.exhibit.get_data_sheet');
 
-	Route::get('/exhibit/{query}', [ExhibitAJAXController::class, 'search_exhibits'])
+	Route::get('/find/exhibit', [ExhibitAJAXController::class, 'search_exhibits'])
 		->name('ajax.exhibit.search');
+
+	Route::get('/find/rubric', [RubricAJAXController::class, 'search_rubrics'])
+		->name('ajax.rubric.search');
 });

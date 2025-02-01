@@ -22,7 +22,12 @@ export interface IExhibitInitPageProps {
 		connected_exhibits: {
 			id: number,
 			name: string
-		}[]
+		}[],
+		rubric: {
+			id: string,
+			name: string,
+			category: string
+		}
 	},
 	errs?: string[],
 	title_image?: {

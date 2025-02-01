@@ -118,7 +118,6 @@ final class RubricRepository
 
 	public function get_by_selectors(array $selectors): array
 	{
-
 		$docs = $this->client->find(
 			$selectors
 		)->docs;

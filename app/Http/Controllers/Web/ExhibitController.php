@@ -61,7 +61,7 @@ class ExhibitController extends Controller
 	{
 		$place = $this->place_repository->get($exhibit->get_place_id());
 		$location = $this->location_repository->get($place->get_location_id());
-		
+
 		$tile_props = [
 			'id' => $exhibit->get_id(),
 			'name' => $exhibit->get_name(),
@@ -72,12 +72,12 @@ class ExhibitController extends Controller
 			'place_name' => $place->get_name(),
 		];
 		if ($title_image = $this->image_service->get_internal_title_image($exhibit)) {
-			$tile_props ['title_image'] = [
+			$tile_props['title_image'] = [
 				'id' => $title_image->get_id(),
 				'description' => $title_image->get_description(),
 				'thumbnail_width' => $title_image->get_thumbnail_width(),
 				'thumbnail_height' => $title_image->get_thumbnail_height(),
-			];	
+			];
 		}
 		return $tile_props;
 	}
@@ -127,6 +127,7 @@ class ExhibitController extends Controller
 			$persisted = false; // TODO remove
 		}
 		$free_texts = $exhibit?->get_free_texts() ?? [];
+		$rubric = $this->rubric_repository->get($exhibit->get_rubric_id());
 		$free_text_forms = array_map(static fn(FreeText $free_text): array => [
 			'id' => $free_text->get_id(),
 			'errs' => [],
@@ -164,16 +165,21 @@ class ExhibitController extends Controller
 					'val' => $free_text_forms,
 					'errs' => [],
 				],
-				'connected_exhibits' => array_map(function(int $id): array {
+				'rubric' => [
+					'id' => $rubric->get_id(),
+					'name' => $rubric->get_name(),
+					'category' => $rubric->get_category()
+				],
+				'connected_exhibits' => array_map(function (int $id): array {
 					$connected_exhibit = $this->exhibit_repository->find($id);
 					return [
-					'id' => $exhibit->get_id(),
-					'name' => $exhibit->get_name()
-					]}, $exhibit->get_connected_exhibits());
+						'id' => $connected_exhibit->get_id(),
+						'name' => $connected_exhibit->get_name()
+					];
+				}, $exhibit->get_connected_exhibits())
 			],
 			'errs' => [],
 		];
-		// dd('free_text_forms: ', $free_text_forms);
 		if ($exhibit) {
 			$exhibit_id = $exhibit->get_id();
 			$exhibit_form['id'] = $exhibit_id;
@@ -186,6 +192,7 @@ class ExhibitController extends Controller
 				];
 			}
 		}
+
 		return $exhibit_form;
 	}
 }

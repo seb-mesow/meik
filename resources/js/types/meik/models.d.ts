@@ -40,7 +40,7 @@ export interface IExhibitForm {
 			val: string,
 			errs: string[];
 		},
-		free_texts: IFreeTextsForms,
+		free_texts: IFreeTextsForms
 	},
 	title_image?: {
 		id: string,

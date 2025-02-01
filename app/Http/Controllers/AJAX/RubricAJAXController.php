@@ -63,8 +63,49 @@ class RubricAJAXController extends Controller
 		return response()->json($this->serializer->serialize($rubric, 'json'));
 	}
 
-	public function delete(string $rubric_id): void {
+	public function delete(string $rubric_id): void
+	{
 		$rubric = $this->rubric_repository->get($rubric_id);
 		$this->rubric_repository->remove($rubric);
+	}
+
+	public function search_rubrics(Request $request)
+	{
+		$query = $request->query('query');
+		$queryParts = explode(' ', $query);
+		$selectors = [];
+		foreach ($queryParts as $queryPart) {
+			if(!$queryPart) {
+				continue;
+			}
+
+			$selector = [
+				'$or' => [
+					[
+						'name' => [
+							'$regex' => '(?i)' . $queryPart // Regex für name
+						]
+					],
+				]
+			];
+
+			$selectorParts[] = $selector;
+		}
+
+		$selectorParts[] = [
+			'_id' => [
+				'$beginsWith' => 'rubric'
+			]
+		];
+		$selectors = [
+			'$and' => $selectorParts
+		];
+		$rubrics = $this->rubric_repository->get_by_selectors($selectors);
+		$rubrics_json = array_map(static fn(Rubric $rubric): array => [
+			'id' => $rubric->get_id(),
+			'name' => $rubric->get_name(),
+			'category' => $rubric->get_category()
+		], $rubrics);
+		return $rubrics_json;
 	}
 }

@@ -163,7 +163,7 @@ final class ExhibitRepository
 	/**
 	 * @return ExhibitDoc
 	 */
-	private function create_doc_from_exhibit(Exhibit $exhibit): stdClass
+	public function create_doc_from_exhibit(Exhibit $exhibit): stdClass
 	{
 		/** @var ExhibitDoc */
 		$exhibit_doc = $this->create_stub_doc_from_model($exhibit);
@@ -205,6 +205,7 @@ final class ExhibitRepository
 			rubric_id: $exhibit_doc?->rubric_id ?? '',
 			id: $this->determinate_model_id_from_doc($exhibit_doc),
 			rev: $exhibit_doc->_rev,
+			connected_exhibits: $exhibit_doc->connected_exhibits ?? []
 		);
 	}
 

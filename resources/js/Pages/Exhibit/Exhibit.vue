@@ -25,12 +25,16 @@ const props = defineProps<{
 
 const suggested_exhibits = ref([]);
 const connected_exhibits = ref(props.init_props.val.connected_exhibits);
+const suggested_rubrics = ref([]);
+const rubric = ref(props.init_props.val.rubric)
+const items = ref()
+
 
 const home = {
 	icon: 'pi pi-home',
 	url: route('category.overview'),
 };
-let items = [
+items.value = [
 	{
 		label: 'Exponate',
 		url: route('exhibit.overview'),
@@ -40,19 +44,19 @@ let items = [
 	},
 ];
 
-if (props.rubric) {
-	items = [
+const update_breadcrumbs = (rubric: any) => {
+	return [
 		{
 			label: 'Kategorien',
 			url: route('category.overview')
 		},
 		{
-			label: props.rubric.category,
-			url: route('rubric.overview', { category: props.rubric.category })
+			label: rubric.category,
+			url: route('rubric.overview', { category: rubric.category })
 		},
 		{
-			label: props.rubric.name,
-			url: route('exhibit.overview', { rubric: props.rubric.id }),
+			label: rubric.name,
+			url: route('exhibit.overview', { rubric: rubric.id }),
 		},
 		{
 			label: props?.name ?? 'Neues Exponat',
@@ -60,25 +64,8 @@ if (props.rubric) {
 	];
 }
 
-
 if (props.rubric) {
-	items = [
-		{
-			label: 'Kategorien',
-			url: route('category.overview')
-		},
-		{
-			label: props.rubric.category,
-			url: route('rubric.overview', { category: props.rubric.category })
-		},
-		{
-			label: props.rubric.name,
-			url: route('exhibit.overview', { rubric: props.rubric.id }),
-		},
-		{
-			label: props?.name ?? 'Neues Exponat',
-		},
-	];
+ 	items.value = update_breadcrumbs(rubric.value)
 }
 
 
@@ -108,15 +95,16 @@ const form: IExhibitForm = {
 			id: 'free_texts',
 			val: props.init_props.val.free_texts.val,
 			errs: props.init_props.val.free_texts.errs,
-		},
+		}
 	},
 	errs: props.init_props.errs ?? [],
 	title_image: props.init_props.title_image,
 }
-
 const exhibit_id = form.id;
 const is_new = exhibit_id === undefined;
 const button_save_metadata_is_loading = ref(false);
+
+
 
 async function save_metadata(event: MouseEvent) {
 	button_save_metadata_is_loading.value = true;
@@ -130,12 +118,16 @@ async function save_metadata(event: MouseEvent) {
 			console.log(`request_data ==`);
 			console.log(request_data);
 			request_data.connected_exhibits = connected_exhibits.value.map((ce) => ce.id);
+			request_data.rubric = rubric.value.id
 			await axios.request({
 				method: 'patch',
 				url: route('ajax.exhibit.set_metadata', { exhibit_id: exhibit_id }),
 				data: request_data // TODO sendet unnützerweise auch free_texts
 			});
 			console.log("AJAX Request erfolgreich");
+			items.value = update_breadcrumbs(rubric.value)
+			console.log(items.value)
+			
 		} catch (e) {
 			console.log("Fehler bei AJAX Request");
 			console.log(e);
@@ -149,15 +141,33 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 	const query = event.query
 	const request_config: AxiosRequestConfig = {
 		method: "get",
-		url: route(`ajax.exhibit.search`, { 'query': query }),
+		url: route(`ajax.exhibit.search`),
 		// Hier könnten auch weitere exhibit id eingebracht werden. 
 		params: {
-			'excluded': [exhibit_id] 
+			'excluded': [exhibit_id],
+			'query': query
 		}
 	};
 	return axios.request(request_config).then(
 		(response: AxiosResponse) => {
 			suggested_exhibits.value = response.data
+			console.log(suggested_exhibits.value)
+		}
+	);
+}
+
+async function search_rubrics(event: AutoCompleteCompleteEvent): Promise<void> {
+	const query = event.query
+	const request_config: AxiosRequestConfig = {
+		method: "get",
+		url: route(`ajax.rubric.search`),
+		params: {
+			'query': query
+		}
+	};
+	return axios.request(request_config).then(
+		(response: AxiosResponse) => {
+			suggested_rubrics.value = response.data
 			console.log(suggested_exhibits.value)
 		}
 	);
@@ -183,9 +193,12 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 				<InputField :form="form.val.inventory_number" label="Inventarnummer" />
 				<InputField :form="form.val.name" label="Bezeichnung" />
 				<InputField :form="form.val.manufacturer" label="Hersteller" />
-				<label for="multiple-ac-1">Verknüpfte Exponate</label>
-				<AutoComplete v-model="connected_exhibits" inputId="multiple-ac-1" multiple fluid :suggestions="suggested_exhibits"
-					@complete="search_exhibits" optionLabel="name" />
+				<p><label for="multiple-ac-1">Verknüpfte Exponate</label></p>
+				<AutoComplete forceSelection v-model="connected_exhibits" inputId="multiple-ac-1" multiple fluid dropdown
+					:suggestions="suggested_exhibits" @complete="search_exhibits" optionLabel="name" />
+				<p><label for="ac-2">Rubrik</label></p>
+				<AutoComplete forceSelection v-model="rubric" inputId="ac-2" fluid
+					:suggestions="suggested_rubrics" @complete="search_rubrics" optionLabel="name"  dropdown/>
 				<Button v-if="is_new" :loading="button_save_metadata_is_loading" type='submit' label='Speichern' />
 				<Button v-else :loading="button_save_metadata_is_loading" type='button' @click="save_metadata"
 					label='Metadaten speichern' />
