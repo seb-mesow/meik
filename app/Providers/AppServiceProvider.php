@@ -5,13 +5,13 @@ namespace App\Providers;
 
 use App\Repository\CouchDBUserProvider;
 use App\Repository\LocationRepository;
+use App\Repository\MariaDBNonBase64SessionHandler;
 use App\Repository\PlaceRepository;
 use Database\Seeders\ExhibitSeeder;
 use Database\Seeders\ImageSeeder;
 use Database\Seeders\LocationSeeder;
 use Database\Seeders\PlaceSeeder;
 use Database\Seeders\UserSeeder;
-use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
+use Session;
 use View;
 
 class AppServiceProvider extends ServiceProvider
@@ -53,17 +54,16 @@ class AppServiceProvider extends ServiceProvider
 		Auth::provider('couchdb', static function(Application $app, array $config): UserProvider {
 			return $app->make(CouchDBUserProvider::class);
 		});
-		Auth::extend('couchdb', static function(Application $app, string $guard_name, array $config) {
-			$guard = new SessionGuard(
-				'session',
-				Auth::createUserProvider($config['provider']),
-				$app->make('session.store'),
-				$app->make('request')
-			);
-			if (method_exists($guard, 'setCookieJar')) {
-				$guard->setCookieJar($app->make('cookie'));
-			}
-			return $guard;
+		
+		Session::extend('mariadb_json', static function(Application $app) {
+			$connection_name = config('session.connection');
+
+			$connection = $app->make('db')->connection($connection_name);
+			
+			$table = config('session.table');
+			$lifetime = config('session.lifetime');
+			
+			return new MariaDBNonBase64SessionHandler($connection, $table, $lifetime, $app);
 		});
 		
 		View::addNamespace('errors', resource_path('views/errors'));
