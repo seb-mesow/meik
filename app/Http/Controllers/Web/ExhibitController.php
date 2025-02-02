@@ -17,9 +17,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 
 class ExhibitController extends Controller
 {
+	private const int COUNT_PER_PAGE = 20;
+	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly LocationRepository $location_repository,
@@ -31,14 +34,18 @@ class ExhibitController extends Controller
 
 	public function overview(Request $request): InertiaResponse
 	{
-		$rubric_id = $request->input('rubric');
-		$page = $request->input('page', 0);
-		$pageSize = $request->input('pageSize', 50);
+		$rubric_id = (string) $request->query('rubric_id', "");
+		// $page_number = (int) $request->query('page_number', 0);
+		// $count_per_page = (int) $request->query('count_per_page', (string) self::DEFAULT_COUNT_PER_PAGE);
 		
 		$breadcrumbs = [];
-		$main_props = [];
+		$main_props = [
+			'count_per_page' => self::COUNT_PER_PAGE, // für ähnliche AJAX-Route
+		];
 		
-		if ($rubric_id) {
+		if ($rubric_id === "") {
+			$selectors = [];
+		} else {
 			$selectors = [
 				'rubric_id' =>  [
 					'$eq' => $rubric_id
@@ -61,11 +68,13 @@ class ExhibitController extends Controller
 					'name' => $rubric->get_name(),
 				],
 			];
-		} else {
-			$selectors = null;
 		}
 		
-		$exhibits = $this->exhibit_repository->get_exhibits_paginated($selectors, $page, $pageSize);
+		$exhibits = $this->exhibit_repository->get_paginated(
+			page_number: 0,
+			count_per_page: self::COUNT_PER_PAGE,
+			additonal_selectors: $selectors,
+		);
 		$main_props['exhibits'] = $this->exhibit_service->determinate_tiles_props($exhibits);
 		
 		return Inertia::render('Exhibit/ExhibitOverview', [
@@ -73,8 +82,6 @@ class ExhibitController extends Controller
 			'breadcrumb' => $breadcrumbs
 		]);
 	}
-
-
 
 	public function details(int $exhibit_id): InertiaResponse
 	{

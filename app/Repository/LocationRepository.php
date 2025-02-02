@@ -47,9 +47,11 @@ final class LocationRepository
 			->include_docs(true)
 			->getView(self::MODEL_TYPE_ID, 'all');
 			$_this = $this;
+		
 		$locations = array_map(static function(stdClass $row) use ($_this): Location {
 			return $_this->create_location_from_doc($row->doc);
 		}, $response->rows);
+		
 		return [
 			'locations' => $locations,
 			'total_count' => $response->total_rows,

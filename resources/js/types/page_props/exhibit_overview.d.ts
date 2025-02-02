@@ -19,4 +19,5 @@ export interface IExhibitOverviewPageProps {
 		id: string
 	},
 	exhibits: IExhibitTileProps[],
+	count_per_page: number,
 }

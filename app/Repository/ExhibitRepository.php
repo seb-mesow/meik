@@ -131,33 +131,35 @@ final class ExhibitRepository
 	}
 
 	/**
+	 * ggf. ist irgendwann einmal noch total_count erforderlich
+	 * 
 	 * @return Exhibit[]
 	 */
-	public function get_exhibits_paginated(array|null $additonalSelectors = null, int $page = 0, int $page_size = 10,): array
+	public function get_paginated(int $page_number, int $count_per_page, array $additonal_selectors = []): array
 	{
 		$selectors = [
 			'_id' => [
 				'$beginsWith' => self::ID_PREFIX
 			]
 		];
+		$selectors = array_merge($selectors, $additonal_selectors);
 
-		if ($additonalSelectors) {
-			$selectors = array_merge($selectors, $additonalSelectors);
-		}
-
-		$exhibits = $this->client
-			->limit($page_size)
-			->skip($page * $page_size)
+		$response = $this->client
+			->limit($count_per_page)
+			->skip($page_number * $count_per_page)
 			->find([
 				'$and' => [
 					$selectors
 				]
 			])
 			->docs;
+			
 		$_this = $this;
-		return array_map(static function (stdClass $doc) use ($_this): Exhibit {
+		$exhibits = array_map(static function (stdClass $doc) use ($_this): Exhibit {
 			return $_this->create_exhibit_from_doc($doc);
-		}, $exhibits);
+		}, $response);
+		
+		return $exhibits;
 	}
 	
 	/**
