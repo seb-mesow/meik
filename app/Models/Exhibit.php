@@ -165,6 +165,9 @@ class Exhibit implements IntIdentifiable, Revisionable
 	public function __construct(
 		string $inventory_number,
 		string $name,
+		string $place_id,
+		string $rubric_id,
+		array $connected_exhibit_ids,
 		string $short_description,
 		string $manufacturer,
 		string $manufacture_date,
@@ -175,9 +178,6 @@ class Exhibit implements IntIdentifiable, Revisionable
 		KindOfProperty $kind_of_property,
 		?DeviceInfo $device_info = null,
 		?BookInfo $book_info = null,
-		string $place_id,
-		string $rubric_id,
-		array $connected_exhibit_ids,
 		array $free_texts = [],
 		?int $id = null,
 		?string $rev = null

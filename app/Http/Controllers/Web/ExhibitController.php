@@ -35,8 +35,6 @@ class ExhibitController extends Controller
 	public function overview(Request $request): InertiaResponse
 	{
 		$rubric_id = (string) $request->query('rubric_id', "");
-		// $page_number = (int) $request->query('page_number', 0);
-		// $count_per_page = (int) $request->query('count_per_page', (string) self::DEFAULT_COUNT_PER_PAGE);
 		
 		$breadcrumbs = [];
 		$main_props = [
