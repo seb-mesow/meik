@@ -60,6 +60,7 @@ final class PlaceRepository
 			->skip($page_number * $count_per_page)
 			->include_docs(true)
 			->getView(self::MODEL_TYPE_ID, 'by-location-id');
+		
 		$_this = $this;
 		$places = array_map(static function(stdClass $row) use ($_this): Place {
 			return $_this->create_place_from_doc($row->doc);

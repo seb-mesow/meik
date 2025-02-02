@@ -43,7 +43,8 @@ class LoginController extends Controller
 	 */
 	public function logout(Request $request): RedirectResponse
 	{
-		Auth::logout(); // use default session guard which is 'couchdb' !
+		// use default session guard, which is configured only in config/auth.php !
+		Auth::logout();
 
 		$request->session()->invalidate();
 		

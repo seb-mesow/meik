@@ -8,6 +8,7 @@ import type { IExhibitOverviewPageProps } from '@/types/page_props/exhibit_overv
 import Breadcrumb from 'primevue/breadcrumb';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ref } from 'vue';
+import { IGetExhibitsPaginated200ResponseData, IGetExhibitsPaginatedQueryParams } from '@/types/ajax/exhibit';
 
 const props = defineProps<{
 	breadcrumb: {
@@ -22,11 +23,16 @@ const props = defineProps<{
 	},
 	main: IExhibitOverviewPageProps,
 }>();
-console.log(props.main)
 
-let page = ref(0);
-const pageSize = ref(50);
-let isLoading = ref(false);
+const exhibits = ref(props.main.exhibits);
+
+// This site was loaded with page_number 0.
+// So for the first AJAX the page_number is 1.
+let page_number = 1;
+
+let more_exhibits_exist = true;
+
+let is_loading = false;
 
 const home = {
 	icon: 'pi pi-home',
@@ -54,50 +60,54 @@ if (props.breadcrumb.rubric) {
 	});
 }
 
-const load_exhibits = (): void => {
-	if (isLoading.value) return;  // Verhindert mehrere Anfragen gleichzeitig
-	isLoading.value = true;
-
-	ajax_get_paginated()
+function load_exhibits(): void {
+	if (is_loading) {
+		return; // Verhindert mehrere Anfragen gleichzeitig
+	}
+	if (!more_exhibits_exist) {
+		console.log(`loaded ${exhibits.value.length} exhibits overall`);
+		return;
+	}
+	is_loading = true;
+	ajax_get_paginated();
 }
 
-const ajax_get_paginated = (): Promise<void> => {
-	const query_params: { page: number, page_size: number, rubric?: string } = {
-		page: page.value,
-		page_size: pageSize.value,
+async function ajax_get_paginated(): Promise<void> {
+	const query_params: IGetExhibitsPaginatedQueryParams = {
+		page_number: page_number,
+		count_per_page: props.main.count_per_page,
 	};
 	if (props.main.rubric) {
-		query_params.rubric = props.main.rubric.id;
+		query_params.rubric_id = props.main.rubric.id;
 	}
 	const request_config: AxiosRequestConfig = {
 		method: "get",
 		url: route('ajax.exhibit.get_paginated'),
-		params: query_params
+		params: query_params,
 	};
 	return axios.request(request_config).then(
-		(response: AxiosResponse) => {
-			isLoading.value = false;
-			if (page.value === 0) {
-				exhibits.value = []
-				exhibits.value = response.data
-			} else {
-				exhibits.value.push(...response.data)
-			}
+		(response: AxiosResponse<IGetExhibitsPaginated200ResponseData>) => {
+			exhibits.value.push(...response.data)
+			page_number++;
+			more_exhibits_exist = response.data.length >= props.main.count_per_page;
+			is_loading = false;
 		}
 	);
 }
 
-const handleScroll = (event: Event) => {
+function handleScroll(event: Event): void {
 	const container = event.target as HTMLElement;
-	const bottomReached = container.scrollHeight === container.scrollTop + container.clientHeight;
-	console.log('trigger', bottomReached, !isLoading.value)
-	if (bottomReached && !isLoading.value) {
-		page.value = page.value + 1;
+	// console.log(`trigger: scrollHeight == ${container.scrollHeight}, diff == ${container.scrollTop + container.clientHeight}`);
+	const diff: number = container.scrollHeight * 1.0 
+						- container.scrollTop * 1.0 
+						- container.clientHeight * 1.0;
+	// console.log(`trigger: overall diff == ${diff}`);
+	const bottom_reached = diff <= 1; // a difference of zero is to restrictive
+	if (bottom_reached && !is_loading) {
+		// console.log(`trigger: bottom_reached == ${bottom_reached}, is_loading == ${is_loading}`);
 		load_exhibits();  // Lädt die nächste Seite, wenn der Benutzer den unteren Rand erreicht
 	}
 }
-
-const exhibits = ref(props.main.exhibits);
 </script>
 
 <template>
@@ -109,7 +119,7 @@ const exhibits = ref(props.main.exhibits);
 						<span v-if="item.icon" :class="item.icon"></span>
 						<span v-else>{{ item.label }}</span>
 					</a>
-				</template>Route
+				</template>
 			</Breadcrumb>
 		</template>
 		<div class="flex h-full">

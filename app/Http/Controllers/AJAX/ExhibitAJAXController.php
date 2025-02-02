@@ -112,21 +112,22 @@ class ExhibitAJAXController extends Controller
 
 	public function get_paginated(Request $request): JsonResponse
 	{
-		$page = (int) $request->query('page');
-		$page_size = (int) $request->query('page_size');
-		$rubric_id = $request->query('rubric');
-
-		if ($rubric_id) {
+		$rubric_id = (string) $request->query('rubric_id');
+		$page_number = (int) $request->query('page_number');
+		/** @see ExhibitController::COUNT_PER_PAGE */
+		$count_per_page = (int) $request->query('count_per_page');
+		
+		if ($rubric_id === '') {
+			$selectors = [];
+		} else {
 			$selectors = [
 				'rubric_id' =>  [
 					'$eq' => $rubric_id
 				]
 			];
-		} else {
-			$selectors = null;
-		}
+		};
 		
-		$exhibits = $this->exhibit_repository->get_exhibits_paginated($selectors, $page, $page_size);
+		$exhibits = $this->exhibit_repository->get_paginated($page_number, $count_per_page, $selectors);
 		
 		$exhibits_json = $this->exhibit_service->determinate_tiles_props($exhibits);
 		

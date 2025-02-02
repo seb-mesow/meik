@@ -84,6 +84,8 @@ use JMS\Serializer\SerializerBuilder;
  */
 class ExhibitAPIController extends Controller
 {
+	private const int DEFAULT_COUNT_PER_PAGE = 25;
+	
 	private Serializer $serializer;
 
 	public function __construct(
@@ -95,12 +97,16 @@ class ExhibitAPIController extends Controller
 	) {
 		$this->serializer = SerializerBuilder::create()->build();
 	}
-
+	
+	// TODO document API
+	// TODO define response objects
 	public function get_exhibits_paginated(Request $request): JsonResponse
 	{
-		$page = (int)$request->input('page', 0);
-		$pageSize = (int)$request->input('pageSize', 10);
-		$exhibits = $this->exhibit_repository->get_exhibits_paginated(null, $page, $pageSize);
+		$page_number = (int) $request->query('page_number', 0);
+		$count_per_page = (int) $request->query('count_per_page', (string) self::DEFAULT_COUNT_PER_PAGE);
+		
+		$exhibits = $this->exhibit_repository->get_paginated($page_number, $count_per_page);
+		
 		return response()->json(json_decode($this->serializer->serialize($exhibits, 'json', (new SerializationContext))));
 	}
 
