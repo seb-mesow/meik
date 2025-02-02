@@ -1,14 +1,14 @@
 # Notizen zur Implementierung der Authentifizierung
 
 - [Notizen zur Implementierung der Authentifizierung](#notizen-zur-implementierung-der-authentifizierung)
-	- [Aufbau](#aufbau)
-	- [Ablauf Login](#ablauf-login)
-	- [Ablauf Authentifizierung einer Request, wenn ordentlich eingeloggt](#ablauf-authentifizierung-einer-request-wenn-ordentlich-eingeloggt)
-	- [Ablauf Authentifizierung einer Request nur über Remember-Token](#ablauf-authentifizierung-einer-request-nur-über-remember-token)
-	- [Ausloggen](#ausloggen)
-	- [Remember-Token](#remember-token)
-	- [Session](#session)
-	- [CSRF-Token](#csrf-token)
+  - [Aufbau](#aufbau)
+  - [Ablauf Login](#ablauf-login)
+  - [Ablauf Authentifizierung einer Request, wenn ordentlich eingeloggt](#ablauf-authentifizierung-einer-request-wenn-ordentlich-eingeloggt)
+  - [Ablauf Authentifizierung einer Request nur über Remember-Token](#ablauf-authentifizierung-einer-request-nur-über-remember-token)
+  - [Ausloggen](#ausloggen)
+  - [Remember-Token](#remember-token)
+  - [Session](#session)
+  - [CSRF-Token](#csrf-token)
 
 Kurzlebige Daten, insbesondere Sitzungsdaten, werden in der MariaDB gespeichert.
 siehe `config/session.php`
@@ -86,9 +86,11 @@ Der CSRF-Token wird in keiner From mit gesendet (weder als Header noch als Teil 
          2. `return true` wenn `$user !== null`
       2. wenn `$checked == false`, dann werfe `AuthenticationException`
 
+
 ## Ausloggen
 1. aktuelle Session mit neuer Session-ID, ohne User-ID in separater Spalte und ohne User-ID in der Session-Payload überschreiben.
 2. Cookie mit Remember-Token mit solchen Parametern senden, dass dieser vom Browser sofort gelöscht wird.
+
 
 ## Remember-Token
 Dazu wird im Browser des Users ein langlebiger Cookie namens `remember_<SESSION_GUARD>_<SHA1-HASH_CLASS-STRING_PROVIDER>`.
@@ -141,3 +143,8 @@ Der CSRF-Token kann auf drei Arten vom Browser angegeben werden:
 2. Als Wert des Headers `X-CSRF-TOKEN`, aber unverschlüsselt.
 3. Als Wert des Headers `X-XSRF-TOKEN`, aber symmetrisch verschlüsselt mit dem APP_KEY.
 Die angegebenen Arten werden von oben nach unten durchprobiert.
+
+Beim Laden von Bildern wird kein Header `X-XSRF-TOKEN` oder `X-CSRF-TOKEN` mit gesendet.
+
+Bei einer AJAX-Request wird der Header `X-XSRF-TOKEN` mitgesendet.
+(Zusätzlich wird der Cookie `meik_session` und der Cookie `XSRF-TOKEN` mit gesendet.)

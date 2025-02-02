@@ -24,10 +24,10 @@ class ExhibitAJAXController extends Controller
 
 	public function set_metadata(Request $request, int $exhibit_id): void
 	{
-		$inventory_number = $request->input('inventory_number');
-		$name = $request->input('name');
-		$manufacturer = $request->input('manufacturer');
-
+		$inventory_number = (string) $request->input('inventory_number');
+		$name = (string) $request->input('name');
+		$manufacturer = (string) $request->input('manufacturer');
+		
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$exhibit->set_inventory_number($inventory_number);
 		$exhibit->set_name($name);
