@@ -14,7 +14,7 @@ use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
 /**
- * @phpstan-type ImageInitPageProps array{
+ * @phpstan-type ImageProps array{
  *     id: string,
  *     description: string,
  *     is_public: bool,
@@ -54,7 +54,7 @@ class ImagesController extends Controller
 	}
 	
 	/**
-	 * @return ImageInitPageProps[]
+	 * @return ImageProps[]
 	 */
 	private function create_images_page_props(Exhibit $exhibit): array {
 		$images = $this->image_repository->get_images($exhibit->get_id());

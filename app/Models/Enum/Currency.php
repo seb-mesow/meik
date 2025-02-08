@@ -102,4 +102,28 @@ enum Currency: string
 	 * (alter) russischer Rubel (1991-1998)
 	 */
 	case RUR = 'RUR';
+	
+	public function get_name(): string {
+		return match($this) {
+			self::EUR => 'Euro',
+			self::USD => 'US-Dollar',
+			self::GBP => 'Britisches Pfund',
+			self::CHF => 'Schweizer Franken',
+			self::RUB => 'Russischer Rubel',
+			self::CZK => 'Tschechische Krone',
+			self::PLN => '(Neuer) Polnischer Zloty',
+			self::CNY => 'Chinesischer Renminbi Yuan',
+			self::TWD => 'Neuer Taiwan-Dollar',
+			self::JPY => 'Japanischer Yen',
+			self::KRW => 'Südkoreanischer Won',
+			self::DEM => 'Deutsche Mark',
+			self::DDM => 'Mark der DDR',
+			self::ATS => 'Schilling',
+			self::FRF => 'Französischer Franc',
+			self::SUR => 'Sowjetischer Rubel',
+			self::CSK => 'Tschechoslowakische Krone',
+			self::PLZ => 'alter Polnischer Zloty',
+			self::RUR => '(alter) russischer Rubel',
+		};
+	}
 }

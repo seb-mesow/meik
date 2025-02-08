@@ -7,16 +7,22 @@ import Breadcrumb from 'primevue/breadcrumb';
 import { IExhibitProps } from '@/types/page_props/exhibit';
 import Form from '@/Components/Form/Form.vue';
 import ExportButton from '@/Components/Control/ExportButton.vue';
-import { ExhibitForm, IExhibitForm, IExhibitFormFormConstructorArgs } from '@/form/exhibitform';
-import InputTextField2 from '@/Components/Form/InputTextField2.vue';
+import {
+	ExhibitForm,
+	IExhibitForm,
+	IExhibitFormConstructorArgs,
+	ISelectableValues,
+} from '@/form/exhibitform';
 import SelectField from '@/Components/Form/SelectField.vue';
-import { ISelectForm, SelectForm } from '@/form/selectform';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
+import GroupSelectField from '@/Components/Form/GroupSelectField.vue';
+import InputNumberField from '@/Components/Form/InputNumberField.vue';
+import InputTextField2 from '@/Components/Form/InputTextField2.vue';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
-	all_locations: string[],
+	selectable_values: ISelectableValues,
 	exhibit_props?: IExhibitProps,
 	category?: {
 		id: string,
@@ -27,6 +33,11 @@ const props = defineProps<{
 		name: string,
 	}
 }>();
+
+console.log('props.selectable_values ==');
+console.log(props.selectable_values);
+console.log('props.exhibit_props ==');
+console.log(props.exhibit_props);
 
 const home = {
 	icon: 'pi pi-home',
@@ -55,30 +66,47 @@ items.push({
 const toast_service = useToast();
 
 // (interne) Attribute der Seite
-let form_constructor_args: IExhibitFormFormConstructorArgs|undefined = undefined;
+const form_constructor_args: IExhibitFormConstructorArgs = {
+	aux: {
+		toast_service: toast_service,
+		selectable_values: props.selectable_values
+	},
+};
 if (props.exhibit_props) {
-	form_constructor_args = {
+	form_constructor_args.data = {
 		id: props.exhibit_props.id,
+	
+		// Kerndaten
 		inventory_number: props.exhibit_props.inventory_number,
 		name: props.exhibit_props.name,
 		short_description: props.exhibit_props.short_description,
-		rubric: props.rubric?.name ?? '',
-		place: props.exhibit_props.place,
-		manufacturer: props.exhibit_props.manufacturer ?? '',
-		toast_service: toast_service,
-	};
+		rubric: props.exhibit_props.rubric,
+		location_id: props.exhibit_props.location_id,
+		place_id: props.exhibit_props.place_id,
+		// TODO connected_exhibits
+		
+		// Bestandsdaten
+		preservation_state_id: props.exhibit_props.preservation_state_id,
+		current_value: props.exhibit_props.current_value,
+		kind_of_property_id: props.exhibit_props.kind_of_property_id,
+		
+		// Zugangsdaten
+		acquistion_info: props.exhibit_props.acquistion_info,
+		
+		// Geräte- und Buchinformationen
+		manufacturer: props.exhibit_props.manufacturer,
+		original_price: props.exhibit_props.original_price,
+		
+		// Geräteinformationen
+		device_info: props.exhibit_props.device_info,
+		
+		// Buchinformationen
+		book_info: props.exhibit_props.book_info,
+	}
 }
 const exhibit_form: IExhibitForm = new ExhibitForm(form_constructor_args);
 const exhibit_id = exhibit_form.id;
 const is_new = exhibit_id === undefined;
-
-const location_form: ISelectForm = new SelectForm({
-	val: '',
-	async get_shown_suggestions(input: string): Promise<string[]> {
-		console.log(`get_shown_suggestions('${input}')`);
-		return props.all_locations.filter((location: string): boolean => location.includes(input));
-	},
-}, 'location');
 </script>
 
 <template>
@@ -97,14 +125,70 @@ const location_form: ISelectForm = new SelectForm({
 
 		<div class="upper-forms">
 			<Form class="metadata-form" :action="route('exhibit.create')" method="post">
+				
+				<!-- Kerndaten -->
 				<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" />
+				
 				<InputTextField2 :form="exhibit_form.inventory_number" label="Inventarnummer" />
+				
 				<InputTextField2 :form="exhibit_form.short_description" label="Kurzbeschreibung" />
-				<SelectField :form="location_form" label="Standort" />
+				
+				<GroupSelectField :form="exhibit_form.rubric" label="Rubrik">
+					<template #optiongroup="category">
+						<span class="font-bold">{{ category.parent }}</span>
+					</template>
+					<template #option="rubric">
+						<span class="ps-4">{{ rubric }}</span>
+					</template>
+				</GroupSelectField>
+				
+				<SelectField :form="exhibit_form.location" label="Standort" optionLabel="name" />
+				
+				<SelectField :form="exhibit_form.place" label="Platz" optionLabel="name" />
+				
+				<!-- Bestandsdaten -->
+				<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" optionLabel="name" />
+				
+				<InputNumberField :form="exhibit_form.current_value" label="Zeitwert" />
+				
+				<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" optionLabel="name" />
+				
+				<!-- Zugangsdaten -->
+				<InputTextField2 :form="exhibit_form.acquistion_date" label="Datum" />
+				
+				<InputTextField2 :form="exhibit_form.source" label="Herkunft" />
+				
+				<SelectField :form="exhibit_form.kind_of_acquistion" label="Zugangsart" optionLabel="name" />
+			
+				<InputNumberField :form="exhibit_form.purchasing_price" label="Kaufpreis" />
+				
+				<!-- Geräteinformationen -->
 				<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" />
+				
+				<InputTextField2 v-if="exhibit_form.device_info" :form="exhibit_form.device_info.manufactured_from_date" label="gebaut von" />
+				
+				<InputTextField2 v-if="exhibit_form.device_info" :form="exhibit_form.device_info.manufactured_to_date" label="gebaut bis" />
+				
+				<InputNumberField :form="exhibit_form.original_price_amount" label="Originalpreis" />
+				
+				<SelectField :form="exhibit_form.original_price_currency" label="Währung" optionLabel="id" />
+				
+				<!-- Buchinformationen -->
+				<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" />
+				
+				<InputTextField2 v-if="exhibit_form.book_info" :form="exhibit_form.book_info.authors" label="Autoren" />
+				
+				<SelectField v-if="exhibit_form.book_info" :form="exhibit_form.book_info.language" label="Sprache" />
+				
+				<InputTextField2 v-if="exhibit_form.book_info" :form="exhibit_form.book_info.isbn" label="ISBN" />
+
+				<InputNumberField :form="exhibit_form.original_price_amount" label="Originalpreis" />
+				
+				<SelectField :form="exhibit_form.original_price_currency" label="Währung" optionLabel="id" />
 				
 				<Button v-if="is_new" type='submit' label='Anlegen' />
 				<Button v-else type='button' label='Stammdaten speichern' @click="exhibit_form.click_save()" />
+				
 			</Form>
 
 			<div class="images-form flex flex-col items-start p-4">
