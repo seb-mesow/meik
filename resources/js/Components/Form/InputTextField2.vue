@@ -12,10 +12,10 @@ const form = props.form;
 
 <template>
 	<div>
-		<p><label :for="form.id">{{ props.label }}</label></p>
+		<p><label :for="form.html_id">{{ props.label }}</label></p>
 		<InputText
 			class="w-full"
-			type=text :id="form.id" :name="form.id"
+			type=text :id="form.html_id" :name="form.html_id"
 			:modelValue="form.val_in_editing"
 			@update:modelValue="(v) => form.on_change_val_in_editing(v)"
 		/>

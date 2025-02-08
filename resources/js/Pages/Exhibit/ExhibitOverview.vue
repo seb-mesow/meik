@@ -8,7 +8,7 @@ import type { IExhibitOverviewPageProps } from '@/types/page_props/exhibit_overv
 import Breadcrumb from 'primevue/breadcrumb';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ref } from 'vue';
-import { IGetExhibitsPaginated200ResponseData, IGetExhibitsPaginatedQueryParams } from '@/types/ajax/exhibit';
+import * as ExhibitAJAX from '@/types/ajax/exhibit';
 
 const props = defineProps<{
 	breadcrumb: {
@@ -73,7 +73,7 @@ function load_exhibits(): void {
 }
 
 async function ajax_get_paginated(): Promise<void> {
-	const query_params: IGetExhibitsPaginatedQueryParams = {
+	const query_params: ExhibitAJAX.GetPaginated.IQueryParams = {
 		page_number: page_number,
 		count_per_page: props.main.count_per_page,
 	};
@@ -86,7 +86,7 @@ async function ajax_get_paginated(): Promise<void> {
 		params: query_params,
 	};
 	return axios.request(request_config).then(
-		(response: AxiosResponse<IGetExhibitsPaginated200ResponseData>) => {
+		(response: AxiosResponse<ExhibitAJAX.GetPaginated.I200ResponseData>) => {
 			exhibits.value.push(...response.data)
 			page_number++;
 			more_exhibits_exist = response.data.length >= props.main.count_per_page;

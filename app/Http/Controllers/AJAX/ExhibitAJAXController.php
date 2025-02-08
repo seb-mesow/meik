@@ -5,7 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\AJAX;
 
 use App\Http\Controllers\Controller;
+use App\Models\Enum\Currency;
+use App\Models\Enum\KindOfAcquistion;
+use App\Models\Enum\KindOfProperty;
+use App\Models\Enum\PreservationState;
+use App\Models\Exhibit;
+use App\Models\Parts\AcquisitionInfo;
 use App\Models\Parts\FreeText;
+use App\Models\Parts\Price;
 use App\Repository\ExhibitRepository;
 use App\Service\ExhibitService;
 use App\Service\WordService;
@@ -13,6 +20,7 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class ExhibitAJAXController extends Controller
 {
@@ -22,15 +30,48 @@ class ExhibitAJAXController extends Controller
 		private readonly WordService $word_service
 	) {}
 
-	public function set_metadata(Request $request, int $exhibit_id): void
+	public function create(Request $request): JsonResponse
 	{
 		$inventory_number = (string) $request->input('inventory_number');
 		$name = (string) $request->input('name');
+		$short_description = (string) $request->input('short_description');
+		$manufacturer = (string) $request->input('manufacturer');
+		
+		$exhibit = new Exhibit(
+			inventory_number: $inventory_number,
+			name: $name,
+			place_id: '',
+			rubric_id: '',
+			connected_exhibit_ids: [],
+			short_description: $short_description,
+			manufacturer: $manufacturer,
+			manufacture_date: '9999-12-31',
+			preservation_state: PreservationState::FULLY_FUNCTIONAL,
+			original_price: new Price(amount: 0, currency: Currency::EUR),
+			current_value: 99999,
+			acquisition_info: new AcquisitionInfo(
+				date: Carbon::create(year: 2025, month: 2, day: 8),
+				source: 'HERKUNFT',
+				kind: KindOfAcquistion::FIND,
+				purchasing_price: 99999,
+			),
+			kind_of_property: KindOfProperty::LOAN,
+		);
+		$this->exhibit_repository->insert($exhibit);
+		return response()->json($exhibit->get_id());
+	}
+	
+	public function update(Request $request, int $exhibit_id): void
+	{
+		$inventory_number = (string) $request->input('inventory_number');
+		$name = (string) $request->input('name');
+		$short_description = (string) $request->input('short_description');
 		$manufacturer = (string) $request->input('manufacturer');
 		
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$exhibit->set_inventory_number($inventory_number);
 		$exhibit->set_name($name);
+		$exhibit->set_short_description($short_description);
 		$exhibit->set_manufacturer($manufacturer);
 		$this->exhibit_repository->update($exhibit);
 		//sleep(5); // TODO entfernen

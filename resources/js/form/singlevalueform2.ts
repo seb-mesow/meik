@@ -1,35 +1,36 @@
-export interface ISingleValueForm2<T, IdType = string> {
-	readonly id: IdType;
-	readonly val: Readonly<T>;
-	val_in_editing: T;
+export interface ISingleValueForm2<ValType extends any = string> {
+	readonly html_id: string;
+	readonly val: Readonly<ValType>|undefined;
+	val_in_editing: ValType|undefined;
 	rollback(): void;
 	commit(): void;
 	errs: readonly string[];
-	on_change_val_in_editing(val: T): void;
+	on_change_val_in_editing(val: ValType|undefined): void;
+	get_value(): ValType;
 }
 
-export interface ISingleValueForm2ConstructorArgs<T, IdType = string> {
-	val: T,
+export interface ISingleValueForm2ConstructorArgs<ValType extends any = string> {
+	val: ValType,
 	errs?: string[],
-	on_change?: (form: SingleValueForm2<T, IdType>) => void,
+	on_change?: (form: SingleValueForm2<ValType>) => void,
 }
 
-export class SingleValueForm2<T, IdType = string> implements ISingleValueForm2<T, IdType> {
-	public readonly id: IdType;
-	public val: T;
-	public val_in_editing: T;
+export class SingleValueForm2<ValType extends any = string> implements ISingleValueForm2<ValType> {
+	public readonly html_id: string;
+	public val: ValType|undefined;
+	public val_in_editing: ValType|undefined;
 	public errs: string[];
-	private readonly on_change: (form: SingleValueForm2<T, IdType>) => void;
+	private readonly on_change: (form: SingleValueForm2<ValType>) => void;
 	
-	public constructor(args: ISingleValueForm2ConstructorArgs<T, IdType>, id: IdType) {
-		this.id = id;
+	public constructor(args: ISingleValueForm2ConstructorArgs<ValType>, id: string|number) {
+		this.html_id = typeof id === 'number' ? id.toString() : id;
 		this.val = args.val;
 		this.val_in_editing = this.val;
 		this.errs = args.errs ?? [];
 		this.on_change = args.on_change ?? (() => {});
 	}
 	
-	public on_change_val_in_editing(val: T): void {
+	public on_change_val_in_editing(val: ValType): void {
 		console.log(`SingleValueForm2: changed ${val}`);
 		this.val_in_editing = val;
 		this.on_change(this);
@@ -41,5 +42,12 @@ export class SingleValueForm2<T, IdType = string> implements ISingleValueForm2<T
 	
 	public commit(): void {
 		this.val = this.val_in_editing;
+	}
+	
+	public get_value(): ValType {
+		if (this.val === undefined) {
+			throw new Error("SingleValueForm2::get_value(): val is undefined");
+		}
+		return this.val;
 	}
 }
