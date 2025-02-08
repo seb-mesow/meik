@@ -1,7 +1,6 @@
 
 <template>
     <div class="card flex justify-center">
-        <Toast />
         <ExportButton label="Exportiere QR-Code ..." @click="save" :model="items" />
     </div>
 </template>
@@ -10,7 +9,6 @@
 import { useToast } from "primevue/usetoast";
 import ExportButton from 'primevue/splitbutton';
 const toast = useToast();
-
 
 const items = [
     {
