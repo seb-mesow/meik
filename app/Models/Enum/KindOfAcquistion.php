@@ -28,4 +28,12 @@ enum KindOfAcquistion: string
 	 */
 	case LOAN_OR_RENT = 'loan_or_rent';
 	
+	public function get_name(): string {
+		return match($this) {
+			self::PURCHASE => 'Kauf',
+			self::GIFT => 'Schenkung',
+			self::FIND => 'Fund',
+			self::LOAN_OR_RENT => 'Überlassung',
+		};
+	}
 }
