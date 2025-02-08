@@ -33,7 +33,21 @@ final class LocationRepository
 		$this->client = $client;
 		$this->string_id_generator = $string_id_generator;
 	}
-
+	
+	/**
+	 * @var string $id
+	 * @return Location[]
+	 */
+	public function get_all(): array
+	{
+		$res = $this->client->find([
+			'_id' => [
+				'$beginsWith' => self::ID_PREFIX
+			],
+		]);
+		return $this->create_locations_from_docs($res->docs);
+	}
+	
 	/**
 	 * @return array{
 	 *     locations: Location[],
