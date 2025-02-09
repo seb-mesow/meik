@@ -13,14 +13,14 @@ const props = defineProps<{
 	<div>
 		<p><label :for="props.form.html_id">{{ props.label }}</label></p>
 		<AutoComplete
-			class="w-full"
 			:id="props.form.html_id" :name="props.form.html_id"
 			:modelValue="props.form.val_in_editing"
-			@update:modelValue="(v) => props.form.on_change_val_in_editing(v)"
+			@update:modelValue="(v: ValType) => props.form.on_change_val_in_editing(v)"
 			dropdown
 			:suggestions="props.form.shown_suggestions.value"
 			@complete="props.form.on_complete($event)"
 			:optionLabel="props.optionLabel"
+			fluid
 		>
 			<template #option="{ option }">
 				<slot name="option" v-bind="option"></slot>

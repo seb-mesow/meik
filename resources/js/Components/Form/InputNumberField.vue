@@ -13,10 +13,10 @@ const props = defineProps<{
 	<div>
 		<p><label :for="props.form.html_id">{{ props.label }}</label></p>
 		<InputNumber
-			class="w-full"
 			:inputId="props.form.html_id"
 			:modelValue="props.form.val_in_editing"
-			@update:modelValue="(v) => props.form.on_change_val_in_editing(v)"
+			@update:modelValue="(v: number) => props.form.on_change_val_in_editing(v)"
+			fluid
 		/>
 		<div v-show="props.form.errs">
 			<p v-for="error in props.form.errs">{{ error }}</p>

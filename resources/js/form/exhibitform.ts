@@ -5,6 +5,7 @@ import * as ExhibitAJAX from '@/types/ajax/exhibit';
 import { ToastServiceMethods } from "primevue/toastservice";
 import { ISelectForm, SelectForm } from "./selectform";
 import { GroupSelectForm, IGroupSelectForm, IGroupType } from "./groupselectform";
+import { ref, Ref } from "vue";
 
 export interface IExhibitForm {
 	readonly id?: number;
@@ -14,7 +15,7 @@ export interface IExhibitForm {
 	readonly name: Readonly<ISingleValueForm2>;
 	readonly short_description: Readonly<ISingleValueForm2>;
 	readonly rubric: Readonly<IGroupSelectForm>;
-	readonly location: Readonly<ISelectForm<ILocation>>;
+	readonly location: Readonly<ISelectForm<ILocation|undefined>>;
 	readonly place: Readonly<ISelectForm>;
 	// TODO connected_exhibits
 	
@@ -29,19 +30,24 @@ export interface IExhibitForm {
 	readonly kind_of_acquistion: Readonly<ISelectForm<IKindOfAcquistion>>;
 	readonly purchasing_price: Readonly<ISingleValueForm2<number>>;
 	
+	// Exponats-Typ
+	readonly type: Readonly<ISingleValueForm2<IExhibitType>>;
+	readonly show_device_info: Readonly<Ref<boolean>>;
+	readonly show_book_info: Readonly<Ref<boolean>>;
+	
 	// Geräte- und Buchinformationen
 	readonly manufacturer: Readonly<ISingleValueForm2>;
 	readonly original_price_amount: Readonly<ISingleValueForm2<number>>;
 	readonly original_price_currency: Readonly<ISelectForm<ICurrency>>;
 	
 	// Geräteinformationen
-	readonly device_info?: {
+	readonly device_info: {
 		readonly manufactured_from_date: Readonly<ISingleValueForm2>;
 		readonly manufactured_to_date: Readonly<ISingleValueForm2>;
 	}
 	
 	// Buchinformationen
-	readonly book_info?: {
+	readonly book_info: {
 		readonly authors: Readonly<ISingleValueForm2>;
 		readonly language: Readonly<ISelectForm<ILanguage>>;
 		readonly isbn: Readonly<ISingleValueForm2>;
@@ -75,6 +81,10 @@ export type ILocation = Readonly<{
 	id: string,
 	name: string,
 }>;
+export type IExhibitType = Readonly<{
+	id: string,
+	name: string,
+}>;
 
 export type ISelectableValues = Readonly<{
 	currency: ICurrency[],
@@ -83,6 +93,7 @@ export type ISelectableValues = Readonly<{
 	language: ILanguage[],
 	preservation_state: IPreservationState[],
 	location: ILocation[],
+	exhibit_type: IExhibitType[],
 }>;
 
 export interface IExhibitFormConstructorArgs {
@@ -149,7 +160,7 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly name: Readonly<ISingleValueForm2<string>>;
 	public readonly short_description: ISingleValueForm2<string>;
 	public readonly rubric: IGroupSelectForm<string>;
-	public readonly location: ISelectForm<ILocation>;
+	public readonly location: ISelectForm<ILocation|undefined>;
 	public readonly place: ISelectForm<string>;
 	// TODO connected_exhibits
 
@@ -164,19 +175,24 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly kind_of_acquistion: Readonly<ISelectForm<IKindOfAcquistion>>;
 	public readonly purchasing_price: Readonly<ISingleValueForm2<number>>;
 	
+	// Exponats-Typ
+	public readonly type: Readonly<ISingleValueForm2<IExhibitType>>;
+	public show_device_info: Ref<boolean>;
+	public show_book_info: Ref<boolean>;
+	
 	// Geräte- und Buchinformationen
 	public readonly manufacturer: Readonly<ISingleValueForm2>;
 	public readonly original_price_amount: Readonly<ISingleValueForm2<number>>;
 	public readonly original_price_currency: Readonly<ISelectForm<ICurrency>>;
 	
 	// Geräteinformationen
-	public device_info?: {
+	public device_info: {
 		readonly manufactured_from_date: Readonly<ISingleValueForm2>;
 		readonly manufactured_to_date: Readonly<ISingleValueForm2>;
 	};
 	
 	// Buchinformationen
-	public book_info?: {
+	public book_info: {
 		readonly authors: Readonly<ISingleValueForm2>;
 		readonly language: Readonly<ISelectForm<ILanguage>>;
 		readonly isbn: Readonly<ISingleValueForm2>;
@@ -278,35 +294,53 @@ export class ExhibitForm implements IExhibitForm {
 		
 		// Geräteinformationen
 		const device_info = args.data?.device_info;
-		if (device_info) {
-			this.device_info = {
-				manufactured_from_date: new SingleValueForm2({ val: device_info.manufactured_from_date ?? '9999-12-31' }, 'manufactured_from_date'),
-				
-				manufactured_to_date: new SingleValueForm2({ val: device_info.manufactured_to_date ?? '9999-12-31' }, 'manufactured_to_date'),
-			}
+		this.device_info = {
+			manufactured_from_date: new SingleValueForm2({ val: device_info?.manufactured_from_date ?? '' }, 'manufactured_from_date'),
+			
+			manufactured_to_date: new SingleValueForm2({ val: device_info?.manufactured_to_date ?? '' }, 'manufactured_to_date'),
 		}
 		
 		// Buchinformationen
 		const book_info = args.data?.book_info;
-		if (book_info) {
-			this.book_info = {
-				authors: new SingleValueForm2({ val: book_info.authors ?? '' }, 'authors'),
-				
-				language: new SelectForm<ILanguage>({
-					val: this.determinate_selectable_value_from_id(book_info.language_id ?? '', this.selectable_values.language),
-					get_shown_suggestions: (query: string): Promise<ILanguage[]> => this.find_suggestions(query, this.selectable_values.language),
-				}, 'original_price_currency'),
-				
-				isbn: new SingleValueForm2({ val: book_info.isbn ?? '' }, 'isbn'),
-			};
+		this.book_info = {
+			authors: new SingleValueForm2({ val: book_info?.authors ?? '' }, 'authors'),
+			
+			language: new SelectForm<ILanguage>({
+				val: this.determinate_selectable_value_from_id(book_info?.language_id ?? '', this.selectable_values.language),
+				get_shown_suggestions: (query: string): Promise<ILanguage[]> => this.find_suggestions(query, this.selectable_values.language),
+			}, 'original_price_currency'),
+			
+			isbn: new SingleValueForm2({ val: book_info?.isbn ?? '' }, 'isbn'),
+		};
+		
+		// Exponats-Typ
+		const is_device: boolean = book_info === undefined;
+		const type: IExhibitType|undefined = args.aux.selectable_values.exhibit_type.find((v) => v.id === (is_device ? 'device' : 'book'));
+		if (!type) {
+			throw new Error("exhibit type not found");
 		}
+		this.show_device_info = ref<boolean>(type.id === 'device');
+		this.show_book_info = ref<boolean>(type.id === 'book');
+		
+		this.type = new SingleValueForm2<IExhibitType>({
+			val: type,
+			on_change: (form: ISingleValueForm2<IExhibitType>) => {
+				const type = form.val_in_editing;
+				if (!type) {
+					throw new Error("exhibit type not found");
+				}
+				this.show_device_info.value = type.id === 'device';
+				this.show_book_info.value = type.id === 'book';
+			},
+		}, 'exhibit_type');
+	
 	}
 	
-	private determinate_selectable_value_from_id<T extends { id: string }>(id: string, selectable_values: T[]): T {
+	private determinate_selectable_value_from_id<T extends { id: string }>(id: string, selectable_values: T[]): T|undefined {
 		const found = selectable_values.find((selectable_value: T): boolean => selectable_value.id === id);
-		if (!found) {
-			throw new Error(`invalid ID '${id}' for a selectable value`);
-		} 
+		// if (!found) {
+		// 	throw new Error(`invalid ID '${id}' for a selectable value`);
+		// } 
 		return found;
 	};
 	
