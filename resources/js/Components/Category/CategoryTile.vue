@@ -9,7 +9,7 @@ const props = defineProps<{
 </script>
 
 <template>
-	<a :href="route('rubric.overview', { category_id: props.category.id })">
+	<a :href="route('category.details', { category_id: props.category.id })">
 		<div class="category-tile">
 			<p>{{ props.category.name }}</p>
 		</div>

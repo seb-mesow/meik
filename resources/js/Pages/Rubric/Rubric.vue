@@ -1,11 +1,21 @@
 <script lang="ts" setup>
 import { route } from 'ziggy-js';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Breadcrumb from 'primevue/breadcrumb';
 import ExhibitTiles from '@/Components/Exhibit/ExhibitTiles.vue';
+import Breadcrumb from 'primevue/breadcrumb';
 import { IExhibitTilesMainProps } from '@/types/page_props/exhibit_tiles';
 
-const props = defineProps<IExhibitTilesMainProps>();
+const props = defineProps<{
+	category: {
+		id: string,
+		name: string,
+	},
+	rubric: {
+		id: string,
+		name: string,
+	},
+	exhibit_tiles_main_props: IExhibitTilesMainProps
+}>();
 
 const home = {
 	icon: 'pi pi-home',
@@ -14,8 +24,12 @@ const home = {
 
 let items: { label: string, url?: string }[] = [
 	{
-		label: 'Exponate',
-		url: route('exhibit.overview'),
+		label: props.category.name,
+		url: route('category.details', { category_id: props.category.id })
+	},
+	{
+		label: props.rubric.name,
+		// url: route('exhibit.overview', { rubric: props.breadcrumb.rubric.id }),
 	}
 ];
 </script>
@@ -34,7 +48,7 @@ let items: { label: string, url?: string }[] = [
 			</Breadcrumb>
 		</template>
 		
-		<ExhibitTiles :main_props="props" />
+		<ExhibitTiles :main_props="props.exhibit_tiles_main_props" :rubric_id="props.rubric.id" />
 		
 	</AuthenticatedLayout>
 </template>

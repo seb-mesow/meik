@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { IFreeTextsInitPageProps } from '@/types/page_props/freetexts';
 import FreeTextField from './FreeTextField.vue';
 import Button from 'primevue/button';
 import { FreeTextsForm, IFreeTextsForm, IFreeTextFormConstructorArgs } from '@/form/freetextsform';
-import { IFreeTextInitPageProps } from '@/types/page_props/freetext';
+import { IFreeTextsProps } from '@/types/page_props/freetexts';
+import { IFreeTextProps } from '@/types/page_props/freetext';
 import { reactive } from 'vue';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
 	exhibit_id: number,
-	init_props: IFreeTextsInitPageProps;
+	init_props: IFreeTextsProps;
 }>();
 // console.log(`FreeTextFields.vue: props.init_props ==`);
 // console.log(props.init_props);
 const form: IFreeTextsForm = reactive(new FreeTextsForm({
 	exhibit_id: props.exhibit_id,
-	val: props.init_props.val.map((_init_props: IFreeTextInitPageProps): IFreeTextFormConstructorArgs => {
+	val: props.init_props.map((_init_props: IFreeTextProps): IFreeTextFormConstructorArgs => {
 		return {
 			id: _init_props.id,
-			heading: _init_props.val.heading,
-			html: _init_props.val.html,
-			is_public: _init_props.val.is_public,
+			heading: _init_props.heading,
+			html: _init_props.html,
+			is_public: _init_props.is_public,
 		};
 	}),
-	errs: props.init_props.errs,
+	errs: [],
 }));
 console.log(`FreeTextFields.vue: form ==`);
 console.log(form);

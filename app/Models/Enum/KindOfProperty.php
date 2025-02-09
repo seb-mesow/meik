@@ -22,4 +22,12 @@ enum KindOfProperty: string
 	 * Miete
 	 */
 	case RENT = 'rent';
+	
+	public function get_name(): string {
+		return match($this) {
+			self::PROPERTY => 'Eigentum',
+			self::LOAN => 'Leihe',
+			self::RENT => 'Miete',
+		};
+	}
 }

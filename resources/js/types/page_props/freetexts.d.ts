@@ -1,6 +1,3 @@
-import { IFreeTextInitPageProps } from "./freetext";
+import { IFreeTextProps } from "./freetext";
 
-export interface IFreeTextsInitPageProps {
-	val: IFreeTextInitPageProps[],
-	errs?: string[],
-}
+export type IFreeTextsProps = IFreeTextProps[];

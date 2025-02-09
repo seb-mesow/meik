@@ -11,7 +11,7 @@ enum Language: string
 	case GERMAN = 'deu';
 	case ENGLISH = 'eng';
 	case CZECH = 'ces';
-	case POLNISCH = 'pol';
+	case POLISH = 'pol';
 	case FRENCH = 'fra';
 	case DUTCH = 'nld';
 	case RUSSIAN = 'rus';
@@ -22,4 +22,20 @@ enum Language: string
 	 */
 	case CHINESE = 'zho';
 	case SAXON = 'sn';
+	
+	public function get_name(): string {
+		return match($this) {
+			self::GERMAN => 'Deutsch',
+			self::ENGLISH => 'Englisch',
+			self::CZECH => 'Tschechisch',
+			self::POLISH => 'Polnisch',
+			self::FRENCH => 'Französisch',
+			self::DUTCH => 'Niederländisch',
+			self::RUSSIAN => 'Russisch',
+			self::JAPANESE => 'Japanisch',
+			self::KOREAN => 'Koreanisch',
+			self::CHINESE => 'Chinesisch',
+			self::SAXON => 'Sächsisch',
+		};
+	}
 }

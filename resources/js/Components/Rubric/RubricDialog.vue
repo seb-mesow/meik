@@ -2,7 +2,7 @@
 import { IRubricForm, RubricForm } from "@/form/rubricform";
 import Button from "primevue/button";
 import { inject, reactive, Reactive } from "vue";
-import InputField from "../Form/InputField.vue";
+import InputTextField2 from "../Form/InputTextField2.vue";
 
 const dialogRef: any = inject('dialogRef');
 
@@ -14,7 +14,7 @@ const form: Reactive<IRubricForm> = reactive(new RubricForm({
 		val: params.rubric?.name,
 		errs: [],
 	},
-	category: params.category,
+	category_id: params.category_id,
 	on_created: params.on_created,
 	dialog_ref: dialogRef
 }));
@@ -22,7 +22,7 @@ const form: Reactive<IRubricForm> = reactive(new RubricForm({
 
 <template>
 	<div>
-		<InputField label="Name" :form="form.name"/>
+		<InputTextField2 :form="form.name" label="Name" />
 		<div class="flex justify-between mt-3">
 			<Button @click="form.save()" label="Speichern"/>
 		</div>

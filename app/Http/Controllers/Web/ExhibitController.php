@@ -1,28 +1,115 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Enum\Currency;
+use App\Models\Enum\KindOfAcquistion;
+use App\Models\Enum\KindOfProperty;
+use App\Models\Enum\Language;
+use App\Models\Enum\PreservationState;
 use App\Models\Exhibit;
+use App\Models\Location;
+use App\Models\Parts\AcquisitionInfo;
 use App\Models\Parts\FreeText;
+use App\Models\Parts\Price;
 use App\Repository\ExhibitRepository;
 use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
 use App\Service\ExhibitService;
 use App\Service\ImageService;
 use App\Repository\RubricRepository;
+use App\Util\DateTimeUtil;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
-use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 
+/**
+ * @phpstan-type FreeTextProps array{
+ *     id: number,
+ *     heading: string,
+ *     html: string,
+ *     is_public: bool,
+ * }
+ * 
+ * @phpstan-type ExhibitProps array{
+ *     id: number,
+ *     inventory_number: string,
+ *     name: string,
+ *     short_description: string,
+ *     location_id: string,
+ *     place_id: string,
+ *     preservation_state_id: string,
+ *     current_value: number,
+ *     kind_of_property_id: string,
+ *     acquistion_info: array{
+ *         date: string,
+ *         source: string,
+ *         kind_id: string,
+ *         purchasing_price: number,
+ *     },
+ *     manufacturer: string,
+ *     original_price: array{
+ *         amount: number,
+ *         currency_id: string,
+ *     },
+ *     device_info?: array{
+ *         manufactured_from_date: string,
+ *         manufactured_to_date: string,
+ *     },
+ *     book_info?: array{
+ *         authors: string,
+ *         language_id: string,
+ *         isbn: string,
+ *     },
+ *     title_image?: array{
+ *         id: string,
+ *         description: string,
+ *         image_width: int,
+ *         image_height: int,
+ *     },
+ *     free_texts: FreeTextProps[],
+ * }
+ * 
+ * @phpstan-type ICurrency array{
+ *     id: string,
+ *     name: string,
+ * }
+ * @phpstan-type IKindOfAcquistion array{
+ *     id: string,
+ *     name: string,
+ * }
+ * @phpstan-type IKindOfProperty array{
+ *     id: string,
+ *     name: string,
+ * }
+ * @phpstan-type ILanguage array{
+ *     id: string,
+ *     name: string,
+ * }
+ * @phpstan-type IPreservationState array{
+ *     id: string,
+ *     name: string,
+ * }
+ * @phpstan-type ILocation array{
+ *     id: string,
+ *     name: string,
+ * }
+ * 
+ * @phpstan-type SelectableValues array{
+ *     currency: ICurrency[],
+ *     kind_of_acquistion: IKindOfAcquistion[],
+ *     kind_of_property: IKindOfProperty[],
+ *     language: ILanguage[],
+ *     preservation_state: IPreservationState[],
+ *     location: ILocation[]
+ * }
+ */
 class ExhibitController extends Controller
 {
-	private const int COUNT_PER_PAGE = 20;
-	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly LocationRepository $location_repository,
@@ -30,16 +117,12 @@ class ExhibitController extends Controller
 		private readonly ImageService $image_service,
 		private readonly RubricRepository $rubric_repository,
 		private readonly ExhibitService $exhibit_service,
+		private readonly DateTimeUtil $date_time_util,
 	) {}
 
 	public function overview(Request $request): InertiaResponse
 	{
 		$rubric_id = (string) $request->query('rubric_id', "");
-		
-		$breadcrumbs = [];
-		$main_props = [
-			'count_per_page' => self::COUNT_PER_PAGE, // für ähnliche AJAX-Route
-		];
 		
 		if ($rubric_id === "") {
 			$selectors = [];
@@ -49,50 +132,29 @@ class ExhibitController extends Controller
 					'$eq' => $rubric_id
 				]
 			];
-			
-			$rubric = $this->rubric_repository->get($rubric_id);
-			$category = $rubric->get_category();
-			$main_props['rubric'] = [
-				'id' => $rubric->get_id(),
-			];
-			
-			$breadcrumbs = [
-				'category' => [
-					'id' => $category->value,
-					'name' => $category->get_pretty_name(),
-				],
-				'rubric' => [
-					'id' => $rubric->get_id(),
-					'name' => $rubric->get_name(),
-				],
-			];
 		}
 		
-		$exhibits = $this->exhibit_repository->get_paginated(
-			page_number: 0,
-			count_per_page: self::COUNT_PER_PAGE,
-			additonal_selectors: $selectors,
-		);
-		$main_props['exhibits'] = $this->exhibit_service->determinate_tiles_props($exhibits);
+		$exhibit_tiles = $this->exhibit_service->determinate_tiles_props(page_number: 0, selectors: $selectors);
 		
 		return Inertia::render('Exhibit/ExhibitOverview', [
-			'main' => $main_props,
-			'breadcrumb' => $breadcrumbs
+			'exhibit_tiles' => $exhibit_tiles,
+			'count_per_page' => ExhibitService::DEFAULT_COUNT_PER_PAGE,
 		]);
 	}
 
 	public function details(int $exhibit_id): InertiaResponse
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
-		$form = $this->create_form($exhibit, true);
+		$form = $this->create_form($exhibit);
 		
 		$rubric = $this->rubric_repository->get($exhibit->get_rubric_id());
 		$category = $rubric->get_category();
 		
+		$selectable_values = $this->determinate_selectable_values();
+		
 		return Inertia::render('Exhibit/Exhibit', [
-			'id' => $exhibit->get_id(),
-			'name' => $exhibit->get_name(),
-			'init_props' => $form,
+			'selectable_values' => $selectable_values,
+			'exhibit_props' => $form,
 			'category' => [
 				'id' => $category->value,
 				'name' => $category->get_pretty_name(),
@@ -104,90 +166,197 @@ class ExhibitController extends Controller
 		]);
 	}
 
-	public function new(): InertiaResponse
+	public function new(Request $request): InertiaResponse
 	{
-		$form = $this->create_form(null, false);
-		return Inertia::render('Exhibit/Exhibit', [
-			'name' => 'Neues Exponat',
-			'init_props' => $form
-		]);
+		$rubric_id = (string) $request->query('rubric_id', '');
+		
+		$selectable_values = $this->determinate_selectable_values();
+		$props = [
+			'selectable_values' => $selectable_values,
+		];
+		
+		if ($rubric_id !== '') {
+			$rubric = $this->rubric_repository->get($rubric_id);
+			$category = $rubric->get_category();
+			$props['category'] = [
+				'id' => $category->value,
+				'name' => $category->get_pretty_name(),
+			];
+			$props['rubric'] = [
+				'id' => $rubric->get_id(),
+				'name' => $rubric->get_name(),
+			];
+		}
+		
+		return Inertia::render('Exhibit/Exhibit', $props);
 	}
 
 	public function create(Request $request): RedirectResponse
 	{
 		$inventory_number = $request->input('inventory_number');
 		$name = $request->input('name');
+		$short_description = $request->input('short_description');
 		$manufacturer = $request->input('manufacturer');
+		
 		$exhibit = new Exhibit(
 			inventory_number: $inventory_number,
 			name: $name,
+			place_id: '',
+			rubric_id: '',
+			connected_exhibit_ids: [],
+			short_description: $short_description,
 			manufacturer: $manufacturer,
-			manufacture_date: '9999', // TODO Baujahr im Frontend implementieren
-			place_id: '0', // TODO Platzangabe im Frontend implementieren
+			manufacture_date: '9999-12-31',
+			preservation_state: PreservationState::FULLY_FUNCTIONAL,
+			original_price: new Price(amount: 0, currency: Currency::EUR),
+			current_value: 99999,
+			acquisition_info: new AcquisitionInfo(
+				date: Carbon::create(year: 2025, month: 2, day: 8),
+				source: 'HERKUNFT',
+				kind: KindOfAcquistion::FIND,
+				purchasing_price: 99999,
+			),
+			kind_of_property: KindOfProperty::LOAN,
 		);
 		$this->exhibit_repository->insert($exhibit);
 		// sleep(5); // TODO entfernen
 		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
 	}
 
-	private function create_form(?Exhibit $exhibit, ?bool $persisted): array
+	/**
+	 * @return ExhibitProps
+	 */
+	private function create_form(Exhibit $exhibit): array
 	{
-		if (!$exhibit) {
-			$persisted = false; // TODO remove
-		}
 		$free_texts = $exhibit?->get_free_texts() ?? [];
-		$free_text_forms = array_map(static fn(FreeText $free_text): array => [
-			'id' => $free_text->get_id(),
-			'errs' => [],
-			'val' => [
-				'heading' => [
-					'val' => $free_text->get_heading(),
-					'errs' => [],
-				],
-				'html' => [
-					'val' => $free_text->get_html(),
-					'errs' => [],
-				],
-				'is_public' => [
-					'val' => $free_text->get_is_public(),
-					'errs' => [],
-				]
-			]
-		], $free_texts);
-
+		$free_text_forms = array_map(static fn(FreeText $free_text): array =>
+			self::create_free_text_form($free_text), $free_texts);
+		
+		$place = $this->place_repository->get($exhibit->get_place_id());
+		$acquistion_info = $exhibit->get_acquistion_info();
+		$original_price = $exhibit->get_original_price();
+		
 		$exhibit_form = [
-			'val' => [
-				'inventory_number' => [
-					'val' => $exhibit?->get_inventory_number(),
-					'errs' => [],
-				],
-				'manufacturer' => [
-					'val' => $exhibit?->get_manufacturer(),
-					'errs' => [],
-				],
-				'name' => [
-					'val' => $exhibit?->get_name(),
-					'errs' => [],
-				],
-				'free_texts' => [
-					'val' => $free_text_forms,
-					'errs' => [],
-				],
+			'id' => $exhibit->get_id(),
+			
+			// Kerndaten
+			'inventory_number' => $exhibit->get_inventory_number(),
+			'name' => $exhibit->get_name(),
+			'short_description' => $exhibit->get_short_description(),
+			'location_id' => $place->get_location_id(),
+			'place_id' => $place->get_id(),
+			// TODO connected_exhibits
+			
+			// Bestandsdaten
+			'preservation_state_id' => $exhibit->get_preservation_state()->value,
+			'current_value' => $exhibit->get_current_value(),
+			'kind_of_property_id' => $exhibit->get_kind_of_property()->value,
+			
+			// Zugangsdaten
+			'acquistion_info' => [
+				'date' => $this->date_time_util->format_as_iso_date($acquistion_info->get_date()),
+				'source'=> $acquistion_info->get_source(),
+				'kind_id' => $acquistion_info->get_kind()->value,
+				'purchasing_price' => $acquistion_info->get_purchasing_price(),
 			],
-			'errs' => [],
+			
+			// Geräte- und Buchinformationen
+			'manufacturer' => $exhibit->get_manufacturer(),
+			'original_price' => [
+				'amount' => $original_price->get_amount(),
+				'currency_id' => $original_price->get_currency()->value,
+			],
+			
+			// Freitexte
+			'free_texts' => $free_text_forms,
 		];
-		if ($exhibit) {
-			$exhibit_id = $exhibit->get_id();
-			$exhibit_form['id'] = $exhibit_id;
-			if ($title_image = $this->image_service->get_internal_title_image($exhibit)) {
-				$exhibit_form['title_image'] = [
-					'id' => $title_image->get_id(),
-					'description' => $title_image->get_description(),
-					'image_width' => $title_image->get_image_width(),
-					'image_height' => $title_image->get_image_height(),
-				];
-			}
+		
+		if ($exhibit->is_device()) {
+			$device_info = $exhibit->get_device_info();
+			$exhibit_form['device_info'] = [
+				'manufactured_from_date' => $device_info->get_manufactured_from_date(),
+				'manufactured_to_date' => $device_info->get_manufactured_to_date(),
+			];
+		} else {
+			$book_info = $exhibit->get_book_info();
+			$exhibit_form['book_info'] = [
+				'authors' => $book_info->get_authors(),
+				'language_id' => $book_info->get_language()->value,
+				'isbn' => $book_info->get_isbn(),
+			];
 		}
+		
+		if ($title_image = $this->image_service->get_internal_title_image($exhibit)) {
+			$exhibit_form['title_image'] = [
+				'id' => $title_image->get_id(),
+				'description' => $title_image->get_description(),
+				'image_width' => $title_image->get_image_width(),
+				'image_height' => $title_image->get_image_height(),
+			];
+		}
+		
 		return $exhibit_form;
+	}
+	
+	/**
+	 * @return FreeTextProps
+	 */
+	private static function create_free_text_form(FreeText $free_text): array {
+		return [
+			'id' => $free_text->get_id(),
+			'heading' => $free_text->get_heading(),
+			'html' => $free_text->get_html(),
+			'is_public' => $free_text->get_is_public(),
+		];
+	}
+	
+	/**
+	 * @return SelectableValues
+	 */
+	private function determinate_selectable_values(): array {
+		$all_currencies = Currency::cases();
+		$all_currencies = array_map(static fn(Currency $currency): array => [
+			'id' => $currency->value,
+			'name' => $currency->get_name(),
+		], $all_currencies);
+		
+		$all_kinds_of_acquistion = KindOfAcquistion::cases();
+		$all_kinds_of_acquistion = array_map(static fn(KindOfAcquistion $kind): array => [
+			'id' => $kind->value,
+			'name' => $kind->get_name(),
+		], $all_kinds_of_acquistion);
+		
+		$all_kinds_of_property = KindOfProperty::cases();
+		$all_kinds_of_property = array_map(static fn(KindOfProperty $kind): array => [
+			'id' => $kind->value,
+			'name' => $kind->get_name(),
+		], $all_kinds_of_property);
+		
+		$all_languages = Language::cases();
+		$all_languages = array_map(static fn(Language $language): array => [
+			'id' => $language->value,
+			'name' => $language->get_name(),
+		], $all_languages);
+		
+		$all_preservation_states = PreservationState::cases();
+		$all_preservation_states = array_map(static fn(PreservationState $state): array => [
+			'id' => $state->value,
+			'name' => $state->get_name(),
+		], $all_preservation_states);
+		
+		$all_locations = $this->location_repository->get_all();
+		$all_locations = array_map(static fn(Location $location): array => [
+			'id' => $location->get_id(),
+			'name' => $location->get_name(),
+		], $all_locations);
+		
+		return [
+			'currency' => $all_currencies,
+			'kind_of_acquistion' => $all_kinds_of_acquistion,
+			'kind_of_property' => $all_kinds_of_property,
+			'language' => $all_languages,
+			'preservation_state' => $all_preservation_states,
+			'location' => $all_locations,
+		];
 	}
 }

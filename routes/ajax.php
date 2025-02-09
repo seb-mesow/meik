@@ -42,11 +42,14 @@ Route::prefix('ajax')->group(static function () {
 		->name('ajax.place.delete');
 
 	# --- Exponate ---
-	Route::get('/exhibit', [ExhibitAJAXController::class, 'get_paginated'])
-		->name('ajax.exhibit.get_paginated');
+	Route::get('/exhibit/tiles', [ExhibitAJAXController::class, 'get_tiles_paginated'])
+		->name('ajax.exhibit.get_tiles_paginated');
 	
-	Route::patch('/exhibit/{exhibit_id}/metadata', [ExhibitAJAXController::class, 'set_metadata'])
-		->name('ajax.exhibit.set_metadata');
+	Route::post('/exhibit', [ExhibitAJAXController::class, 'create'])
+		->name('ajax.exhibit.create');
+	
+	Route::put('/exhibit/{exhibit_id}', [ExhibitAJAXController::class, 'update'])
+		->name('ajax.exhibit.update');
 
 	// siehe freetexts.d.ts
 	Route::post('/exhibit/{exhibit_id}/free_text', [ExhibitAJAXController::class, 'create_free_text'])

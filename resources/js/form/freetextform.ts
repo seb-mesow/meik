@@ -35,9 +35,9 @@ export interface IFreeTextFormParent {
 export type IFreeTextFormConstructorArgs = Readonly<{
 	id?: number;
 	errs?: string[];
-	heading?: ISingleValueFormConstructorArgs<string>;
-	html?: ISingleValueFormConstructorArgs<string>;
-	is_public?: ISingleValueFormConstructorArgs<boolean>;
+	heading?: string;
+	html?: string;
+	is_public?: boolean;
 	ui_id: number;
 	exhibit_id: number;
 	parent: IFreeTextFormParent;
@@ -61,16 +61,16 @@ export class FreeTextForm implements IFreeTextForm {
 		this.id = args.id;
 		
 		const heading_args: ISingleValueFormConstructorArgs<string> = {
-			val: args.heading?.val ?? '',
-			errs: args.heading?.errs,
+			val: args.heading ?? '',
+			errs: [],
 		};
 		const html_args: ISingleValueFormConstructorArgs<string> = {
-			val: args.html?.val ?? '',
-			errs: args.html?.errs,
+			val: args.html ?? '',
+			errs: [],
 		};
 		const is_public_args: ISingleValueFormConstructorArgs<boolean> = {
-			val: args.is_public?.val ?? false,
-			errs: args.is_public?.errs,
+			val: args.is_public ?? false,
+			errs: [],
 		};
 		this.errs = args.errs ?? [];
 		this.heading = new SingleValueForm(heading_args, 'heading');

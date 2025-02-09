@@ -1,4 +1,4 @@
-export interface IRubricTileProps {
+export interface IRubricProps {
 	id: string,
 	name: string,
 }

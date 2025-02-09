@@ -27,4 +27,13 @@ enum PreservationState: string
 	 * ohne Funktion, nur zum Ausstellen
 	 */
 	case DISPLAY_ONLY = 'display_only';
+	
+	public function get_name(): string {
+		return match($this) {
+			self::FULLY_FUNCTIONAL => 'voll funktionsfähig',
+			self::PARTIALLY_FUNCTIONAL => 'teils funktionsfähig',
+			self::NEEDS_REPAIR => 'reparaturbedürftig',
+			self::DISPLAY_ONLY => 'nur zum Ausstellen',
+		};
+	}
 }
