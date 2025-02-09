@@ -14,10 +14,10 @@ const form = props.form;
 	<div>
 		<p><label :for="form.html_id">{{ props.label }}</label></p>
 		<InputText
-			class="w-full"
 			type=text :id="form.html_id" :name="form.html_id"
 			:modelValue="form.val_in_editing"
-			@update:modelValue="(v) => form.on_change_val_in_editing(v)"
+			@update:modelValue="(v: string|undefined) => form.on_change_val_in_editing(v)"
+			fluid
 		/>
 		<div v-show="form.errs">
 			<p v-for="error in form.errs">{{ error }}</p>

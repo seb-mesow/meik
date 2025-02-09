@@ -10,7 +10,7 @@ export interface ISingleValueForm2<ValType extends any = string> {
 }
 
 export interface ISingleValueForm2ConstructorArgs<ValType extends any = string> {
-	val: ValType,
+	val?: ValType,
 	errs?: string[],
 	on_change?: (form: SingleValueForm2<ValType>) => void,
 }
@@ -31,7 +31,8 @@ export class SingleValueForm2<ValType extends any = string> implements ISingleVa
 	}
 	
 	public on_change_val_in_editing(val: ValType): void {
-		console.log(`SingleValueForm2: changed ${val}`);
+		console.log(`SingleValueForm2: changed == `);
+		console.log(`${val}`);
 		this.val_in_editing = val;
 		this.on_change(this);
 	}

@@ -4,13 +4,14 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Button from 'primevue/button';
 import FreeTextFields from '@/Components/Exhibit/FreeTextFields.vue';
 import Breadcrumb from 'primevue/breadcrumb';
-import { IExhibitProps } from '@/types/page_props/exhibit';
+import { IExhibitProps, ISelectableValuesProps } from '@/types/page_props/exhibit';
 import Form from '@/Components/Form/Form.vue';
 import ExportButton from '@/Components/Control/ExportButton.vue';
 import {
 	ExhibitForm,
 	IExhibitForm,
 	IExhibitFormConstructorArgs,
+	IExhibitType,
 	ISelectableValues,
 } from '@/form/exhibitform';
 import SelectField from '@/Components/Form/SelectField.vue';
@@ -19,10 +20,12 @@ import Toast from 'primevue/toast';
 import GroupSelectField from '@/Components/Form/GroupSelectField.vue';
 import InputNumberField from '@/Components/Form/InputNumberField.vue';
 import InputTextField2 from '@/Components/Form/InputTextField2.vue';
+import Fieldset from 'primevue/fieldset';
+import SelectButton from 'primevue/selectbutton';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
-	selectable_values: ISelectableValues,
+	selectable_values: ISelectableValuesProps,
 	exhibit_props?: IExhibitProps,
 	category?: {
 		id: string,
@@ -65,11 +68,16 @@ items.push({
 
 const toast_service = useToast();
 
+const exhibit_types: IExhibitType[] = [
+	{ id: 'device', name: 'Gerät' },
+	{ id: 'book', name: 'Buch' },
+];
+
 // (interne) Attribute der Seite
 const form_constructor_args: IExhibitFormConstructorArgs = {
 	aux: {
 		toast_service: toast_service,
-		selectable_values: props.selectable_values
+		selectable_values: { ...props.selectable_values, ...{ exhibit_type: exhibit_types } },
 	},
 };
 if (props.exhibit_props) {
@@ -123,89 +131,116 @@ const is_new = exhibit_id === undefined;
 			</Breadcrumb>
 		</template>
 
-		<div class="upper-forms">
-			<Form class="metadata-form" :action="route('exhibit.create')" method="post">
+		<Form :action="route('exhibit.create')" method="post">
+			<div class="flex gap-x-3">
+				<div class="basis-2/3 grid grid-cols-3 gap-x-3">
+					<!-- Kerndaten -->
+					<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" class="col-span-2"/>
+						
+					<InputTextField2 :form="exhibit_form.inventory_number" label="Inventarnummer" class="col-span-1"/>
+					
+					<InputTextField2 :form="exhibit_form.short_description" label="Kurzbeschreibung" class="col-span-full"/>
+					
+					<GroupSelectField :form="exhibit_form.rubric" label="Rubrik" class="col-span-1">
+						<template #optiongroup="category">
+							<span class="font-bold">{{ category.parent }}</span>
+						</template>
+						<template #option="rubric">
+							<span class="ps-4">{{ rubric }}</span>
+						</template>
+					</GroupSelectField>
+					
+					<SelectField :form="exhibit_form.location" label="Standort" optionLabel="name" class="col-span-1"/>
+					
+					<SelectField :form="exhibit_form.place" label="Platz" optionLabel="name" class="col-span-1"/>
+				</div>
 				
-				<!-- Kerndaten -->
-				<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" />
-				
-				<InputTextField2 :form="exhibit_form.inventory_number" label="Inventarnummer" />
-				
-				<InputTextField2 :form="exhibit_form.short_description" label="Kurzbeschreibung" />
-				
-				<GroupSelectField :form="exhibit_form.rubric" label="Rubrik">
-					<template #optiongroup="category">
-						<span class="font-bold">{{ category.parent }}</span>
-					</template>
-					<template #option="rubric">
-						<span class="ps-4">{{ rubric }}</span>
-					</template>
-				</GroupSelectField>
-				
-				<SelectField :form="exhibit_form.location" label="Standort" optionLabel="name" />
-				
-				<SelectField :form="exhibit_form.place" label="Platz" optionLabel="name" />
-				
+				<div class="basis-1/3">
+					<!-- Button oben rechts -->
+					<ExportButton/>
+					
+					<a v-if="exhibit_id !== undefined"
+						:href="route('exhibit.images.details', { exhibit_id: exhibit_id })">
+						<img v-if="props.exhibit_props?.title_image"
+							class="m-auto max-h-[15rem]"
+							:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })"
+						>
+					</a>
+				</div>
+			</div>
+			
+			<div class="flex flex-wrap gap-x-3 items-start">
 				<!-- Bestandsdaten -->
-				<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" optionLabel="name" />
-				
-				<InputNumberField :form="exhibit_form.current_value" label="Zeitwert" />
-				
-				<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" optionLabel="name" />
+				<Fieldset legend="Bestandsdaten" toggleable collapsed class="basis-[30rem] flex-1">
+					<div class="grid grid-cols-2 gap-x-3">
+						<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" optionLabel="name" />
+						
+						<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" optionLabel="name" class="col-start-1" />
+						
+						<InputNumberField :form="exhibit_form.current_value" label="Zeitwert" />
+					</div>
+				</Fieldset>
 				
 				<!-- Zugangsdaten -->
-				<InputTextField2 :form="exhibit_form.acquistion_date" label="Datum" />
-				
-				<InputTextField2 :form="exhibit_form.source" label="Herkunft" />
-				
-				<SelectField :form="exhibit_form.kind_of_acquistion" label="Zugangsart" optionLabel="name" />
-			
-				<InputNumberField :form="exhibit_form.purchasing_price" label="Kaufpreis" />
-				
-				<!-- Geräteinformationen -->
-				<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" />
-				
-				<InputTextField2 v-if="exhibit_form.device_info" :form="exhibit_form.device_info.manufactured_from_date" label="gebaut von" />
-				
-				<InputTextField2 v-if="exhibit_form.device_info" :form="exhibit_form.device_info.manufactured_to_date" label="gebaut bis" />
-				
-				<InputNumberField :form="exhibit_form.original_price_amount" label="Originalpreis" />
-				
-				<SelectField :form="exhibit_form.original_price_currency" label="Währung" optionLabel="id" />
-				
-				<!-- Buchinformationen -->
-				<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" />
-				
-				<InputTextField2 v-if="exhibit_form.book_info" :form="exhibit_form.book_info.authors" label="Autoren" />
-				
-				<SelectField v-if="exhibit_form.book_info" :form="exhibit_form.book_info.language" label="Sprache" />
-				
-				<InputTextField2 v-if="exhibit_form.book_info" :form="exhibit_form.book_info.isbn" label="ISBN" />
-
-				<InputNumberField :form="exhibit_form.original_price_amount" label="Originalpreis" />
-				
-				<SelectField :form="exhibit_form.original_price_currency" label="Währung" optionLabel="id" />
-				
-				<Button v-if="is_new" type='submit' label='Anlegen' />
-				<Button v-else type='button' label='Stammdaten speichern' @click="exhibit_form.click_save()" />
-				
-			</Form>
-
-			<div class="images-form flex flex-col items-start p-4">
-				
-				<!-- Button oben rechts -->
-				<ExportButton class="bg-blue-500 text-white rounded" />
-				
-				<a v-if="exhibit_id !== undefined"
-					:href="route('exhibit.images.details', { exhibit_id: exhibit_id })">
-					<img v-if="props.exhibit_props?.title_image"
-						class="title-image"
-						:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })"
-					>
-				</a>
-
+				<Fieldset legend="Zugangsdaten" toggleable collapsed class="basis-[30rem] flex-1">
+					<div class="grid grid-cols-2 gap-x-3">
+						<InputTextField2 :form="exhibit_form.acquistion_date" label="Datum" />
+						
+						<InputTextField2 :form="exhibit_form.source" label="Herkunft" class="col-span-full"/>
+						
+						<SelectField :form="exhibit_form.kind_of_acquistion" optionLabel="name"  label="Zugangsart" />
+						
+						<InputNumberField :form="exhibit_form.purchasing_price" label="Kaufpreis" />
+					</div>
+				</Fieldset>
 			</div>
-		</div>
+			
+			<SelectButton
+				:modelValue="exhibit_form.type.val_in_editing"
+				@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_val_in_editing(v)"
+				:options="exhibit_types"
+				optionLabel="name"
+			/>
+			
+			<!-- Geräteinformationen -->
+			<Fieldset v-show="exhibit_form.show_device_info.value" legend="Geräteinformationen">
+				<div class="grid grid-cols-3 gap-x-3">
+					<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" class="col-span-full" />
+					
+					<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date" label="gebaut von" class="col-span-1" />
+					
+					<InputTextField2 :form="exhibit_form.device_info.manufactured_to_date" label="gebaut bis" class="col-span-1" />
+					
+					<div class="col-span-1 col-start-1 flex gap-x-3">
+						<InputNumberField :form="exhibit_form.original_price_amount" label="Originalpreis" class="grow"/>
+						
+						<SelectField :form="exhibit_form.original_price_currency" optionLabel="id" label="Währung" class="flex-none w-[6rem]" />
+					</div>
+				</div>
+			</Fieldset>
+			
+			<!-- Buchinformationen -->
+			<Fieldset v-show="exhibit_form.show_book_info.value" legend="Buchinformationen">
+				<div class="grid grid-cols-3 gap-x-3">
+					<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" class="col-span-full" />
+					
+					<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" class="col-span-full" />
+					
+					<SelectField :form="exhibit_form.book_info.language" optionLabel="name" label="Sprache" />
+					
+					<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" />
+					
+					<div class="flex gap-x-3">
+						<InputNumberField :form="exhibit_form.original_price_amount" label="Originalpreis" class="grow!" />
+						
+						<SelectField :form="exhibit_form.original_price_currency" optionLabel="id" label="Währung" class="flex-none w-[6rem]" />
+					</div>
+				</div>
+			</Fieldset>
+			
+			<Button v-if="is_new" type='submit' label='Anlegen' />
+			<Button v-else type='button' label='Stammdaten speichern' @click="exhibit_form.click_save()" />
+		</Form>
 		
 		<FreeTextFields v-if="props.exhibit_props"
 			:init_props="props.exhibit_props.free_texts" :exhibit_id="props.exhibit_props.id"
@@ -222,15 +257,11 @@ const is_new = exhibit_id === undefined;
 	column-gap: 1rem;
 }
 
-.metadata-form {
-	flex: 18rem;
+.basicdata-form {
+	flex: 2;
 }
 
 .images-form {
-	flex: 18rem;
-}
-
-.title-image {
-	object-fit: inherit;
+	flex: 1;
 }
 </style>

@@ -1,8 +1,13 @@
+import { ICurrency, IKindOfAcquistion, IKindOfProperty, ILanguage, ILocation, IPreservationState } from "@/form/exhibitform";
 import { IFreeTextsPageProps } from "./freetexts"
 
-export interface ILocationProps {
-	id: string,
-	name: string,
+export interface ISelectableValuesProps {
+	currency: ICurrency[],
+	kind_of_acquistion: IKindOfAcquistion[],
+	kind_of_property: IKindOfProperty[],
+	language: ILanguage[],
+	preservation_state: IPreservationState[],
+	location: ILocation[],
 }
 
 export interface IExhibitProps {
