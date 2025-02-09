@@ -50,13 +50,13 @@ let items: { label: string, url?: string }[] = [];
 if (props.category) {
 	items.push({
 		label: props.category.name,
-		url: route('rubric.overview', { category_id: props.category.id })
+		url: route('category.details', { category_id: props.category.id })
 	});
 }
 if (props.rubric) {
 	items.push({
 		label: props.rubric.name,
-		url: route('exhibit.overview', { rubric: props.rubric.id }),
+		url: route('rubric.details', { rubric_id: props.rubric.id }),
 	});
 }
 items.push({

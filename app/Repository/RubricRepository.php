@@ -38,7 +38,7 @@ final class RubricRepository
 
 	/**
 	 * @var string $id
-	 * @return array<Rubric>
+	 * @return Rubric[]
 	 */
 	public function get_all(): array
 	{
@@ -56,13 +56,13 @@ final class RubricRepository
 	/**
 	 * @var string $id
 	 */
-	public function get_rubrics_paginated(string $category, int $page = 0, int $page_size = 10): array
+	public function get_rubrics_paginated(string $category, int $page_number, int $count_per_page): array
 	{
 		$response = $this->client
 			->key($category)
 			->reduce(false)
-			->limit($page_size)
-			->skip($page * $page_size)
+			->limit($count_per_page)
+			->skip($page_number * $count_per_page)
 			->include_docs(true)
 			->getView(self::MODEL_TYPE_ID, 'by-category-name');
 		$_this = $this;
@@ -72,8 +72,8 @@ final class RubricRepository
 
 		$response = $this->client
 			->key($category)
-			->limit($page_size)
-			->skip($page * $page_size)
+			->limit($count_per_page)
+			->skip($page_number * $count_per_page)
 			->getView(self::MODEL_TYPE_ID, 'by-category-name');
 		$total_count = $response->rows[0]?->value ?? 0;
 

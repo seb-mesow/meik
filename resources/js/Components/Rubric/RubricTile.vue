@@ -7,7 +7,7 @@ const RubricDialog = defineAsyncComponent(() => import('./RubricDialog.vue'));
 import axios, { AxiosRequestConfig } from "axios";
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import { IRubricTileProps } from '@/types/page_props/rubric_overview';
+import { IRubricProps } from '@/types/page_props/rubric_overview';
 
 const confirm_service = useConfirm();
 const emit = defineEmits({
@@ -20,13 +20,12 @@ const props = defineProps<{
 		id: string,
 		name: string,
 	},
-	category: string,
+	category_id: string,
 }>();
-console.log(`props.category == ${props.category}`);
-
 const rubric = props.rubric;
 const rubric_id = ref(rubric.id);
 const rubric_name = ref(rubric.name);
+const category_id = ref(props.category_id);
 	
 console.log(`rubric_id == ${rubric_id.value}`);
 console.log(`rubric_name == ${rubric_name.value}`);
@@ -52,8 +51,8 @@ const edit = () => {
 				id: rubric_id.value,
 				name: rubric_name.value,
 			},
-			category: props.category,
-			on_updated: (tile: IRubricTileProps) => {
+			category_id: category_id.value,
+			on_updated: (tile: IRubricProps) => {
 				rubric_id.value = tile.id;
 				rubric_name.value = tile.name;
 			}
@@ -122,7 +121,7 @@ const ajax_delete = (): Promise<void> => {
 	<div class="h-fit">
 		<Button @click="edit">Edit</Button>
 		<Button @click="delete_rubric($event)">Delete</Button>
-		<a :href="route('exhibit.overview', { rubric: rubric_id })">
+		<a :href="route('rubric.details', { rubric_id: rubric_id })">
 			<div class="rubric-tile">
 				<p>{{ rubric_name }}</p>
 			</div>

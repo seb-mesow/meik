@@ -1,12 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import {
-	ICreateRubric200ResponseData,
-	ICreateRubricRequestData,
-	IUpdateRubricRequestData
-} from "@/types/ajax/rubric";
+import * as RubricAJAX from "@/types/ajax/rubric";
 import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
 import { route } from "ziggy-js";
-import { IRubricTileProps } from "@/types/page_props/rubric_overview";
+import { IRubricProps } from "@/types/page_props/rubric_overview";
 
 export interface IRubricForm {
 	readonly name: ISingleValueForm2<string>;
@@ -16,19 +12,19 @@ export interface IRubricForm {
 export interface IRubricFormConstructorArgs {
 	id?: string,
 	name?: ISingleValueForm2ConstructorArgs<string>,
-	category: string,
+	category_id: string,
 	dialog_ref: any,
-	on_created?: (tile: IRubricTileProps) => void
-	on_updated?: (tile: IRubricTileProps) => void
+	on_created?: (tile: IRubricProps) => void
+	on_updated?: (tile: IRubricProps) => void
 };
 
 export class RubricForm implements IRubricForm {
 	private id?: string;
 	public name: SingleValueForm2<string>;
-	private category: string;
+	private category_id: string;
 	private dialog_ref: any;
-	private on_created: (tile: IRubricTileProps) => void; 
-	private on_updated: (tile: IRubricTileProps) => void; 
+	private on_created: (tile: IRubricProps) => void; 
+	private on_updated: (tile: IRubricProps) => void; 
 
 	public constructor(args: IRubricFormConstructorArgs) {
 		this.id = args.id;
@@ -38,7 +34,7 @@ export class RubricForm implements IRubricForm {
 			errs: args.name?.errs
 		};
 		this.name = new SingleValueForm2(name_args, 'name');
-		this.category = args.category ?? '';
+		this.category_id = args.category_id ?? '';
 		
 		this.dialog_ref = args.dialog_ref;
 		this.on_created = args.on_created ?? (() => {});
@@ -58,20 +54,20 @@ export class RubricForm implements IRubricForm {
 	} 
 
 	private async ajax_create(): Promise<void> {
-		console.log(`ajax_update(): this.category == ${this.category}`);
+		console.log(`ajax_update(): this.category_id == ${this.category_id}`);
 		
-		const request_config: AxiosRequestConfig<ICreateRubricRequestData> = {
+		const request_config: AxiosRequestConfig<RubricAJAX.Create.IRequestData> = {
 			method: "post",
 			url: route('ajax.rubric.create'),
 			data: {
-				name: this.name.val,
-				category: this.category
+				name: this.name.get_value(),
+				category_id: this.category_id,
 			},
 		};
 		return axios.request(request_config).then(
-			(response: AxiosResponse<ICreateRubric200ResponseData>) => {
+			(response: AxiosResponse<RubricAJAX.Create.I200ResponseData>) => {
 				const new_rubric_id = response.data;
-				this.on_created({ id: new_rubric_id, name: this.name.val });
+				this.on_created({ id: new_rubric_id, name: this.name.get_value() });
 				this.dialog_ref.close({
 					data: {
 						id: new_rubric_id,
@@ -86,19 +82,19 @@ export class RubricForm implements IRubricForm {
 		if (this.id === undefined) {
 			throw new Error("undefined id");
 		}
-		const request_config: AxiosRequestConfig<IUpdateRubricRequestData> = {
+		const request_config: AxiosRequestConfig<RubricAJAX.Update.IRequestData> = {
 			method: "put",
 			url: route('ajax.rubric.update', { rubric_id: this.id }),
 			data: {
-				name: this.name.val,
-				category: this.category
+				name: this.name.get_value(),
+				category_id: this.category_id
 			},
 		};
 		return axios.request(request_config).then(() => {
 			if (this.id === undefined) {
 				throw new Error("undefined id");
 			}
-			this.on_updated({ id: this.id, name: this.name.val });
+			this.on_updated({ id: this.id, name: this.name.get_value() });
 			this.dialog_ref.close({
 				data: {
 					id: this.id,

@@ -151,12 +151,10 @@ class ExhibitAJAXController extends Controller
 		return response($result->getString(), 200)->header('Content-Type', 'image/png');
 	}
 
-	public function get_paginated(Request $request): JsonResponse
+	public function get_tiles_paginated(Request $request): JsonResponse
 	{
 		$rubric_id = (string) $request->query('rubric_id');
 		$page_number = (int) $request->query('page_number');
-		/** @see ExhibitController::COUNT_PER_PAGE */
-		$count_per_page = (int) $request->query('count_per_page');
 		
 		if ($rubric_id === '') {
 			$selectors = [];
@@ -168,9 +166,7 @@ class ExhibitAJAXController extends Controller
 			];
 		};
 		
-		$exhibits = $this->exhibit_repository->get_paginated($page_number, $count_per_page, $selectors);
-		
-		$exhibits_json = $this->exhibit_service->determinate_tiles_props($exhibits);
+		$exhibits_json = $this->exhibit_service->determinate_tiles_props(page_number: $page_number, selectors: $selectors);
 		
 		return response()->json( $exhibits_json);
 	}

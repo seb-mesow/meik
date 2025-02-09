@@ -110,8 +110,6 @@ use Inertia\Response as InertiaResponse;
  */
 class ExhibitController extends Controller
 {
-	private const int COUNT_PER_PAGE = 20;
-	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly LocationRepository $location_repository,
@@ -126,11 +124,6 @@ class ExhibitController extends Controller
 	{
 		$rubric_id = (string) $request->query('rubric_id', "");
 		
-		$breadcrumbs = [];
-		$main_props = [
-			'count_per_page' => self::COUNT_PER_PAGE, // für ähnliche AJAX-Route
-		];
-		
 		if ($rubric_id === "") {
 			$selectors = [];
 		} else {
@@ -139,35 +132,13 @@ class ExhibitController extends Controller
 					'$eq' => $rubric_id
 				]
 			];
-			
-			$rubric = $this->rubric_repository->get($rubric_id);
-			$category = $rubric->get_category();
-			$main_props['rubric'] = [
-				'id' => $rubric->get_id(),
-			];
-			
-			$breadcrumbs = [
-				'category' => [
-					'id' => $category->value,
-					'name' => $category->get_pretty_name(),
-				],
-				'rubric' => [
-					'id' => $rubric->get_id(),
-					'name' => $rubric->get_name(),
-				],
-			];
 		}
 		
-		$exhibits = $this->exhibit_repository->get_paginated(
-			page_number: 0,
-			count_per_page: self::COUNT_PER_PAGE,
-			additonal_selectors: $selectors,
-		);
-		$main_props['exhibits'] = $this->exhibit_service->determinate_tiles_props($exhibits);
+		$exhibit_tiles = $this->exhibit_service->determinate_tiles_props(page_number: 0, selectors: $selectors);
 		
 		return Inertia::render('Exhibit/ExhibitOverview', [
-			'main' => $main_props,
-			'breadcrumb' => $breadcrumbs
+			'exhibit_tiles' => $exhibit_tiles,
+			'count_per_page' => ExhibitService::DEFAULT_COUNT_PER_PAGE,
 		]);
 	}
 
@@ -195,10 +166,29 @@ class ExhibitController extends Controller
 		]);
 	}
 
-	public function new(): InertiaResponse
+	public function new(Request $request): InertiaResponse
 	{
-		// TODO set category and rubric
-		return Inertia::render('Exhibit/Exhibit', []);
+		$rubric_id = (string) $request->query('rubric_id', '');
+		
+		$selectable_values = $this->determinate_selectable_values();
+		$props = [
+			'selectable_values' => $selectable_values,
+		];
+		
+		if ($rubric_id !== '') {
+			$rubric = $this->rubric_repository->get($rubric_id);
+			$category = $rubric->get_category();
+			$props['category'] = [
+				'id' => $category->value,
+				'name' => $category->get_pretty_name(),
+			];
+			$props['rubric'] = [
+				'id' => $rubric->get_id(),
+				'name' => $rubric->get_name(),
+			];
+		}
+		
+		return Inertia::render('Exhibit/Exhibit', $props);
 	}
 
 	public function create(Request $request): RedirectResponse
