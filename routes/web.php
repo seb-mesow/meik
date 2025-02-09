@@ -32,10 +32,19 @@ Route::middleware('auth')->group(function () {
 	Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 	Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
+	
+	# --- Categories ---
+	Route::get('/categories', [CategoryController::class, 'overview'])->name('category.overview');
+	
+	Route::get('/category/{category_id}', [CategoryController::class, 'details'])->name('category.details');
+	
+	# --- Rubric ---
+	Route::get('/rubric/{rubric_id}', [RubricController::class, 'details'])->name('rubric.details');
+	
 	# --- Exhibits ---
 	Route::get('/exhibits', [ExhibitController::class, 'overview'])->name('exhibit.overview');
-	Route::get('/exhibit', [ExhibitController::class, 'new'])->name('exhibit.new');
+	
+	Route::get('/exhibit/new', [ExhibitController::class, 'new'])->name('exhibit.new');
 	Route::post('/exhibit', [ExhibitController::class, 'create'])->name('exhibit.create');
 	Route::get('/exhibit/{exhibit_id}', [ExhibitController::class, 'details'])->name('exhibit.details');
 	Route::delete('/exhibit/{exhibit_id}', [ExhibitController::class, 'delete'])->name('exhibit.delete');
@@ -51,14 +60,6 @@ Route::middleware('auth')->group(function () {
 	# --- Places ---
 	Route::get('/locations/{location_id}/places', [PlaceController::class, 'overview'])
 		->name('place.overview');
-
-	# --- Categories ---
-	Route::get('/categories', [CategoryController::class, 'overview'])
-		->name('category.overview');
-
-	# --- Rubric ---
-	Route::get('/categories/{category_id}', [RubricController::class, 'overview'])
-		->name('rubric.overview');
 });
 
 require __DIR__ . '/auth.php';

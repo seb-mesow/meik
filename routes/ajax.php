@@ -42,8 +42,8 @@ Route::prefix('ajax')->group(static function () {
 		->name('ajax.place.delete');
 
 	# --- Exponate ---
-	Route::get('/exhibit', [ExhibitAJAXController::class, 'get_paginated'])
-		->name('ajax.exhibit.get_paginated');
+	Route::get('/exhibit/tiles', [ExhibitAJAXController::class, 'get_tiles_paginated'])
+		->name('ajax.exhibit.get_tiles_paginated');
 	
 	Route::post('/exhibit', [ExhibitAJAXController::class, 'create'])
 		->name('ajax.exhibit.create');

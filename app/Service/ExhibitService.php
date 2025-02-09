@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Models\Exhibit;
+use App\Repository\ExhibitRepository;
 use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
 
@@ -25,7 +26,10 @@ use App\Repository\PlaceRepository;
  * }
  */
 final class ExhibitService {
+	public const int DEFAULT_COUNT_PER_PAGE = 20;
+	
 	public function __construct(
+		private readonly ExhibitRepository $exhibit_repository,
 		private readonly PlaceRepository $place_repository,
 		private readonly LocationRepository $location_repository,
 		private readonly ImageService $image_service,
@@ -33,8 +37,15 @@ final class ExhibitService {
 	
 	/**
 	 * @param Exhibit[] $exhibits
+	 * @return IExhibitTileProps[]
 	 */
-	public function determinate_tiles_props(array $exhibits): array {
+	public function determinate_tiles_props(int $page_number, int $count_per_page = self::DEFAULT_COUNT_PER_PAGE, array $selectors = []): array {
+		$exhibits = $this->exhibit_repository->get_paginated(
+			page_number: $page_number,
+			count_per_page: $count_per_page,
+			additonal_selectors: $selectors,
+		);
+		
 		$_this = $this;
 		return array_map(static function(Exhibit $exhibit) use ($_this): array {
 			return $_this->determinate_tile_props($exhibit);
