@@ -195,16 +195,19 @@ const is_new = exhibit_id === undefined;
 				</Fieldset>
 			</div>
 			
-			<SelectButton
-				:modelValue="exhibit_form.type.val_in_editing"
-				@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_val_in_editing(v)"
-				:options="exhibit_types"
-				optionLabel="name"
-			/>
 			
-			<!-- Geräteinformationen -->
-			<Fieldset v-show="exhibit_form.show_device_info.value" legend="Geräteinformationen">
-				<div class="grid grid-cols-3 gap-x-3">
+			<Fieldset legend="Geräteinformationen">
+				<template #legend>
+					<SelectButton
+						:modelValue="exhibit_form.type.val_in_editing"
+						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_val_in_editing(v)"
+						:options="exhibit_types"
+						optionLabel="name"
+					/>
+				</template>
+				
+				<!-- Geräteinformationen -->
+				<div v-show="exhibit_form.show_device_info.value" class="grid grid-cols-3 gap-x-3">
 					<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" class="col-span-full" />
 					
 					<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date" label="gebaut von" class="col-span-1" />
@@ -217,11 +220,9 @@ const is_new = exhibit_id === undefined;
 						<SelectField :form="exhibit_form.original_price_currency" optionLabel="id" label="Währung" class="flex-none w-[6rem]" />
 					</div>
 				</div>
-			</Fieldset>
-			
-			<!-- Buchinformationen -->
-			<Fieldset v-show="exhibit_form.show_book_info.value" legend="Buchinformationen">
-				<div class="grid grid-cols-3 gap-x-3">
+				
+				<!-- Buchinformationen -->
+				<div v-show="exhibit_form.show_book_info.value" class="grid grid-cols-3 gap-x-3">
 					<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" class="col-span-full" />
 					
 					<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" class="col-span-full" />
@@ -237,6 +238,7 @@ const is_new = exhibit_id === undefined;
 					</div>
 				</div>
 			</Fieldset>
+			
 			
 			<Button v-if="is_new" type='submit' label='Anlegen' />
 			<Button v-else type='button' label='Stammdaten speichern' @click="exhibit_form.click_save()" />
