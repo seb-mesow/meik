@@ -35,27 +35,27 @@ use Inertia\Response as InertiaResponse;
  *     is_public: bool,
  * }
  * 
+ * ohne Rubric
  * @phpstan-type ExhibitProps array{
  *     id: number,
  *     inventory_number: string,
  *     name: string,
  *     short_description: string,
- *     location_id: string,
- *     place_id: string,
+ *     manufacturer: string,
+ *     manufacture_date: string,
  *     preservation_state_id: string,
+ *     original_price: array{
+ *         amount: number,
+ *         currency_id: string,
+ *     },
  *     current_value: number,
- *     kind_of_property_id: string,
  *     acquistion_info: array{
  *         date: string,
  *         source: string,
  *         kind_id: string,
  *         purchasing_price: number,
  *     },
- *     manufacturer: string,
- *     original_price: array{
- *         amount: number,
- *         currency_id: string,
- *     },
+ *     kind_of_property_id: string,
  *     device_info?: array{
  *         manufactured_from_date: string,
  *         manufactured_to_date: string,
@@ -65,13 +65,16 @@ use Inertia\Response as InertiaResponse;
  *         language_id: string,
  *         isbn: string,
  *     },
+ *     place_id: string,
+ *     location_id: string,
+ *     connected_exhibit_ids: number[],
+ *     free_texts: FreeTextProps[],
  *     title_image?: array{
  *         id: string,
  *         description: string,
  *         image_width: int,
  *         image_height: int,
  *     },
- *     free_texts: FreeTextProps[],
  * }
  * 
  * @phpstan-type ICurrency array{
@@ -262,6 +265,7 @@ class ExhibitController extends Controller
 			
 			// Geräte- und Buchinformationen
 			'manufacturer' => $exhibit->get_manufacturer(),
+			'manufacture_date' => $exhibit->get_manufacture_date(),
 			'original_price' => [
 				'amount' => $original_price->get_amount(),
 				'currency_id' => $original_price->get_currency()->value,
