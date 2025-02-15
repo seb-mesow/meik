@@ -88,7 +88,7 @@ if (props.exhibit_props) {
 		inventory_number: props.exhibit_props.inventory_number,
 		name: props.exhibit_props.name,
 		short_description: props.exhibit_props.short_description,
-		rubric: props.exhibit_props.rubric,
+		// TODO rubric
 		location_id: props.exhibit_props.location_id,
 		place_id: props.exhibit_props.place_id,
 		// TODO connected_exhibits
@@ -103,6 +103,7 @@ if (props.exhibit_props) {
 		
 		// Geräte- und Buchinformationen
 		manufacturer: props.exhibit_props.manufacturer,
+		manufacture_date: props.exhibit_props.manufacture_date,
 		original_price: props.exhibit_props.original_price,
 		
 		// Geräteinformationen
@@ -184,13 +185,13 @@ const is_new = exhibit_id === undefined;
 				<!-- Zugangsdaten -->
 				<Fieldset legend="Zugangsdaten" toggleable collapsed class="basis-[30rem] flex-1">
 					<div class="grid grid-cols-2 gap-x-3">
-						<InputTextField2 :form="exhibit_form.acquistion_date" label="Datum" />
+						<InputTextField2 :form="exhibit_form.acquistion_info.date" label="Datum" />
 						
-						<InputTextField2 :form="exhibit_form.source" label="Herkunft" class="col-span-full"/>
+						<InputTextField2 :form="exhibit_form.acquistion_info.source" label="Herkunft" class="col-span-full"/>
 						
-						<SelectField :form="exhibit_form.kind_of_acquistion" optionLabel="name"  label="Zugangsart" />
+						<SelectField :form="exhibit_form.acquistion_info.kind" optionLabel="name"  label="Zugangsart" />
 						
-						<InputNumberField :form="exhibit_form.purchasing_price" label="Kaufpreis" />
+						<InputNumberField :form="exhibit_form.acquistion_info.purchasing_price" label="Kaufpreis" />
 					</div>
 				</Fieldset>
 			</div>
@@ -210,14 +211,16 @@ const is_new = exhibit_id === undefined;
 				<div v-show="exhibit_form.show_device_info.value" class="grid grid-cols-3 gap-x-3">
 					<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" class="col-span-full" />
 					
+					<InputTextField2 :form="exhibit_form.manufacture_date" label="Baujahr" class="col-span-1" />
+					
 					<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date" label="gebaut von" class="col-span-1" />
 					
 					<InputTextField2 :form="exhibit_form.device_info.manufactured_to_date" label="gebaut bis" class="col-span-1" />
 					
-					<div class="col-span-1 col-start-1 flex gap-x-3">
-						<InputNumberField :form="exhibit_form.original_price_amount" label="Originalpreis" class="grow"/>
+					<div class="flex gap-x-3">
+						<InputNumberField :form="exhibit_form.original_price.amount" label="Originalpreis" class="grow"/>
 						
-						<SelectField :form="exhibit_form.original_price_currency" optionLabel="id" label="Währung" class="flex-none w-[6rem]" />
+						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[6rem]" />
 					</div>
 				</div>
 				
@@ -225,17 +228,19 @@ const is_new = exhibit_id === undefined;
 				<div v-show="exhibit_form.show_book_info.value" class="grid grid-cols-3 gap-x-3">
 					<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" class="col-span-full" />
 					
-					<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" class="col-span-full" />
+					<InputTextField2 :form="exhibit_form.manufacture_date" label="Erscheinungsjahr" class="col-span-1" />
+					
+					<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" class="col-span-2" />
+					
+					<div class="flex gap-x-3">
+						<InputNumberField :form="exhibit_form.original_price.amount" label="Originalpreis" class="grow!" />
+						
+						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[6rem]" />
+					</div>
 					
 					<SelectField :form="exhibit_form.book_info.language" optionLabel="name" label="Sprache" />
 					
 					<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" />
-					
-					<div class="flex gap-x-3">
-						<InputNumberField :form="exhibit_form.original_price_amount" label="Originalpreis" class="grow!" />
-						
-						<SelectField :form="exhibit_form.original_price_currency" optionLabel="id" label="Währung" class="flex-none w-[6rem]" />
-					</div>
 				</div>
 			</Fieldset>
 			

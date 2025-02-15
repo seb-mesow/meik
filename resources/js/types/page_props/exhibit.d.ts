@@ -17,7 +17,6 @@ export interface IExhibitProps {
 	inventory_number: string,
 	name: string,
 	short_description: string,
-	rubric: string,
 	location_id: string,
 	place_id: string,
 	// TODO connected_exhibits
@@ -37,6 +36,7 @@ export interface IExhibitProps {
 	
 	// Geräte- und Buchinformationen
 	manufacturer: string,
+	manufacture_date: string,
 	original_price: {
 		amount: number,
 		currency_id: string,

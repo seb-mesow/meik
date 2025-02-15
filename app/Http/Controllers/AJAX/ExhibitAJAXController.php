@@ -8,9 +8,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Enum\Currency;
 use App\Models\Enum\KindOfAcquistion;
 use App\Models\Enum\KindOfProperty;
+use App\Models\Enum\Language;
 use App\Models\Enum\PreservationState;
 use App\Models\Exhibit;
 use App\Models\Parts\AcquisitionInfo;
+use App\Models\Parts\BookInfo;
+use App\Models\Parts\DeviceInfo;
 use App\Models\Parts\FreeText;
 use App\Models\Parts\Price;
 use App\Repository\ExhibitRepository;
@@ -20,7 +23,6 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
 class ExhibitAJAXController extends Controller
 {
@@ -30,51 +32,115 @@ class ExhibitAJAXController extends Controller
 		private readonly WordService $word_service
 	) {}
 
-	public function create(Request $request): JsonResponse
+	public function create_or_update(Request $request, ?Exhibit $exhibit = null): Exhibit
 	{
+		// ermittle Eingabewerte
 		$inventory_number = (string) $request->input('inventory_number');
 		$name = (string) $request->input('name');
 		$short_description = (string) $request->input('short_description');
 		$manufacturer = (string) $request->input('manufacturer');
+		$manufacture_date = (string) $request->input('manufacture_date');
+		$preservation_state_id = (string) $request->input('preservation_state_id');
+		$original_price_arr = [
+			'amount' => (int) $request->input('original_price.amount'),
+			'currency_id' => (string) $request->input('original_price.currency_id'),
+		];
+		$current_value = (int) $request->input('current_value');
+		$acquistion_info_arr = $request->input('acquistion_info'); // alle Kind-Elemente sind z.Z. Strings.
+		$kind_of_property_id = (string) $request->input('kind_of_property_id');
+		$device_info_arr = $request->input('device_info', null); // alle Kind-Elemente sind z.Z. Strings.
+		$book_info_arr = $request->input('book_info', null); // alle Kind-Elemente sind z.Z. Strings.
+		$place_id = (string) $request->input('place_id');
+		$rubric_id = (string) $request->input('rubric_id');
+		$connected_exhibit_ids = (array) $request->input('conntected_exhibit_ids');
 		
-		$exhibit = new Exhibit(
-			inventory_number: $inventory_number,
-			name: $name,
-			place_id: '',
-			rubric_id: '',
-			connected_exhibit_ids: [],
-			short_description: $short_description,
-			manufacturer: $manufacturer,
-			manufacture_date: '9999-12-31',
-			preservation_state: PreservationState::FULLY_FUNCTIONAL,
-			original_price: new Price(amount: 0, currency: Currency::EUR),
-			current_value: 99999,
-			acquisition_info: new AcquisitionInfo(
-				date: Carbon::create(year: 2025, month: 2, day: 8),
-				source: 'HERKUNFT',
-				kind: KindOfAcquistion::FIND,
-				purchasing_price: 99999,
-			),
-			kind_of_property: KindOfProperty::LOAN,
+		// wandle Eingabewerte um
+		$preservation_state = PreservationState::from($preservation_state_id);
+		$original_price = new Price(
+			amount: $original_price_arr['amount'],
+			currency: Currency::from($original_price_arr['currency_id']),
 		);
+		$acquistion_info = new AcquisitionInfo(
+			date: $acquistion_info_arr['date'],
+			source: $acquistion_info_arr['source'],
+			kind: KindOfAcquistion::from($acquistion_info_arr['kind_id']),
+			purchasing_price: $acquistion_info_arr['purchasing_price'],
+		);
+		$kind_of_property = KindOfProperty::from($kind_of_property_id);
+		if ($device_info_arr === null) {
+			$device_info = null;
+		} else {
+			$device_info = new DeviceInfo(
+				manufactured_from_date: $device_info_arr['manufactured_from_date'],
+				manufactured_to_date: $device_info_arr['manufactured_to_date']
+			);
+		}
+		if ($book_info_arr === null) {
+			$book_info = null;
+		} else {
+			$book_info = new BookInfo(
+				authors: $book_info_arr['authors'],
+				isbn: $book_info_arr['isbn'],
+				language: Language::from($book_info_arr['language_id']),
+			);
+		}
+		
+		if ($exhibit) {
+			// bestehendes Exhibit updaten
+			$exhibit->set_inventory_number($inventory_number);
+			$exhibit->set_name($name);
+			$exhibit->set_short_description($short_description);
+			$exhibit->set_manufacturer($manufacturer);
+			$exhibit->set_manufacture_date($manufacture_date);
+			$exhibit->set_preservation_state($preservation_state);
+			$exhibit->set_original_price($original_price);
+			$exhibit->set_current_value($current_value);
+			$exhibit->set_acquistion_info($acquistion_info);
+			$exhibit->set_kind_of_property($kind_of_property);
+			if ($device_info) {
+				$exhibit->set_device_info($device_info);
+			}
+			if ($book_info) {
+				$exhibit->set_book_info($book_info);
+			}
+			$exhibit->set_place_id($place_id);
+			$exhibit->set_connected_exhibit_ids($connected_exhibit_ids);
+		} else {
+			// neues Exhibit erzeugen
+			$exhibit = new Exhibit(
+				inventory_number: $inventory_number,
+				name: $name,
+				short_description: $short_description,
+				manufacturer: $manufacturer,
+				manufacture_date: $manufacture_date,
+				preservation_state: $preservation_state,
+				original_price: $original_price,
+				current_value: $current_value,
+				acquisition_info: $acquistion_info,
+				kind_of_property: $kind_of_property,
+				device_info: $device_info,
+				book_info: $book_info,
+				place_id: $place_id,
+				rubric_id: $rubric_id,
+				connected_exhibit_ids: $connected_exhibit_ids,
+			);
+		}
+		
+		return $exhibit;
+	}
+	
+	public function create(Request $request): JsonResponse
+	{
+		$exhibit = $this->create_or_update($request);
 		$this->exhibit_repository->insert($exhibit);
 		return response()->json($exhibit->get_id());
 	}
 	
 	public function update(Request $request, int $exhibit_id): void
 	{
-		$inventory_number = (string) $request->input('inventory_number');
-		$name = (string) $request->input('name');
-		$short_description = (string) $request->input('short_description');
-		$manufacturer = (string) $request->input('manufacturer');
-		
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
-		$exhibit->set_inventory_number($inventory_number);
-		$exhibit->set_name($name);
-		$exhibit->set_short_description($short_description);
-		$exhibit->set_manufacturer($manufacturer);
+		$exhibit = $this->create_or_update($request, $exhibit);
 		$this->exhibit_repository->update($exhibit);
-		//sleep(5); // TODO entfernen
 	}
 
 	public function create_free_text(Request $request, int $exhibit_id): JsonResponse

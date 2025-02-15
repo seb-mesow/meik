@@ -1,5 +1,5 @@
 import { ISingleValueForm2, SingleValueForm2 } from "./singlevalueform2";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { route } from "ziggy-js";
 import * as ExhibitAJAX from '@/types/ajax/exhibit';
 import { ToastServiceMethods } from "primevue/toastservice";
@@ -25,10 +25,12 @@ export interface IExhibitForm {
 	readonly kind_of_property: Readonly<ISelectForm<IKindOfProperty>>;
 	
 	// Zugangsdaten
-	readonly acquistion_date: Readonly<ISingleValueForm2>;
-	readonly source: Readonly<ISingleValueForm2>;
-	readonly kind_of_acquistion: Readonly<ISelectForm<IKindOfAcquistion>>;
-	readonly purchasing_price: Readonly<ISingleValueForm2<number>>;
+	readonly acquistion_info: Readonly<{
+		readonly date: Readonly<ISingleValueForm2>;
+		readonly source: Readonly<ISingleValueForm2>;
+		readonly kind: Readonly<ISelectForm<IKindOfAcquistion>>;
+		readonly purchasing_price: Readonly<ISingleValueForm2<number>>;
+	}>;
 	
 	// Exponats-Typ
 	readonly type: Readonly<ISingleValueForm2<IExhibitType>>;
@@ -37,21 +39,24 @@ export interface IExhibitForm {
 	
 	// Geräte- und Buchinformationen
 	readonly manufacturer: Readonly<ISingleValueForm2>;
-	readonly original_price_amount: Readonly<ISingleValueForm2<number>>;
-	readonly original_price_currency: Readonly<ISelectForm<ICurrency>>;
+	readonly manufacture_date: Readonly<ISingleValueForm2>;
+	readonly original_price: Readonly<{
+		readonly amount: Readonly<ISingleValueForm2<number>>;
+		readonly currency: Readonly<ISelectForm<ICurrency>>;
+	}>;
 	
 	// Geräteinformationen
-	readonly device_info: {
+	readonly device_info: Readonly<{
 		readonly manufactured_from_date: Readonly<ISingleValueForm2>;
 		readonly manufactured_to_date: Readonly<ISingleValueForm2>;
-	}
+	}>;
 	
 	// Buchinformationen
-	readonly book_info: {
+	readonly book_info: Readonly<{
 		readonly authors: Readonly<ISingleValueForm2>;
 		readonly language: Readonly<ISelectForm<ILanguage>>;
 		readonly isbn: Readonly<ISingleValueForm2>;
-	}
+	}>;
 	
 	click_delete(): void;
 	click_save(): void;
@@ -104,7 +109,7 @@ export interface IExhibitFormConstructorArgs {
 		inventory_number: string,
 		name: string,
 		short_description: string,
-		rubric: string,
+		// rubric: string,
 		location_id: string,
 		place_id: string,
 		// TODO connected_exhibits
@@ -124,6 +129,7 @@ export interface IExhibitFormConstructorArgs {
 		
 		// Geräte- und Buchinformationen
 		manufacturer: string,
+		manufacture_date: string,
 		original_price: {
 			amount: number,
 			currency_id: string,
@@ -170,10 +176,12 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly kind_of_property: Readonly<ISelectForm<IKindOfProperty>>;
 	
 	// Zugangsdaten
-	public readonly acquistion_date: Readonly<ISingleValueForm2>;
-	public readonly source: Readonly<ISingleValueForm2>;
-	public readonly kind_of_acquistion: Readonly<ISelectForm<IKindOfAcquistion>>;
-	public readonly purchasing_price: Readonly<ISingleValueForm2<number>>;
+	public readonly acquistion_info: Readonly<{
+		readonly date: Readonly<ISingleValueForm2>;
+		readonly source: Readonly<ISingleValueForm2>;
+		readonly kind: Readonly<ISelectForm<IKindOfAcquistion>>;
+		readonly purchasing_price: Readonly<ISingleValueForm2<number>>;
+	}>;
 	
 	// Exponats-Typ
 	public readonly type: Readonly<ISingleValueForm2<IExhibitType>>;
@@ -182,17 +190,20 @@ export class ExhibitForm implements IExhibitForm {
 	
 	// Geräte- und Buchinformationen
 	public readonly manufacturer: Readonly<ISingleValueForm2>;
-	public readonly original_price_amount: Readonly<ISingleValueForm2<number>>;
-	public readonly original_price_currency: Readonly<ISelectForm<ICurrency>>;
+	public readonly manufacture_date: Readonly<ISingleValueForm2>;
+	public readonly original_price: {
+		readonly amount: Readonly<ISingleValueForm2<number>>;
+		readonly currency: Readonly<ISelectForm<ICurrency>>;
+	};
 	
 	// Geräteinformationen
-	public device_info: {
+	public readonly device_info: {
 		readonly manufactured_from_date: Readonly<ISingleValueForm2>;
 		readonly manufactured_to_date: Readonly<ISingleValueForm2>;
 	};
 	
 	// Buchinformationen
-	public book_info: {
+	public readonly book_info: {
 		readonly authors: Readonly<ISingleValueForm2>;
 		readonly language: Readonly<ISelectForm<ILanguage>>;
 		readonly isbn: Readonly<ISingleValueForm2>;
@@ -218,7 +229,7 @@ export class ExhibitForm implements IExhibitForm {
 		this.short_description = new SingleValueForm2({ val: args.data?.short_description ?? '' }, 'short_description');
 		
 		this.rubric = new GroupSelectForm<string>({
-			val: args.data?.rubric ?? '',
+			val: '',
 			get_shown_suggestions(query: string): Promise<IGroupType[]> {
 				return Promise.resolve([
 					{
@@ -271,26 +282,32 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'kind_of_property');
 		
 		// Zugangsdaten
-		this.acquistion_date = new SingleValueForm2({ val: args.data?.acquistion_info.date ?? '9999-12-31' }, 'acquistion_date');
-		
-		this.source = new SingleValueForm2({ val: args.data?.acquistion_info.source ?? '' }, 'source');
-		
-		this.kind_of_acquistion = new SelectForm<IKindOfAcquistion>({
-			val: this.determinate_selectable_value_from_id(args.data?.acquistion_info.kind_id ?? '', this.selectable_values.kind_of_acquistion),
-			get_shown_suggestions: (query: string): Promise<IKindOfAcquistion[]> => this.find_suggestions(query, this.selectable_values.kind_of_acquistion),
-		}, 'kind_of_acquistion');
-		
-		this.purchasing_price = new SingleValueForm2<number>({ val: args.data?.acquistion_info.purchasing_price ?? 0 }, 'purchasing_price');
+		this.acquistion_info = {
+			date: new SingleValueForm2({ val: args.data?.acquistion_info.date ?? '9999-12-31' }, 'acquistion_date'),
+			
+			source: new SingleValueForm2({ val: args.data?.acquistion_info.source ?? '' }, 'source'),
+			
+			kind: new SelectForm<IKindOfAcquistion>({
+				val: this.determinate_selectable_value_from_id(args.data?.acquistion_info.kind_id ?? '', this.selectable_values.kind_of_acquistion),
+				get_shown_suggestions: (query: string): Promise<IKindOfAcquistion[]> => this.find_suggestions(query, this.selectable_values.kind_of_acquistion),
+			}, 'kind_of_acquistion'),
+			
+			purchasing_price: new SingleValueForm2<number>({ val: args.data?.acquistion_info.purchasing_price ?? 0 }, 'purchasing_price'),
+		};
 		
 		// Geräte- und Buchinformationen
 		this.manufacturer = new SingleValueForm2({ val: args.data?.manufacturer ?? '' }, 'manufacturer');
 		
-		this.original_price_amount = new SingleValueForm2<number>({ val: args.data?.original_price.amount ?? 0 }, 'original_price_amount');
+		this.manufacture_date = new SingleValueForm2({ val: args.data?.manufacture_date ?? '' }, 'manufacture_date');
 		
-		this.original_price_currency = new SelectForm<ICurrency>({
-			val: this.determinate_selectable_value_from_id(args.data?.original_price.currency_id ?? '', this.selectable_values.currency),
-			get_shown_suggestions: (query: string): Promise<ICurrency[]> => this.find_suggestions(query, this.selectable_values.currency),
-		}, 'original_price_currency');
+		this.original_price = {
+			amount: new SingleValueForm2<number>({ val: args.data?.original_price.amount ?? 0 }, 'original_price_amount'),
+			
+			currency: new SelectForm<ICurrency>({
+				val: this.determinate_selectable_value_from_id(args.data?.original_price.currency_id ?? '', this.selectable_values.currency),
+				get_shown_suggestions: (query: string): Promise<ICurrency[]> => this.find_suggestions(query, this.selectable_values.currency),
+			}, 'original_price_currency'),
+		};
 		
 		// Geräteinformationen
 		const device_info = args.data?.device_info;
@@ -345,8 +362,9 @@ export class ExhibitForm implements IExhibitForm {
 	};
 	
 	private find_suggestions<T extends { name: string}>(query: string, selectable_values: T[]): Promise<T[]> {
+		query = query.toLowerCase();
 		return Promise.resolve(
-			selectable_values.filter((selectable_value: T): boolean => selectable_value.name.includes(query))
+			selectable_values.filter((selectable_value: T): boolean => selectable_value.name.toLowerCase().includes(query))
 		);
 	};
 	
@@ -369,9 +387,25 @@ export class ExhibitForm implements IExhibitForm {
 		this.inventory_number.commit();
 		this.name.commit();
 		this.short_description.commit();
-		this.rubric.commit();
-		this.place.commit();
 		this.manufacturer.commit();
+		this.manufacture_date.commit();
+		this.preservation_state.commit();
+		this.original_price.amount.commit();
+		this.original_price.currency.commit();
+		this.current_value.commit();
+		this.acquistion_info.date.commit();
+		this.acquistion_info.source.commit();
+		this.acquistion_info.kind.commit();
+		this.acquistion_info.purchasing_price.commit();
+		this.kind_of_property.commit();
+		this.device_info.manufactured_from_date.commit();
+		this.device_info.manufactured_to_date.commit();
+		this.book_info.authors.commit();
+		this.book_info.isbn.commit();
+		this.book_info.language.commit();
+		this.place.commit();
+		this.rubric.commit();
+		// this.connected_exhibits.commit();
 		
 		// this.is_save_button_loading = true;
 		if (this.exists_in_db()) {
@@ -387,19 +421,16 @@ export class ExhibitForm implements IExhibitForm {
 			throw new Error("undefined id");
 		}
 		
+		const request_data: ExhibitAJAX.Update.IRequestData = this.create_or_update_request_data();
+		
 		const request_config: AxiosRequestConfig<ExhibitAJAX.Update.IRequestData> = {
 			method: "put",
 			url: route('ajax.exhibit.update', { exhibit_id: this.id }),
-			data: {
-				inventory_number: this.inventory_number.get_value(),
-				name: this.name.get_value(),
-				short_description: this.short_description.get_value(),
-				manufacturer: this.manufacturer.get_value(),
-			}
+			data: request_data,
 		};
 		
 		return axios.request(request_config).then(
-			() => {
+			(response) => {
 				this.success_toast('Exponat gespeichert');
 				// TODO Breadcrumbb anpassen
 			},
@@ -414,24 +445,62 @@ export class ExhibitForm implements IExhibitForm {
 			throw new Error("defined id");
 		}
 		
+		const request_data: ExhibitAJAX.Create.IRequestData = this.create_or_update_request_data();
+		
 		const request_config: AxiosRequestConfig<ExhibitAJAX.Update.IRequestData> = {
 			method: "put",
 			url: route('ajax.exhibit.create'),
-			data: {
-				inventory_number: this.inventory_number.get_value(),
-				name: this.name.get_value(),
-				short_description: this.short_description.get_value(),
-				manufacturer: this.manufacturer.get_value(),
-			}
+			data: request_data,
 		};
 		
 		return axios.request(request_config).then(
-			() => {
-				this.success_toast('neues Exponat gespeichert');
+			(response: AxiosResponse<ExhibitAJAX.Create.I200ResponseData>) => {
+				this.success_toast(`neues Exponat mit ID ${response.data} gespeichert`);
 			},
 			() => {
 				this.success_toast('neues Exponat konnte nicht gespeichert');
 			}
 		);
+	}
+	
+	private create_or_update_request_data(): ExhibitAJAX.Create.IRequestData|ExhibitAJAX.Update.IRequestData {
+		const request_data: ExhibitAJAX.Create.IRequestData|ExhibitAJAX.Update.IRequestData = {
+			inventory_number: this.inventory_number.get_value(),
+			name: this.inventory_number.get_value(),
+			short_description: this.short_description.get_value(),
+			manufacturer: this.manufacturer.get_value(),
+			manufacture_date: this.manufacture_date.get_value(),
+			preservation_state_id: this.preservation_state.get_value().id,
+			original_price: {
+				amount: this.original_price.amount.get_value(),
+				currency_id: this.original_price.currency.get_value().id
+			},
+			current_value: this.current_value.get_value(),
+			acquistion_info: {
+				date: this.acquistion_info.date.get_value(),
+				source: this.acquistion_info.source.get_value(),
+				kind_id: this.acquistion_info.kind.get_value().id,
+				purchasing_price: this.acquistion_info.purchasing_price.get_value()
+			},
+			kind_of_property_id: this.kind_of_property.get_value().id,
+			place_id: this.place.get_value(),
+			rubric_id: this.rubric.get_value(),
+			// TODO
+			conntected_exhibit_ids: [],
+		};
+		if (this.type.get_value().id === 'device') {
+			request_data.device_info = {
+				manufactured_from_date: this.device_info.manufactured_from_date.get_value(),
+				manufactured_to_date: this.device_info.manufactured_to_date.get_value(),
+			};
+		}
+		if (this.type.get_value().id === 'book') {
+			request_data.book_info = {
+				authors: this.book_info.authors.get_value(),
+				isbn: this.book_info.isbn.get_value(),
+				language_id: this.book_info.language.get_value().id,
+			};
+		}
+		return request_data;
 	}
 }
