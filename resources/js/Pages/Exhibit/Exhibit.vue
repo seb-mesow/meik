@@ -22,6 +22,7 @@ import InputNumberField from '@/Components/Form/InputNumberField.vue';
 import InputTextField2 from '@/Components/Form/InputTextField2.vue';
 import Fieldset from 'primevue/fieldset';
 import SelectButton from 'primevue/selectbutton';
+import { PartialDate } from '@/util/partial-date';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
@@ -81,6 +82,14 @@ const form_constructor_args: IExhibitFormConstructorArgs = {
 	},
 };
 if (props.exhibit_props) {
+	let device_info = undefined;
+	if (props.exhibit_props.device_info) {
+		device_info = {
+			manufactured_from_date: PartialDate.parse_iso(props.exhibit_props.device_info.manufactured_from_date),
+			manufactured_to_date: PartialDate.parse_iso(props.exhibit_props.device_info.manufactured_to_date),
+		};
+	}
+	
 	form_constructor_args.data = {
 		id: props.exhibit_props.id,
 	
@@ -103,11 +112,11 @@ if (props.exhibit_props) {
 		
 		// Geräte- und Buchinformationen
 		manufacturer: props.exhibit_props.manufacturer,
-		manufacture_date: props.exhibit_props.manufacture_date,
+		manufacture_date: PartialDate.parse_iso(props.exhibit_props.manufacture_date),
 		original_price: props.exhibit_props.original_price,
 		
 		// Geräteinformationen
-		device_info: props.exhibit_props.device_info,
+		device_info: device_info,
 		
 		// Buchinformationen
 		book_info: props.exhibit_props.book_info,
@@ -200,7 +209,7 @@ const is_new = exhibit_id === undefined;
 			<Fieldset legend="Geräteinformationen">
 				<template #legend>
 					<SelectButton
-						:modelValue="exhibit_form.type.val_in_editing"
+						:modelValue="exhibit_form.type.ui_value_in_editing.value"
 						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_val_in_editing(v)"
 						:options="exhibit_types"
 						optionLabel="name"
@@ -220,7 +229,7 @@ const is_new = exhibit_id === undefined;
 					<div class="flex gap-x-3">
 						<InputNumberField :form="exhibit_form.original_price.amount" label="Originalpreis" class="grow"/>
 						
-						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[6rem]" />
+						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[7rem]" />
 					</div>
 				</div>
 				
@@ -235,7 +244,7 @@ const is_new = exhibit_id === undefined;
 					<div class="flex gap-x-3">
 						<InputNumberField :form="exhibit_form.original_price.amount" label="Originalpreis" class="grow!" />
 						
-						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[6rem]" />
+						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[7rem]" />
 					</div>
 					
 					<SelectField :form="exhibit_form.book_info.language" optionLabel="name" label="Sprache" />

@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { route } from 'ziggy-js';
-import { IExhibitTileProps } from '@/types/page_props/exhibit_overview';
-import { sprint_pretty_partial_date } from '@/util/partial-date';
+import { PartialDate } from '@/util/partial-date';
+import { IExhibitTileProps } from '@/types/page_props/exhibit_tiles';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
 	exhibit: IExhibitTileProps;
 }>();
 
-const exhibit_manufacture_date = sprint_pretty_partial_date(props.exhibit.manufacture_date);
+const exhibit_manufacture_date: PartialDate = PartialDate.parse_iso(props.exhibit.manufacture_date);
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const exhibit_manufacture_date = sprint_pretty_partial_date(props.exhibit.manufa
 			</div>
 			<div class="flex flex-col pl-4">
 				<p class="truncate w-72" style="font-size: larger;">{{ props.exhibit.name + " (" + props.exhibit.inventory_number + ")" }}</p>
-				<p class="truncate w-72"> {{ "Baujahr: " + exhibit_manufacture_date }}</p>
+				<p class="truncate w-72"> {{ "Baujahr: " + exhibit_manufacture_date.format_pretty() }}</p>
 				<p class="truncate w-72"> {{ "Hersteller: " + props.exhibit.manufacturer }}</p>
 				<p class="truncate w-72"> {{ "Standort: " + props.exhibit.location_name + " - " + props.exhibit.place_name }}</p>
 			</div>

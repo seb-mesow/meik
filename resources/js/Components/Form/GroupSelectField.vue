@@ -30,8 +30,8 @@ const props = defineProps<{
 				<slot name="option" v-bind="option"></slot>
 			</template>
 		</AutoComplete>
-		<div v-show="form.errs">
-			<p v-for="error in form.errs">{{ error }}</p>
+		<div v-show="form.ui_errs">
+			<p v-for="error in form.ui_errs">{{ error }}</p>
 		</div>
 	</div>
 </template>
