@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import InputNumber from 'primevue/inputnumber';
-import { ISingleValueForm2 } from '@/form/singlevalueform2';
+import { ISingleValueForm2, UISingleValueForm2 } from '@/form/singlevalueform2';
 
 const props = defineProps<{
 	label: string,
-	form: ISingleValueForm2<number>,
+	form: UISingleValueForm2<number>,
 }>();
 
 </script>
@@ -14,12 +14,12 @@ const props = defineProps<{
 		<p><label :for="props.form.html_id">{{ props.label }}</label></p>
 		<InputNumber
 			:inputId="props.form.html_id"
-			:modelValue="props.form.val_in_editing"
+			:modelValue="props.form.ui_value_in_editing.value"
 			@update:modelValue="(v: number) => props.form.on_change_val_in_editing(v)"
 			fluid
 		/>
-		<div v-show="props.form.errs">
-			<p v-for="error in props.form.errs">{{ error }}</p>
+		<div v-show="props.form.errs.value.length > 0">
+			<p v-for="error in props.form.errs.value">{{ error }}</p>
 		</div>
 	</div>
 </template>

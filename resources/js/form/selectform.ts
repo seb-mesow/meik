@@ -1,37 +1,21 @@
 import { shallowRef, ShallowRef } from "vue";
-import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
+import { ISingleValueForm2ConstructorArgs, SingleValueForm2, UISingleValueForm2 } from "./singlevalueform2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 
-export interface ISelectForm<
-	ValType extends any = string
-> extends ISingleValueForm2<
-	ValType
-> {
-	readonly shown_suggestions: Readonly<ShallowRef<Readonly<ValType>[]>>;
+export interface UISelectForm<U> extends UISingleValueForm2<U> {
+	readonly shown_suggestions: Readonly<ShallowRef<Readonly<U>[]>>;
 	on_complete(event: AutoCompleteCompleteEvent): Promise<void>;
 }
 
-export interface ISelectFormConstructorArgs<
-	ValType extends any = string
->
-extends ISingleValueForm2ConstructorArgs<
-	ValType
-> {
-	get_shown_suggestions: (query: string) => Promise<Readonly<ValType>[]>;
+export interface ISelectFormConstructorArgs<T = string> extends ISingleValueForm2ConstructorArgs<T> {
+	get_shown_suggestions: (query: string) => Promise<Readonly<T>[]>;
 }
 
-export class SelectForm<
-	ValType extends any = string,
-	HtmlIdType extends string|number = string
-> extends SingleValueForm2<
-	ValType
-> implements ISelectForm<
-	ValType
-> {
-	public readonly shown_suggestions: ShallowRef<Readonly<ValType>[]>;
-	private readonly get_shown_suggestions: (query: string) => Promise<Readonly<ValType>[]>;
+export class SelectForm<T = string> extends SingleValueForm2<T, T> implements UISelectForm<T> {
+	public readonly shown_suggestions: ShallowRef<Readonly<T>[]>;
+	private readonly get_shown_suggestions: (query: string) => Promise<Readonly<T>[]>;
 	
-	public constructor(args: ISelectFormConstructorArgs<ValType>, id: HtmlIdType) {
+	public constructor(args: ISelectFormConstructorArgs<T>, id: string|number) {
 		super(args, id);
 		this.get_shown_suggestions = args.get_shown_suggestions;
 		this.shown_suggestions = shallowRef([]);
