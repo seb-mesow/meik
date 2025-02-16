@@ -5,6 +5,7 @@ import { UISingleValueForm2 } from '@/form/singlevalueform2';
 const props = defineProps<{
 	label: string,
 	form: UISingleValueForm2,
+	tooltip?: string,
 }>();
 
 const form = props.form;
@@ -17,6 +18,7 @@ const form = props.form;
 			type=text :id="form.html_id" :name="form.html_id"
 			:modelValue="form.ui_value_in_editing.value"
 			@update:modelValue="(v: string|undefined) => form.on_change_val_in_editing(v)"
+			v-tooltip.top="{ value: props.tooltip, showDelay: 1000 }"
 			fluid
 		/>
 		<div v-show="form.errs.value.length > 0">
