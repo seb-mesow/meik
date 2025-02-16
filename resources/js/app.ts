@@ -13,6 +13,7 @@ import ConfirmationService from 'primevue/confirmationservice';
 import Lara from '@primevue/themes/lara';
 import ToastService from 'primevue/toastservice';
 import DialogService from 'primevue/dialogservice';
+import Tooltip from 'primevue/tooltip';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -47,10 +48,11 @@ createInertiaApp({
 		app.use(ConfirmationService);
 		app.use(ToastService);
 		app.use(DialogService);
+		app.directive('tooltip', Tooltip);
 		
 		app.mount(el);
-		},
-		progress: {
-			color: '#4B5563',
-		},
-	});
+	},
+	progress: {
+		color: '#4B5563',
+	},
+});

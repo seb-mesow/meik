@@ -125,6 +125,8 @@ if (props.exhibit_props) {
 const exhibit_form: IExhibitForm = new ExhibitForm(form_constructor_args);
 const exhibit_id = exhibit_form.id;
 const is_new = exhibit_id === undefined;
+
+const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\nMONAT JJJJ\nJJJJ';
 </script>
 
 <template>
@@ -220,11 +222,11 @@ const is_new = exhibit_id === undefined;
 				<div v-show="exhibit_form.show_device_info.value" class="grid grid-cols-3 gap-x-3">
 					<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" class="col-span-full" />
 					
-					<InputTextField2 :form="exhibit_form.manufacture_date" label="Baujahr" class="col-span-1" />
+					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip" label="Baujahr" class="col-span-1" />
 					
-					<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date" label="gebaut von" class="col-span-1" />
+					<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date" :tooltip="partial_date_tooltip" label="gebaut von" class="col-span-1" />
 					
-					<InputTextField2 :form="exhibit_form.device_info.manufactured_to_date" label="gebaut bis" class="col-span-1" />
+					<InputTextField2 :form="exhibit_form.device_info.manufactured_to_date" :tooltip="partial_date_tooltip" label="gebaut bis" class="col-span-1" />
 					
 					<div class="flex gap-x-3">
 						<InputNumberField :form="exhibit_form.original_price.amount" label="Originalpreis" class="grow"/>
@@ -237,7 +239,7 @@ const is_new = exhibit_id === undefined;
 				<div v-show="exhibit_form.show_book_info.value" class="grid grid-cols-3 gap-x-3">
 					<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" class="col-span-full" />
 					
-					<InputTextField2 :form="exhibit_form.manufacture_date" label="Erscheinungsjahr" class="col-span-1" />
+					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip" label="Erscheinungsjahr" class="col-span-1" />
 					
 					<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" class="col-span-2" />
 					
