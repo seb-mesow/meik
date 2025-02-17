@@ -4,7 +4,7 @@ import { route } from "ziggy-js";
 import * as ExhibitAJAX from '@/types/ajax/exhibit';
 import { ToastServiceMethods } from "primevue/toastservice";
 import { UISelectForm, SelectForm } from "./selectform";
-import { GroupSelectForm, IGroupSelectForm, IGroupType } from "./groupselectform";
+import { GroupSelectForm, UIGroupSelectForm, IGroupType } from "./groupselectform";
 import { ref, Ref } from "vue";
 import { PartialDate } from "@/util/partial-date";
 import { PartialDateFrom } from "./partialdateform";
@@ -16,7 +16,7 @@ export interface IExhibitForm {
 	readonly inventory_number: Readonly<UISingleValueForm2>;
 	readonly name: Readonly<UISingleValueForm2>;
 	readonly short_description: Readonly<UISingleValueForm2>;
-	readonly rubric: Readonly<IGroupSelectForm>;
+	readonly rubric: Readonly<UIGroupSelectForm<string>>;
 	readonly location: Readonly<UISelectForm<ILocation|undefined>>;
 	readonly place: Readonly<UISelectForm<string>>;
 	// TODO connected_exhibits
@@ -171,7 +171,7 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly inventory_number: SingleValueForm2<string>;
 	public readonly name: Readonly<SingleValueForm2<string>>;
 	public readonly short_description: SingleValueForm2<string>;
-	public readonly rubric: IGroupSelectForm<string>;
+	public readonly rubric: GroupSelectForm<string>;
 	public readonly location: SelectForm<ILocation>;
 	public readonly place: SelectForm<string>;
 	// TODO connected_exhibits
@@ -253,12 +253,28 @@ export class ExhibitForm implements IExhibitForm {
 						]
 					}
 				])
-			}
+			},
+			validate(value_in_editing): Promise<string[]> {
+				return new Promise<string[]>((resolve) => {
+					if (value_in_editing) {
+						if (['Rub 1.1', 'Rub 1.2', 'Rub 2.1', 'Rub 2.2'].includes(value_in_editing)) {
+							resolve([]);
+						} else {
+							resolve(['Bitte eine auswählbare Rubrik angeben']);
+						}
+					} else {
+						resolve(['Bitte eine Rubrik angeben']);
+					}
+				});
+			},
 		}, 'rubric');
 		
 		this.location = new SelectForm<ILocation>({
 			val: this.determinate_selectable_value_from_id(args.data?.location_id ?? '', this.selectable_values.location),
 			get_shown_suggestions: (query: string): Promise<ILocation[]> => this.find_suggestions_in_name(query, this.selectable_values.location),
+			validate(value_in_editing): Promise<string[]> {
+				throw new Error("not implemented");
+			},
 		}, 'location');
 		
 		this.place = new SelectForm<string>({
@@ -270,6 +286,9 @@ export class ExhibitForm implements IExhibitForm {
 					'Place 3',
 				])
 			},
+			validate(value_in_editing): Promise<string[]> {
+				throw new Error("not implemented");
+			},
 		}, 'place');
 		
 		// TODO connected_exhibits
@@ -278,6 +297,17 @@ export class ExhibitForm implements IExhibitForm {
 		this.preservation_state = new SelectForm<IPreservationState>({
 			val: this.determinate_selectable_value_from_id(args.data?.preservation_state_id ?? '', this.selectable_values.preservation_state),
 			get_shown_suggestions: (query: string): Promise<IPreservationState[]> => this.find_suggestions_in_name(query, this.selectable_values.preservation_state),
+			validate: (value_in_editing) => new Promise((resolve) => {
+				if (value_in_editing) {
+					if (this.selectable_values.preservation_state.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
+						resolve([]);
+					} else {
+						resolve(['Bitte einen auswählbaren Erhaltungszustand angeben']);
+					}
+				} else {
+					resolve(['Bitte einen Erhaltungszustand angeben']);
+				}
+			}),
 		}, 'preservation_state');
 		
 		this.current_value = new SingleValueForm2<number, number>({ val: args.data?.current_value ?? 0}, 'current_value');
@@ -285,6 +315,17 @@ export class ExhibitForm implements IExhibitForm {
 		this.kind_of_property = new SelectForm<IKindOfProperty>({
 			val: this.determinate_selectable_value_from_id(args.data?.kind_of_property_id ?? '', this.selectable_values.kind_of_property),
 			get_shown_suggestions: (query: string): Promise<IKindOfProperty[]> => this.find_suggestions_in_name(query, this.selectable_values.kind_of_property),
+			validate: (value_in_editing) => new Promise((resolve) => {
+				if (value_in_editing) {
+					if (this.selectable_values.kind_of_property.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
+						resolve([]);
+					} else {
+						resolve(['Bitte eine auswählbare Besitzart angeben']);
+					}
+				} else {
+					resolve(['Bitte eine Besitzart angeben']);
+				}
+			}),
 		}, 'kind_of_property');
 		
 		// Zugangsdaten
@@ -296,6 +337,17 @@ export class ExhibitForm implements IExhibitForm {
 			kind: new SelectForm<IKindOfAcquistion>({
 				val: this.determinate_selectable_value_from_id(args.data?.acquistion_info.kind_id ?? '', this.selectable_values.kind_of_acquistion),
 				get_shown_suggestions: (query: string): Promise<IKindOfAcquistion[]> => this.find_suggestions_in_name(query, this.selectable_values.kind_of_acquistion),
+				validate: (value_in_editing) => new Promise((resolve) => {
+					if (value_in_editing) {
+						if (this.selectable_values.kind_of_acquistion.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
+							resolve([]);
+						} else {
+							resolve(['Bitte eine auswählbare Zugangsart angeben']);
+						}
+					} else {
+						resolve(['Bitte eine Zugangsart angeben']);
+					}
+				}),
 			}, 'kind_of_acquistion'),
 			
 			purchasing_price: new SingleValueForm2<number, number>({ val: args.data?.acquistion_info.purchasing_price ?? 0 }, 'purchasing_price'),
@@ -312,6 +364,17 @@ export class ExhibitForm implements IExhibitForm {
 			currency: new SelectForm<ICurrency>({
 				val: this.determinate_selectable_value_from_id(args.data?.original_price.currency_id ?? '', this.selectable_values.currency),
 				get_shown_suggestions: (query: string): Promise<ICurrency[]> => this.find_suggestions_in_id(query, this.selectable_values.currency),
+				validate: (value_in_editing) => new Promise((resolve) => {
+					if (value_in_editing) {
+						if (this.selectable_values.currency.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
+							resolve([]);
+						} else {
+							resolve(['Bitte eine auswählbare Währung angeben']);
+						}
+					} else {
+						resolve(['Bitte eine Währung angeben']);
+					}
+				}),
 			}, 'original_price_currency'),
 		};
 		
@@ -331,6 +394,17 @@ export class ExhibitForm implements IExhibitForm {
 			language: new SelectForm<ILanguage>({
 				val: this.determinate_selectable_value_from_id(book_info?.language_id ?? '', this.selectable_values.language),
 				get_shown_suggestions: (query: string): Promise<ILanguage[]> => this.find_suggestions_in_name(query, this.selectable_values.language),
+				validate: (value_in_editing) => new Promise((resolve) => {
+					if (value_in_editing) {
+						if (this.selectable_values.language.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
+							resolve([]);
+						} else {
+							resolve(['Bitte eine auswählbare Währung angeben']);
+						}
+					} else {
+						resolve(['Bitte eine Währung angeben']);
+					}
+				}),
 			}, 'original_price_currency'),
 			
 			isbn: new SingleValueForm2({ val: book_info?.isbn ?? '' }, 'isbn'),

@@ -12,7 +12,6 @@ import {
 	IExhibitForm,
 	IExhibitFormConstructorArgs,
 	IExhibitType,
-	ISelectableValues,
 } from '@/form/exhibitform';
 import SelectField from '@/Components/Form/SelectField.vue';
 import { useToast } from 'primevue/usetoast';
@@ -212,7 +211,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				<template #legend>
 					<SelectButton
 						:modelValue="exhibit_form.type.ui_value_in_editing"
-						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_val_in_editing(v)"
+						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_ui_value_in_editing(v)"
 						:options="exhibit_types"
 						optionLabel="name"
 					/>
@@ -266,20 +265,3 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 		
 	</AuthenticatedLayout>
 </template>
-
-
-<style lang="css" scoped>
-.upper-forms {
-	display: flex;
-	flex-wrap: wrap;
-	column-gap: 1rem;
-}
-
-.basicdata-form {
-	flex: 2;
-}
-
-.images-form {
-	flex: 1;
-}
-</style>

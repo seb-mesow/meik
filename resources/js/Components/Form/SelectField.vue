@@ -11,23 +11,26 @@ const props = defineProps<{
 
 <template>
 	<div>
-		<p><label :for="props.form.html_id">{{ props.label }}</label></p>
+		<p><label :for="form.html_id">{{ label }}</label></p>
+		<!-- @vue-expect-error -->
 		<AutoComplete
-			:id="props.form.html_id" :name="props.form.html_id"
-			:modelValue="props.form.ui_value_in_editing"
-			@update:modelValue="(v: U) => props.form.on_change_val_in_editing(v)"
+			:id="form.html_id" :name="form.html_id"
+			:modelValue="form.ui_value_in_editing"
+			@update:modelValue="(v: U) => form.on_change_ui_value_in_editing(v)"
 			dropdown
-			:suggestions="props.form.shown_suggestions.value"
-			@complete="props.form.on_complete($event)"
-			:optionLabel="props.optionLabel"
+			:suggestions="form.shown_suggestions.value"
+			@complete="form.on_complete($event)"
+			:optionLabel="optionLabel"
 			fluid
+			@keydown.tab="form.on_tab_keydown($event)"
+			:pt="{ dropdown: { tabindex: -1 } }"
 		>
 			<template #option="{ option }">
 				<slot name="option" v-bind="option"></slot>
 			</template>
 		</AutoComplete>
-		<div v-show="props.form.errs.value.length > 0">
-			<p v-for="error in props.form.errs.value">{{ error }}</p>
+		<div v-show="form.errs.value.length > 0">
+			<p v-for="error in form.errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
 		</div>
 	</div>
 </template>
