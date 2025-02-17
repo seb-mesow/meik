@@ -19,6 +19,7 @@ use App\Models\Parts\Price;
 use App\Repository\ExhibitRepository;
 use App\Service\ExhibitService;
 use App\Service\WordService;
+use App\Util\DateTimeUtil;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +30,8 @@ class ExhibitAJAXController extends Controller
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly ExhibitService $exhibit_service,
-		private readonly WordService $word_service
+		private readonly WordService $word_service,
+		private readonly DateTimeUtil $date_time_util,
 	) {}
 
 	public function create_or_update(Request $request, ?Exhibit $exhibit = null): Exhibit
@@ -61,7 +63,7 @@ class ExhibitAJAXController extends Controller
 			currency: Currency::from($original_price_arr['currency_id']),
 		);
 		$acquistion_info = new AcquisitionInfo(
-			date: $acquistion_info_arr['date'],
+			date: $this->date_time_util->parse_iso_date($acquistion_info_arr['date']),
 			source: $acquistion_info_arr['source'],
 			kind: KindOfAcquistion::from($acquistion_info_arr['kind_id']),
 			purchasing_price: $acquistion_info_arr['purchasing_price'],
