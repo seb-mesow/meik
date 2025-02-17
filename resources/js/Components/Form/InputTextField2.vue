@@ -14,9 +14,10 @@ const form = props.form;
 <template>
 	<div>
 		<p><label :for="form.html_id">{{ props.label }}</label></p>
+		<!-- @vue-expect-error -->
 		<InputText
 			type=text :id="form.html_id" :name="form.html_id"
-			:modelValue="form.ui_value_in_editing.value"
+			:modelValue="form.ui_value_in_editing"
 			@update:modelValue="(v: string|undefined) => form.on_change_val_in_editing(v)"
 			v-tooltip.top="{ value: props.tooltip, showDelay: 1000 }"
 			fluid

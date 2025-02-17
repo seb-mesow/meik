@@ -211,7 +211,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			<Fieldset legend="Geräteinformationen">
 				<template #legend>
 					<SelectButton
-						:modelValue="exhibit_form.type.ui_value_in_editing.value"
+						:modelValue="exhibit_form.type.ui_value_in_editing"
 						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_val_in_editing(v)"
 						:options="exhibit_types"
 						optionLabel="name"
