@@ -1,10 +1,11 @@
-import { Ref, shallowRef, ShallowRef } from "vue";
+import { Ref, shallowRef } from "vue";
 import { ISingleValueForm2ConstructorArgs, SingleValueForm2, UISingleValueForm2 } from "./singlevalueform2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 
 export interface UISelectForm<O> extends UISingleValueForm2<string> {
 	readonly shown_suggestions: Readonly<Ref<Readonly<O[]>>>;
 	on_complete(event: AutoCompleteCompleteEvent): Promise<void>;
+	on_clear(): Promise<void>;
 	on_tab_keydown(event: KeyboardEvent): Promise<void>;
 }
 
@@ -26,9 +27,12 @@ export class SelectForm<O = string> extends SingleValueForm2<O, string> implemen
 		this.shown_suggestions.value = await this.get_shown_suggestions(event.query);
 	}
 	
+	public async on_clear(): Promise<void> {
+		// damit man über ein leeres (wenn auch invalides) SelectFeld tabben kann
+		this.shown_suggestions.value = [];
+	}
+	
 	public async on_tab_keydown(event: KeyboardEvent): Promise<void> {
-		console.log(`on_tab_keydown(): shown_suggestions == `);
-		console.log(this.shown_suggestions.value);
 		if (!this.is_valid() && this.shown_suggestions.value.length > 0) {
 			event.preventDefault();
 			const first: O = this.shown_suggestions.value[0];
