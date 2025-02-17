@@ -21,6 +21,7 @@ const props = defineProps<{
 			dropdown
 			:suggestions="form.shown_suggestions.value"
 			@complete="form.on_complete($event)"
+			@clear="form.on_clear()"
 			:optionLabel="optionLabel"
 			fluid
 			@keydown.tab="form.on_tab_keydown($event)"
