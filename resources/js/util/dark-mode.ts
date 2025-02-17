@@ -11,7 +11,7 @@ export default class {
 	
 	public set(new_dark: boolean) {
 		this.dark = new_dark;
-		const root = document.documentElement.classList;
+		const root = document.documentElement.classList; // auch auf primevue.org wird die Classe direkt am html-Element gesetzt.
 		const icon = document.getElementById("dark_mode_icon")?.classList;
 		if (this.dark) {
 			root?.add('p-dark');
