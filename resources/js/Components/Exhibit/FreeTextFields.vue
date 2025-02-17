@@ -25,8 +25,6 @@ const form: IFreeTextsForm = reactive(new FreeTextsForm({
 	}),
 	errs: [],
 }));
-console.log(`FreeTextFields.vue: form ==`);
-console.log(form);
 </script>
 
 <template>
