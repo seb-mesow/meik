@@ -14,7 +14,7 @@ const props = defineProps<{
 		<p><label :for="props.form.html_id">{{ props.label }}</label></p>
 		<AutoComplete
 			:id="props.form.html_id" :name="props.form.html_id"
-			:modelValue="props.form.ui_value_in_editing.value"
+			:modelValue="props.form.ui_value_in_editing"
 			@update:modelValue="(v: U) => props.form.on_change_val_in_editing(v)"
 			dropdown
 			:suggestions="props.form.shown_suggestions.value"
