@@ -22,6 +22,8 @@ import InputTextField2 from '@/Components/Form/InputTextField2.vue';
 import Fieldset from 'primevue/fieldset';
 import SelectButton from 'primevue/selectbutton';
 import { PartialDate } from '@/util/partial-date';
+import DateField from '@/Components/Form/DateField.vue';
+import * as DateUtil from '@/util/date';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
@@ -88,6 +90,10 @@ if (props.exhibit_props) {
 			manufactured_to_date: PartialDate.parse_iso(props.exhibit_props.device_info.manufactured_to_date),
 		};
 	}
+	const acquistion_info = {
+		...props.exhibit_props.acquistion_info,
+		...{ date: DateUtil.parse_iso_date(props.exhibit_props.acquistion_info.date) }
+	};
 	
 	form_constructor_args.data = {
 		id: props.exhibit_props.id,
@@ -107,7 +113,7 @@ if (props.exhibit_props) {
 		kind_of_property_id: props.exhibit_props.kind_of_property_id,
 		
 		// Zugangsdaten
-		acquistion_info: props.exhibit_props.acquistion_info,
+		acquistion_info: acquistion_info,
 		
 		// Geräte- und Buchinformationen
 		manufacturer: props.exhibit_props.manufacturer,
@@ -195,7 +201,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				<!-- Zugangsdaten -->
 				<Fieldset legend="Zugangsdaten" toggleable collapsed class="basis-[30rem] flex-1">
 					<div class="grid grid-cols-2 gap-x-3">
-						<InputTextField2 :form="exhibit_form.acquistion_info.date" label="Datum" />
+						<DateField :form="exhibit_form.acquistion_info.date" label="Datum" />
 						
 						<InputTextField2 :form="exhibit_form.acquistion_info.source" label="Herkunft" class="col-span-full"/>
 						

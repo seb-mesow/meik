@@ -5,6 +5,7 @@ export class PartialDateFrom extends SingleValueForm2<PartialDate.PartialDate, s
 	public constructor(args: ISingleValueForm2ConstructorArgs<PartialDate.PartialDate>, id: string|number) {
 		args.validate = (value_in_editing) => new Promise<string[]>((resolve) => {
 			value_in_editing?.validate();
+			resolve([]); // do not forget !
 		});
 		super(args, id);
 	}
@@ -12,12 +13,12 @@ export class PartialDateFrom extends SingleValueForm2<PartialDate.PartialDate, s
 	protected create_value_from_ui_value(ui_value: string): PartialDate.PartialDate|null {
 		// let partial_date: PartialDate.PartialDate|null = null;
 		
-		try {
+		// try {
 			return PartialDate.PartialDate.parse_pretty(ui_value);
-		} catch (e) {
-			this.handle_errors(e as Error);
-			return null;
-		}
+		// } catch (e) {
+		// 	this.handle_errors(e as Error);
+		// 	return null;
+		// }
 		
 		// try {
 		// 	partial_date.validate();
@@ -36,6 +37,7 @@ export class PartialDateFrom extends SingleValueForm2<PartialDate.PartialDate, s
 			console.log("multiple errors");
 			this.errs.value = e.errors.map((error) => error.message);
 		} else {
+			console.log("other error");
 			throw e;
 		}
 	}
