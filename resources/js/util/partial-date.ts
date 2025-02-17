@@ -188,10 +188,8 @@ export class PartialDate {
 				if (!Number.isInteger(this.day)) {
 					errors.push(new Errors.InvalidDayNumber(days_in_month));
 				} else if (this.day < 1) {
-					console.log("Tag zu klein");
 					errors.push(new Errors.InvalidDayNumber(days_in_month));
 				} else if (days_in_month !== undefined && this.day > days_in_month) {
-					console.log("Tag zu groß für Monat");
 					errors.push(new Errors.InvalidDayNumber(days_in_month));
 				}
 			}
@@ -206,9 +204,6 @@ export class PartialDate {
 			
 		}
 		
-		console.log('PartialDate.validate()');
-		console.log(this);
-		console.log(errors);
 		if (errors.length > 0) {
 			throw new Errors.MultipleErrors(errors);
 		}
