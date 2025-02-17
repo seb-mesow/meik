@@ -16,7 +16,7 @@ const props = defineProps<{
 		<InputNumber
 			:inputId="props.form.html_id"
 			:modelValue="props.form.ui_value_in_editing"
-			@update:modelValue="(v: number) => props.form.on_change_val_in_editing(v)"
+			@update:modelValue="(v: number) => props.form.on_change_ui_value_in_editing(v)"
 			fluid
 		/>
 		<div v-show="props.form.errs.value.length > 0">

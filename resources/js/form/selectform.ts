@@ -1,21 +1,22 @@
-import { shallowRef, ShallowRef } from "vue";
+import { Ref, shallowRef, ShallowRef } from "vue";
 import { ISingleValueForm2ConstructorArgs, SingleValueForm2, UISingleValueForm2 } from "./singlevalueform2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 
-export interface UISelectForm<U> extends UISingleValueForm2<U> {
-	readonly shown_suggestions: Readonly<ShallowRef<Readonly<U>[]>>;
+export interface UISelectForm<O> extends UISingleValueForm2<string> {
+	readonly shown_suggestions: Readonly<Ref<Readonly<O[]>>>;
 	on_complete(event: AutoCompleteCompleteEvent): Promise<void>;
+	on_tab_keydown(event: KeyboardEvent): Promise<void>;
 }
 
-export interface ISelectFormConstructorArgs<T = string> extends ISingleValueForm2ConstructorArgs<T> {
-	get_shown_suggestions: (query: string) => Promise<Readonly<T>[]>;
+export interface ISelectFormConstructorArgs<O = string> extends ISingleValueForm2ConstructorArgs<O> {
+	get_shown_suggestions: (query: string) => Promise<Readonly<O[]>>;
 }
 
-export class SelectForm<T = string> extends SingleValueForm2<T, T> implements UISelectForm<T> {
-	public readonly shown_suggestions: ShallowRef<Readonly<T>[]>;
-	private readonly get_shown_suggestions: (query: string) => Promise<Readonly<T>[]>;
+export class SelectForm<O = string> extends SingleValueForm2<O, string> implements UISelectForm<O> {
+	public readonly shown_suggestions: Ref<Readonly<O[]>>;
+	private readonly get_shown_suggestions: (query: string) => Promise<Readonly<O[]>>;
 	
-	public constructor(args: ISelectFormConstructorArgs<T>, id: string|number) {
+	public constructor(args: ISelectFormConstructorArgs<O>, id: string|number) {
 		super(args, id);
 		this.get_shown_suggestions = args.get_shown_suggestions;
 		this.shown_suggestions = shallowRef([]);
@@ -23,5 +24,15 @@ export class SelectForm<T = string> extends SingleValueForm2<T, T> implements UI
 	
 	public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
 		this.shown_suggestions.value = await this.get_shown_suggestions(event.query);
+	}
+	
+	public async on_tab_keydown(event: KeyboardEvent): Promise<void> {
+		console.log(`on_tab_keydown(): shown_suggestions == `);
+		console.log(this.shown_suggestions.value);
+		if (!this.is_valid() && this.shown_suggestions.value.length > 0) {
+			event.preventDefault();
+			const first: O = this.shown_suggestions.value[0];
+			return this.set_value_in_editing(first);
+		}
 	}
 }
