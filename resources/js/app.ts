@@ -8,9 +8,11 @@ import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 //@ts-ignore
 import { Ziggy } from './ziggy/ziggy';
+
+// Prime Vue
 import PrimeVue from 'primevue/config';
-import ConfirmationService from 'primevue/confirmationservice';
 import Lara from '@primevue/themes/lara';
+import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
 import DialogService from 'primevue/dialogservice';
 import Tooltip from 'primevue/tooltip';
@@ -30,19 +32,30 @@ createInertiaApp({
 	setup({ el, App, props, plugin }) {
 		// für lokale Dev
 		const app = createApp({ render: () => h(App, props) });
-		// für Produktiv
-		// const app = createSSRApp({ render: () => h(App, props) });
 		
 		app.use(plugin);
 		
 		// Plugins für Vue
 		app.use(ZiggyVue, Ziggy);
+		
+		// PrimeVue
 		app.use(PrimeVue, {
 			theme: {
 				preset: Lara, // oder Material
 				options: {
 					darkModeSelector: '.p-dark'
 				}
+			},
+			locale: {
+				dateFormat: 'dd.mm.yy',
+				today: "Heute",
+				weekHeader: "KW",
+				firstDayOfWeek: 1,
+				dayNames: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+				dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+				dayNamesShort: ["Son", "Mon", "Die", "Mit", "Don", "Fre", "Sam"],
+				monthNames: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+				monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
 			}
 		});
 		app.use(ConfirmationService);

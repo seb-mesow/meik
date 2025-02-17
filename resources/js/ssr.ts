@@ -6,13 +6,18 @@ import createServer from '@inertiajs/vue3/server'
 import { renderToString } from '@vue/server-renderer';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createSSRApp, DefineComponent, h } from 'vue';
-import { route as ziggy_route, RouteList, ZiggyVue } from 'ziggy-js';
+import { route as ziggy_route } from 'ziggy-js';
 //@ts-ignore
 import { Ziggy as _Ziggy } from './ziggy/ziggy';
+
+// Prime Vue
 import PrimeVue from 'primevue/config';
-import ConfirmationService from 'primevue/confirmationservice';
 import Lara from '@primevue/themes/lara';
+import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
+import DialogService from 'primevue/dialogservice';
+import Tooltip from 'primevue/tooltip';
+
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -42,6 +47,7 @@ createServer(page => createInertiaApp({
 			},
 		});
 		
+		// PrimeVue
 		app.use(PrimeVue, {
 			theme: {
 				preset: Lara, // oder Material
@@ -52,6 +58,8 @@ createServer(page => createInertiaApp({
 		});
 		app.use(ConfirmationService);
 		app.use(ToastService);
+		app.use(DialogService);
+		app.directive('tooltip', Tooltip);
 		
 		// ohne app.mount(el);
 		// stattdessen:

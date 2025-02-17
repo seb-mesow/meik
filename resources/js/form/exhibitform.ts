@@ -8,6 +8,7 @@ import { GroupSelectForm, UIGroupSelectForm, IGroupType } from "./groupselectfor
 import { ref, Ref } from "vue";
 import { PartialDate } from "@/util/partial-date";
 import { PartialDateFrom } from "./partialdateform";
+import * as DateUtil from "@/util/date";
 
 export interface IExhibitForm {
 	readonly id?: number;
@@ -28,7 +29,7 @@ export interface IExhibitForm {
 	
 	// Zugangsdaten
 	readonly acquistion_info: Readonly<{
-		readonly date: Readonly<UISingleValueForm2<string|undefined>>;
+		readonly date: Readonly<UISingleValueForm2<Date>>;
 		readonly source: Readonly<UISingleValueForm2>;
 		readonly kind: Readonly<UISelectForm<IKindOfAcquistion>>;
 		readonly purchasing_price: Readonly<UISingleValueForm2<number>>;
@@ -127,7 +128,7 @@ export interface IExhibitFormConstructorArgs {
 		
 		// Zugangsdaten
 		acquistion_info: {
-			date: string, // TODO should be a Date object
+			date: Date,
 			source: string,
 			kind_id: string,
 			purchasing_price: number,
@@ -183,7 +184,7 @@ export class ExhibitForm implements IExhibitForm {
 	
 	// Zugangsdaten
 	public readonly acquistion_info: Readonly<{
-		readonly date: Readonly<SingleValueForm2>;
+		readonly date: Readonly<SingleValueForm2<Date, Date>>;
 		readonly source: Readonly<SingleValueForm2>;
 		readonly kind: Readonly<SelectForm<IKindOfAcquistion>>;
 		readonly purchasing_price: Readonly<SingleValueForm2<number, number>>;
@@ -330,7 +331,16 @@ export class ExhibitForm implements IExhibitForm {
 		
 		// Zugangsdaten
 		this.acquistion_info = {
-			date: new SingleValueForm2({ val: args.data?.acquistion_info.date ?? '9999-12-31' }, 'acquistion_date'),
+			date: new SingleValueForm2<Date, Date>({
+				val: args.data?.acquistion_info.date ?? new Date(),
+				validate: (value_in_editing) => new Promise((resolve) => {
+					if (value_in_editing) {
+						resolve([]);
+					} else {
+						resolve(['Bitte ein Datum angeben']);
+					}
+				}),
+			}, 'acquistion_date'),
 			
 			source: new SingleValueForm2({ val: args.data?.acquistion_info.source ?? '' }, 'source'),
 			
@@ -564,7 +574,7 @@ export class ExhibitForm implements IExhibitForm {
 			},
 			current_value: this.current_value.get_value(),
 			acquistion_info: {
-				date: this.acquistion_info.date.get_value(),
+				date: DateUtil.format_as_iso_date(this.acquistion_info.date.get_value()),
 				source: this.acquistion_info.source.get_value(),
 				kind_id: this.acquistion_info.kind.get_value().id,
 				purchasing_price: this.acquistion_info.purchasing_price.get_value()
