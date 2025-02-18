@@ -1,17 +1,19 @@
 <script setup lang="ts" generic="C = string, P = C">
-import AutoComplete from 'primevue/autocomplete';
-
+import BaseInputField from './BaseInputField.vue';
 import { UIGroupSelectForm } from '@/form/groupselectform';
+import AutoComplete from 'primevue/autocomplete';
 
 const props = defineProps<{
 	label: string,
 	form: UIGroupSelectForm<C, P>,
+	grid_col: number,
+	grid_col_span?: number,
+	grid_row: number,
 }>();
 </script>
 
 <template>
-	<div>
-		<p><label :for="form.html_id">{{ props.label }}</label></p>
+	<BaseInputField :form="form" :label="label" :grid_col="grid_col" :grid_col_span="grid_col_span" :grid_row="grid_row">
 		<!-- @vue-expect-error -->
 		<AutoComplete
 			class="w-full"
@@ -35,8 +37,5 @@ const props = defineProps<{
 				<slot name="option" v-bind="option"></slot>
 			</template>
 		</AutoComplete>
-		<div v-show="form.errs.value.length > 0">
-			<p v-for="error in form.errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
-		</div>
-	</div>
+	</BaseInputField>
 </template>
