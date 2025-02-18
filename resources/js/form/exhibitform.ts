@@ -272,7 +272,9 @@ export class ExhibitForm implements IExhibitForm {
 		
 		this.location = new SelectForm<ILocation>({
 			val: this.determinate_selectable_value_from_id(args.data?.location_id ?? '', this.selectable_values.location),
-			get_shown_suggestions: (query: string): Promise<ILocation[]> => this.find_suggestions_in_name(query, this.selectable_values.location),
+			get_shown_suggestions: (query: string): Promise<ILocation[]> => {
+				return this.find_suggestions_in_name(query, this.selectable_values.location);
+			},
 			validate(value_in_editing): Promise<string[]> {
 				throw new Error("not implemented");
 			},
@@ -297,7 +299,9 @@ export class ExhibitForm implements IExhibitForm {
 		// Bestandsdaten
 		this.preservation_state = new SelectForm<IPreservationState>({
 			val: this.determinate_selectable_value_from_id(args.data?.preservation_state_id ?? '', this.selectable_values.preservation_state),
-			get_shown_suggestions: (query: string): Promise<IPreservationState[]> => this.find_suggestions_in_name(query, this.selectable_values.preservation_state),
+			get_shown_suggestions: (query: string): Promise<IPreservationState[]> => {
+				return this.find_suggestions_in_name(query, this.selectable_values.preservation_state);
+			},
 			validate: (value_in_editing) => new Promise((resolve) => {
 				if (value_in_editing) {
 					if (this.selectable_values.preservation_state.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
@@ -452,10 +456,14 @@ export class ExhibitForm implements IExhibitForm {
 	};
 	
 	private find_suggestions_in_name<T extends { name: string }>(query: string, selectable_values: T[]): Promise<T[]> {
-		query = query.toLowerCase();
-		return Promise.resolve(
-			selectable_values.filter((selectable_value: T): boolean => selectable_value.name.toLowerCase().includes(query))
-		);
+		// return new Promise((resolve) => {
+			query = query.trim();
+			if (query.length > 0) {
+				query = query.toLowerCase();
+				return Promise.resolve(selectable_values.filter((selectable_value: T): boolean => selectable_value.name.toLowerCase().includes(query)));
+			} else {
+				return Promise.resolve(selectable_values);
+			}
 	};
 	
 	private find_suggestions_in_id<T extends { id: string }>(query: string, selectable_values: T[]): Promise<T[]> {

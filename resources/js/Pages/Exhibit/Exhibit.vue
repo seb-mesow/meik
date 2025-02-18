@@ -236,7 +236,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 					<div class="flex gap-x-3">
 						<InputNumberField :form="exhibit_form.original_price.amount" label="Originalpreis" class="grow"/>
 						
-						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[7rem]" />
+						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[7.5rem]" />
 					</div>
 				</div>
 				
@@ -251,7 +251,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 					<div class="flex gap-x-3">
 						<InputNumberField :form="exhibit_form.original_price.amount" label="Originalpreis" class="grow!" />
 						
-						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[7rem]" />
+						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[7.5rem]" />
 					</div>
 					
 					<SelectField :form="exhibit_form.book_info.language" optionLabel="name" label="Sprache" />

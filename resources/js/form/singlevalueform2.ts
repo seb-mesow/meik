@@ -131,22 +131,17 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	}
 	
 	public async validate(): Promise<void> {
-		console.log(`prior validation were ${this.errs.value.length} errors`);
 		try {
 			const further_errs: string[] = await this._validate(this.value_in_editing);
 			this.errs.value.push(...further_errs);
 		} catch (e) {
-			console.log('new exceptions');
 			this.handle_exceptions(e);
 			// throw errors have priority over returned errors
 		}
-		console.log(`during validation were ${this.errs.value.length} errors`);
 		this.ui_is_invalid.value = this.errs.value.length > 0;
-		console.log(`this.ui_is_invalide === ${this.ui_is_invalid}`);
 	}
 	
 	private handle_exceptions(err: any): void {
-		console.log("handle exceptions ...")
 		if ('errors' in err && Array.isArray(err.errors)) {
 			for (const _err of err.errors) {
 				if ('message' in _err && typeof _err.message === 'string') {
@@ -156,6 +151,5 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		} else if ('message' in err && typeof err.message === 'string') {
 			this.errs.value.push(err.message);
 		}
-		console.log("handled exceptions")
 	}
 }
