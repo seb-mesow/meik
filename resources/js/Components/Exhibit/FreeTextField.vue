@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InputField from '../Form/InputField.vue';
+import InputField from '../Form/old/InputField.vue';
 import RichTextEditor from '../Form/RichTextEditor.vue';
 import ToggleButton from 'primevue/togglebutton';
 import Button from 'primevue/button';
