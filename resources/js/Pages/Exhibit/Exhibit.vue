@@ -103,7 +103,8 @@ if (props.exhibit_props) {
 		inventory_number: props.exhibit_props.inventory_number,
 		name: props.exhibit_props.name,
 		short_description: props.exhibit_props.short_description,
-		// TODO rubric
+		// @ts-expect-error Wenn die exhibit_props gegeben sind (= Aufruf bestehendes Exhibit), sind immer auch die Properties category und rubric gegeben.
+		rubric: props.rubric,
 		location_id: props.exhibit_props.location_id,
 		place_id: props.exhibit_props.place_id,
 		// TODO connected_exhibits
@@ -161,10 +162,10 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 					
 					<GroupSelectField :form="exhibit_form.rubric" label="Rubrik" :grid_col="1" :grid_row="3">
 						<template #optiongroup="category">
-							<span class="font-bold">{{ category.parent }}</span>
+							<span class="font-bold">{{ category.name }}</span>
 						</template>
 						<template #option="rubric">
-							<span class="ps-4">{{ rubric }}</span>
+							<span class="ps-4">{{ rubric.name }}</span>
 						</template>
 					</GroupSelectField>
 					

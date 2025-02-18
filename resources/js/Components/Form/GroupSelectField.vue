@@ -24,17 +24,19 @@ const props = defineProps<{
 			dropdown
 			:suggestions="form.shown_suggestions.value"
 			@complete="form.on_complete($event)"
-			@clear="form.on_clear()"
+			@before-show="form.on_before_show()"
+			@hide="form.on_hide()"
+			:optionLabel="form.get_option_label"
 			optionGroupLabel="children"
 			optionGroupChildren="children"
 			@keydown.tab="form.on_tab_keydown($event)"
 			:pt="{ dropdown: { tabindex: -1 } }"
 		>
 			<template #optiongroup="{ option }">
-				<slot name="optiongroup" v-bind="option"></slot>
+				<slot name="optiongroup" v-bind="option.parent"/>
 			</template>
 			<template #option="{ option }">
-				<slot name="option" v-bind="option"></slot>
+				<slot name="option" v-bind="option"/>
 			</template>
 		</AutoComplete>
 	</BaseInputField>

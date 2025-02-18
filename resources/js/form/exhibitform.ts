@@ -11,6 +11,7 @@ import { PartialDateFrom } from "./single/partialdate-form";
 import * as DateUtil from "@/util/date";
 import { StringForm } from "./single/string-form";
 import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
+import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "./single/rubric-form";
 
 export interface IExhibitForm {
 	readonly id?: number;
@@ -19,7 +20,7 @@ export interface IExhibitForm {
 	readonly inventory_number: Readonly<UISingleValueForm2>;
 	readonly name: Readonly<UISingleValueForm2>;
 	readonly short_description: Readonly<UISingleValueForm2>;
-	readonly rubric: Readonly<UIGroupSelectForm<string>>;
+	readonly rubric: Readonly<UIGroupSelectForm<IRubric, ICategory>>;
 	readonly location: Readonly<UISelectForm<ILocation|undefined>>;
 	readonly place: Readonly<UISelectForm<string>>;
 	// TODO connected_exhibits
@@ -69,23 +70,7 @@ export interface IExhibitForm {
 	readonly is_saving_button_enabled: Readonly<Ref<boolean>>;
 }
 
-export type ICurrency = Readonly<{
-	id: string,
-	name: string,
-}>;
-export type IKindOfAcquistion = Readonly<{
-	id: string,
-	name: string,
-}>;
-export type IKindOfProperty = Readonly<{
-	id: string,
-	name: string,
-}>;
-export type ILanguage = Readonly<{
-	id: string,
-	name: string,
-}>;
-export type IPreservationState = Readonly<{
+export type ILocation = Readonly<{
 	id: string,
 	name: string,
 }>;
@@ -93,7 +78,15 @@ export type IPlace = Readonly<{
 	id: string,
 	name: string,
 }>;
-export type ILocation = Readonly<{
+export type IPreservationState = Readonly<{
+	id: string,
+	name: string,
+}>;
+export type IKindOfProperty = Readonly<{
+	id: string,
+	name: string,
+}>;
+export type IKindOfAcquistion = Readonly<{
 	id: string,
 	name: string,
 }>;
@@ -101,15 +94,24 @@ export type IExhibitType = Readonly<{
 	id: string,
 	name: string,
 }>;
+export type ICurrency = Readonly<{
+	id: string,
+	name: string,
+}>;
+export type ILanguage = Readonly<{
+	id: string,
+	name: string,
+}>;
 
 export type ISelectableValues = Readonly<{
-	currency: ICurrency[],
-	kind_of_acquistion: IKindOfAcquistion[],
-	kind_of_property: IKindOfProperty[],
-	language: ILanguage[],
-	preservation_state: IPreservationState[],
+	categories_with_rubrics: ICategoryWithRubrics[],
 	location: ILocation[],
+	preservation_state: IPreservationState[],
+	kind_of_property: IKindOfProperty[],
+	kind_of_acquistion: IKindOfAcquistion[],
 	exhibit_type: IExhibitType[],
+	currency: ICurrency[],
+	language: ILanguage[],
 }>;
 
 export interface IExhibitFormConstructorArgs {
@@ -120,7 +122,7 @@ export interface IExhibitFormConstructorArgs {
 		inventory_number: string,
 		name: string,
 		short_description?: string, // optional
-		// rubric: string,
+		rubric: IRubric,
 		location_id: string,
 		place_id: string,
 		// TODO connected_exhibits
@@ -140,6 +142,7 @@ export interface IExhibitFormConstructorArgs {
 		
 		// Geräte- und Buchinformationen
 		manufacturer: string,
+		// TODO im Constructor doch erstmal noch string
 		manufacture_date?: PartialDate, // optional
 		original_price?: { // optional
 			amount: number,
@@ -148,6 +151,7 @@ export interface IExhibitFormConstructorArgs {
 		
 		// Geräteinformationen
 		device_info?: {
+			// TODO im Constructor doch erstmal noch string
 			manufactured_from_date?: PartialDate, // optional
 			manufactured_to_date?: PartialDate, // optional
 		}
@@ -176,7 +180,7 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly inventory_number: SingleValueForm2<string>;
 	public readonly name: Readonly<SingleValueForm2<string>>;
 	public readonly short_description: SingleValueForm2<string>;
-	public readonly rubric: GroupSelectForm<string>;
+	public readonly rubric: ISingleValueForm2<IRubric> & UIGroupSelectForm<IRubric, ICategory>
 	public readonly location: SelectForm<ILocation>;
 	public readonly place: SelectForm<string>;
 	// TODO connected_exhibits
@@ -264,40 +268,23 @@ export class ExhibitForm implements IExhibitForm {
 			val: args.data?.short_description ?? ''
 		}, 'short_description', this.multiple_value_form);
 		
-		this.rubric = new GroupSelectForm<string>({
-			val: '',
+		this.rubric = new RubricForm({
+			val: args.data?.rubric,
 			required: true,
-			get_shown_suggestions(query: string): Promise<IGroupType[]> {
-				return Promise.resolve([
-					{
-						parent: 'Kat 1',
-						children: [
-							'Rub 1.1',
-							'Rub 1.2',
-						]
-					},
-					{
-						parent: 'Kat 2',
-						children: [
-							'Rub 2.1',
-							'Rub 2.2',
-						]
-					}
-				])
-			},
-			validate(value_in_editing): Promise<string[]> {
-				return new Promise<string[]>((resolve) => {
-					if (value_in_editing) {
-						if (['Rub 1.1', 'Rub 1.2', 'Rub 2.1', 'Rub 2.2'].includes(value_in_editing)) {
-							resolve([]);
-						} else {
-							resolve(['Bitte eine auswählbare Rubrik angeben']);
-						}
-					} else {
-						resolve(['Bitte eine Rubrik angeben']);
-					}
-				});
-			},
+			selectable_categories_with_rubrics: args.aux.selectable_values.categories_with_rubrics,
+			// validate(value_in_editing): Promise<string[]> {
+			// 	return new Promise<string[]>((resolve) => {
+			// 		if (value_in_editing) {
+			// 			if (['Rub 1.1', 'Rub 1.2', 'Rub 2.1', 'Rub 2.2'].includes(value_in_editing)) {
+			// 				resolve([]);
+			// 			} else {
+			// 				resolve(['Bitte eine auswählbare Rubrik angeben']);
+			// 			}
+			// 		} else {
+			// 			resolve(['Bitte eine Rubrik angeben']);
+			// 		}
+			// 	});
+			// },
 		}, 'rubric', this.multiple_value_form);
 		
 		this.location = new SelectForm<ILocation>({
@@ -626,7 +613,7 @@ export class ExhibitForm implements IExhibitForm {
 			},
 			kind_of_property_id: this.kind_of_property.get_value().id,
 			place_id: this.place.get_value(),
-			rubric_id: this.rubric.get_value(),
+			rubric_id: this.rubric.get_value().id,
 			// TODO
 			conntected_exhibit_ids: [],
 		};

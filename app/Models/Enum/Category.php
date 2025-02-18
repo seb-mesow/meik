@@ -18,4 +18,8 @@ enum Category: string
 			self::OTHER => 'Sonstiges',
 		};
 	}
+	
+	public function get_id(): string {
+		return $this->value;
+	}
 }

@@ -42,12 +42,10 @@ export class SelectForm<O = string> extends SingleValueForm2<O, string> implemen
 	}
 	
 	public async on_tab_keydown(event: KeyboardEvent): Promise<void> {
-		if (this.is_overlay_shown && this.shown_suggestions.value.length === 1 ) {
+		if (this.is_overlay_shown && this.shown_suggestions.value.length === 1) {
 			event.preventDefault();
-			// if (this.shown_suggestions.value.length === 1) {
-				const first: O = this.shown_suggestions.value[0];
-				return this.set_value_in_editing(first);
-			// }
+			const first: O = this.shown_suggestions.value[0];
+			return this.set_value_in_editing(first);
 		}
 	}
 }
