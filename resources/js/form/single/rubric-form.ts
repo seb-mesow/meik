@@ -27,15 +27,15 @@ export class RubricForm extends GroupSelectForm<IRubric, ICategory> {
 		this.selectable_categories_with_rubrics = args.selectable_categories_with_rubrics;
 	}
 	
-	protected create_value_from_ui_value(ui_value: string|undefined): IRubric|null {
+	protected create_value_from_ui_value(ui_value: string|undefined): IRubric|null|undefined {
 		if (!ui_value) {
 			return null;
 		}
-		const suggestions = this.search_suggestions(ui_value);
+		const suggestions = this.search_suggestions(ui_value, (rubric_name, query) => rubric_name === query);
 		if (suggestions.length === 1 && suggestions[0].children.length === 1) {
 			return suggestions[0].children[0];
 		}
-		return null;
+		return undefined; // multiple or no match
 	}
 	
 	protected create_ui_value_from_value(value: IRubric|null): string|undefined {
@@ -49,16 +49,14 @@ export class RubricForm extends GroupSelectForm<IRubric, ICategory> {
 	}
 	
 	protected get_shown_suggestions(query: string): Promise<Readonly<IGroupType<IRubric, ICategory>>[]> {
-		return new Promise((resolve) => resolve(this.search_suggestions(query)));
+		return new Promise((resolve) => resolve(this.search_suggestions(query, (rubric_name, query) => rubric_name.includes(query))));
 	};
 	
-	private search_suggestions(query: string): IGroupType<IRubric, ICategory>[] {
+	private search_suggestions(query: string, filter_func: (rubric_name: string, query: string) => boolean): IGroupType<IRubric, ICategory>[] {
 		query = query.trim().toLowerCase();
 		const suggestions: IGroupType<IRubric, ICategory>[] = [];
 		for (const category_with_rubrics of this.selectable_categories_with_rubrics) {
-			const rubrics: IRubric[] = category_with_rubrics.rubrics.filter((rubric): boolean =>
-				rubric.name.toLowerCase().includes(query)
-			);
+			const rubrics: IRubric[] = category_with_rubrics.rubrics.filter((rubric) => filter_func(rubric.name.toLowerCase(), query));
 			if (rubrics.length > 0) {
 				suggestions.push({
 					parent: category_with_rubrics,
