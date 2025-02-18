@@ -26,7 +26,7 @@ const props = defineProps<{
 			@complete="form.on_complete($event)"
 			@before-show="form.on_before_show()"
 			@hide="form.on_hide()"
-			:optionLabel="form.get_option_label"
+			:optionLabel="(option) => form.get_option_label(option)"
 			optionGroupLabel="children"
 			optionGroupChildren="children"
 			@keydown.tab="form.on_tab_keydown($event)"

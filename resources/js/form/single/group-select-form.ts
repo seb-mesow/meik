@@ -8,7 +8,7 @@ export interface UIGroupSelectForm<C, P = C> extends UISingleValueForm2<string|u
 	on_before_show(): Promise<void>;
 	on_hide(): Promise<void>;
 	on_tab_keydown(event: KeyboardEvent): Promise<void>;
-	get_option_label(option: C): string;
+	get_option_label(option: C): string|undefined;
 }
 
 export interface IGroupType<C = string, P = C> {
@@ -18,7 +18,6 @@ export interface IGroupType<C = string, P = C> {
 
 export interface IGroupSelectFormConstructorArgs<C = string, P = C> extends ISingleValueForm2ConstructorArgs<C> {
 	get_shown_suggestions?: (query: string) => Promise<Readonly<IGroupType<C, P>>[]>;
-	get_option_label?: (option: C) => string;
 }
 
 /**
@@ -30,13 +29,11 @@ export interface IGroupSelectFormConstructorArgs<C = string, P = C> extends ISin
 export class GroupSelectForm<C = string, P = C> extends SingleValueForm2<C, string|undefined> implements UIGroupSelectForm<C, P> {
 	public readonly shown_suggestions: ShallowRef<Readonly<IGroupType<C, P>[]>>;
 	private readonly _get_shown_suggestions: (query: string) => Promise<Readonly<IGroupType<C, P>>[]>;
-	private readonly _get_option_label: (option: C) => string;
 	private is_overlay_shown: boolean = false;
 	
 	public constructor(args: IGroupSelectFormConstructorArgs<C, P>, id: string|number, parent: ISingleValueForm2Parent<C>) {
 		super(args, id, parent);
 		this._get_shown_suggestions = args.get_shown_suggestions ?? (() => Promise.reject('no get_shown_suggestions()'));
-		this._get_option_label = args.get_option_label ?? (() => 'no get_option_label()');
 		this.shown_suggestions = shallowRef([]);
 	}
 	
@@ -69,7 +66,7 @@ export class GroupSelectForm<C = string, P = C> extends SingleValueForm2<C, stri
 		return this._get_shown_suggestions(query);
 	}
 	
-	public get_option_label(query: C): string {
-		return this._get_option_label(query);
+	public get_option_label(option: C): string|undefined {
+		return this.create_ui_value_from_value(option);
 	}
 }
