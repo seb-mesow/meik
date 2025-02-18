@@ -13,15 +13,19 @@ class DeviceInfo
 	 * partielles Startdatum des Vertriebs dieses Produktes (öffentlich)
 	 * 
 	 * gültige Formate: YYYY, YYYY-MM, YYYY-MM-DD
+	 * 
+	 * optional
 	 */
-	private string $manufactured_from_date;
+	private ?string $manufactured_from_date;
 	
 	/**
 	 * partielles Enddatum des Vertriebs dieses Produktes
 	 * 
 	 * gültige Formate: YYYY, YYYY-MM, YYYY-MM-DD (öffentlich)
+	 * 
+	 * optional
 	 */
-	private string $manufactured_to_date;
+	private ?string $manufactured_to_date;
 	
 	public function __construct(
 		string $manufactured_from_date,

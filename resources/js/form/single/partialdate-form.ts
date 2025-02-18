@@ -1,4 +1,4 @@
-import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
+import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./single-value-form2";
 import * as PartialDate from "@/util/partial-date";
 
 export class PartialDateFrom extends SingleValueForm2<PartialDate.PartialDate, string> {
@@ -11,22 +11,7 @@ export class PartialDateFrom extends SingleValueForm2<PartialDate.PartialDate, s
 	}
 	
 	protected create_value_from_ui_value(ui_value: string): PartialDate.PartialDate|null {
-		// let partial_date: PartialDate.PartialDate|null = null;
-		
-		// try {
-			return PartialDate.PartialDate.parse_pretty(ui_value);
-		// } catch (e) {
-		// 	this.handle_errors(e as Error);
-		// 	return null;
-		// }
-		
-		// try {
-		// 	partial_date.validate();
-		// } catch(e) {
-		// 	this.handle_errors(e as Error);
-		// }
-		
-		// return partial_date;
+		return PartialDate.PartialDate.parse_pretty(ui_value);
 	}
 	
 	private handle_errors(e: Error): void {

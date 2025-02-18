@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="C = string, P = C">
 import BaseInputField from './BaseInputField.vue';
-import { UIGroupSelectForm } from '@/form/groupselectform';
+import { UIGroupSelectForm } from '@/form/single/group-select-form';
 import AutoComplete from 'primevue/autocomplete';
 
 const props = defineProps<{

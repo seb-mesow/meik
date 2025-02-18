@@ -5,6 +5,7 @@ export interface UISingleValueForm2<U = string|undefined> {
 	readonly ui_value_in_editing: Readonly<Ref<U>>;
 	readonly ui_is_invalid: Readonly<Ref<boolean>>;
 	readonly errs: Readonly<Ref<string[]>>;
+	readonly is_required: boolean;
 	on_change_ui_value_in_editing(new_ui_value_in_editing: U): void;
 }
 
@@ -29,6 +30,7 @@ export interface MultipleValidationErrors {
 export interface ISingleValueForm2ConstructorArgs<T = string> {
 	val?: T,
 	errs?: string[],
+	required?: boolean;
 	on_change?: (form: ISingleValueForm2<T>) => void,
 	validate?: (value_in_editing: T|null) => Promise<string[]>,
 }
@@ -48,6 +50,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	public errs: Ref<string[]>;
 	public ui_is_invalid: Ref<boolean>;
 	public readonly html_id: string;
+	public readonly is_required: boolean;
 	
 	private readonly on_change: (form: ISingleValueForm2<T>) => void;
 	private readonly _validate: (value_in_editing: T|null) => Promise<string[]>;
@@ -56,6 +59,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		this.html_id = typeof id === 'number' ? id.toString() : id;
 		this.value = args.val ?? null;
 		this.value_in_editing = this.value;
+		this.is_required = args.required ?? false;
 		this.errs = ref(args.errs ?? []);
 		//@ts-expect-error
 		this.ui_value_in_editing = ref(this.create_ui_value_from_value(this.value));
@@ -131,6 +135,10 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	}
 	
 	public async validate(): Promise<void> {
+		if (this.is_required && this.value_in_editing === null) {
+			this.errs.value.push('Pflichtfeld');
+			return;
+		}
 		try {
 			const further_errs: string[] = await this._validate(this.value_in_editing);
 			this.errs.value.push(...further_errs);

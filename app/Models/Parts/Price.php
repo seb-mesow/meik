@@ -9,11 +9,15 @@ class Price
 {
 	/**
 	 * Währungsbetrag in der kleinsten Einheit der Währung (z.B. Pfennig) (öffentlich)
+	 * 
+	 * Pflicht (wenn Originalpreis überhaupt angegeben)
 	 */
 	private int $amount;
 	
 	/**
 	 * historische Währung (öffentlich)
+	 * 
+	 * Pflicht (wenn Originalpreis überhaupt angegeben)
 	 * 
 	 * @Accessor(getter="get_currency")
 	 */

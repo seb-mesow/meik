@@ -12,6 +12,8 @@ class AcquisitionInfo
 	/** 
 	 * Zugangsdatum (intern)
 	 * 
+	 * Pflicht
+	 * 
 	 * @Accessor(getter="get_date") 
 	 */
 	#[Expose()]
@@ -21,6 +23,8 @@ class AcquisitionInfo
 	 * Angaben zur Herkunft (zunächst intern, könnte auch öffentlich sein)
 	 * 
 	 * (Von wem kommt das Exponat in das Museum?)
+	 * 
+	 * Pflicht
 	 */
 	private string $source;
 	
@@ -29,16 +33,20 @@ class AcquisitionInfo
 	 * 
 	 * Eine dieser Möglichkieten: Schenkung, Kauf, Fund, Überlassung
 	 * 
+	 * Pflicht
+	 * 
 	 * @Accessor(getter="get_kind")
 	 */
-	private KindOfAcquistion $kind;
+	private ?KindOfAcquistion $kind;
 	
 	/**
 	 * Kaufpreis in Cent (intern)
 	 * 
+	 * optional
+	 * 
 	 * @Accessor(getter="get_purchasing_price")
 	 */
-	private int $purchasing_price;
+	private ?int $purchasing_price;
 	
 	public function __construct(
 		Carbon $date,

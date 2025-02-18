@@ -1,5 +1,5 @@
 import { shallowRef, ShallowRef } from "vue";
-import { ISingleValueForm2ConstructorArgs, SingleValueForm2, UISingleValueForm2 } from "./singlevalueform2";
+import { ISingleValueForm2ConstructorArgs, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 
 export interface UIGroupSelectForm<C, P = C> extends UISingleValueForm2<string> {

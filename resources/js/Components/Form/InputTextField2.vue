@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BaseInputField from './BaseInputField.vue';
 import InputText from 'primevue/inputtext';
-import { UISingleValueForm2 } from '@/form/singlevalueform2';
+import { UISingleValueForm2 } from '@/form/single/single-value-form2';
 
 const props = defineProps<{
 	label: string,
@@ -21,7 +21,7 @@ const props = defineProps<{
 			:modelValue="form.ui_value_in_editing"
 			@update:modelValue="(v: string|undefined) => form.on_change_ui_value_in_editing(v)"
 			:invalid="form.ui_is_invalid.value"
-			v-tooltip.top="{ value: props.tooltip, showDelay: 1000 }"
+			v-tooltip.top="{ value: tooltip, showDelay: 1000 }"
 			fluid
 		/>
 	</BaseInputField>
