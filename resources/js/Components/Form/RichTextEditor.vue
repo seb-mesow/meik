@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // https://github.com/primefaces/primevue/issues/5606#issuecomment-2198442124
-import { ISingleValueForm, SingleValueForm } from "@/form/singlevalueform";
+import { ISingleValueForm } from "@/form/singlevalueform";
 import Editor from "primevue/editor";
 import Quill from "quill";
 

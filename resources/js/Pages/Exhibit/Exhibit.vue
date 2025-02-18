@@ -24,6 +24,7 @@ import SelectButton from 'primevue/selectbutton';
 import { PartialDate } from '@/util/partial-date';
 import DateField from '@/Components/Form/DateField.vue';
 import * as DateUtil from '@/util/date';
+import OriginalPriceField from '@/Components/Form/OriginalPriceField.vue';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
@@ -152,13 +153,13 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			<div class="flex gap-x-3">
 				<div class="basis-2/3 grid grid-cols-3 gap-x-3">
 					<!-- Kerndaten -->
-					<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" class="col-span-2"/>
+					<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" :grid_col="1" :grid_col_span="2" :grid_row="1"/>
 						
-					<InputTextField2 :form="exhibit_form.inventory_number" label="Inventarnummer" class="col-span-1"/>
+					<InputTextField2 :form="exhibit_form.inventory_number" label="Inventarnummer" :grid_col="3" :grid_row="1"/>
 					
-					<InputTextField2 :form="exhibit_form.short_description" label="Kurzbeschreibung" class="col-span-full"/>
+					<InputTextField2 :form="exhibit_form.short_description" label="Kurzbeschreibung" :grid_col="1" :grid_col_span="3" :grid_row="2"/>
 					
-					<GroupSelectField :form="exhibit_form.rubric" label="Rubrik" class="col-span-1">
+					<GroupSelectField :form="exhibit_form.rubric" label="Rubrik" :grid_col="1" :grid_row="3">
 						<template #optiongroup="category">
 							<span class="font-bold">{{ category.parent }}</span>
 						</template>
@@ -167,9 +168,9 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						</template>
 					</GroupSelectField>
 					
-					<SelectField :form="exhibit_form.location" label="Standort" optionLabel="name" class="col-span-1"/>
+					<SelectField :form="exhibit_form.location" label="Standort" optionLabel="name" :grid_col="2" :grid_row="3"/>
 					
-					<SelectField :form="exhibit_form.place" label="Platz" optionLabel="name" class="col-span-1"/>
+					<SelectField :form="exhibit_form.place" label="Platz" optionLabel="name" :grid_col="3" :grid_row="3"/>
 				</div>
 				
 				<div class="basis-1/3">
@@ -188,26 +189,26 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			
 			<div class="flex flex-wrap gap-x-3 items-start">
 				<!-- Bestandsdaten -->
-				<Fieldset legend="Bestandsdaten" toggleable collapsed class="basis-[30rem] flex-1">
+				<Fieldset legend="Bestandsdaten *" toggleable collapsed class="basis-[30rem] flex-1">
 					<div class="grid grid-cols-2 gap-x-3">
-						<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" optionLabel="name" />
+						<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" optionLabel="name" :grid_col="1" :grid_row="1"/>
 						
-						<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" optionLabel="name" class="col-start-1" />
+						<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" optionLabel="name" :grid_col="1" :grid_row="2"/>
 						
-						<InputNumberField :form="exhibit_form.current_value" label="Zeitwert" />
+						<InputNumberField :form="exhibit_form.current_value" label="Zeitwert" :grid_col="2" :grid_row="2"/>
 					</div>
 				</Fieldset>
 				
 				<!-- Zugangsdaten -->
-				<Fieldset legend="Zugangsdaten" toggleable collapsed class="basis-[30rem] flex-1">
+				<Fieldset legend="Zugangsdaten *" toggleable collapsed class="basis-[30rem] flex-1">
 					<div class="grid grid-cols-2 gap-x-3">
-						<DateField :form="exhibit_form.acquistion_info.date" label="Datum" />
+						<DateField :form="exhibit_form.acquistion_info.date" label="Datum" :grid_col="1" :grid_row="1"/>
 						
-						<InputTextField2 :form="exhibit_form.acquistion_info.source" label="Herkunft" class="col-span-full"/>
+						<InputTextField2 :form="exhibit_form.acquistion_info.source" label="Herkunft" :grid_col="1" :grid_col_span="2" :grid_row="2"/>
 						
-						<SelectField :form="exhibit_form.acquistion_info.kind" optionLabel="name"  label="Zugangsart" />
+						<SelectField :form="exhibit_form.acquistion_info.kind" optionLabel="name"  label="Zugangsart" :grid_col="1" :grid_row="3"/>
 						
-						<InputNumberField :form="exhibit_form.acquistion_info.purchasing_price" label="Kaufpreis" />
+						<InputNumberField :form="exhibit_form.acquistion_info.purchasing_price" label="Kaufpreis" :grid_col="2" :grid_row="3"/>
 					</div>
 				</Fieldset>
 			</div>
@@ -225,41 +226,41 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				
 				<!-- Geräteinformationen -->
 				<div v-show="exhibit_form.show_device_info.value" class="grid grid-cols-3 gap-x-3">
-					<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" class="col-span-full" />
+					<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" :grid_col="1" :grid_col_span="3" :grid_row="1"/>
 					
-					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip" label="Baujahr" class="col-span-1" />
+					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip" label="Baujahr" :grid_col="1" :grid_row="2"/>
 					
-					<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date" :tooltip="partial_date_tooltip" label="gebaut von" class="col-span-1" />
+					<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date" :tooltip="partial_date_tooltip" label="gebaut von" :grid_col="2" :grid_row="2"/>
 					
-					<InputTextField2 :form="exhibit_form.device_info.manufactured_to_date" :tooltip="partial_date_tooltip" label="gebaut bis" class="col-span-1" />
+					<InputTextField2 :form="exhibit_form.device_info.manufactured_to_date" :tooltip="partial_date_tooltip" label="gebaut bis" :grid_col="3" :grid_row="2"/>
 					
-					<div class="flex gap-x-3">
-						<InputNumberField :form="exhibit_form.original_price.amount" label="Originalpreis" class="grow"/>
-						
-						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[7.5rem]" />
-					</div>
+					<OriginalPriceField
+						:form_amount="exhibit_form.original_price.amount"
+						:form_currency="exhibit_form.original_price.currency"
+						:grid_col="1" :grid_row="3"
+					/>
 				</div>
 				
 				<!-- Buchinformationen -->
 				<div v-show="exhibit_form.show_book_info.value" class="grid grid-cols-3 gap-x-3">
-					<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" class="col-span-full" />
+					<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" :grid_col="1" :grid_col_span="3" :grid_row="1"/>
 					
-					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip" label="Erscheinungsjahr" class="col-span-1" />
+					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip" label="Erscheinungsjahr" :grid_col="1" :grid_row="2"/>
 					
-					<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" class="col-span-2" />
+					<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" :grid_col="2" :grid_col_span="2" :grid_row="2"/>
 					
-					<div class="flex gap-x-3">
-						<InputNumberField :form="exhibit_form.original_price.amount" label="Originalpreis" class="grow!" />
-						
-						<SelectField :form="exhibit_form.original_price.currency" optionLabel="id" label="Währung" class="flex-none w-[7.5rem]" />
-					</div>
+					<OriginalPriceField
+						:form_amount="exhibit_form.original_price.amount"
+						:form_currency="exhibit_form.original_price.currency"
+						:grid_col="1" :grid_row="3"
+					/>
 					
-					<SelectField :form="exhibit_form.book_info.language" optionLabel="name" label="Sprache" />
+					<SelectField :form="exhibit_form.book_info.language" optionLabel="name" label="Sprache" :grid_col="2" :grid_row="3"/>
 					
-					<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" />
+					<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" :grid_col="3" :grid_row="3"/>
+					
 				</div>
 			</Fieldset>
-			
 			
 			<Button v-if="is_new" type='submit' label='Anlegen' />
 			<Button v-else type='button' label='Stammdaten speichern' @click="exhibit_form.click_save()" />
