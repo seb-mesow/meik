@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import * as RubricAJAX from "@/types/ajax/rubric";
-import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./singlevalueform2";
+import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./single/single-value-form2";
 import { route } from "ziggy-js";
 import { IRubricProps } from "@/types/page_props/rubric_overview";
 

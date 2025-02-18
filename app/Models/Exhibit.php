@@ -42,6 +42,8 @@ class Exhibit implements IntIdentifiable, Revisionable
 	/**
 	 * Name/Titel (öffentlich)
 	 * 
+	 * Pflicht
+	 * 
 	 * @Accessor(getter="get_name")
 	 */
 	#[Expose]
@@ -49,20 +51,18 @@ class Exhibit implements IntIdentifiable, Revisionable
 	
 	/**
 	 * Kurzbeschreibung (öffentlich)
+	 * 
+	 * optional
 	 */
 	#[Expose]
-	private string $short_description;
+	private ?string $short_description;
 	
-	/**
-	 * Rubrik (öffentlich)
-	 * 
-	 * Daraus ergibt sich die Kategorie
-	 */
-	
-	/**
+   /**
 	 * bei Geräte: Hersteller (öffentlich)
 	 * 
 	 * bei Bücher: Verlag (öffentlich)
+	 * 
+	 * Pflicht
 	 * 
 	 * @Accessor(getter="get_manufacturer") 
 	 */
@@ -74,47 +74,63 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 * 
 	 * bei Büchern: Erscheinungsjahr der konkreten Auflage/Jahr des Druckes (öffentlich)
 	 * 
+	 * optional
+	 * 
 	 * @Accessor(getter="get_year_of_construction")
 	 */
 	#[Expose]
-	private string $manufacture_date;
+	private ?string $manufacture_date;
 	
 	/**
 	 * Zustand (intern)
+	 * 
+	 * Pflicht
 	 */
 	private PreservationState $preservation_state;
 	 
 	/**
 	 * Originalpreis in historischer Währung (öffentlich)
 	 * 
+	 * optional
+	 * 
 	 * @Accessor(getter="get_original_price") 
 	 */
-	private Price $original_price;
+	private ?Price $original_price;
 
 	/**
 	 * Zeitwert in Cent (intern)
 	 * 
+	 * optional
+	 * 
 	 * @Accessor(getter="get_current_value") 
 	 */
-	private int $current_value = 0;
+	private ?int $current_value = 0;
 	
 	/**
 	 * Zugangsinformationen (meist intern)
+	 * 
+	 * Pflicht
 	 */
 	private AcquisitionInfo $acquisition_info;
 	
 	/**
 	 * Art des Besitzes (öffentlich)
+	 * 
+	 * Pflicht
 	 */
 	private KindOfProperty $kind_of_property;
 	
 	/**
 	 * bei Geräten: Geräteinformationen (meist öffentlich)
+	 * 
+	 * Genau eins von device_info oder book_info ist Pflicht.
 	 */
 	private ?DeviceInfo $device_info;
 	
 	/**
 	 * bei Büchern: Buchinformationen (meist öffentlich)
+	 * 
+	 * Genau eins von device_info oder book_info ist Pflicht.
 	 */
 	private ?BookInfo $book_info;
 	
@@ -122,6 +138,8 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 * Platz (öffentlich)
 	 * 
 	 * daraus ergibt sich der Standort (Location)
+	 * 
+	 * Pflicht
 	 * 
 	 * @Accessor(getter="get_place_id")
 	 */
@@ -133,6 +151,8 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 * 
 	 * daraus ergibt sich die Kategorie
 	 * 
+	 * Pflicht
+	 * 
 	 *  @Accessor(getter="get_rubric_id") 
 	 */
 	private string $rubric_id;
@@ -140,15 +160,19 @@ class Exhibit implements IntIdentifiable, Revisionable
 	/**
 	 * in Verbindung stehende Exponate (öffentlich)
 	 * 
+	 * optional
+	 * 
 	 * @var int[]
 	 * 
 	 * @Accessor(getter="get_connected_exhibit_ids") 
 	 */
 	#[Expose]
-	private array $connected_exhibit_ids = [];
+	private ?array $connected_exhibit_ids = [];
 	
 	/**
 	 * Freitexte (teils öffentlich, teils intern)
+	 * 
+	 * optional
 	 * 
 	 * @var FreeText[]
 	 * 
@@ -156,7 +180,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 */
 	#[Expose]
 	#[SerializedName('freetexts')]
-	private array $free_texts;
+	private ?array $free_texts;
 	
 	#endregion
 	

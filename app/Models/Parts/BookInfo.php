@@ -10,19 +10,25 @@ class BookInfo
 	/**
 	 * Autoren (öffentlich)
 	 * 
+	 * optional
+	 * 
 	 * @Accessor(getter="get_author") 
 	 */
-	private string $authors;
+	private ?string $authors;
 	
 	/**
 	 * ISBN (öffentlich)
 	 * 
+	 * optional
+	 * 
 	 * @Accessor(getter="get_isbn")
 	 */
-	private string $isbn;
+	private ?string $isbn;
 	
 	/**
 	 * Sprache des Buches nach ISO 6393 (öffentlich)
+	 * 
+	 * Pflicht
 	 * 
 	 * @Accessor(getter="language")
 	 */

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SplitBaseInputField from './SplitBaseInputField.vue';
-import { UISelectForm } from '@/form/selectform';
-import { UISingleValueForm2 } from '@/form/singlevalueform2';
+import { UISelectForm } from '@/form/single/select-form';
+import { UISingleValueForm2 } from '@/form/single/single-value-form2';
 import InputNumber from 'primevue/inputnumber';
 import AutoComplete from 'primevue/autocomplete';
 import { ICurrency } from '@/form/exhibitform';

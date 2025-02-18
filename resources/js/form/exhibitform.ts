@@ -1,14 +1,15 @@
-import { ISingleValueForm2, UISingleValueForm2, SingleValueForm2 } from "./singlevalueform2";
+import { ISingleValueForm2, UISingleValueForm2, SingleValueForm2 } from "./single/single-value-form2";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { route } from "ziggy-js";
 import * as ExhibitAJAX from '@/types/ajax/exhibit';
 import { ToastServiceMethods } from "primevue/toastservice";
-import { UISelectForm, SelectForm } from "./selectform";
-import { GroupSelectForm, UIGroupSelectForm, IGroupType } from "./groupselectform";
+import { UISelectForm, SelectForm } from "./single/select-form";
+import { GroupSelectForm, UIGroupSelectForm, IGroupType } from "./single/group-select-form";
 import { ref, Ref } from "vue";
 import { PartialDate } from "@/util/partial-date";
-import { PartialDateFrom } from "./partialdateform";
+import { PartialDateFrom } from "./single/partialdate-form";
 import * as DateUtil from "@/util/date";
+import { StringForm } from "./single/string-form";
 
 export interface IExhibitForm {
 	readonly id?: number;
@@ -115,7 +116,7 @@ export interface IExhibitFormConstructorArgs {
 		// Kerndaten
 		inventory_number: string,
 		name: string,
-		short_description: string,
+		short_description?: string, // optional
 		// rubric: string,
 		location_id: string,
 		place_id: string,
@@ -123,7 +124,7 @@ export interface IExhibitFormConstructorArgs {
 		
 		// Bestandsdaten
 		preservation_state_id: string,
-		current_value: number,
+		current_value?: number, // optional
 		kind_of_property_id: string,
 		
 		// Zugangsdaten
@@ -131,28 +132,28 @@ export interface IExhibitFormConstructorArgs {
 			date: Date,
 			source: string,
 			kind_id: string,
-			purchasing_price: number,
+			purchasing_price?: number, // optional
 		},
 		
 		// Geräte- und Buchinformationen
 		manufacturer: string,
-		manufacture_date: PartialDate,
-		original_price: {
+		manufacture_date?: PartialDate, // optional
+		original_price?: { // optional
 			amount: number,
 			currency_id: string,
 		},
 		
 		// Geräteinformationen
 		device_info?: {
-			manufactured_from_date: PartialDate,
-			manufactured_to_date: PartialDate,
+			manufactured_from_date?: PartialDate, // optional
+			manufactured_to_date?: PartialDate, // optional
 		}
 		
 		// Buchinformationen
 		book_info?: {
-			authors: string,
+			authors?: string, // optional
 			language_id: string,
-			isbn: string,
+			isbn?: string, // optional
 		}
 	},
 	
@@ -229,14 +230,24 @@ export class ExhibitForm implements IExhibitForm {
 		this.id = args.data?.id;
 		
 		// Kerndaten
-		this.inventory_number = new SingleValueForm2({ val: args.data?.inventory_number ?? '' }, 'inventory_number');
+		this.name = new StringForm({
+			val: args.data?.name ?? '',
+			required: true,
+		}, 'name');
 		
-		this.name = new SingleValueForm2({ val: args.data?.name ?? '' }, 'name');
+		this.inventory_number = new StringForm({
+			val: args.data?.inventory_number ?? '',
+			required: true,
+		}, 'inventory_number');
 		
-		this.short_description = new SingleValueForm2({ val: args.data?.short_description ?? '' }, 'short_description');
+		
+		this.short_description = new StringForm({
+			val: args.data?.short_description ?? ''
+		}, 'short_description');
 		
 		this.rubric = new GroupSelectForm<string>({
 			val: '',
+			required: true,
 			get_shown_suggestions(query: string): Promise<IGroupType[]> {
 				return Promise.resolve([
 					{
@@ -272,6 +283,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		this.location = new SelectForm<ILocation>({
 			val: this.determinate_selectable_value_from_id(args.data?.location_id ?? '', this.selectable_values.location),
+			required: true,
 			get_shown_suggestions: (query: string): Promise<ILocation[]> => {
 				return this.find_suggestions_in_name(query, this.selectable_values.location);
 			},
@@ -282,6 +294,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		this.place = new SelectForm<string>({
 			val: args.data?.place_id ?? '',
+			required: true,
 			get_shown_suggestions(query: string): Promise<string[]> {
 				return Promise.resolve([
 					'Place 1',
@@ -299,6 +312,7 @@ export class ExhibitForm implements IExhibitForm {
 		// Bestandsdaten
 		this.preservation_state = new SelectForm<IPreservationState>({
 			val: this.determinate_selectable_value_from_id(args.data?.preservation_state_id ?? '', this.selectable_values.preservation_state),
+			required: true,
 			get_shown_suggestions: (query: string): Promise<IPreservationState[]> => {
 				return this.find_suggestions_in_name(query, this.selectable_values.preservation_state);
 			},
@@ -315,10 +329,13 @@ export class ExhibitForm implements IExhibitForm {
 			}),
 		}, 'preservation_state');
 		
-		this.current_value = new SingleValueForm2<number, number>({ val: args.data?.current_value ?? 0}, 'current_value');
+		this.current_value = new SingleValueForm2<number, number>({
+			val: args.data?.current_value ?? 0,
+		}, 'current_value');
 		
 		this.kind_of_property = new SelectForm<IKindOfProperty>({
 			val: this.determinate_selectable_value_from_id(args.data?.kind_of_property_id ?? '', this.selectable_values.kind_of_property),
+			required: true,
 			get_shown_suggestions: (query: string): Promise<IKindOfProperty[]> => this.find_suggestions_in_name(query, this.selectable_values.kind_of_property),
 			validate: (value_in_editing) => new Promise((resolve) => {
 				if (value_in_editing) {
@@ -337,6 +354,7 @@ export class ExhibitForm implements IExhibitForm {
 		this.acquistion_info = {
 			date: new SingleValueForm2<Date, Date>({
 				val: args.data?.acquistion_info.date ?? new Date(),
+				required: true,
 				validate: (value_in_editing) => new Promise((resolve) => {
 					if (value_in_editing) {
 						resolve([]);
@@ -346,7 +364,10 @@ export class ExhibitForm implements IExhibitForm {
 				}),
 			}, 'acquistion_date'),
 			
-			source: new SingleValueForm2({ val: args.data?.acquistion_info.source ?? '' }, 'source'),
+			source: new StringForm({
+				val: args.data?.acquistion_info.source ?? '',
+				required: true,
+			}, 'source'),
 			
 			kind: new SelectForm<IKindOfAcquistion>({
 				val: this.determinate_selectable_value_from_id(args.data?.acquistion_info.kind_id ?? '', this.selectable_values.kind_of_acquistion),
@@ -364,19 +385,28 @@ export class ExhibitForm implements IExhibitForm {
 				}),
 			}, 'kind_of_acquistion'),
 			
-			purchasing_price: new SingleValueForm2<number, number>({ val: args.data?.acquistion_info.purchasing_price ?? 0 }, 'purchasing_price'),
+			purchasing_price: new SingleValueForm2<number, number>({
+				val: args.data?.acquistion_info.purchasing_price ?? 0
+			}, 'purchasing_price'),
 		};
 		
 		// Geräte- und Buchinformationen
-		this.manufacturer = new SingleValueForm2({ val: args.data?.manufacturer ?? '' }, 'manufacturer');
+		this.manufacturer = new StringForm({
+			val: args.data?.manufacturer ?? '',
+			required: true,
+		}, 'manufacturer');
 		
-		this.manufacture_date = new PartialDateFrom({ val: args.data?.manufacture_date }, 'manufacture_date');
+		this.manufacture_date = new PartialDateFrom({
+			val: args.data?.manufacture_date
+		}, 'manufacture_date');
 		
 		this.original_price = {
-			amount: new SingleValueForm2<number, number>({ val: args.data?.original_price.amount ?? 0 }, 'original_price_amount'),
+			amount: new SingleValueForm2<number, number>({
+				val: args.data?.original_price?.amount ?? 0
+			}, 'original_price_amount'),
 			
 			currency: new SelectForm<ICurrency>({
-				val: this.determinate_selectable_value_from_id(args.data?.original_price.currency_id ?? '', this.selectable_values.currency),
+				val: this.determinate_selectable_value_from_id(args.data?.original_price?.currency_id ?? '', this.selectable_values.currency),
 				get_shown_suggestions: (query: string): Promise<ICurrency[]> => this.find_suggestions_in_id(query, this.selectable_values.currency),
 				validate: (value_in_editing) => new Promise((resolve) => {
 					if (value_in_editing) {
@@ -403,10 +433,13 @@ export class ExhibitForm implements IExhibitForm {
 		// Buchinformationen
 		const book_info = args.data?.book_info;
 		this.book_info = {
-			authors: new SingleValueForm2({ val: book_info?.authors ?? '' }, 'authors'),
+			authors: new StringForm({
+				val: book_info?.authors ?? ''
+			}, 'authors'),
 			
 			language: new SelectForm<ILanguage>({
 				val: this.determinate_selectable_value_from_id(book_info?.language_id ?? '', this.selectable_values.language),
+				required: true,
 				get_shown_suggestions: (query: string): Promise<ILanguage[]> => this.find_suggestions_in_name(query, this.selectable_values.language),
 				validate: (value_in_editing) => new Promise((resolve) => {
 					if (value_in_editing) {
@@ -419,9 +452,11 @@ export class ExhibitForm implements IExhibitForm {
 						resolve(['Bitte eine Währung angeben']);
 					}
 				}),
-			}, 'original_price_currency'),
+			}, 'language'),
 			
-			isbn: new SingleValueForm2({ val: book_info?.isbn ?? '' }, 'isbn'),
+			isbn: new StringForm({
+				val: book_info?.isbn ?? ''
+			}, 'isbn'),
 		};
 		
 		// Exponats-Typ
