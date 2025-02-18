@@ -39,13 +39,7 @@ export class RubricForm extends GroupSelectForm<IRubric, ICategory> {
 	}
 	
 	protected create_ui_value_from_value(value: IRubric|null): string|undefined {
-		console.log("RubricForm::create_ui_value_from_value(): value ==");
-		console.log(value);
 		return value ? value.name : undefined;
-	}
-	
-	public get_option_label(option: IRubric): string {
-		return option.name;
 	}
 	
 	protected get_shown_suggestions(query: string): Promise<Readonly<IGroupType<IRubric, ICategory>>[]> {
