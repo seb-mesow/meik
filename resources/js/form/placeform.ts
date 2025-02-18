@@ -99,7 +99,7 @@ export class PlaceForm implements IPlaceForm {
 		});
 	}
 	
-	public cancel_editing(): void {
+	public async cancel_editing(): void {
 		console.log('PlaceForm::cancel_editing()');
 		console.log(`this.id === ${this.id}`);
 		console.log(`this.name.val === ${this.name.val}`);

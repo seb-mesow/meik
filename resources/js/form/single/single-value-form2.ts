@@ -10,13 +10,17 @@ export interface UISingleValueForm2<U = string|undefined> {
 }
 
 export interface ISingleValueForm2<T = string> {
-	validate(): Promise<void>;
-	is_valid(): boolean;
+	is_valid(): Promise<boolean>;
 	commit(): void;
 	rollback(): void;
 	get_value(): T;
 	set_value_in_editing(new_value_in_editing: T|null): void;
 	get_value_in_editing(): T|null;
+}
+
+export interface ISingleValueForm2Parent<T> {
+	register_child(child_form: ISingleValueForm2<T>): void;
+	on_child_change(child_form: ISingleValueForm2<T>): void;
 }
 
 export interface ValidationError {
@@ -52,10 +56,13 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	public readonly html_id: string;
 	public readonly is_required: boolean;
 	
-	private readonly on_change: (form: ISingleValueForm2<T>) => void;
+	private readonly _on_change: (form: ISingleValueForm2<T>) => void;
 	private readonly _validate: (value_in_editing: T|null) => Promise<string[]>;
+	private readonly parent: ISingleValueForm2Parent<T>;
 	
-	public constructor(args: ISingleValueForm2ConstructorArgs<T>, id: string|number) {
+	private last_validation_state: boolean|undefined = undefined;
+	
+	public constructor(args: ISingleValueForm2ConstructorArgs<T>, id: string|number, parent: ISingleValueForm2Parent<T>) {
 		this.html_id = typeof id === 'number' ? id.toString() : id;
 		this.value = args.val ?? null;
 		this.value_in_editing = this.value;
@@ -64,20 +71,36 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		//@ts-expect-error
 		this.ui_value_in_editing = ref(this.create_ui_value_from_value(this.value));
 		this.ui_is_invalid = ref(false);
-		this.on_change = args.on_change ?? (() => {});
+		this._on_change = args.on_change ?? (() => {});
 		this._validate = args.validate ?? (() => Promise.resolve<string[]>([]));
-	}
-	
-	public async on_change_ui_value_in_editing(new_ui_value_in_editing: U): Promise<void> {
-		this.errs.value = [];
-		this.value_in_editing = this._create_value_from_ui_value(new_ui_value_in_editing);
-		await this.validate();
 		
-		this.on_change(this);
+		this.parent = parent;
+		this.parent.register_child(this);
 	}
 	
-	public is_valid(): boolean {
-		return this.errs.value.length < 1;
+	public on_change_ui_value_in_editing(new_ui_value_in_editing: U): void {
+		this.set_value_in_editing_without_ui_value(this._create_value_from_ui_value(new_ui_value_in_editing));
+	}
+	
+	public async is_valid(): Promise<boolean> {
+		if (this.last_validation_state !== undefined) {
+			return this.last_validation_state;
+		} else {
+			if (this.is_required && this.value_in_editing === null) {
+				this.errs.value.push('Pflichtfeld');
+			} else {
+				try {
+					const further_errs: string[] = await this._validate(this.value_in_editing);
+					this.errs.value.push(...further_errs);
+				} catch (e) {
+					this.handle_exceptions(e);
+					// throw errors have priority over returned errors
+				}
+			}
+			const is_valid = this.errs.value.length < 1;
+			this.last_validation_state = is_valid;
+			return is_valid;
+		}
 	}
 	
 	public commit(): void {
@@ -85,27 +108,23 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	}
 	
 	public rollback(): void {
-		this.value_in_editing = this.value;
-		this.ui_value_in_editing.value = this.create_ui_value_from_value(this.value);
+		this.set_value_in_editing(this.value);
 	}
 	
 	public get_value_in_editing(): T|null {
-		// if (this.value_in_editing === undefined) {
-		// 	this.value_in_editing = this.create_value_from_ui_value_and_validate(this.ui_value_in_editing.value);
-		// }
 		return this.value_in_editing;
 	}
 	
-	public async set_value_in_editing(new_value_in_editing: T | null): Promise<void> {
-		console.log(`new_value_in_editing ==`);
-		console.log(new_value_in_editing);
-		new Promise<void>(() => {
-			this.ui_value_in_editing.value = this.create_ui_value_from_value(new_value_in_editing);
-		});
-		
+	public set_value_in_editing(new_value_in_editing: T | null): void {
+		this.ui_value_in_editing.value = this.create_ui_value_from_value(new_value_in_editing);
+		this.set_value_in_editing_without_ui_value(new_value_in_editing);
+	}
+	
+	private set_value_in_editing_without_ui_value(new_value_in_editing: T | null): void {
 		this.errs.value = [];
+		this.last_validation_state = undefined;
 		this.value_in_editing = new_value_in_editing;
-		return this.validate();
+		this.notify_about_changes();
 	}
 	
 	public get_value(): T {
@@ -134,19 +153,13 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		}
 	}
 	
-	public async validate(): Promise<void> {
-		if (this.is_required && this.value_in_editing === null) {
-			this.errs.value.push('Pflichtfeld');
-			return;
+	private notify_about_changes(): void {
+		// do NOT wait / fire and forget
+		async () => {
+			this.ui_is_invalid.value = await this.is_valid();
 		}
-		try {
-			const further_errs: string[] = await this._validate(this.value_in_editing);
-			this.errs.value.push(...further_errs);
-		} catch (e) {
-			this.handle_exceptions(e);
-			// throw errors have priority over returned errors
-		}
-		this.ui_is_invalid.value = this.errs.value.length > 0;
+		this._on_change(this); 
+		this.parent.on_child_change(this);
 	}
 	
 	private handle_exceptions(err: any): void {

@@ -1,5 +1,5 @@
 import { shallowRef, ShallowRef } from "vue";
-import { ISingleValueForm2ConstructorArgs, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
+import { ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 
 export interface UIGroupSelectForm<C, P = C> extends UISingleValueForm2<string> {
@@ -22,8 +22,8 @@ export class GroupSelectForm<C = string, P = C> extends SingleValueForm2<C, stri
 	public readonly shown_suggestions: ShallowRef<Readonly<IGroupType<C, P>[]>>;
 	private readonly get_shown_suggestions: (query: string) => Promise<Readonly<IGroupType<C, P>>[]>;
 	
-	public constructor(args: IGroupSelectFormConstructorArgs<C, P>, id: string|number) {
-		super(args, id);
+	public constructor(args: IGroupSelectFormConstructorArgs<C, P>, id: string|number, parent: ISingleValueForm2Parent<C>) {
+		super(args, id, parent);
 		this.get_shown_suggestions = args.get_shown_suggestions;
 		this.shown_suggestions = shallowRef([]);
 	}

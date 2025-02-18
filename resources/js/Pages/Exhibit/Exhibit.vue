@@ -262,8 +262,8 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				</div>
 			</Fieldset>
 			
-			<Button v-if="is_new" type='submit' label='Anlegen' />
-			<Button v-else type='button' label='Stammdaten speichern' @click="exhibit_form.click_save()" />
+			<Button v-if="is_new" :disabled="!exhibit_form.is_saving_button_enabled.value" type='submit' label='Anlegen'/>
+			<Button v-else :disabled="!exhibit_form.is_saving_button_enabled.value" type='button' label='Stammdaten speichern' @click="exhibit_form.click_save()"/>
 		</Form>
 		
 		<FreeTextFields v-if="props.exhibit_props"
