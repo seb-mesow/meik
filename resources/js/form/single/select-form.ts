@@ -1,5 +1,5 @@
 import { Ref, shallowRef } from "vue";
-import { ISingleValueForm2ConstructorArgs, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
+import { ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 
 export interface UISelectForm<O> extends UISingleValueForm2<string> {
@@ -19,8 +19,8 @@ export class SelectForm<O = string> extends SingleValueForm2<O, string> implemen
 	private readonly get_shown_suggestions: (query: string) => Promise<Readonly<O[]>>;
 	private is_overlay_shown: boolean = false;
 	
-	public constructor(args: ISelectFormConstructorArgs<O>, id: string|number) {
-		super(args, id);
+	public constructor(args: ISelectFormConstructorArgs<O>, id: string|number, parent: ISingleValueForm2Parent<O>) {
+		super(args, id, parent);
 		this.get_shown_suggestions = args.get_shown_suggestions;
 		this.shown_suggestions = shallowRef([]);
 	}

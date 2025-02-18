@@ -1,13 +1,13 @@
-import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./single-value-form2";
+import { ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2 } from "./single-value-form2";
 import * as PartialDate from "@/util/partial-date";
 
 export class PartialDateFrom extends SingleValueForm2<PartialDate.PartialDate, string> {
-	public constructor(args: ISingleValueForm2ConstructorArgs<PartialDate.PartialDate>, id: string|number) {
+	public constructor(args: ISingleValueForm2ConstructorArgs<PartialDate.PartialDate>, id: string|number, parent: ISingleValueForm2Parent<PartialDate.PartialDate>) {
 		args.validate = (value_in_editing) => new Promise<string[]>((resolve) => {
 			value_in_editing?.validate();
 			resolve([]); // do not forget !
 		});
-		super(args, id);
+		super(args, id, parent);
 	}
 	
 	protected create_value_from_ui_value(ui_value: string): PartialDate.PartialDate|null {

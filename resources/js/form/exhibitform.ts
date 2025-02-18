@@ -1,4 +1,4 @@
-import { ISingleValueForm2, UISingleValueForm2, SingleValueForm2 } from "./single/single-value-form2";
+import { ISingleValueForm2, UISingleValueForm2, SingleValueForm2, ISingleValueForm2Parent } from "./single/single-value-form2";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { route } from "ziggy-js";
 import * as ExhibitAJAX from '@/types/ajax/exhibit';
@@ -10,6 +10,7 @@ import { PartialDate } from "@/util/partial-date";
 import { PartialDateFrom } from "./single/partialdate-form";
 import * as DateUtil from "@/util/date";
 import { StringForm } from "./single/string-form";
+import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
 
 export interface IExhibitForm {
 	readonly id?: number;
@@ -64,6 +65,8 @@ export interface IExhibitForm {
 	
 	click_delete(): void;
 	click_save(): void;
+	
+	readonly is_saving_button_enabled: Readonly<Ref<boolean>>;
 }
 
 export type ICurrency = Readonly<{
@@ -217,15 +220,31 @@ export class ExhibitForm implements IExhibitForm {
 		readonly isbn: Readonly<SingleValueForm2>;
 	}
 	
+	// Auswahlwerte
 	private readonly selectable_values: ISelectableValues;
+	
+	// Hilfspbjekte
 	private readonly toast_service: ToastServiceMethods;
+	private readonly multiple_value_form: IMultipleValueForm & ISingleValueForm2Parent<any>;
+	
+	// UI-Werte
+	public readonly is_saving_button_enabled: Ref<boolean>;
 	
 	public constructor(args: IExhibitFormConstructorArgs) {
+		
 		// Auswahlwerte
 		this.selectable_values = args.aux.selectable_values;
 
 		// Hilfsobjekte
 		this.toast_service = args.aux.toast_service;
+		this.multiple_value_form = new MultipleValueForm({
+			on_child_change: async (multiple_value_form) => {
+				this.is_saving_button_enabled.value = await multiple_value_form.is_valid();
+			},
+		});
+		
+		// UI-Werte
+		this.is_saving_button_enabled = ref(false);
 		
 		this.id = args.data?.id;
 		
@@ -233,17 +252,17 @@ export class ExhibitForm implements IExhibitForm {
 		this.name = new StringForm({
 			val: args.data?.name ?? '',
 			required: true,
-		}, 'name');
+		}, 'name', this.multiple_value_form);
 		
 		this.inventory_number = new StringForm({
 			val: args.data?.inventory_number ?? '',
 			required: true,
-		}, 'inventory_number');
+		}, 'inventory_number', this.multiple_value_form);
 		
 		
 		this.short_description = new StringForm({
 			val: args.data?.short_description ?? ''
-		}, 'short_description');
+		}, 'short_description', this.multiple_value_form);
 		
 		this.rubric = new GroupSelectForm<string>({
 			val: '',
@@ -279,7 +298,7 @@ export class ExhibitForm implements IExhibitForm {
 					}
 				});
 			},
-		}, 'rubric');
+		}, 'rubric', this.multiple_value_form);
 		
 		this.location = new SelectForm<ILocation>({
 			val: this.determinate_selectable_value_from_id(args.data?.location_id ?? '', this.selectable_values.location),
@@ -290,7 +309,7 @@ export class ExhibitForm implements IExhibitForm {
 			validate(value_in_editing): Promise<string[]> {
 				throw new Error("not implemented");
 			},
-		}, 'location');
+		}, 'location', this.multiple_value_form);
 		
 		this.place = new SelectForm<string>({
 			val: args.data?.place_id ?? '',
@@ -305,7 +324,7 @@ export class ExhibitForm implements IExhibitForm {
 			validate(value_in_editing): Promise<string[]> {
 				throw new Error("not implemented");
 			},
-		}, 'place');
+		}, 'place', this.multiple_value_form);
 		
 		// TODO connected_exhibits
 		
@@ -327,11 +346,11 @@ export class ExhibitForm implements IExhibitForm {
 					resolve(['Bitte einen Erhaltungszustand angeben']);
 				}
 			}),
-		}, 'preservation_state');
+		}, 'preservation_state', this.multiple_value_form);
 		
 		this.current_value = new SingleValueForm2<number, number>({
 			val: args.data?.current_value ?? 0,
-		}, 'current_value');
+		}, 'current_value', this.multiple_value_form);
 		
 		this.kind_of_property = new SelectForm<IKindOfProperty>({
 			val: this.determinate_selectable_value_from_id(args.data?.kind_of_property_id ?? '', this.selectable_values.kind_of_property),
@@ -348,7 +367,7 @@ export class ExhibitForm implements IExhibitForm {
 					resolve(['Bitte eine Besitzart angeben']);
 				}
 			}),
-		}, 'kind_of_property');
+		}, 'kind_of_property', this.multiple_value_form);
 		
 		// Zugangsdaten
 		this.acquistion_info = {
@@ -362,12 +381,12 @@ export class ExhibitForm implements IExhibitForm {
 						resolve(['Bitte ein Datum angeben']);
 					}
 				}),
-			}, 'acquistion_date'),
+			}, 'acquistion_date', this.multiple_value_form),
 			
 			source: new StringForm({
 				val: args.data?.acquistion_info.source ?? '',
 				required: true,
-			}, 'source'),
+			}, 'source', this.multiple_value_form),
 			
 			kind: new SelectForm<IKindOfAcquistion>({
 				val: this.determinate_selectable_value_from_id(args.data?.acquistion_info.kind_id ?? '', this.selectable_values.kind_of_acquistion),
@@ -383,27 +402,27 @@ export class ExhibitForm implements IExhibitForm {
 						resolve(['Bitte eine Zugangsart angeben']);
 					}
 				}),
-			}, 'kind_of_acquistion'),
+			}, 'kind_of_acquistion', this.multiple_value_form),
 			
 			purchasing_price: new SingleValueForm2<number, number>({
 				val: args.data?.acquistion_info.purchasing_price ?? 0
-			}, 'purchasing_price'),
+			}, 'purchasing_price', this.multiple_value_form),
 		};
 		
 		// Geräte- und Buchinformationen
 		this.manufacturer = new StringForm({
 			val: args.data?.manufacturer ?? '',
 			required: true,
-		}, 'manufacturer');
+		}, 'manufacturer', this.multiple_value_form);
 		
 		this.manufacture_date = new PartialDateFrom({
 			val: args.data?.manufacture_date
-		}, 'manufacture_date');
+		}, 'manufacture_date', this.multiple_value_form);
 		
 		this.original_price = {
 			amount: new SingleValueForm2<number, number>({
 				val: args.data?.original_price?.amount ?? 0
-			}, 'original_price_amount'),
+			}, 'original_price_amount', this.multiple_value_form),
 			
 			currency: new SelectForm<ICurrency>({
 				val: this.determinate_selectable_value_from_id(args.data?.original_price?.currency_id ?? '', this.selectable_values.currency),
@@ -419,15 +438,19 @@ export class ExhibitForm implements IExhibitForm {
 						resolve(['Bitte eine Währung angeben']);
 					}
 				}),
-			}, 'original_price_currency'),
+			}, 'original_price_currency', this.multiple_value_form),
 		};
 		
 		// Geräteinformationen
 		const device_info = args.data?.device_info;
 		this.device_info = {
-			manufactured_from_date: new PartialDateFrom({ val: device_info?.manufactured_from_date }, 'manufactured_from_date'),
+			manufactured_from_date: new PartialDateFrom({
+				val: device_info?.manufactured_from_date
+			}, 'manufactured_from_date', this.multiple_value_form),
 			
-			manufactured_to_date: new PartialDateFrom({ val: device_info?.manufactured_to_date }, 'manufactured_to_date'),
+			manufactured_to_date: new PartialDateFrom({
+				val: device_info?.manufactured_to_date
+			}, 'manufactured_to_date', this.multiple_value_form),
 		}
 		
 		// Buchinformationen
@@ -435,7 +458,7 @@ export class ExhibitForm implements IExhibitForm {
 		this.book_info = {
 			authors: new StringForm({
 				val: book_info?.authors ?? ''
-			}, 'authors'),
+			}, 'authors', this.multiple_value_form),
 			
 			language: new SelectForm<ILanguage>({
 				val: this.determinate_selectable_value_from_id(book_info?.language_id ?? '', this.selectable_values.language),
@@ -452,11 +475,11 @@ export class ExhibitForm implements IExhibitForm {
 						resolve(['Bitte eine Währung angeben']);
 					}
 				}),
-			}, 'language'),
+			}, 'language', this.multiple_value_form),
 			
 			isbn: new StringForm({
 				val: book_info?.isbn ?? ''
-			}, 'isbn'),
+			}, 'isbn', this.multiple_value_form),
 		};
 		
 		// Exponats-Typ
@@ -478,7 +501,7 @@ export class ExhibitForm implements IExhibitForm {
 				this.show_device_info.value = type.id === 'device';
 				this.show_book_info.value = type.id === 'book';
 			},
-		}, 'exhibit_type');
+		}, 'exhibit_type', this.multiple_value_form);
 	
 	}
 	
@@ -524,28 +547,7 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	public async click_save(): Promise<void> {
-		this.inventory_number.commit();
-		this.name.commit();
-		this.short_description.commit();
-		this.manufacturer.commit();
-		this.manufacture_date.commit();
-		this.preservation_state.commit();
-		this.original_price.amount.commit();
-		this.original_price.currency.commit();
-		this.current_value.commit();
-		this.acquistion_info.date.commit();
-		this.acquistion_info.source.commit();
-		this.acquistion_info.kind.commit();
-		this.acquistion_info.purchasing_price.commit();
-		this.kind_of_property.commit();
-		this.device_info.manufactured_from_date.commit();
-		this.device_info.manufactured_to_date.commit();
-		this.book_info.authors.commit();
-		this.book_info.isbn.commit();
-		this.book_info.language.commit();
-		this.place.commit();
-		this.rubric.commit();
-		// this.connected_exhibits.commit();
+		this.multiple_value_form.commit();
 		
 		// this.is_save_button_loading = true;
 		if (this.exists_in_db()) {
