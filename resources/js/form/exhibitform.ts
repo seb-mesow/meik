@@ -272,19 +272,12 @@ export class ExhibitForm implements IExhibitForm {
 			val: args.data?.rubric,
 			required: true,
 			selectable_categories_with_rubrics: args.aux.selectable_values.categories_with_rubrics,
-			// validate(value_in_editing): Promise<string[]> {
-			// 	return new Promise<string[]>((resolve) => {
-			// 		if (value_in_editing) {
-			// 			if (['Rub 1.1', 'Rub 1.2', 'Rub 2.1', 'Rub 2.2'].includes(value_in_editing)) {
-			// 				resolve([]);
-			// 			} else {
-			// 				resolve(['Bitte eine auswählbare Rubrik angeben']);
-			// 			}
-			// 		} else {
-			// 			resolve(['Bitte eine Rubrik angeben']);
-			// 		}
-			// 	});
-			// },
+			validate: async (value_in_editing) => {
+				if (value_in_editing === undefined) {
+					return ['Bitte eine auswählbare Rubrik angeben'];
+				}
+				return [];
+			},
 		}, 'rubric', this.multiple_value_form);
 		
 		this.location = new SelectForm<ILocation>({

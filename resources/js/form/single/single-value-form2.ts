@@ -15,7 +15,7 @@ export interface ISingleValueForm2<T = string> {
 	rollback(): void;
 	get_value(): T;
 	set_value_in_editing(new_value_in_editing: T|null): void;
-	get_value_in_editing(): T|null;
+	get_value_in_editing(): T|null|undefined;
 }
 
 export interface ISingleValueForm2Parent<T> {
@@ -36,7 +36,7 @@ export interface ISingleValueForm2ConstructorArgs<T = string> {
 	errs?: string[],
 	required?: boolean;
 	on_change?: (form: ISingleValueForm2<T>) => void,
-	validate?: (value_in_editing: T|null) => Promise<string[]>,
+	validate?: (value_in_editing: T|null|undefined) => Promise<string[]>,
 }
 
 export class SingleValueForm2<T = string, U = T|undefined> implements
@@ -48,7 +48,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	/**
 	 * prefilled cache for this.create_value_from_ui_value_and_validate(this.ui_value_in_editing.value);
 	 */
-	private value_in_editing: T|null;
+	private value_in_editing: T|null|undefined;
 	
 	public ui_value_in_editing: Ref<U>;
 	public errs: Ref<string[]>;
@@ -57,7 +57,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	public readonly is_required: boolean;
 	
 	private readonly _on_change: (form: ISingleValueForm2<T>) => void;
-	private readonly _validate: (value_in_editing: T|null) => Promise<string[]>;
+	private readonly _validate: (value_in_editing: T|null|undefined) => Promise<string[]>;
 	private readonly parent: ISingleValueForm2Parent<T>;
 	
 	private last_validation_state: boolean|undefined = undefined;
@@ -84,6 +84,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	}
 	
 	public async is_valid(): Promise<boolean> {
+		// TODO still return true, if the user had never touched/focused the field
 		if (this.last_validation_state !== undefined) {
 			return this.last_validation_state;
 		} else {
@@ -105,23 +106,24 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	}
 	
 	public commit(): void {
-		this.value = this.get_value_in_editing();
+		const value = this.get_value_in_editing();
+		this.value = (value === undefined) ? null : value;
 	}
 	
 	public rollback(): void {
 		this.set_value_in_editing(this.value);
 	}
 	
-	public get_value_in_editing(): T|null {
+	public get_value_in_editing(): T|null|undefined {
 		return this.value_in_editing;
 	}
 	
-	public set_value_in_editing(new_value_in_editing: T | null): void {
+	public set_value_in_editing(new_value_in_editing: T|null): void {
 		this.ui_value_in_editing.value = this.create_ui_value_from_value(new_value_in_editing);
 		this.set_value_in_editing_without_ui_value(new_value_in_editing);
 	}
 	
-	private set_value_in_editing_without_ui_value(new_value_in_editing: T | null): void {
+	private set_value_in_editing_without_ui_value(new_value_in_editing: T|null|undefined): void {
 		this.errs.value = [];
 		this.last_validation_state = undefined;
 		this.value_in_editing = new_value_in_editing;
@@ -140,12 +142,17 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		return value;
 	}
 	
-	protected create_value_from_ui_value(ui_value: U): T|null {
+	/**
+	 * return `null`, if the user left absolutely nothing
+	 * 
+	 * return `undefined`, if the user left something, that cannot be converted to a (single) value
+	 */
+	protected create_value_from_ui_value(ui_value: U): T|null|undefined {
 		//@ts-expect-error
 		return ui_value;
 	}
 	
-	private _create_value_from_ui_value(ui_value: U): T|null {
+	private _create_value_from_ui_value(ui_value: U): T|null|undefined {
 		try {
 			return this.create_value_from_ui_value(ui_value);
 		} catch(e) {
