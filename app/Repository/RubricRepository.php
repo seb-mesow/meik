@@ -16,7 +16,7 @@ use stdClass;
  * @phpstan-type RubricDoc object{
  *    _id: string,
  *    _rev?: string,
- *    category: string,
+ *    category_id: string,
  *    name: string,
  *}
  */
@@ -47,34 +47,38 @@ final class RubricRepository
 				'$beginsWith' => self::ID_PREFIX
 			],
 		]);
-		$_this = $this;
-		return array_map(static function (stdClass $doc) use ($_this): Rubric {
-			return $_this->create_rubric_from_doc($doc);
-		}, $res->docs);
+		return $this->create_rubrics_from_docs($res->docs);
 	}
-
+	
 	/**
-	 * @var string $id
+	 * @return Rubric[]
 	 */
-	public function get_rubrics_paginated(string $category, int $page_number, int $count_per_page): array
+	public function get_all_by_category_id(string $category_id): array
 	{
 		$response = $this->client
-			->key($category)
+			->key($category_id)
+			->reduce(false)
+			->include_docs(true)
+			->getView(self::MODEL_TYPE_ID, 'by-category-id');
+		return $this->create_rubrics_from_view_response($response);
+	}
+	
+	public function get_rubrics_paginated(string $category_id, int $page_number, int $count_per_page): array
+	{
+		$response = $this->client
+			->key($category_id)
 			->reduce(false)
 			->limit($count_per_page)
 			->skip($page_number * $count_per_page)
 			->include_docs(true)
-			->getView(self::MODEL_TYPE_ID, 'by-category-name');
-		$_this = $this;
-		$rubrics = array_map(static function (stdClass $row) use ($_this): Rubric {
-			return $_this->create_rubric_from_doc($row->doc);
-		}, $response->rows);
-
+			->getView(self::MODEL_TYPE_ID, 'by-category-id');
+		$rubrics = $this->create_rubrics_from_view_response($response);
+		
 		$response = $this->client
-			->key($category)
+			->key($category_id)
 			->limit($count_per_page)
 			->skip($page_number * $count_per_page)
-			->getView(self::MODEL_TYPE_ID, 'by-category-name');
+			->getView(self::MODEL_TYPE_ID, 'by-category-id');
 		$total_count = $response->rows[0]?->value ?? 0;
 
 		return [
@@ -137,10 +141,7 @@ final class RubricRepository
 			$selectors
 		)->docs;
 
-		$_this = $this;
-		return array_map(static function (stdClass $doc) use ($_this): Rubric {
-			return $_this->create_rubric_from_doc($doc);
-		}, $docs);
+		return $this->create_rubrics_from_docs($docs);
 	}
 
 	/**
@@ -152,21 +153,43 @@ final class RubricRepository
 		$rubric_doc = $this->create_stub_doc_from_model($rubric);
 
 		$rubric_doc->name = $rubric->get_name();
-		$rubric_doc->category = $rubric->get_category()->value;
+		$rubric_doc->category_id = $rubric->get_category()->value;
 
 		return $rubric_doc;
 	}
 
 	/**
-	 * @param RubricDoc $rubric_doc
+	 * @param RubricDoc $doc
 	 */
-	public function create_rubric_from_doc(stdClass $rubric_doc): Rubric
+	private function create_rubric_from_doc(stdClass $doc): Rubric
 	{
 		return new Rubric(
-			name: $rubric_doc->name,
-			category: Category::from($rubric_doc->category),
-			id: $this->determinate_model_id_from_doc($rubric_doc),
-			rev: $rubric_doc->_rev,
+			name: $doc->name,
+			category: Category::from($doc->category_id),
+			id: $this->determinate_model_id_from_doc($doc),
+			rev: $doc->_rev,
 		);
+	}
+	
+	/**
+	 * @param RubricDoc[] $docs
+	 * @return Rubric[]
+	 */
+	private function create_rubrics_from_docs(array $docs): array {
+		$_this = $this;
+		return array_map(static function (stdClass $doc) use ($_this): Rubric {
+			return $_this->create_rubric_from_doc($doc);
+		}, $docs);
+	}
+	
+	/**
+	 * @param RubricDoc[] $docs
+	 * @return Rubric[]
+	 */
+	private function create_rubrics_from_view_response(stdClass $response): array {
+		$_this = $this;
+		return array_map(static function (stdClass $row) use ($_this): Rubric {
+			return $_this->create_rubric_from_doc($row->doc);
+		}, $response->rows);
 	}
 }

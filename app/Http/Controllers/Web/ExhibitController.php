@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Enum\Category;
 use App\Models\Enum\Currency;
 use App\Models\Enum\KindOfAcquistion;
 use App\Models\Enum\KindOfProperty;
@@ -14,6 +15,7 @@ use App\Models\Location;
 use App\Models\Parts\AcquisitionInfo;
 use App\Models\Parts\FreeText;
 use App\Models\Parts\Price;
+use App\Models\Rubric;
 use App\Repository\ExhibitRepository;
 use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
@@ -35,7 +37,7 @@ use Inertia\Response as InertiaResponse;
  *     is_public: bool,
  * }
  * 
- * ohne Rubric
+ * ohne rubric_id
  * @phpstan-type ExhibitProps array{
  *     id: number,
  *     inventory_number: string,
@@ -65,8 +67,8 @@ use Inertia\Response as InertiaResponse;
  *         language_id: string,
  *         isbn: string,
  *     },
- *     place_id: string,
  *     location_id: string,
+ *     place_id: string,
  *     connected_exhibit_ids: number[],
  *     free_texts: FreeTextProps[],
  *     title_image?: array{
@@ -77,6 +79,15 @@ use Inertia\Response as InertiaResponse;
  *     },
  * }
  * 
+ * @phpstan-type IRubrics array{
+ *     id: string,
+ *     name: string,
+ * }
+ * @phpstan-type ICategoryWithRubrics array{
+ *     id: string,
+ *     name: string,
+ *     rubrics: IRubrics[],
+ * }
  * @phpstan-type ICurrency array{
  *     id: string,
  *     name: string,
@@ -103,12 +114,13 @@ use Inertia\Response as InertiaResponse;
  * }
  * 
  * @phpstan-type SelectableValues array{
- *     currency: ICurrency[],
- *     kind_of_acquistion: IKindOfAcquistion[],
- *     kind_of_property: IKindOfProperty[],
- *     language: ILanguage[],
+ *     categories_with_rubrics: ICategoryWithRubrics[],
+ *     location: ILocation[],
  *     preservation_state: IPreservationState[],
- *     location: ILocation[]
+ *     kind_of_property: IKindOfProperty[],
+ *     kind_of_acquistion: IKindOfAcquistion[],
+ *     currency: ICurrency[],
+ *     language: ILanguage[],
  * }
  */
 class ExhibitController extends Controller
@@ -318,35 +330,20 @@ class ExhibitController extends Controller
 	 * @return SelectableValues
 	 */
 	private function determinate_selectable_values(): array {
-		$all_currencies = Currency::cases();
-		$all_currencies = array_map(static fn(Currency $currency): array => [
-			'id' => $currency->value,
-			'name' => $currency->get_name(),
-		], $all_currencies);
-		
-		$all_kinds_of_acquistion = KindOfAcquistion::cases();
-		$all_kinds_of_acquistion = array_map(static fn(KindOfAcquistion $kind): array => [
-			'id' => $kind->value,
-			'name' => $kind->get_name(),
-		], $all_kinds_of_acquistion);
-		
-		$all_kinds_of_property = KindOfProperty::cases();
-		$all_kinds_of_property = array_map(static fn(KindOfProperty $kind): array => [
-			'id' => $kind->value,
-			'name' => $kind->get_name(),
-		], $all_kinds_of_property);
-		
-		$all_languages = Language::cases();
-		$all_languages = array_map(static fn(Language $language): array => [
-			'id' => $language->value,
-			'name' => $language->get_name(),
-		], $all_languages);
-		
-		$all_preservation_states = PreservationState::cases();
-		$all_preservation_states = array_map(static fn(PreservationState $state): array => [
-			'id' => $state->value,
-			'name' => $state->get_name(),
-		], $all_preservation_states);
+		$_this = $this;
+		$all_categories_with_rubrics = Category::cases();
+		$all_categories_with_rubrics = array_map(static function (Category $category) use ($_this): array {
+			// TODO optimierbar
+			$all_rubrics = $_this->rubric_repository->get_all_by_category_id($category->get_id());
+			return [
+				'id' => $category->get_id(),
+				'name' => $category->get_pretty_name(),
+				'rubrics' => array_map(static fn(Rubric $rubric): array => [
+					'id' => $rubric->get_id(),
+					'name' => $rubric->get_name(),
+				], $all_rubrics),
+			];
+		}, $all_categories_with_rubrics);
 		
 		$all_locations = $this->location_repository->get_all();
 		$all_locations = array_map(static fn(Location $location): array => [
@@ -354,13 +351,44 @@ class ExhibitController extends Controller
 			'name' => $location->get_name(),
 		], $all_locations);
 		
+		$all_preservation_states = PreservationState::cases();
+		$all_preservation_states = array_map(static fn(PreservationState $state): array => [
+			'id' => $state->value,
+			'name' => $state->get_name(),
+		], $all_preservation_states);
+		
+		$all_kinds_of_property = KindOfProperty::cases();
+		$all_kinds_of_property = array_map(static fn(KindOfProperty $kind): array => [
+			'id' => $kind->value,
+			'name' => $kind->get_name(),
+		], $all_kinds_of_property);
+		
+		$all_kinds_of_acquistion = KindOfAcquistion::cases();
+		$all_kinds_of_acquistion = array_map(static fn(KindOfAcquistion $kind): array => [
+			'id' => $kind->value,
+			'name' => $kind->get_name(),
+		], $all_kinds_of_acquistion);
+		
+		$all_currencies = Currency::cases();
+		$all_currencies = array_map(static fn(Currency $currency): array => [
+			'id' => $currency->value,
+			'name' => $currency->get_name(),
+		], $all_currencies);
+		
+		$all_languages = Language::cases();
+		$all_languages = array_map(static fn(Language $language): array => [
+			'id' => $language->value,
+			'name' => $language->get_name(),
+		], $all_languages);
+		
 		return [
-			'currency' => $all_currencies,
-			'kind_of_acquistion' => $all_kinds_of_acquistion,
-			'kind_of_property' => $all_kinds_of_property,
-			'language' => $all_languages,
-			'preservation_state' => $all_preservation_states,
+			'categories_with_rubrics' => $all_categories_with_rubrics,
 			'location' => $all_locations,
+			'preservation_state' => $all_preservation_states,
+			'kind_of_property' => $all_kinds_of_property,
+			'kind_of_acquistion' => $all_kinds_of_acquistion,
+			'currency' => $all_currencies,
+			'language' => $all_languages,
 		];
 	}
 }

@@ -11,7 +11,7 @@ use PHPOnCouch\Exceptions\CouchNotFoundException;
 return new class extends Migration
 {
     private const string DESIGN_DOC_ID = '_design/rubric';
-	private const string VIEW = 'by-category-name';
+	private const string VIEW = 'by-category-id';
 	
 	private readonly CouchClient $client;
 	private readonly string $map_function;
@@ -20,11 +20,11 @@ return new class extends Migration
 	public function __construct() {
 		$this->client = App::make(CouchClient::class.'.admin');
 		
-		$model_type_id = RubricRepository::MODEL_TYPE_ID;
+		$model_type_id = RubricRepository::ID_PREFIX;
 		$this->map_function = <<<END
 		function(doc) {
 			if (doc._id.startsWith('$model_type_id')) {
-				emit(doc.category, null);
+				emit(doc.category_id, null);
 				// no value specified
 				// retrieve by seperate lookup or include_docs parameter
 			}

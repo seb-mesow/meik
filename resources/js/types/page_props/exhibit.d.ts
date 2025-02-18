@@ -1,13 +1,14 @@
-import { ICurrency, IKindOfAcquistion, IKindOfProperty, ILanguage, ILocation, IPreservationState } from "@/form/exhibitform";
+import { ICategoryWithRubrics, ICurrency, IKindOfAcquistion, IKindOfProperty, ILanguage, ILocation, IPreservationState } from "@/form/exhibitform";
 import { IFreeTextsPageProps } from "./freetexts"
 
 export interface ISelectableValuesProps {
-	currency: ICurrency[],
-	kind_of_acquistion: IKindOfAcquistion[],
-	kind_of_property: IKindOfProperty[],
-	language: ILanguage[],
-	preservation_state: IPreservationState[],
+	categories_with_rubrics: ICategoryWithRubrics[],
 	location: ILocation[],
+	preservation_state: IPreservationState[],
+	kind_of_property: IKindOfProperty[],
+	kind_of_acquistion: IKindOfAcquistion[],
+	currency: ICurrency[],
+	language: ILanguage[],
 }
 
 export interface IExhibitProps {
@@ -17,6 +18,7 @@ export interface IExhibitProps {
 	inventory_number: string,
 	name: string,
 	short_description: string,
+	// rubric_id muss nicht, da schon als anderweitige Page-Prop
 	location_id: string,
 	place_id: string,
 	// TODO connected_exhibits

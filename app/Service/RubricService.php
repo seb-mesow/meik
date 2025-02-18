@@ -3,11 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Models\Exhibit;
 use App\Models\Rubric;
-use App\Repository\ExhibitRepository;
-use App\Repository\LocationRepository;
-use App\Repository\PlaceRepository;
 use App\Repository\RubricRepository;
 
 /**
