@@ -1,14 +1,17 @@
 import { Ref, shallowRef } from "vue";
-import { ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
+import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 
-export interface UISelectForm<O> extends UISingleValueForm2<string|undefined> {
+export interface UISelectForm<O> extends UISingleValueForm2<O|string|undefined> {
 	readonly shown_suggestions: Readonly<Ref<Readonly<O[]>>>;
 	on_complete(event: AutoCompleteCompleteEvent): Promise<void>;
 	on_before_show(): Promise<void>;
 	on_hide(): Promise<void>;
 	on_tab_keydown(event: KeyboardEvent): Promise<void>;
+	// get_option_label(option: O): string|undefined;
 }
+
+export interface ISelectForm<O> extends ISingleValueForm2<O> {};
 
 export interface ISelectFormConstructorArgs<O = string> extends ISingleValueForm2ConstructorArgs<O> {
 	get_shown_suggestions?: (query: string) => Promise<Readonly<O[]>>;
@@ -20,7 +23,7 @@ export interface ISelectFormConstructorArgs<O = string> extends ISingleValueForm
  *
  * same for get_option_label
  */
-export class SelectForm<O = string> extends SingleValueForm2<O, string|undefined> implements UISelectForm<O> {
+export class SelectForm<O = string> extends SingleValueForm2<O, O|string|undefined> implements ISelectForm<O>, UISelectForm<O> {
 	public readonly shown_suggestions: Ref<Readonly<O[]>>;
 	private readonly _get_shown_suggestions: (query: string) => Promise<Readonly<O[]>>;
 	private is_overlay_shown: boolean = false;
@@ -62,4 +65,8 @@ export class SelectForm<O = string> extends SingleValueForm2<O, string|undefined
 	protected get_shown_suggestions(query: string): Promise<Readonly<O[]>> {
 		return this._get_shown_suggestions(query);
 	}
+	
+	// public get_option_label(option: O): string|undefined {
+	// 	return this.create_ui_value_from_value(option);
+	// }
 }

@@ -14,8 +14,9 @@ export interface ISingleValueForm2<T = string> {
 	commit(): void;
 	rollback(): void;
 	get_value(): T;
-	set_value_in_editing(new_value_in_editing: T|null): void;
 	get_value_in_editing(): T|null|undefined;
+	set_value_in_editing(new_value_in_editing: T|null): void;
+	set_validate(validate: (value_in_editing: T|null|undefined) => Promise<string[]>): void;
 }
 
 export interface ISingleValueForm2Parent<T> {
@@ -32,7 +33,7 @@ export interface MultipleValidationErrors {
 }
 
 export interface ISingleValueForm2ConstructorArgs<T = string> {
-	val?: T,
+	val?: T|null,
 	errs?: string[],
 	required?: boolean;
 	on_change?: (form: ISingleValueForm2<T>) => void,
@@ -57,14 +58,14 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	public readonly is_required: boolean;
 	
 	private readonly _on_change: (form: ISingleValueForm2<T>) => void;
-	private readonly _validate: (value_in_editing: T|null|undefined) => Promise<string[]>;
+	private _validate: (value_in_editing: T|null|undefined) => Promise<string[]>;
 	private readonly parent: ISingleValueForm2Parent<T>;
 	
 	private last_validation_state: boolean|undefined = undefined;
 	
 	public constructor(args: ISingleValueForm2ConstructorArgs<T>, id: string|number, parent: ISingleValueForm2Parent<T>) {
 		this.html_id = typeof id === 'number' ? id.toString() : id;
-		this.value = args.val ?? null;
+		this.value = args.val ?? null; // The provided value is never undefined.
 		this.value_in_editing = this.value;
 		this.is_required = args.required ?? false;
 		this.errs = ref(args.errs ?? []);
@@ -83,6 +84,21 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		this.set_value_in_editing_without_ui_value(this._create_value_from_ui_value(new_ui_value_in_editing));
 	}
 	
+	public set_value_in_editing(new_value_in_editing: T|null): void {
+		this.ui_value_in_editing.value = this.create_ui_value_from_value(new_value_in_editing);
+		this.set_value_in_editing_without_ui_value(new_value_in_editing);
+	}
+	
+	public set_validate(validate: (value_in_editing: T|null|undefined) => Promise<string[]>): void {
+		this._validate = validate;
+		this.refresh();
+	}
+	
+	private set_value_in_editing_without_ui_value(new_value_in_editing: T|null|undefined): void {
+		this.value_in_editing = new_value_in_editing;
+		this.refresh();
+	}
+	
 	public async is_valid(): Promise<boolean> {
 		// TODO still return true, if the user had never touched/focused the field
 		if (this.last_validation_state !== undefined) {
@@ -92,6 +108,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 				this.errs.value.push('Pflichtfeld');
 			} else {
 				try {
+					console.log(`Form ${this.html_id}: start validating`)
 					const further_errs: string[] = await this._validate(this.value_in_editing);
 					this.errs.value.push(...further_errs);
 				} catch (e) {
@@ -118,18 +135,6 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		return this.value_in_editing;
 	}
 	
-	public set_value_in_editing(new_value_in_editing: T|null): void {
-		this.ui_value_in_editing.value = this.create_ui_value_from_value(new_value_in_editing);
-		this.set_value_in_editing_without_ui_value(new_value_in_editing);
-	}
-	
-	private set_value_in_editing_without_ui_value(new_value_in_editing: T|null|undefined): void {
-		this.errs.value = [];
-		this.last_validation_state = undefined;
-		this.value_in_editing = new_value_in_editing;
-		this.notify_about_changes();
-	}
-	
 	public get_value(): T {
 		if (this.value === null) {
 			throw new Error("SingleValueForm2::get_value(): val is undefined");
@@ -145,7 +150,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	/**
 	 * return `null`, if the user left absolutely nothing
 	 * 
-	 * return `undefined`, if the user left something, that cannot be converted to a (single) value
+	 * return `undefined`, if the user left something, that cannot be converted to a single and valid value
 	 */
 	protected create_value_from_ui_value(ui_value: U): T|null|undefined {
 		//@ts-expect-error
@@ -161,7 +166,11 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		}
 	}
 	
-	private notify_about_changes(): void {
+	private refresh(): void {
+		console.log(`Form ${this.html_id} refreshed`);
+		this.errs.value = [];
+		this.last_validation_state = undefined;
+		
 		// do NOT wait / fire and forget
 		async () => {
 			this.ui_is_invalid.value = await this.is_valid();

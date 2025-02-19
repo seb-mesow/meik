@@ -1,24 +1,29 @@
-export interface IGetPlacesPaginatedQueryParams {
-	page_number: number,
-	count_per_page: number,
-};
-export interface IGetPlacesPaginated200ResponseData {
-	places: {
-		id: string,
-		name: string,
-	}[],
-	total_count: number,
-};
+export namespace Query {
+	export interface IQueryParams {
+		location_id?: string,
+		page_number?: number,
+		count_per_page?: number,
+	};
+	export interface I200ResponseData {
+		places: { id: string, name: string }[],
+		total_count?: number,
+	};
+}
 
-export type ICreatePlaceRequestData = string; // name
+export namespace Create {
+	export type IRequestData = string; // name
+	export type I200ResponseData = string; // new ID
+	export type I422ResponseData = string[]; // errs
+}
 
-export type ICreatePlace200ResponseData = string; // new ID
-export type ICreatePlace422ResponseData = string[]; // errs
+export namespace Update {
+	export type IRequestData = string; // new name
+	export type I200ResponseData = never;
+	export type I422ResponseData = string[]; // errs
+}
 
-export type IUpdatePlaceRequestData = string; // new name
-export type IUpdatePlace200ResponseData = never;
-export type IUpdatePlace422ResponseData = string[]; // errs
-
-export type IDeletePlaceRequestData = never;
-export type IDeletePlace200ResponseData = never;
-export type IDeletePlace422ResponseData = string[]; // errs
+export namespace Delete {
+	export type IRequestData = never;
+	export type I200ResponseData = never;
+	export type I422ResponseData = string[]; // errs
+}

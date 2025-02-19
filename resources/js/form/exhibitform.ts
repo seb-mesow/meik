@@ -13,6 +13,7 @@ import { StringForm } from "./single/generic/string-form";
 import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
 import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "./single/special/rubric-form";
 import { ILocation, LocationForm } from "./single/special/location-form";
+import { IPlace, IPlaceForm, PlaceForm } from "./single/special/place-form";
 
 export interface IExhibitForm {
 	readonly id?: number;
@@ -22,8 +23,8 @@ export interface IExhibitForm {
 	readonly name: Readonly<UISingleValueForm2>;
 	readonly short_description: Readonly<UISingleValueForm2>;
 	readonly rubric: Readonly<UIGroupSelectForm<IRubric, ICategory>>;
-	readonly location: Readonly<UISelectForm<ILocation|undefined>>;
-	readonly place: Readonly<UISelectForm<string>>;
+	readonly location: Readonly<UISelectForm<ILocation>>;
+	readonly place: Readonly<UISelectForm<IPlace>>;
 	// TODO connected_exhibits
 	
 	// Bestandsdaten
@@ -71,10 +72,6 @@ export interface IExhibitForm {
 	readonly is_saving_button_enabled: Readonly<Ref<boolean>>;
 }
 
-export type IPlace = Readonly<{
-	id: string,
-	name: string,
-}>;
 export type IPreservationState = Readonly<{
 	id: string,
 	name: string,
@@ -103,6 +100,7 @@ export type ILanguage = Readonly<{
 export type ISelectableValues = Readonly<{
 	categories_with_rubrics: ICategoryWithRubrics[],
 	location: ILocation[],
+	initial_places?: IPlace[],
 	preservation_state: IPreservationState[],
 	kind_of_property: IKindOfProperty[],
 	kind_of_acquistion: IKindOfAcquistion[],
@@ -179,7 +177,7 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly short_description: SingleValueForm2<string>;
 	public readonly rubric: ISingleValueForm2<IRubric> & UIGroupSelectForm<IRubric, ICategory>
 	public readonly location: ISingleValueForm2<ILocation> & UISelectForm<ILocation>;
-	public readonly place: SelectForm<string>;
+	public readonly place: IPlaceForm & UISelectForm<IPlace>;
 	// TODO connected_exhibits
 
 	// Bestandsdaten
@@ -281,8 +279,11 @@ export class ExhibitForm implements IExhibitForm {
 			val: this.determinate_selectable_value_from_id(args.data?.location_id ?? '', this.selectable_values.location),
 			required: true,
 			selectable_locations: args.aux.selectable_values.location,
-			on_change(form) {
-				
+			on_change: async (form) => {
+				if (form instanceof LocationForm && form.get_value_in_editing()) {
+					const selectable_places: IPlace[] = await form.get_all_places_in_value_in_editing();
+					this.place.set_selectable_places(selectable_places);
+				}
 			},
 			validate: async (value_in_editing): Promise<string[]> => {
 				if (value_in_editing === undefined) {
@@ -292,19 +293,17 @@ export class ExhibitForm implements IExhibitForm {
 			},
 		}, 'location', this.multiple_value_form);
 		
-		this.place = new SelectForm<string>({
-			val: args.data?.place_id ?? '',
+		let provided_place = null;
+		if (args.data?.place_id) {
+			if (!this.selectable_values.initial_places) {
+				throw new Error("Assertation failed: this.selectable_values.initial_places is not defined, despite a place_id is present");
+			}
+			provided_place = this.determinate_selectable_value_from_id(args.data.place_id, this.selectable_values.initial_places);
+		}
+		this.place = new PlaceForm({
+			val: provided_place,
 			required: true,
-			get_shown_suggestions(query: string): Promise<string[]> {
-				return Promise.resolve([
-					'Place 1',
-					'Place 2',
-					'Place 3',
-				])
-			},
-			validate(value_in_editing): Promise<string[]> {
-				throw new Error("not implemented");
-			},
+			initial_selectable_places: args.aux.selectable_values.initial_places,
 		}, 'place', this.multiple_value_form);
 		
 		// TODO connected_exhibits
@@ -606,7 +605,7 @@ export class ExhibitForm implements IExhibitForm {
 				purchasing_price: this.acquistion_info.purchasing_price.get_value()
 			},
 			kind_of_property_id: this.kind_of_property.get_value().id,
-			place_id: this.place.get_value(),
+			place_id: this.place.get_value().id,
 			rubric_id: this.rubric.get_value().id,
 			// TODO
 			conntected_exhibit_ids: [],

@@ -56,11 +56,13 @@ final class RubricRepository
 	 *     total_count: int
 	 * }
 	 */
-	public function query(?string $category_id, ?int $page_number, ?int $count_per_page): array
+	public function query(?string $category_id = null, ?int $page_number = null, ?int $count_per_page = null): array
 	{
-		$client = $this->client
-			->key($category_id)
-			->reduce(false);
+		$client = $this->client->reduce(false);
+		
+		if ($category_id !== null) {
+			$client = $client->key($category_id);
+		}
 		
 		if ($page_number !== null) {
 			assert($count_per_page !== null);
@@ -83,7 +85,7 @@ final class RubricRepository
 		}
 		
 		$ret = [ 'rubrics' => $rubrics ];
-		if ($total_count) {
+		if (isset($total_count)) {
 			$ret['total_count'] = $total_count;
 		}
 		return $ret;

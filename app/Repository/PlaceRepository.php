@@ -62,10 +62,12 @@ final class PlaceRepository
 	 *     total_count: int
 	 * }
 	 */
-	public function query(?string $location_id, ?int $page_number, ?int $count_per_page): array {
-		$client = $this->client
-			->key($location_id)
-			->reduce(false);
+	public function query(?string $location_id = null, ?int $page_number = null, ?int $count_per_page = null): array {
+		$client = $this->client->reduce(false);
+		
+		if ($location_id !== null) {
+			$client = $client->key($location_id);
+		}
 		
 		if ($page_number !== null) {
 			assert($count_per_page !== null);
@@ -86,7 +88,7 @@ final class PlaceRepository
 		$total_count = $response->rows[0]?->value ?? 0;
 		
 		$ret = [ 'places' => $places ];
-		if ($total_count) {
+		if (isset($total_count)) {
 			$ret['total_count'] = $total_count;
 		}
 		return $ret;

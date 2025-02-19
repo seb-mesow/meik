@@ -341,14 +341,14 @@ class ExhibitController extends Controller
 		$all_categories_with_rubrics = Category::cases();
 		$all_categories_with_rubrics = array_map(static function (Category $category) use ($_this): array {
 			// TODO optimierbar
-			$all_rubrics = $_this->rubric_repository->get_all_in_category($category->get_id());
+			$result = $_this->rubric_repository->query($category->get_id());
 			return [
 				'id' => $category->get_id(),
 				'name' => $category->get_pretty_name(),
 				'rubrics' => array_map(static fn(Rubric $rubric): array => [
 					'id' => $rubric->get_id(),
 					'name' => $rubric->get_name(),
-				], $all_rubrics),
+				], $result['rubrics']),
 			];
 		}, $all_categories_with_rubrics);
 		
