@@ -7,7 +7,7 @@ import {
 } from "@/types/ajax/place";
 import { ToastServiceMethods } from "primevue/toastservice";
 import { ConfirmationServiceMethods } from "primevue/confirmationservice";
-import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./single/single-value-form2";
+import { ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./single/generic/single-value-form2";
 import { route } from "ziggy-js";
 
 export interface IPlaceForm {

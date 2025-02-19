@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="U">
-import { UISingleValueForm2 } from '@/form/single/single-value-form2';
+import { UISingleValueForm2 } from '@/form/single/generic/single-value-form2';
 
 const props = defineProps<{
 	form: UISingleValueForm2<U>,

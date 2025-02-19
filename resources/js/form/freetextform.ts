@@ -9,7 +9,7 @@ import {
 	ICreateFreeText422ResponseData,
 } from "@/types/ajax/freetext";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { ISingleValueForm, ISingleValueFormConstructorArgs, SingleValueForm } from "./single/single-value-form";
+import { ISingleValueForm, ISingleValueFormConstructorArgs, SingleValueForm } from "./single/generic/single-value-form";
 import { route } from "ziggy-js";
 
 export interface IFreeTextForm {
