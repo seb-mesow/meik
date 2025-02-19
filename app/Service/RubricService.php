@@ -25,16 +25,14 @@ final class RubricService {
 	 *     total_count: int,
 	 * }
 	 */
-	public function determinate_props_of_multiple_paginated(string $category_id, int $page_number, int $count_per_page = self::DEFAULT_COUNT_PER_PAGE): array {
-		['rubrics' => $rubrics, 'total_count' => $total_count] =
-			$this->rubric_repository->get_rubrics_paginated($category_id, $page_number, $count_per_page);
+	public function query(?string $category_id = null, ?int $page_number = null, ?int $count_per_page = null): array {
+		$count_per_page ??= self::DEFAULT_COUNT_PER_PAGE;
 		
-		$rubric_props =  array_map(static fn(Rubric $rubric): array => self::determinate_props($rubric), $rubrics);
+		$result = $this->rubric_repository->query($category_id, $page_number, $count_per_page);
 		
-		return [
-			'rubrics' => $rubric_props,
-			'total_count' => $total_count
-		];
+		$result['rubrics'] =  array_map(static fn(Rubric $rubric): array => self::determinate_props($rubric), $result['rubrics']);
+		
+		return $result;
 	}
 	
 	/**

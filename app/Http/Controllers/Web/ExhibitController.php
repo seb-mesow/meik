@@ -15,6 +15,7 @@ use App\Models\Location;
 use App\Models\Parts\AcquisitionInfo;
 use App\Models\Parts\FreeText;
 use App\Models\Parts\Price;
+use App\Models\Place;
 use App\Models\Rubric;
 use App\Repository\ExhibitRepository;
 use App\Repository\LocationRepository;
@@ -88,19 +89,11 @@ use Inertia\Response as InertiaResponse;
  *     name: string,
  *     rubrics: IRubrics[],
  * }
- * @phpstan-type ICurrency array{
+ * @phpstan-type ILocation array{
  *     id: string,
  *     name: string,
  * }
- * @phpstan-type IKindOfAcquistion array{
- *     id: string,
- *     name: string,
- * }
- * @phpstan-type IKindOfProperty array{
- *     id: string,
- *     name: string,
- * }
- * @phpstan-type ILanguage array{
+ * @phpstan-type IPlace array{
  *     id: string,
  *     name: string,
  * }
@@ -108,7 +101,19 @@ use Inertia\Response as InertiaResponse;
  *     id: string,
  *     name: string,
  * }
- * @phpstan-type ILocation array{
+ * @phpstan-type IKindOfProperty array{
+ *     id: string,
+ *     name: string,
+ * }
+ * @phpstan-type IKindOfAcquistion array{
+ *     id: string,
+ *     name: string,
+ * }
+ * @phpstan-type ICurrency array{
+ *     id: string,
+ *     name: string,
+ * }
+ * @phpstan-type ILanguage array{
  *     id: string,
  *     name: string,
  * }
@@ -116,6 +121,7 @@ use Inertia\Response as InertiaResponse;
  * @phpstan-type SelectableValues array{
  *     categories_with_rubrics: ICategoryWithRubrics[],
  *     location: ILocation[],
+ *     inital_places?: IPlace[],
  *     preservation_state: IPreservationState[],
  *     kind_of_property: IKindOfProperty[],
  *     kind_of_acquistion: IKindOfAcquistion[],
@@ -160,12 +166,13 @@ class ExhibitController extends Controller
 	public function details(int $exhibit_id): InertiaResponse
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
-		$form = $this->create_form($exhibit);
+		$place = $this->place_repository->get($exhibit->get_place_id());
+		$form = $this->create_form($exhibit, $place);
 		
 		$rubric = $this->rubric_repository->get($exhibit->get_rubric_id());
 		$category = $rubric->get_category();
 		
-		$selectable_values = $this->determinate_selectable_values();
+		$selectable_values = $this->determinate_selectable_values($place->get_location_id());
 		
 		return Inertia::render('Exhibit/Exhibit', [
 			'selectable_values' => $selectable_values,
@@ -241,13 +248,12 @@ class ExhibitController extends Controller
 	/**
 	 * @return ExhibitProps
 	 */
-	private function create_form(Exhibit $exhibit): array
+	private function create_form(Exhibit $exhibit, Place $place): array
 	{
 		$free_texts = $exhibit?->get_free_texts() ?? [];
 		$free_text_forms = array_map(static fn(FreeText $free_text): array =>
 			self::create_free_text_form($free_text), $free_texts);
 		
-		$place = $this->place_repository->get($exhibit->get_place_id());
 		$acquistion_info = $exhibit->get_acquistion_info();
 		$original_price = $exhibit->get_original_price();
 		
@@ -327,14 +333,15 @@ class ExhibitController extends Controller
 	}
 	
 	/**
+	 * @param ?string $location_id 
 	 * @return SelectableValues
 	 */
-	private function determinate_selectable_values(): array {
+	private function determinate_selectable_values(?string $location_id = null): array {
 		$_this = $this;
 		$all_categories_with_rubrics = Category::cases();
 		$all_categories_with_rubrics = array_map(static function (Category $category) use ($_this): array {
 			// TODO optimierbar
-			$all_rubrics = $_this->rubric_repository->get_all_by_category_id($category->get_id());
+			$all_rubrics = $_this->rubric_repository->get_all_in_category($category->get_id());
 			return [
 				'id' => $category->get_id(),
 				'name' => $category->get_pretty_name(),
@@ -350,6 +357,14 @@ class ExhibitController extends Controller
 			'id' => $location->get_id(),
 			'name' => $location->get_name(),
 		], $all_locations);
+		
+		if ($location_id) {
+			$all_initial_places = $this->place_repository->get_all_in_location($location_id);
+			$all_initial_places = array_map(static fn(Place $place): array => [
+				'id' => $place->get_id(),
+				'name' => $place->get_name(),
+			], $all_initial_places);
+		}
 		
 		$all_preservation_states = PreservationState::cases();
 		$all_preservation_states = array_map(static fn(PreservationState $state): array => [
@@ -381,7 +396,7 @@ class ExhibitController extends Controller
 			'name' => $language->get_name(),
 		], $all_languages);
 		
-		return [
+		$selectable_values = [
 			'categories_with_rubrics' => $all_categories_with_rubrics,
 			'location' => $all_locations,
 			'preservation_state' => $all_preservation_states,
@@ -390,5 +405,9 @@ class ExhibitController extends Controller
 			'currency' => $all_currencies,
 			'language' => $all_languages,
 		];
+		if ($all_initial_places) {
+			$selectable_values['initial_places'] = $all_initial_places;
+		}
+		return $selectable_values;
 	}
 }

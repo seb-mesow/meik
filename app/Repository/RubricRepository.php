@@ -51,40 +51,42 @@ final class RubricRepository
 	}
 	
 	/**
-	 * @return Rubric[]
+	 * @return array{
+	 *     rubrics: Rubric[],
+	 *     total_count: int
+	 * }
 	 */
-	public function get_all_by_category_id(string $category_id): array
+	public function query(?string $category_id, ?int $page_number, ?int $count_per_page): array
 	{
-		$response = $this->client
+		$client = $this->client
 			->key($category_id)
-			->reduce(false)
-			->include_docs(true)
-			->getView(self::MODEL_TYPE_ID, 'by-category-id');
-		return $this->create_rubrics_from_view_response($response);
-	}
-	
-	public function get_rubrics_paginated(string $category_id, int $page_number, int $count_per_page): array
-	{
-		$response = $this->client
-			->key($category_id)
-			->reduce(false)
-			->limit($count_per_page)
-			->skip($page_number * $count_per_page)
+			->reduce(false);
+		
+		if ($page_number !== null) {
+			assert($count_per_page !== null);
+			$client = $this->client
+				->limit($count_per_page)
+				->skip($page_number * $count_per_page);
+		}
+		
+		// Hinweis: Es ist möglich mehrere Queries auf einmal auszuführen
+		// /{db}/_design/{ddoc}/_view/{view}/queries
+		$response = $client
 			->include_docs(true)
 			->getView(self::MODEL_TYPE_ID, 'by-category-id');
 		$rubrics = $this->create_rubrics_from_view_response($response);
 		
-		$response = $this->client
-			->key($category_id)
-			->limit($count_per_page)
-			->skip($page_number * $count_per_page)
-			->getView(self::MODEL_TYPE_ID, 'by-category-id');
-		$total_count = $response->rows[0]?->value ?? 0;
-
-		return [
-			'rubrics' => $rubrics,
-			'total_count' => $total_count,
-		];
+		if ($page_number !== null) {
+			$response = $client
+				->getView(self::MODEL_TYPE_ID, 'by-category-id');
+			$total_count = $response->rows[0]?->value ?? 0;
+		}
+		
+		$ret = [ 'rubrics' => $rubrics ];
+		if ($total_count) {
+			$ret['total_count'] = $total_count;
+		}
+		return $ret;
 	}
 
 	public function find(string $id): ?Rubric
@@ -183,7 +185,6 @@ final class RubricRepository
 	}
 	
 	/**
-	 * @param RubricDoc[] $docs
 	 * @return Rubric[]
 	 */
 	private function create_rubrics_from_view_response(stdClass $response): array {

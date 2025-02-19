@@ -21,7 +21,7 @@ class PlaceController extends Controller
 	
 	public function overview(string $location_id) {
 		[ 'places' => $places, 'total_count' => $total_count ] = 
-			$this->place_repository->get_paginated($location_id, 0, self::DEFAULT_COUNT_PER_PAGE);
+			$this->place_repository->query($location_id, 0, self::DEFAULT_COUNT_PER_PAGE);
 		
 		$places_json = array_map(static fn(Place $place): array => [
 			'id' => $place->get_id(),

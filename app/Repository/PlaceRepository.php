@@ -45,38 +45,51 @@ final class PlaceRepository
 	}
 	
 	/**
+	 * @return Place[]
+	 */
+	public function get_all_in_location(string $location_id): array {
+		$response = $this->client
+			->key($location_id)
+			->reduce(false)
+			->include_docs(true)
+			->getView(self::MODEL_TYPE_ID, 'by-location-id');
+		return $this->create_places_from_view_response($response);
+	}
+	
+	/**
 	 * @return array{
 	 *     places: Place[],
 	 *     total_count: int
 	 * }
 	 */
-	public function get_paginated(string $location_id, int $page_number, int $count_per_page): array {
+	public function query(?string $location_id, ?int $page_number, ?int $count_per_page): array {
+		$client = $this->client
+			->key($location_id)
+			->reduce(false);
+		
+		if ($page_number !== null) {
+			assert($count_per_page !== null);
+			$client = $client
+				->limit($count_per_page)
+				->skip($page_number * $count_per_page);
+		}
+		
 		// Hinweis: Es ist möglich mehrere Queries auf einmal auszuführen
 		// /{db}/_design/{ddoc}/_view/{view}/queries
-		$response = $this->client
-			->key($location_id)
-			->reduce(false)
-			->limit($count_per_page)
-			->skip($page_number * $count_per_page)
+		$response = $client
 			->include_docs(true)
 			->getView(self::MODEL_TYPE_ID, 'by-location-id');
+		$places = $this->create_places_from_view_response($response);
 		
-		$_this = $this;
-		$places = array_map(static function(stdClass $row) use ($_this): Place {
-			return $_this->create_place_from_doc($row->doc);
-		}, $response->rows);
-		
-		$response = $this->client
-			->key($location_id)
-			->limit($count_per_page)
-			->skip($page_number * $count_per_page)
+		$response = $client
 			->getView(self::MODEL_TYPE_ID, 'by-location-id');
 		$total_count = $response->rows[0]?->value ?? 0;
 		
-		return [
-			'places' => $places,
-			'total_count' => $total_count,
-		];
+		$ret = [ 'places' => $places ];
+		if ($total_count) {
+			$ret['total_count'] = $total_count;
+		}
+		return $ret;
 	}
 	
 	public function find(string $id): ?Place {
@@ -158,5 +171,15 @@ final class PlaceRepository
 		$place_doc->name = $place->get_name();
 		$place_doc->location_id = $place->get_location_id();
 		return $place_doc;
+	}
+	
+	/**
+	 * @return Place[]
+	 */
+	private function create_places_from_view_response(stdClass $response): array {
+		$_this = $this;
+		return array_map(static function(stdClass $row) use ($_this): Place {
+			return $_this->create_place_from_doc($row->doc);
+		}, $response->rows);
 	}
 }

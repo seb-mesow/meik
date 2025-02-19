@@ -6,31 +6,29 @@ namespace App\Http\Controllers\AJAX;
 use App\Http\Controllers\Controller;
 use App\Models\Place;
 use App\Repository\PlaceRepository;
+use App\Service\PlaceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PlaceAJAXController extends Controller
 {
 	public function __construct(
-		private readonly PlaceRepository $place_repository
+		private readonly PlaceRepository $place_repository,
+		private readonly PlaceService $place_service,
 	) {}
 	
-	public function get_paginated(Request $request, string $location_id): JsonResponse {
-		$page_number = (int) $request->query('page_number');
-		$count_per_page = (int) $request->query('count_per_page');
+	public function query(Request $request): JsonResponse {
+		$location_id = $request->query('location_id');
+		$page_number = $request->query('page_number');
+		$count_per_page = $request->query('count_per_page');
 		
-		[ 'places' => $places, 'total_count' => $total_count ] = 
-			$this->place_repository->get_paginated($location_id, $page_number, $count_per_page);
+		$location_id = is_string($location_id) ? trim($location_id) : null;
+		$page_number = is_string($page_number) ? (int) $page_number : null;
+		$count_per_page = is_string($count_per_page) ? (int) $count_per_page : null;
 		
-		$places_json = array_map(static fn(Place $place): array => [
-			'id' => $place->get_id(),
-			'name' => $place->get_name(),
-		] , $places);
+		$result = $this->place_service->query($location_id, $page_number, $count_per_page);
 		
-		return response()->json([
-			'places' => $places_json,
-			'total_count' => $total_count
-		]);
+		return response()->json($result);
 	}
 	
 	public function create(Request $request, string $location_id): JsonResponse {

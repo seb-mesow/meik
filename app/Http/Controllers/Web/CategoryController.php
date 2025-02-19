@@ -29,7 +29,7 @@ class CategoryController extends Controller
 	public function details(string $category_id): InertiaResponse {
 		$category = Category::from($category_id);
 		
-		['rubrics' => $rubric_props ] = $this->rubric_service->determinate_props_of_multiple_paginated($category_id, 0);
+		['rubrics' => $rubric_props ] = $this->rubric_service->query($category_id, 0);
 		
 		return Inertia::render('Category/Category', [
 			'category' => [
