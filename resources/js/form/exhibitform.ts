@@ -12,6 +12,7 @@ import * as DateUtil from "@/util/date";
 import { StringForm } from "./single/generic/string-form";
 import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
 import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "./single/special/rubric-form";
+import { ILocation, LocationForm } from "./single/special/location-form";
 
 export interface IExhibitForm {
 	readonly id?: number;
@@ -70,10 +71,6 @@ export interface IExhibitForm {
 	readonly is_saving_button_enabled: Readonly<Ref<boolean>>;
 }
 
-export type ILocation = Readonly<{
-	id: string,
-	name: string,
-}>;
 export type IPlace = Readonly<{
 	id: string,
 	name: string,
@@ -181,7 +178,7 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly name: Readonly<SingleValueForm2<string>>;
 	public readonly short_description: SingleValueForm2<string>;
 	public readonly rubric: ISingleValueForm2<IRubric> & UIGroupSelectForm<IRubric, ICategory>
-	public readonly location: SelectForm<ILocation>;
+	public readonly location: ISingleValueForm2<ILocation> & UISelectForm<ILocation>;
 	public readonly place: SelectForm<string>;
 	// TODO connected_exhibits
 
@@ -280,17 +277,18 @@ export class ExhibitForm implements IExhibitForm {
 			},
 		}, 'rubric', this.multiple_value_form);
 		
-		this.location = new SelectForm<ILocation>({
+		this.location = new LocationForm({
 			val: this.determinate_selectable_value_from_id(args.data?.location_id ?? '', this.selectable_values.location),
 			required: true,
+			selectable_locations: args.aux.selectable_values.location,
 			on_change(form) {
 				
 			},
-			get_shown_suggestions: (query: string): Promise<ILocation[]> => {
-				return this.find_suggestions_in_name(query, this.selectable_values.location);
-			},
-			validate(value_in_editing): Promise<string[]> {
-				throw new Error("not implemented");
+			validate: async (value_in_editing): Promise<string[]> => {
+				if (value_in_editing === undefined) {
+					return ['Bitte einen auswählbaren Standort angeben'];
+				}
+				return [];
 			},
 		}, 'location', this.multiple_value_form);
 		
