@@ -38,14 +38,10 @@ export class SelectForm<O = string> extends SingleValueForm2<O, O|string|undefin
 		this.optionLabel = args.optionLabel;
 	}
 	
-	// public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
-	// 	// useless spread operator required, because of
-	// 	// https://github.com/primefaces/primevue/issues/5601
-	// 	this.shown_suggestions.value = [...(await this.get_shown_suggestions(event.query))];
-	// }
-	
 	public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
-		this.shown_suggestions.value = await this.get_shown_suggestions(event.query);
+		// useless spread operator required, because of
+		// https://github.com/primefaces/primevue/issues/5601
+		this.shown_suggestions.value = [...(await this.get_shown_suggestions(event.query))];
 	}
 	
 	public async on_before_show(): Promise<void> {

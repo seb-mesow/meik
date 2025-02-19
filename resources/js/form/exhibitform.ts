@@ -311,6 +311,7 @@ export class ExhibitForm implements IExhibitForm {
 		// Bestandsdaten
 		this.preservation_state = new SelectForm<IPreservationState>({
 			val: this.determinate_selectable_value_from_id(args.data?.preservation_state_id ?? '', this.selectable_values.preservation_state),
+			optionLabel: 'name',
 			required: true,
 			get_shown_suggestions: (query: string): Promise<IPreservationState[]> => {
 				return this.find_suggestions_in_name(query, this.selectable_values.preservation_state);
@@ -334,6 +335,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		this.kind_of_property = new SelectForm<IKindOfProperty>({
 			val: this.determinate_selectable_value_from_id(args.data?.kind_of_property_id ?? '', this.selectable_values.kind_of_property),
+			optionLabel: 'name',
 			required: true,
 			get_shown_suggestions: (query: string): Promise<IKindOfProperty[]> => this.find_suggestions_in_name(query, this.selectable_values.kind_of_property),
 			validate: (value_in_editing) => new Promise((resolve) => {
@@ -370,6 +372,7 @@ export class ExhibitForm implements IExhibitForm {
 			
 			kind: new SelectForm<IKindOfAcquistion>({
 				val: this.determinate_selectable_value_from_id(args.data?.acquistion_info.kind_id ?? '', this.selectable_values.kind_of_acquistion),
+				optionLabel: 'name',
 				get_shown_suggestions: (query: string): Promise<IKindOfAcquistion[]> => this.find_suggestions_in_name(query, this.selectable_values.kind_of_acquistion),
 				validate: (value_in_editing) => new Promise((resolve) => {
 					if (value_in_editing) {
@@ -442,6 +445,7 @@ export class ExhibitForm implements IExhibitForm {
 			
 			language: new SelectForm<ILanguage>({
 				val: this.determinate_selectable_value_from_id(book_info?.language_id ?? '', this.selectable_values.language),
+				optionLabel: 'name',
 				required: true,
 				get_shown_suggestions: (query: string): Promise<ILanguage[]> => this.find_suggestions_in_name(query, this.selectable_values.language),
 				validate: (value_in_editing) => new Promise((resolve) => {
