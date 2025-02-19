@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Enum\Category;
 use App\Models\Enum\Currency;
-use App\Models\Enum\KindOfAcquistion;
+use App\Models\Enum\KindOfAcquisition;
 use App\Models\Enum\KindOfProperty;
 use App\Models\Enum\Language;
 use App\Models\Enum\PreservationState;
@@ -52,7 +52,7 @@ use Inertia\Response as InertiaResponse;
  *         currency_id: string,
  *     },
  *     current_value: number,
- *     acquistion_info: array{
+ *     acquisition_info: array{
  *         date: string,
  *         source: string,
  *         kind_id: string,
@@ -105,7 +105,7 @@ use Inertia\Response as InertiaResponse;
  *     id: string,
  *     name: string,
  * }
- * @phpstan-type IKindOfAcquistion array{
+ * @phpstan-type IKindOfAcquisition array{
  *     id: string,
  *     name: string,
  * }
@@ -124,7 +124,7 @@ use Inertia\Response as InertiaResponse;
  *     inital_places?: IPlace[],
  *     preservation_state: IPreservationState[],
  *     kind_of_property: IKindOfProperty[],
- *     kind_of_acquistion: IKindOfAcquistion[],
+ *     kind_of_acquisition: IKindOfAcquisition[],
  *     currency: ICurrency[],
  *     language: ILanguage[],
  * }
@@ -235,7 +235,7 @@ class ExhibitController extends Controller
 			acquisition_info: new AcquisitionInfo(
 				date: Carbon::create(year: 2025, month: 2, day: 8),
 				source: 'HERKUNFT',
-				kind: KindOfAcquistion::FIND,
+				kind: KindOfAcquisition::FIND,
 				purchasing_price: 99999,
 			),
 			kind_of_property: KindOfProperty::LOAN,
@@ -254,7 +254,7 @@ class ExhibitController extends Controller
 		$free_text_forms = array_map(static fn(FreeText $free_text): array =>
 			self::create_free_text_form($free_text), $free_texts);
 		
-		$acquistion_info = $exhibit->get_acquistion_info();
+		$acquisition_info = $exhibit->get_acquisition_info();
 		$original_price = $exhibit->get_original_price();
 		
 		$exhibit_form = [
@@ -274,11 +274,11 @@ class ExhibitController extends Controller
 			'kind_of_property_id' => $exhibit->get_kind_of_property()->value,
 			
 			// Zugangsdaten
-			'acquistion_info' => [
-				'date' => $this->date_time_util->format_as_iso_date($acquistion_info->get_date()),
-				'source'=> $acquistion_info->get_source(),
-				'kind_id' => $acquistion_info->get_kind()->value,
-				'purchasing_price' => $acquistion_info->get_purchasing_price(),
+			'acquisition_info' => [
+				'date' => $this->date_time_util->format_as_iso_date($acquisition_info->get_date()),
+				'source'=> $acquisition_info->get_source(),
+				'kind_id' => $acquisition_info->get_kind()->value,
+				'purchasing_price' => $acquisition_info->get_purchasing_price(),
 			],
 			
 			// Geräte- und Buchinformationen
@@ -378,11 +378,11 @@ class ExhibitController extends Controller
 			'name' => $kind->get_name(),
 		], $all_kinds_of_property);
 		
-		$all_kinds_of_acquistion = KindOfAcquistion::cases();
-		$all_kinds_of_acquistion = array_map(static fn(KindOfAcquistion $kind): array => [
+		$all_kinds_of_acquisition = KindOfAcquisition::cases();
+		$all_kinds_of_acquisition = array_map(static fn(KindOfAcquisition $kind): array => [
 			'id' => $kind->value,
 			'name' => $kind->get_name(),
-		], $all_kinds_of_acquistion);
+		], $all_kinds_of_acquisition);
 		
 		$all_currencies = Currency::cases();
 		$all_currencies = array_map(static fn(Currency $currency): array => [
@@ -401,7 +401,7 @@ class ExhibitController extends Controller
 			'location' => $all_locations,
 			'preservation_state' => $all_preservation_states,
 			'kind_of_property' => $all_kinds_of_property,
-			'kind_of_acquistion' => $all_kinds_of_acquistion,
+			'kind_of_acquisition' => $all_kinds_of_acquisition,
 			'currency' => $all_currencies,
 			'language' => $all_languages,
 		];

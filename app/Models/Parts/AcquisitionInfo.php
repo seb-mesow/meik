@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Models\Parts;
 
-use App\Models\Enum\KindOfAcquistion;
+use App\Models\Enum\KindOfAcquisition;
 use Illuminate\Support\Carbon;
 use JMS\Serializer\Annotation\Expose;
 
@@ -37,7 +37,7 @@ class AcquisitionInfo
 	 * 
 	 * @Accessor(getter="get_kind")
 	 */
-	private ?KindOfAcquistion $kind;
+	private ?KindOfAcquisition $kind;
 	
 	/**
 	 * Kaufpreis in Cent (intern)
@@ -51,7 +51,7 @@ class AcquisitionInfo
 	public function __construct(
 		Carbon $date,
 		string $source,
-		KindOfAcquistion $kind,
+		KindOfAcquisition $kind,
 		int $purchasing_price,
 	) {
 		$this->date = $date;
@@ -76,11 +76,11 @@ class AcquisitionInfo
 		$this->source = $source;
 	}
 	
-	public function get_kind(): KindOfAcquistion {
+	public function get_kind(): KindOfAcquisition {
 		return $this->kind;
 	}
 	
-	public function set_kind(KindOfAcquistion $kind): void {
+	public function set_kind(KindOfAcquisition $kind): void {
 		$this->kind = $kind;
 	}
 	

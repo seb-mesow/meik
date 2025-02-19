@@ -6,7 +6,7 @@ namespace App\Http\Controllers\AJAX;
 
 use App\Http\Controllers\Controller;
 use App\Models\Enum\Currency;
-use App\Models\Enum\KindOfAcquistion;
+use App\Models\Enum\KindOfAcquisition;
 use App\Models\Enum\KindOfProperty;
 use App\Models\Enum\Language;
 use App\Models\Enum\PreservationState;
@@ -48,7 +48,7 @@ class ExhibitAJAXController extends Controller
 			'currency_id' => (string) $request->input('original_price.currency_id'),
 		];
 		$current_value = (int) $request->input('current_value');
-		$acquistion_info_arr = $request->input('acquistion_info'); // alle Kind-Elemente sind z.Z. Strings.
+		$acquisition_info_arr = $request->input('acquisition_info'); // alle Kind-Elemente sind z.Z. Strings.
 		$kind_of_property_id = (string) $request->input('kind_of_property_id');
 		$device_info_arr = $request->input('device_info', null); // alle Kind-Elemente sind z.Z. Strings.
 		$book_info_arr = $request->input('book_info', null); // alle Kind-Elemente sind z.Z. Strings.
@@ -62,11 +62,11 @@ class ExhibitAJAXController extends Controller
 			amount: $original_price_arr['amount'],
 			currency: Currency::from($original_price_arr['currency_id']),
 		);
-		$acquistion_info = new AcquisitionInfo(
-			date: $this->date_time_util->parse_iso_date($acquistion_info_arr['date']),
-			source: $acquistion_info_arr['source'],
-			kind: KindOfAcquistion::from($acquistion_info_arr['kind_id']),
-			purchasing_price: $acquistion_info_arr['purchasing_price'],
+		$acquisition_info = new AcquisitionInfo(
+			date: $this->date_time_util->parse_iso_date($acquisition_info_arr['date']),
+			source: $acquisition_info_arr['source'],
+			kind: KindOfAcquisition::from($acquisition_info_arr['kind_id']),
+			purchasing_price: $acquisition_info_arr['purchasing_price'],
 		);
 		$kind_of_property = KindOfProperty::from($kind_of_property_id);
 		if ($device_info_arr === null) {
@@ -97,7 +97,7 @@ class ExhibitAJAXController extends Controller
 			$exhibit->set_preservation_state($preservation_state);
 			$exhibit->set_original_price($original_price);
 			$exhibit->set_current_value($current_value);
-			$exhibit->set_acquistion_info($acquistion_info);
+			$exhibit->set_acquisition_info($acquisition_info);
 			$exhibit->set_kind_of_property($kind_of_property);
 			if ($device_info) {
 				$exhibit->set_device_info($device_info);
@@ -118,7 +118,7 @@ class ExhibitAJAXController extends Controller
 				preservation_state: $preservation_state,
 				original_price: $original_price,
 				current_value: $current_value,
-				acquisition_info: $acquistion_info,
+				acquisition_info: $acquisition_info,
 				kind_of_property: $kind_of_property,
 				device_info: $device_info,
 				book_info: $book_info,

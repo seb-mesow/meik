@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Enum\Currency;
-use App\Models\Enum\KindOfAcquistion;
+use App\Models\Enum\KindOfAcquisition;
 use App\Models\Enum\KindOfProperty;
 use App\Models\Enum\Language;
 use App\Models\Enum\PreservationState;
@@ -297,7 +297,7 @@ class ExhibitSeeder extends Seeder
 			acquisition_info: $acquisition_info ?? new AcquisitionInfo(
 				date: Carbon::create(fake()->dateTimeBetween(Carbon::parse('1930-01-01 00:00:00'))),
 				source: fake()->randomElement(self::SOURCES),
-				kind: fake()->randomElement(KindOfAcquistion::cases()),
+				kind: fake()->randomElement(KindOfAcquisition::cases()),
 				purchasing_price: fake()->numberBetween(1,1000000),
 			),
 			kind_of_property: $kind_of_property ?? fake()->randomElement(KindOfProperty::cases()),
