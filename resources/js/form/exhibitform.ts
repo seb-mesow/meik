@@ -408,25 +408,36 @@ export class ExhibitForm implements IExhibitForm {
 			val: args.data?.manufacture_date
 		}, 'manufacture_date', this.common_fields);
 		
+		const original_price_currency_not_validate = async () => [];
+		const original_price_currency_validate = async (value_in_editing: ICurrency|null|undefined) => {
+			if (value_in_editing) {
+				if (this.selectable_values.currency.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
+					return [];
+				} else {
+					return ['Bitte eine auswählbare Währung angeben'];
+				}
+			} else {
+				return ['Bitte eine Währung angeben'];
+			}
+		};
+		
 		this.original_price = {
 			amount: new SingleValueForm2<number, number>({
-				val: args.data?.original_price?.amount ?? 0
+				val: args.data?.original_price?.amount,
+				on_change: (form) => {
+					const value_in_editing = form.get_value_in_editing();
+					if (value_in_editing === null || value_in_editing == undefined) {
+						this.original_price.currency.set_validate(original_price_currency_not_validate);
+					} else {
+						this.original_price.currency.set_validate(original_price_currency_validate);
+					}
+				},
 			}, 'original_price_amount', this.common_fields),
 			
 			currency: new SelectForm<ICurrency>({
-				val: this.determinate_selectable_value_from_id(args.data?.original_price?.currency_id ?? '', this.selectable_values.currency),
+				val: this.determinate_selectable_value_from_id(args.data?.original_price?.currency_id, this.selectable_values.currency),
 				get_shown_suggestions: (query: string): Promise<ICurrency[]> => this.find_suggestions_in_id(query, this.selectable_values.currency),
-				validate: (value_in_editing) => new Promise((resolve) => {
-					if (value_in_editing) {
-						if (this.selectable_values.currency.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
-							resolve([]);
-						} else {
-							resolve(['Bitte eine auswählbare Währung angeben']);
-						}
-					} else {
-						resolve(['Bitte eine Währung angeben']);
-					}
-				}),
+				validate: (args.data?.original_price?.amount === undefined) ? original_price_currency_not_validate : original_price_currency_validate,
 			}, 'original_price_currency', this.common_fields),
 		};
 		
@@ -513,12 +524,11 @@ export class ExhibitForm implements IExhibitForm {
 		return first_valid && second_valid;
 	}
 	
-	private determinate_selectable_value_from_id<T extends { id: string }>(id: string, selectable_values: T[]): T|undefined {
-		const found = selectable_values.find((selectable_value: T): boolean => selectable_value.id === id);
-		// if (!found) {
-		// 	throw new Error(`invalid ID '${id}' for a selectable value`);
-		// } 
-		return found;
+	private determinate_selectable_value_from_id<T extends { id: string }>(id: string|undefined, selectable_values: T[]): T|undefined {
+		if (id === undefined) {
+			return undefined;
+		}
+		return selectable_values.find((selectable_value: T): boolean => selectable_value.id === id);
 	};
 	
 	private find_suggestions_in_name<T extends { name: string }>(query: string, selectable_values: T[]): Promise<T[]> {

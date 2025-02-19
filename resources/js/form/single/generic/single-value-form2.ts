@@ -1,4 +1,5 @@
 import { ref, Ref } from "vue";
+import { Mutex, MutexInterface } from 'async-mutex';
 
 export interface UISingleValueForm2<U = string|undefined> {
 	readonly html_id: string;
@@ -62,6 +63,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	private readonly parent: ISingleValueForm2Parent<T>;
 	
 	private last_validation_state: boolean|undefined = undefined;
+	private is_valid_mutex: MutexInterface = new Mutex();
 	
 	public constructor(args: ISingleValueForm2ConstructorArgs<T>, id: string|number, parent: ISingleValueForm2Parent<T>) {
 		this.html_id = typeof id === 'number' ? id.toString() : id;
@@ -102,26 +104,29 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	}
 	
 	public async is_valid(): Promise<boolean> {
-		// TODO still return true, if the user had never touched/focused the field
-		if (this.last_validation_state !== undefined) {
-			return this.last_validation_state;
-		} else {
-			if (this.is_required && this.value_in_editing === null) {
-				this.errs.value.push('Pflichtfeld');
+		return this.is_valid_mutex.runExclusive(async () => {
+			// TODO still return true, if the user had never touched/focused the field
+			if (this.last_validation_state !== undefined) {
+				return this.last_validation_state;
 			} else {
-				try {
-					console.log(`Form ${this.html_id}: start validating`)
-					const further_errs: string[] = await this._validate(this.value_in_editing);
-					this.errs.value.push(...further_errs);
-				} catch (e) {
-					this.handle_exceptions(e);
-					// throw errors have priority over returned errors
+				if (this.is_required && this.value_in_editing === null) {
+					this.errs.value.push('Pflichtfeld');
+				} else {
+					try {
+						console.log(`Form ${this.html_id}: start validating ...`)
+						const further_errs: string[] = await this._validate(this.value_in_editing);
+						console.log(`Form ${this.html_id}: ended validating ...`)
+						this.errs.value.push(...further_errs);
+					} catch (e) {
+						this.handle_exceptions(e);
+						// throw errors have priority over returned errors
+					}
 				}
+				const is_valid = this.errs.value.length < 1;
+				this.last_validation_state = is_valid;
+				return is_valid;
 			}
-			const is_valid = this.errs.value.length < 1;
-			this.last_validation_state = is_valid;
-			return is_valid;
-		}
+		});
 	}
 	
 	public commit(): void {
@@ -169,7 +174,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	}
 	
 	private refresh(inner: () => void): void {
-		console.log(`Form ${this.html_id} refreshed`);
+		console.log(`Form ${this.html_id} refreshing`);
 		this.errs.value = [];
 		
 		inner();
@@ -179,7 +184,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		async () => {
 			this.ui_is_invalid.value = await this.is_valid();
 		}
-		this._on_change(this); 
+		this._on_change(this);
 		this.parent.on_child_change(this);
 	}
 	
