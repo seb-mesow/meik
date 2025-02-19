@@ -13,16 +13,18 @@ let dark_mode: DarkMode;
 onBeforeMount(() => {
 	dark_mode = new DarkMode();
 });
-
 </script>
 
 <template>
 	<!-- Hier keine Popups, Toasts, DynamicDialog usw. einfügen! -->
 	<!-- Stattdessen diese nur in solchen Seiten einfügen, wo sie auch benötigt werden -->
 	<div class="flex">
+		
 		<NavBar />
+		
 		<!-- Page Content -->
 		<div class="flex-grow">
+			
 			<!-- Page Heading -->
 			<header class="bg-white h-fit min-h-16 shadow dark:bg-gray-800 items-center flex">
 				<slot name="header"/>
@@ -31,9 +33,11 @@ onBeforeMount(() => {
 					<i id="dark_mode_icon" class="pi pi-sun"/>
 				</Button>
 			</header>
-			<main class="p-4 h-full" :class="{ 'overflow-y-hidden': disable_overflow }">
+			
+			<main class="p-4 h-full">
 				<slot />
 			</main>
+			
 		</div>
 	</div>
 </template>

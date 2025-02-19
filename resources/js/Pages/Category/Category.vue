@@ -101,28 +101,28 @@ const load_rubrics = (): void => {
 }
 
 const ajax_get_paginated = (): Promise<void> => {
-	const query_params: RubricAJAX.GetPaginated.IQueryParams = {
+	const query_params: RubricAJAX.Query.IQueryParams = {
 		category_id: props.category.id,
-		page_number: page.value
+		page_number: page.value,
 	};
 	
-	const request_config: AxiosRequestConfig<RubricAJAX.GetPaginated.IRequestData> = {
+	const request_config: AxiosRequestConfig<RubricAJAX.Query.IRequestData> = {
 		method: "get",
-		url: route('ajax.rubric.get_paginated'),
+		url: route('ajax.rubric.query'),
 		params: query_params,
 	};
 	return axios.request(request_config).then(
-		(response: AxiosResponse<RubricAJAX.GetPaginated.I200ResponseData>) => {
+		(response: AxiosResponse<RubricAJAX.Query.I200ResponseData>) => {
 			isLoading.value = false;
 			if (page.value === 0) {
-				rubricArray.value = []
-				rubricArray.value = response.data
+				rubricArray.value = [];
+				rubricArray.value = response.data.rubrics;
 				// total_count = response.data.total_count
-				console.log('replace', rubricArray.value)
+				console.log('replace', rubricArray.value);
 			} else {
-				rubricArray.value.push(...response.data)
+				rubricArray.value.push(...response.data.rubrics);
 				// total_count = response.data.total_count
-				console.log('append')
+				console.log('append');
 			}
 		}
 	);
