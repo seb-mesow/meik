@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./single/single-value-form2";
+import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./single/generic/single-value-form2";
 import {
 	IImageIDsOrder,
 	ICreateImageRequestData,

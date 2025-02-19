@@ -1,17 +1,17 @@
-import { ISingleValueForm2, UISingleValueForm2, SingleValueForm2, ISingleValueForm2Parent } from "./single/single-value-form2";
+import { ISingleValueForm2, UISingleValueForm2, SingleValueForm2, ISingleValueForm2Parent } from "./single/generic/single-value-form2";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { route } from "ziggy-js";
 import * as ExhibitAJAX from '@/types/ajax/exhibit';
 import { ToastServiceMethods } from "primevue/toastservice";
-import { UISelectForm, SelectForm } from "./single/select-form";
-import { GroupSelectForm, UIGroupSelectForm, IGroupType } from "./single/group-select-form";
+import { UISelectForm, SelectForm } from "./single/generic/select-form";
+import { UIGroupSelectForm } from "./single/generic/group-select-form";
 import { ref, Ref } from "vue";
 import { PartialDate } from "@/util/partial-date";
-import { PartialDateFrom } from "./single/partialdate-form";
+import { PartialDateFrom } from "./single/special/partialdate-form";
 import * as DateUtil from "@/util/date";
-import { StringForm } from "./single/string-form";
+import { StringForm } from "./single/generic/string-form";
 import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
-import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "./single/rubric-form";
+import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "./single/special/rubric-form";
 
 export interface IExhibitForm {
 	readonly id?: number;
@@ -283,6 +283,9 @@ export class ExhibitForm implements IExhibitForm {
 		this.location = new SelectForm<ILocation>({
 			val: this.determinate_selectable_value_from_id(args.data?.location_id ?? '', this.selectable_values.location),
 			required: true,
+			on_change(form) {
+				
+			},
 			get_shown_suggestions: (query: string): Promise<ILocation[]> => {
 				return this.find_suggestions_in_name(query, this.selectable_values.location);
 			},

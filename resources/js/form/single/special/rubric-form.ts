@@ -1,5 +1,5 @@
-import { GroupSelectForm, IGroupSelectFormConstructorArgs, IGroupType } from "./group-select-form";
-import { ISingleValueForm2Parent } from "./single-value-form2";
+import { GroupSelectForm, IGroupSelectFormConstructorArgs, IGroupType } from "../generic/group-select-form";
+import { ISingleValueForm2Parent } from "../generic/single-value-form2";
 
 export type IRubric = Readonly<{
 	id: string,

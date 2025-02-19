@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BaseInputField from './BaseInputField.vue';
-import { UISingleValueForm2 } from '@/form/single/single-value-form2';
+import { UISingleValueForm2 } from '@/form/single/generic/single-value-form2';
 import DatePicker from 'primevue/datepicker';
 
 const props = defineProps<{
