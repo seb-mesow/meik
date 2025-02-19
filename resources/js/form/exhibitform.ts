@@ -33,10 +33,10 @@ export interface IExhibitForm {
 	readonly kind_of_property: Readonly<UISelectForm<IKindOfProperty>>;
 	
 	// Zugangsdaten
-	readonly acquistion_info: Readonly<{
+	readonly acquisition_info: Readonly<{
 		readonly date: Readonly<UISingleValueForm2<Date>>;
 		readonly source: Readonly<UISingleValueForm2>;
-		readonly kind: Readonly<UISelectForm<IKindOfAcquistion>>;
+		readonly kind: Readonly<UISelectForm<IKindOfAcquisition>>;
 		readonly purchasing_price: Readonly<UISingleValueForm2<number>>;
 	}>;
 	
@@ -81,7 +81,7 @@ export type IKindOfProperty = Readonly<{
 	id: string,
 	name: string,
 }>;
-export type IKindOfAcquistion = Readonly<{
+export type IKindOfAcquisition = Readonly<{
 	id: string,
 	name: string,
 }>;
@@ -104,7 +104,7 @@ export type ISelectableValues = Readonly<{
 	initial_places?: IPlace[],
 	preservation_state: IPreservationState[],
 	kind_of_property: IKindOfProperty[],
-	kind_of_acquistion: IKindOfAcquistion[],
+	kind_of_acquisition: IKindOfAcquisition[],
 	exhibit_type: IExhibitType[],
 	currency: ICurrency[],
 	language: ILanguage[],
@@ -129,7 +129,7 @@ export interface IExhibitFormConstructorArgs {
 		kind_of_property_id: string,
 		
 		// Zugangsdaten
-		acquistion_info: {
+		acquisition_info: {
 			date: Date,
 			source: string,
 			kind_id: string,
@@ -187,10 +187,10 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly kind_of_property: Readonly<SelectForm<IKindOfProperty>>;
 	
 	// Zugangsdaten
-	public readonly acquistion_info: Readonly<{
+	public readonly acquisition_info: Readonly<{
 		readonly date: Readonly<SingleValueForm2<Date, Date>>;
 		readonly source: Readonly<SingleValueForm2>;
-		readonly kind: Readonly<SelectForm<IKindOfAcquistion>>;
+		readonly kind: Readonly<SelectForm<IKindOfAcquisition>>;
 		readonly purchasing_price: Readonly<SingleValueForm2<number, number>>;
 	}>;
 	
@@ -359,9 +359,9 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'kind_of_property', this.common_fields);
 		
 		// Zugangsdaten
-		this.acquistion_info = {
+		this.acquisition_info = {
 			date: new SingleValueForm2<Date, Date>({
-				val: args.data?.acquistion_info.date ?? new Date(),
+				val: args.data?.acquisition_info.date ?? new Date(),
 				required: true,
 				validate: (value_in_editing) => new Promise((resolve) => {
 					if (value_in_editing) {
@@ -370,20 +370,20 @@ export class ExhibitForm implements IExhibitForm {
 						resolve(['Bitte ein Datum angeben']);
 					}
 				}),
-			}, 'acquistion_date', this.common_fields),
+			}, 'acquisition_date', this.common_fields),
 			
 			source: new StringForm({
-				val: args.data?.acquistion_info.source ?? '',
+				val: args.data?.acquisition_info.source ?? '',
 				required: true,
 			}, 'source', this.common_fields),
 			
-			kind: new SelectForm<IKindOfAcquistion>({
-				val: this.determinate_selectable_value_from_id(args.data?.acquistion_info.kind_id ?? '', this.selectable_values.kind_of_acquistion),
+			kind: new SelectForm<IKindOfAcquisition>({
+				val: this.determinate_selectable_value_from_id(args.data?.acquisition_info.kind_id ?? '', this.selectable_values.kind_of_acquisition),
 				optionLabel: 'name',
-				get_shown_suggestions: (query: string): Promise<IKindOfAcquistion[]> => this.find_suggestions_in_name(query, this.selectable_values.kind_of_acquistion),
+				get_shown_suggestions: (query: string): Promise<IKindOfAcquisition[]> => this.find_suggestions_in_name(query, this.selectable_values.kind_of_acquisition),
 				validate: (value_in_editing) => new Promise((resolve) => {
 					if (value_in_editing) {
-						if (this.selectable_values.kind_of_acquistion.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
+						if (this.selectable_values.kind_of_acquisition.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
 							resolve([]);
 						} else {
 							resolve(['Bitte eine auswählbare Zugangsart angeben']);
@@ -392,10 +392,10 @@ export class ExhibitForm implements IExhibitForm {
 						resolve(['Bitte eine Zugangsart angeben']);
 					}
 				}),
-			}, 'kind_of_acquistion', this.common_fields),
+			}, 'kind_of_acquisition', this.common_fields),
 			
 			purchasing_price: new SingleValueForm2<number, number>({
-				val: this.form_price_amount(args.data?.acquistion_info.purchasing_price),
+				val: this.form_price_amount(args.data?.acquisition_info.purchasing_price),
 			}, 'purchasing_price', this.common_fields),
 		};
 		
@@ -650,11 +650,11 @@ export class ExhibitForm implements IExhibitForm {
 				currency_id: this.original_price.currency.get_value().id
 			},
 			current_value: this.request_price_amount(this.current_value.get_value()),
-			acquistion_info: {
-				date: DateUtil.format_as_iso_date(this.acquistion_info.date.get_value()),
-				source: this.acquistion_info.source.get_value(),
-				kind_id: this.acquistion_info.kind.get_value().id,
-				purchasing_price: this.request_price_amount(this.acquistion_info.purchasing_price.get_value()),
+			acquisition_info: {
+				date: DateUtil.format_as_iso_date(this.acquisition_info.date.get_value()),
+				source: this.acquisition_info.source.get_value(),
+				kind_id: this.acquisition_info.kind.get_value().id,
+				purchasing_price: this.request_price_amount(this.acquisition_info.purchasing_price.get_value()),
 			},
 			kind_of_property_id: this.kind_of_property.get_value().id,
 			place_id: this.place.get_value().id,

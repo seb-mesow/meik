@@ -6,7 +6,7 @@ namespace App\Models\Enum;
 /**
  * Art des Zugangs eines Exponates
  */
-enum KindOfAcquistion: string
+enum KindOfAcquisition: string
 {
 	/**
 	 * Kauf

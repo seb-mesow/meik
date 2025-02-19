@@ -303,12 +303,12 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->current_value = $current_value;
 	}
 	
-	public function get_acquistion_info(): AcquisitionInfo {
+	public function get_acquisition_info(): AcquisitionInfo {
 		return $this->acquisition_info;
 	}
 
-	public function set_acquistion_info(AcquisitionInfo $acquistion_info): void {
-		$this->acquistion_info = $acquistion_info;
+	public function set_acquisition_info(AcquisitionInfo $acquisition_info): void {
+		$this->acquisition_info = $acquisition_info;
 	}
 	
 	public function get_kind_of_property(): KindOfProperty {

@@ -23,7 +23,7 @@ namespace Create {
 			currency_id: string,
 		},
 		current_value: number,
-		acquistion_info: {
+		acquisition_info: {
 			date: string,
 			source: string,
 			kind_id: string,

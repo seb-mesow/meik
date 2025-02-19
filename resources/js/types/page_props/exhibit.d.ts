@@ -1,4 +1,4 @@
-import { ICurrency, IKindOfAcquistion, IKindOfProperty, ILanguage, IPreservationState } from "@/form/exhibitform";
+import { ICurrency, IKindOfAcquisition, IKindOfProperty, ILanguage, IPreservationState } from "@/form/exhibitform";
 import { IFreeTextsPageProps } from "./freetexts"
 import { IPlace } from "@/form/single/special/place-form";
 import { ICategoryWithRubrics } from "@/form/single/special/rubric-form";
@@ -10,7 +10,7 @@ export interface ISelectableValuesProps {
 	initial_places?: IPlace[],
 	preservation_state: IPreservationState[],
 	kind_of_property: IKindOfProperty[],
-	kind_of_acquistion: IKindOfAcquistion[],
+	kind_of_acquisition: IKindOfAcquisition[],
 	currency: ICurrency[],
 	language: ILanguage[],
 }
@@ -33,7 +33,7 @@ export interface IExhibitProps {
 	kind_of_property_id: string,
 	
 	// Zugangsdaten
-	acquistion_info: {
+	acquisition_info: {
 		date: string,
 		source: string,
 		kind_id: string,

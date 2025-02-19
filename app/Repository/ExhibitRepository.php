@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\Enum\Currency;
-use App\Models\Enum\KindOfAcquistion;
+use App\Models\Enum\KindOfAcquisition;
 use App\Models\Enum\KindOfProperty;
 use App\Models\Enum\Language;
 use App\Models\Enum\PreservationState;
@@ -228,14 +228,14 @@ final class ExhibitRepository
 		
 		$exhibit_doc->current_value = $exhibit->get_current_value();
 		
-		$acquistion_info = $exhibit->get_acquistion_info();
+		$acquisition_info = $exhibit->get_acquisition_info();
 		/** @var AcquisitionInfoDoc */
-		$acquistion_info_doc = new stdClass(); 
-		$acquistion_info_doc->date = $acquistion_info->get_date()->format(self::ISO_8601_DATE_FORMAT);
-		$acquistion_info_doc->source = $acquistion_info->get_source();
-		$acquistion_info_doc->kind = $acquistion_info->get_kind()->value;
-		$acquistion_info_doc->purchasing_price = $acquistion_info->get_purchasing_price();
-		$exhibit_doc->acquisition_info = $acquistion_info_doc;
+		$acquisition_info_doc = new stdClass(); 
+		$acquisition_info_doc->date = $acquisition_info->get_date()->format(self::ISO_8601_DATE_FORMAT);
+		$acquisition_info_doc->source = $acquisition_info->get_source();
+		$acquisition_info_doc->kind = $acquisition_info->get_kind()->value;
+		$acquisition_info_doc->purchasing_price = $acquisition_info->get_purchasing_price();
+		$exhibit_doc->acquisition_info = $acquisition_info_doc;
 		
 		$exhibit_doc->kind_of_property = $exhibit->get_kind_of_property()->value;
 		
@@ -281,7 +281,7 @@ final class ExhibitRepository
 		$acquisition_info = new AcquisitionInfo(
 			date: Carbon::createFromFormat(self::ISO_8601_DATE_FORMAT, $acquisition_info_doc->date),
 			source: $acquisition_info_doc->source,
-			kind: KindOfAcquistion::from($acquisition_info_doc->kind),
+			kind: KindOfAcquisition::from($acquisition_info_doc->kind),
 			purchasing_price: $acquisition_info_doc->purchasing_price,
 		);
 		
