@@ -34,7 +34,7 @@ class ExhibitAJAXController extends Controller
 		private readonly DateTimeUtil $date_time_util,
 	) {}
 
-	public function create_or_update(Request $request, ?Exhibit $exhibit = null): Exhibit
+	private function create_or_update(Request $request, ?Exhibit $exhibit = null): Exhibit
 	{
 		// ermittle Eingabewerte
 		$inventory_number = (string) $request->input('inventory_number');
