@@ -19,14 +19,19 @@ class RubricAJAXController extends Controller
 		private readonly RubricRepository $rubric_repository,
 	) {}
 
-	public function get_paginated(Request $request): JsonResponse
+	public function query(Request $request): JsonResponse
 	{
-		$category_id = (string) $request->query('category_id');
-		$page_number = (int) $request->query('page_number');
+		$category_id = $request->query('category_id');
+		$page_number = $request->query('page_number');
+		$count_per_page = $request->query('count_per_page');
 		
-		[ 'rubrics' => $rubrics ] = $this->rubric_service->determinate_props_of_multiple_paginated($category_id, $page_number);
+		$category_id = is_string($category_id) ? trim($category_id) : null;
+		$page_number = is_string($page_number) ? (int) $page_number : null;
+		$count_per_page = is_string($count_per_page) ? (int) $count_per_page : null;
 		
-		return response()->json($rubrics);
+		$result = $this->rubric_service->query($category_id, $page_number, $count_per_page);
+		
+		return response()->json($result);
 	}
 
 	public function create(Request $request): JsonResponse

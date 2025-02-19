@@ -16,6 +16,7 @@ Route::prefix('ajax')->group(static function () {
 		->name('ajax.user.set_admin');
 
 	# --- Locations / Standorte ---
+	// TODO name should be ajax.location.query
 	Route::get('/locations', [LocationAJAXController::class, 'get_paginated'])
 		->name('ajax.location.get_paginated');
 
@@ -29,9 +30,10 @@ Route::prefix('ajax')->group(static function () {
 		->name('ajax.location.delete');
 
 	# --- Plätze / Places ---
-	Route::get('/location/{location_id}/places', [PlaceAJAXController::class, 'get_paginated'])
-		->name('ajax.place.get_paginated');
-
+	Route::get('/places', [PlaceAJAXController::class, 'query'])
+		->name('ajax.place.query');
+	
+	// TODO URI should by /place
 	Route::post('location/{location_id}/place', [PlaceAJAXController::class, 'create'])
 		->name('ajax.place.create');
 
@@ -91,13 +93,13 @@ Route::prefix('ajax')->group(static function () {
 
 	Route::delete('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'delete'])
 		->name('ajax.exhibit.image.delete');
-
+	
 	Route::patch('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'move'])
 		->name('ajax.exhibit.image.move');
 
 	// --- Rubriken ---
-	Route::get('/rubric', [RubricAJAXController::class, 'get_paginated'])
-		->name('ajax.rubric.get_paginated');
+	Route::get('/rubrics', [RubricAJAXController::class, 'query'])
+		->name('ajax.rubric.query');
 
 	Route::post('/rubric', [RubricAJAXController::class, 'create'])
 		->name('ajax.rubric.create');
