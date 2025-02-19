@@ -69,7 +69,8 @@ export interface IExhibitForm {
 	click_delete(): void;
 	click_save(): void;
 	
-	readonly is_saving_button_enabled: Readonly<Ref<boolean>>;
+	readonly is_save_button_enabled: Readonly<Ref<boolean>>;
+	readonly is_save_button_loading: Readonly<Ref<boolean>>;
 }
 
 export type IPreservationState = Readonly<{
@@ -228,8 +229,9 @@ export class ExhibitForm implements IExhibitForm {
 	private readonly device_fields: IMultipleValueForm & ISingleValueForm2Parent<any>;
 	private readonly book_fields: IMultipleValueForm & ISingleValueForm2Parent<any>;
 	
-	// UI-Werte
-	public readonly is_saving_button_enabled: Ref<boolean>;
+	// UI-Werte(false)
+	public readonly is_save_button_enabled: Ref<boolean> = ref(false);
+	public readonly is_save_button_loading: Ref<boolean> = ref(false);
 	
 	public constructor(args: IExhibitFormConstructorArgs) {
 		
@@ -249,7 +251,6 @@ export class ExhibitForm implements IExhibitForm {
 		});
 		
 		// UI-Werte
-		this.is_saving_button_enabled = ref(false);
 		
 		this.id = args.data?.id;
 		
@@ -336,7 +337,7 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'preservation_state', this.common_fields);
 		
 		this.current_value = new SingleValueForm2<number, number>({
-			val: args.data?.current_value ?? 0,
+			val: this.form_price_amount(args.data?.current_value),
 		}, 'current_value', this.common_fields);
 		
 		this.kind_of_property = new SelectForm<IKindOfProperty>({
@@ -394,7 +395,7 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'kind_of_acquistion', this.common_fields),
 			
 			purchasing_price: new SingleValueForm2<number, number>({
-				val: args.data?.acquistion_info.purchasing_price ?? 0
+				val: this.form_price_amount(args.data?.acquistion_info.purchasing_price),
 			}, 'purchasing_price', this.common_fields),
 		};
 		
@@ -423,7 +424,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		this.original_price = {
 			amount: new SingleValueForm2<number, number>({
-				val: args.data?.original_price?.amount,
+				val: this.form_price_amount(args.data?.original_price?.amount),
 				on_change: (form) => {
 					const value_in_editing = form.get_value_in_editing();
 					if (value_in_editing === null || value_in_editing == undefined) {
@@ -506,24 +507,6 @@ export class ExhibitForm implements IExhibitForm {
 	
 	}
 	
-	private async on_child_field_change(form: IMultipleValueForm): Promise<void> {
-		this.is_saving_button_enabled.value = await this.is_valid();
-	}
-	
-	private async is_valid(): Promise<boolean> {
-		const first = this.common_fields.is_valid();
-		
-		const type = this.type.get_value_in_editing();
-		if (!type || type.id === undefined || (type.id !== 'device' && type.id !== 'book')) {
-			throw new Error("Assertation failed: no exhibit type");
-		}
-		const second = (type.id === 'device') ? this.device_fields.is_valid() : this.book_fields.is_valid();
-		
-		const [ first_valid, second_valid ] = await Promise.all([first, second]);
-		
-		return first_valid && second_valid;
-	}
-	
 	private determinate_selectable_value_from_id<T extends { id: string }>(id: string|undefined, selectable_values: T[]): T|undefined {
 		if (id === undefined) {
 			return undefined;
@@ -556,6 +539,37 @@ export class ExhibitForm implements IExhibitForm {
 		this.toast_service.add({ severity: 'error', summary: msg, life: 3000 });
 	}
 	
+	private async on_child_field_change(form: IMultipleValueForm): Promise<void> {
+		this.is_save_button_enabled.value = await this.is_valid();
+	}
+	
+	private async is_valid(): Promise<boolean> {
+		return (await Promise.all(this.determinate_relevant_multiple_value_forms()
+			.map((multiple_form) => multiple_form.is_valid())
+		)).every((result) => result);
+	}
+	
+	private commit(): void {
+		this.get_all_multiple_value_forms().forEach(multiple_form => multiple_form.commit());
+	}
+	
+	private rollback(): void {
+		this.get_all_multiple_value_forms().forEach(multiple_form => multiple_form.rollback());
+	}
+	
+	private get_all_multiple_value_forms(): IMultipleValueForm[] {
+		return [this.common_fields, this.device_fields, this.book_fields];
+	}
+	
+	private determinate_relevant_multiple_value_forms(): IMultipleValueForm[] {
+		const type = this.type.get_value_in_editing();
+		if (!type || type.id === undefined || (type.id !== 'device' && type.id !== 'book')) {
+			throw new Error("Assertation failed: no exhibit type");
+		}
+		const second = (type.id === 'device') ? this.device_fields : this.book_fields;
+		return [this.common_fields, second];
+	}
+	
 	private exists_in_db(): boolean {
 		return this.id !== undefined;
 	}
@@ -565,15 +579,15 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	public async click_save(): Promise<void> {
-		this.common_fields.commit();
+		this.commit();
 		
-		// this.is_save_button_loading = true;
+		this.is_save_button_loading.value = true;
 		if (this.exists_in_db()) {
 			await this.ajax_update();
 		} else {
 			await this.ajax_create();
 		}
-		// this.is_save_button_loading = false;
+		this.is_save_button_loading.value = false;
 	}
 	
 	private async ajax_update(): Promise<void> {
@@ -626,21 +640,21 @@ export class ExhibitForm implements IExhibitForm {
 	private create_or_update_request_data(): ExhibitAJAX.Create.IRequestData|ExhibitAJAX.Update.IRequestData {
 		const request_data: ExhibitAJAX.Create.IRequestData|ExhibitAJAX.Update.IRequestData = {
 			inventory_number: this.inventory_number.get_value(),
-			name: this.inventory_number.get_value(),
+			name: this.name.get_value(),
 			short_description: this.short_description.get_value(),
 			manufacturer: this.manufacturer.get_value(),
 			manufacture_date: this.manufacture_date.get_value().format_iso(),
 			preservation_state_id: this.preservation_state.get_value().id,
 			original_price: {
-				amount: this.original_price.amount.get_value(),
+				amount: this.request_price_amount(this.original_price.amount.get_value()),
 				currency_id: this.original_price.currency.get_value().id
 			},
-			current_value: this.current_value.get_value(),
+			current_value: this.request_price_amount(this.current_value.get_value()),
 			acquistion_info: {
 				date: DateUtil.format_as_iso_date(this.acquistion_info.date.get_value()),
 				source: this.acquistion_info.source.get_value(),
 				kind_id: this.acquistion_info.kind.get_value().id,
-				purchasing_price: this.acquistion_info.purchasing_price.get_value()
+				purchasing_price: this.request_price_amount(this.acquistion_info.purchasing_price.get_value()),
 			},
 			kind_of_property_id: this.kind_of_property.get_value().id,
 			place_id: this.place.get_value().id,
@@ -662,5 +676,13 @@ export class ExhibitForm implements IExhibitForm {
 			};
 		}
 		return request_data;
+	}
+	
+	private form_price_amount(amount: number|undefined): number|undefined {
+		return (amount === undefined) ? amount : (amount / 100);
+	}
+	
+	private request_price_amount(amount: number): number {
+		return Math.round(amount * 100);
 	}
 }
