@@ -1,6 +1,11 @@
 import { shallowRef, ShallowRef } from "vue";
-import { ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
+import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
+
+export interface IGroupType<C = string, P = C> {
+	children: C[];
+	parent: P;
+}
 
 export interface UIGroupSelectForm<C, P = C> extends UISingleValueForm2<string|undefined> {
 	readonly shown_suggestions: Readonly<ShallowRef<Readonly<IGroupType<C, P>[]>>>;
@@ -11,10 +16,7 @@ export interface UIGroupSelectForm<C, P = C> extends UISingleValueForm2<string|u
 	get_option_label(option: C): string|undefined;
 }
 
-export interface IGroupType<C = string, P = C> {
-	children: C[];
-	parent: P;
-}
+export interface IGroupSelectForm<C, P = C> extends ISingleValueForm2<C> {};
 
 export interface IGroupSelectFormConstructorArgs<C = string, P = C> extends ISingleValueForm2ConstructorArgs<C> {
 	get_shown_suggestions?: (query: string) => Promise<Readonly<IGroupType<C, P>>[]>;
@@ -26,7 +28,7 @@ export interface IGroupSelectFormConstructorArgs<C = string, P = C> extends ISin
  *
  * same for get_option_label
  */
-export class GroupSelectForm<C = string, P = C> extends SingleValueForm2<C, string|undefined> implements UIGroupSelectForm<C, P> {
+export class GroupSelectForm<C = string, P = C> extends SingleValueForm2<C, string|undefined> implements IGroupSelectForm<C, P>, UIGroupSelectForm<C, P> {
 	public readonly shown_suggestions: ShallowRef<Readonly<IGroupType<C, P>[]>>;
 	private readonly _get_shown_suggestions: (query: string) => Promise<Readonly<IGroupType<C, P>>[]>;
 	private is_overlay_shown: boolean = false;

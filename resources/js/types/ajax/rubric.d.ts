@@ -1,15 +1,16 @@
 import { IExhibitTileProps } from "../page_props/exhibit_overview";
 
-namespace GetPaginated {
+namespace Query {
 	export interface IQueryParams {
-		page_number: number,
 		category_id?: string,
+		page_number?: number,
+		count_per_page?: number,
 	};
 	export type IRequestData = never;
 	export type I200ResponseData = {
-		id: string,
-		name: string,
-	}[];
+		rubrics: { id: string, name: string }[],
+		total_count?: number,
+	};
 }
 
 namespace Create {
