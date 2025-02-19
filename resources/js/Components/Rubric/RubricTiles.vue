@@ -3,7 +3,7 @@ import Button from 'primevue/button';
 import RubricTile from '@/Components/Rubric/RubricTile.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { defineAsyncComponent, ref } from 'vue';
+import { defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 import Breadcrumb from 'primevue/breadcrumb';
 import { route } from 'ziggy-js';
 import { useDialog } from 'primevue/usedialog';
@@ -14,8 +14,8 @@ import { IRubricTilesMainProps } from '@/types/page_props/rubric_tiles';
 const RubricDialog = defineAsyncComponent(() => import('../../Components/Rubric/RubricDialog.vue'));
 
 const props = defineProps<{
-	category_id: string,
 	main_props: IRubricTilesMainProps,
+	category_id?: string,
 }>();
 const dialog = useDialog();
 
@@ -80,6 +80,7 @@ const reload = () => {
 
 async function load_rubrics(): Promise<void> {
 	if (is_loading) {
+		console.log("is_loading");
 		return; // Verhindert mehrere Anfragen gleichzeitig
 	}
 	if (!more_exist) {
@@ -90,8 +91,8 @@ async function load_rubrics(): Promise<void> {
 	return ajax_get_paginated();
 }
 
-const ajax_get_paginated = (): Promise<void> => {
-	const query_params: RubricAJAX.GetPaginated.IQueryParams = {
+async function ajax_get_paginated(): Promise<void> {
+	const query_params: RubricAJAX.Query.IQueryParams = {
 		page_number: page_number,
 	};
 	if (props.category_id) {
@@ -99,48 +100,55 @@ const ajax_get_paginated = (): Promise<void> => {
 	}
 	const request_config: AxiosRequestConfig = {
 		method: "get",
-		url: route('ajax.rubric.get_paginated'),
+		url: route('ajax.rubric.query'),
 		params: query_params,
 	};
 	return axios.request(request_config).then(
-		(response: AxiosResponse<RubricAJAX.GetPaginated.I200ResponseData>) => {
-			rubrics.value.push(...response.data)
+		(response: AxiosResponse<RubricAJAX.Query.I200ResponseData>) => {
+			rubrics.value.push(...response.data.rubrics)
 			page_number++;
-			more_exist = response.data.length >= props.main_props.count_per_page;
+			more_exist = response.data.rubrics.length >= props.main_props.count_per_page;
 			is_loading = false;
 		}
 	);
 }
 
 const handleScroll = (event: Event) => {
+	console.log("handleScroll");
 	const container = event.target as HTMLElement;
-	// console.log(`trigger: scrollHeight == ${container.scrollHeight}, diff == ${container.scrollTop + container.clientHeight}`);
-	const diff: number = container.scrollHeight * 1.0 
-						- container.scrollTop * 1.0 
-						- container.clientHeight * 1.0;
+	const diff: number = document.body.scrollHeight - (window.innerHeight + window.scrollY)
 	// console.log(`trigger: overall diff == ${diff}`);
 	const bottom_reached = diff <= 1; // a difference of zero is to restrictive
 	if (bottom_reached && !is_loading) {
-		// console.log(`trigger: bottom_reached == ${bottom_reached}, is_loading == ${is_loading}`);
+		console.log(`trigger: bottom_reached == ${bottom_reached}, is_loading == ${is_loading}`);
 		load_rubrics();  // Lädt die nächste Seite, wenn der Benutzer den unteren Rand erreicht
 	}
 }
 
+onMounted(() => {
+	window.addEventListener('scroll', handleScroll);
+	window.addEventListener('resize', handleScroll);
+});
+onBeforeUnmount(() => {
+	window.removeEventListener('scroll', handleScroll);
+	window.removeEventListener('resize', handleScroll);
+});
+
 </script>
 
 <template>
-	<div class="flex h-full">
+		<div class="fixed bottom-4 right-4">
+			<Button @click="create">Neu</Button>
+		</div>
+		
 		<!-- Wrapper für den Scroll-Bereich -->
-		<div class="overflow-y-auto flex flex-wrap flex-grow content-start" @scroll="handleScroll($event)">
-			<RubricTile v-for="rubric in rubrics" :key="rubric.id" 	
+		<div class="flex flex-wrap" @scroll="handleScroll($event)">
+			<!-- TODO handle category_id for RubricTiles -->
+			<RubricTile v-for="rubric in rubrics" :key="rubric.id"
 				:rubric="rubric"
 				:category_id="props.category_id"
 				@delete_tile="delete_tile"
 			/>
 		</div>
-		
-		<div class="absolute bottom-4 right-4">
-			<Button @click="create">Neu</Button>
-		</div>
-	</div>
+	
 </template>
