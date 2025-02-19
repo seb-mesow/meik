@@ -14,7 +14,7 @@ export interface ILocationForm extends ISelectForm<ILocation> {
 	get_all_places_in_value_in_editing(): Promise<IPlace[]>;
 };
 
-export interface ILocationFormConstructorArgs extends Omit<ISelectFormConstructorArgs<ILocation>, 'get_shown_suggestions'> {
+export interface ILocationFormConstructorArgs extends Pick<ISelectFormConstructorArgs<ILocation>, 'val'|'required'|'on_change'|'validate'> {
 	selectable_locations: ILocation[];
 }
 
@@ -22,13 +22,15 @@ export class LocationForm extends SelectForm<ILocation> implements ILocationForm
 	private readonly selectable_locations: ILocation[];
 	
 	public constructor(args: ILocationFormConstructorArgs, id: string|number, parent: ISingleValueForm2Parent<ILocation>) {
+		const _args: ISelectFormConstructorArgs<ILocation> = args;
+		_args.optionLabel = 'name';
 		super(args, id, parent);
 		this.selectable_locations = args.selectable_locations;
 	}
 	
 	protected create_value_from_ui_value(ui_value: ILocation|string|undefined): ILocation|null|undefined {
-		console.log(`LocationForm::create_value_from_ui_value(): ui_value ==`);
-		console.log(ui_value);
+		// console.log(`LocationForm::create_value_from_ui_value(): ui_value ==`);
+		// console.log(ui_value);
 		if (!ui_value) {
 			return null;
 		}
@@ -43,8 +45,8 @@ export class LocationForm extends SelectForm<ILocation> implements ILocationForm
 	}
 	
 	protected create_ui_value_from_value(value: ILocation|null): ILocation|undefined {
-		console.log(`LocationForm::create_ui_value_from_value(): value ==`);
-		console.log(value);	
+		// console.log(`LocationForm::create_ui_value_from_value(): value ==`);
+		// console.log(value);	
 		return value ?? undefined;
 	}
 	

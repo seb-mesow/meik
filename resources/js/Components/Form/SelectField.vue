@@ -26,7 +26,7 @@ const props = defineProps<{
 			@complete="form.on_complete($event)"
 			@before-show="form.on_before_show()"
 			@hide="form.on_hide()"
-			:optionLabel="optionLabel"
+			:optionLabel="optionLabel ?? form.optionLabel"
 			fluid
 			@keydown.tab="form.on_tab_keydown($event)"
 			:pt="{ dropdown: { tabindex: -1 } }"

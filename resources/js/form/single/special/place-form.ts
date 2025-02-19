@@ -11,7 +11,7 @@ export interface IPlaceForm extends ISelectForm<IPlace> {
 	set_selectable_places(selectable_places: IPlace[]): void;
 }
 
-export interface IPlaceFormConstructorArgs extends Omit<ISelectFormConstructorArgs<IPlace>, 'get_shown_suggestions'|'validate'> {
+export interface IPlaceFormConstructorArgs extends Pick<ISelectFormConstructorArgs<IPlace>, 'val'|'required'|'on_change'> {
 	initial_selectable_places?: IPlace[];
 }
 
@@ -19,10 +19,9 @@ export class PlaceForm extends SelectForm<IPlace> implements IPlaceForm {
 	private selectable_places: IPlace[] = [];
 	
 	public constructor(args: IPlaceFormConstructorArgs, id: string|number, parent: ISingleValueForm2Parent<IPlace>) {
-		const _args: ISelectFormConstructorArgs<IPlace> = {
-			...args,
-			validate: PlaceForm.get_validate(args.initial_selectable_places ?? []),
-		};
+		const _args: ISelectFormConstructorArgs<IPlace> = args;
+		_args.validate = PlaceForm.get_validate(args.initial_selectable_places ?? []);
+		_args.optionLabel = 'name';
 		super(_args, id, parent);
 		this.selectable_places = args.initial_selectable_places ?? [];
 	}
@@ -48,8 +47,8 @@ export class PlaceForm extends SelectForm<IPlace> implements IPlaceForm {
 	}
 	
 	protected create_value_from_ui_value(ui_value: IPlace|string|undefined): IPlace|null|undefined {
-		console.log(`PlaceForm::create_value_from_ui_value(): ui_value ==`);
-		console.log(ui_value);
+		// console.log(`PlaceForm::create_value_from_ui_value(): ui_value ==`);
+		// console.log(ui_value);
 		if (!ui_value) {
 			return null;
 		}
@@ -64,8 +63,8 @@ export class PlaceForm extends SelectForm<IPlace> implements IPlaceForm {
 	}
 	
 	protected create_ui_value_from_value(value: IPlace|null): IPlace|undefined {
-		console.log(`PlaceForm::create_ui_value_from_value(): value ==`);
-		console.log(value);
+		// console.log(`PlaceForm::create_ui_value_from_value(): value ==`);
+		// console.log(value);
 		return value ?? undefined;
 	}
 	

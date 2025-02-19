@@ -6,6 +6,7 @@ import AutoComplete from 'primevue/autocomplete';
 const props = defineProps<{
 	label: string,
 	form: UIGroupSelectForm<C, P>,
+	optionLabel?: string,
 	grid_col: number,
 	grid_col_span?: number,
 	grid_row: number,
@@ -26,7 +27,7 @@ const props = defineProps<{
 			@complete="form.on_complete($event)"
 			@before-show="form.on_before_show()"
 			@hide="form.on_hide()"
-			:optionLabel="(option) => form.get_option_label(option)"
+			:optionLabel="optionLabel ?? form.optionLabel"
 			optionGroupLabel="children"
 			optionGroupChildren="children"
 			@keydown.tab="form.on_tab_keydown($event)"
