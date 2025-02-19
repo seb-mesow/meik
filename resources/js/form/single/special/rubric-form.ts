@@ -15,7 +15,7 @@ export type ICategoryWithRubrics = Readonly<{
 	rubrics: IRubric[],
 }>;
 
-export interface IRubricFormConstructorArgs extends Omit<IGroupSelectFormConstructorArgs<IRubric, ICategory>, 'get_shown_suggestions'|'get_option_label'> {
+export interface IRubricFormConstructorArgs extends Pick<IGroupSelectFormConstructorArgs<IRubric, ICategory>, 'val'|'required'|'on_change'|'validate'> {
 	selectable_categories_with_rubrics: ICategoryWithRubrics[];
 }
 
@@ -23,19 +23,26 @@ export class RubricForm extends GroupSelectForm<IRubric, ICategory> {
 	private readonly selectable_categories_with_rubrics: ICategoryWithRubrics[];
 	
 	public constructor(args: IRubricFormConstructorArgs, id: string|number, parent: ISingleValueForm2Parent<IRubric>) {
+		const _args: IGroupSelectFormConstructorArgs<IRubric, ICategory> = args;
+		_args.optionLabel = 'name';
 		super(args, id, parent);
 		this.selectable_categories_with_rubrics = args.selectable_categories_with_rubrics;
 	}
 	
-	protected create_value_from_ui_value(ui_value: string|undefined): IRubric|null|undefined {
+	protected create_value_from_ui_value(ui_value: IRubric|string|undefined): IRubric|null|undefined {
+		// console.log(`RubricForm::create_value_from_ui_value(): ui_value ==`);
+		// console.log(ui_value);
 		if (!ui_value) {
 			return null;
 		}
-		const suggestions = this.search_suggestions(ui_value, (rubric_name, query) => rubric_name === query);
-		if (suggestions.length === 1 && suggestions[0].children.length === 1) {
-			return suggestions[0].children[0];
+		if (typeof ui_value === 'string') {
+			const suggestions = this.search_suggestions(ui_value, (rubric_name, query) => rubric_name === query);
+			if (suggestions.length === 1 && suggestions[0].children.length === 1) {
+				return suggestions[0].children[0];
+			}
+			return undefined; // multiple or no match
 		}
-		return undefined; // multiple or no match
+		return ui_value;
 	}
 	
 	protected create_ui_value_from_value(value: IRubric|null): string|undefined {

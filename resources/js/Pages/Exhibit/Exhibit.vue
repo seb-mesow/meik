@@ -169,9 +169,9 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						</template>
 					</GroupSelectField>
 					
-					<SelectField :form="exhibit_form.location" label="Standort" optionLabel="name" :grid_col="2" :grid_row="3"/>
+					<SelectField :form="exhibit_form.location" label="Standort" :grid_col="2" :grid_row="3"/>
 					
-					<SelectField :form="exhibit_form.place" label="Platz" optionLabel="name" :grid_col="3" :grid_row="3"/>
+					<SelectField :form="exhibit_form.place" label="Platz" :grid_col="3" :grid_row="3"/>
 				</div>
 				
 				<div class="basis-1/3">
@@ -192,9 +192,9 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				<!-- Bestandsdaten -->
 				<Fieldset legend="Bestandsdaten *" toggleable collapsed class="basis-[30rem] flex-1">
 					<div class="grid grid-cols-2 gap-x-3">
-						<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" optionLabel="name" :grid_col="1" :grid_row="1"/>
+						<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" :grid_col="1" :grid_row="1"/>
 						
-						<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" optionLabel="name" :grid_col="1" :grid_row="2"/>
+						<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" :grid_col="1" :grid_row="2"/>
 						
 						<InputNumberField :form="exhibit_form.current_value" label="Zeitwert" :grid_col="2" :grid_row="2"/>
 					</div>
@@ -207,7 +207,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						
 						<InputTextField2 :form="exhibit_form.acquistion_info.source" label="Herkunft" :grid_col="1" :grid_col_span="2" :grid_row="2"/>
 						
-						<SelectField :form="exhibit_form.acquistion_info.kind" optionLabel="name"  label="Zugangsart" :grid_col="1" :grid_row="3"/>
+						<SelectField :form="exhibit_form.acquistion_info.kind" label="Zugangsart" :grid_col="1" :grid_row="3"/>
 						
 						<InputNumberField :form="exhibit_form.acquistion_info.purchasing_price" label="Kaufpreis" :grid_col="2" :grid_row="3"/>
 					</div>
@@ -256,7 +256,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						:grid_col="1" :grid_row="3"
 					/>
 					
-					<SelectField :form="exhibit_form.book_info.language" optionLabel="name" label="Sprache" :grid_col="2" :grid_row="3"/>
+					<SelectField :form="exhibit_form.book_info.language" label="Sprache" :grid_col="2" :grid_row="3"/>
 					
 					<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" :grid_col="3" :grid_row="3"/>
 					

@@ -8,12 +8,13 @@ export interface UISelectForm<O> extends UISingleValueForm2<O|string|undefined> 
 	on_before_show(): Promise<void>;
 	on_hide(): Promise<void>;
 	on_tab_keydown(event: KeyboardEvent): Promise<void>;
-	// get_option_label(option: O): string|undefined;
+	optionLabel: string|undefined;
 }
 
 export interface ISelectForm<O> extends ISingleValueForm2<O> {};
 
 export interface ISelectFormConstructorArgs<O = string> extends ISingleValueForm2ConstructorArgs<O> {
+	optionLabel?: string,
 	get_shown_suggestions?: (query: string) => Promise<Readonly<O[]>>;
 }
 
@@ -25,6 +26,8 @@ export interface ISelectFormConstructorArgs<O = string> extends ISingleValueForm
  */
 export class SelectForm<O = string> extends SingleValueForm2<O, O|string|undefined> implements ISelectForm<O>, UISelectForm<O> {
 	public readonly shown_suggestions: Ref<Readonly<O[]>>;
+	public readonly optionLabel: string|undefined;
+	
 	private readonly _get_shown_suggestions: (query: string) => Promise<Readonly<O[]>>;
 	private is_overlay_shown: boolean = false;
 	
@@ -32,6 +35,7 @@ export class SelectForm<O = string> extends SingleValueForm2<O, O|string|undefin
 		super(args, id, parent);
 		this._get_shown_suggestions = args.get_shown_suggestions ?? (() => Promise.reject('no get_shown_suggestions()'));
 		this.shown_suggestions = shallowRef([]);
+		this.optionLabel = args.optionLabel;
 	}
 	
 	// public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
