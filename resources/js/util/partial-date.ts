@@ -131,9 +131,6 @@ export class PartialDate {
 		return partial_date;
 	}
 	
-	/**
-	 * @param errors output parameter for validation errors
-	 */
 	public static parse_pretty(input: string): PartialDate {
 		const _input = input.trim();
 		if (_input.length < 1) {

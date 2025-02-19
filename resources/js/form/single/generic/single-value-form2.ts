@@ -81,22 +81,24 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	
 	public on_change_ui_value_in_editing(new_ui_value_in_editing: U): void {
 		// TODO awaited hook here for place form
-		this.set_value_in_editing_without_ui_value(this._create_value_from_ui_value(new_ui_value_in_editing));
+		this.set_value_in_editing_without_ui_value(() => this._create_value_from_ui_value(new_ui_value_in_editing));
 	}
 	
 	public set_value_in_editing(new_value_in_editing: T|null): void {
 		this.ui_value_in_editing.value = this.create_ui_value_from_value(new_value_in_editing);
-		this.set_value_in_editing_without_ui_value(new_value_in_editing);
+		this.set_value_in_editing_without_ui_value(() => new_value_in_editing);
 	}
 	
 	public set_validate(validate: (value_in_editing: T|null|undefined) => Promise<string[]>): void {
-		this._validate = validate;
-		this.refresh();
+		this.refresh(() => {
+			this._validate = validate;
+		});
 	}
 	
-	private set_value_in_editing_without_ui_value(new_value_in_editing: T|null|undefined): void {
-		this.value_in_editing = new_value_in_editing;
-		this.refresh();
+	private set_value_in_editing_without_ui_value(setter: () => T|null|undefined): void {
+		this.refresh(() => {
+			this.value_in_editing = setter();
+		});
 	}
 	
 	public async is_valid(): Promise<boolean> {
@@ -166,11 +168,13 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		}
 	}
 	
-	private refresh(): void {
+	private refresh(inner: () => void): void {
 		console.log(`Form ${this.html_id} refreshed`);
 		this.errs.value = [];
-		this.last_validation_state = undefined;
 		
+		inner();
+		
+		this.last_validation_state = undefined;
 		// do NOT wait / fire and forget
 		async () => {
 			this.ui_is_invalid.value = await this.is_valid();
