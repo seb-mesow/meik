@@ -2,7 +2,7 @@ import { Ref, shallowRef } from "vue";
 import { ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 
-export interface UISelectForm<O> extends UISingleValueForm2<string> {
+export interface UISelectForm<O> extends UISingleValueForm2<string|undefined> {
 	readonly shown_suggestions: Readonly<Ref<Readonly<O[]>>>;
 	on_complete(event: AutoCompleteCompleteEvent): Promise<void>;
 	on_before_show(): Promise<void>;
@@ -11,24 +11,34 @@ export interface UISelectForm<O> extends UISingleValueForm2<string> {
 }
 
 export interface ISelectFormConstructorArgs<O = string> extends ISingleValueForm2ConstructorArgs<O> {
-	get_shown_suggestions: (query: string) => Promise<Readonly<O[]>>;
+	get_shown_suggestions?: (query: string) => Promise<Readonly<O[]>>;
 }
 
-export class SelectForm<O = string> extends SingleValueForm2<O, string> implements UISelectForm<O> {
+/**
+ * Either the constructor argument get_shown_suggestions must be provided
+ * or the function get_shown_suggestions() must be overridden in a subclass.
+ *
+ * same for get_option_label
+ */
+export class SelectForm<O = string> extends SingleValueForm2<O, string|undefined> implements UISelectForm<O> {
 	public readonly shown_suggestions: Ref<Readonly<O[]>>;
-	private readonly get_shown_suggestions: (query: string) => Promise<Readonly<O[]>>;
+	private readonly _get_shown_suggestions: (query: string) => Promise<Readonly<O[]>>;
 	private is_overlay_shown: boolean = false;
 	
 	public constructor(args: ISelectFormConstructorArgs<O>, id: string|number, parent: ISingleValueForm2Parent<O>) {
 		super(args, id, parent);
-		this.get_shown_suggestions = args.get_shown_suggestions;
+		this._get_shown_suggestions = args.get_shown_suggestions ?? (() => Promise.reject('no get_shown_suggestions()'));
 		this.shown_suggestions = shallowRef([]);
 	}
 	
+	// public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
+	// 	// useless spread operator required, because of
+	// 	// https://github.com/primefaces/primevue/issues/5601
+	// 	this.shown_suggestions.value = [...(await this.get_shown_suggestions(event.query))];
+	// }
+	
 	public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
-		// useless spread operator required, because of
-		// https://github.com/primefaces/primevue/issues/5601
-		this.shown_suggestions.value = [...(await this.get_shown_suggestions(event.query))];
+		this.shown_suggestions.value = await this.get_shown_suggestions(event.query);
 	}
 	
 	public async on_before_show(): Promise<void> {
@@ -47,5 +57,9 @@ export class SelectForm<O = string> extends SingleValueForm2<O, string> implemen
 			const first: O = this.shown_suggestions.value[0];
 			return this.set_value_in_editing(first);
 		}
+	}
+	
+	protected get_shown_suggestions(query: string): Promise<Readonly<O[]>> {
+		return this._get_shown_suggestions(query);
 	}
 }
