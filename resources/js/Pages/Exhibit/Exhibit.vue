@@ -84,17 +84,17 @@ const form_constructor_args: IExhibitFormConstructorArgs = {
 	},
 };
 if (props.exhibit_props) {
-	let device_info = undefined;
-	if (props.exhibit_props.device_info) {
-		device_info = {
-			manufactured_from_date: PartialDate.parse_iso(props.exhibit_props.device_info.manufactured_from_date),
-			manufactured_to_date: PartialDate.parse_iso(props.exhibit_props.device_info.manufactured_to_date),
-		};
-	}
-	const acquisition_info = {
-		...props.exhibit_props.acquisition_info,
-		...{ date: DateUtil.parse_iso_date(props.exhibit_props.acquisition_info.date) }
-	};
+	// let device_info = undefined;
+	// if (props.exhibit_props.device_info) {
+	// 	device_info = {
+	// 		manufactured_from_date: PartialDate.parse_iso(props.exhibit_props.device_info.manufactured_from_date),
+	// 		manufactured_to_date: PartialDate.parse_iso(props.exhibit_props.device_info.manufactured_to_date),
+	// 	};
+	// }
+	// const acquisition_info = {
+	// 	...props.exhibit_props.acquisition_info,
+	// 	...{ date: DateUtil.parse_iso_date(props.exhibit_props.acquisition_info.date) }
+	// };
 	
 	form_constructor_args.data = {
 		id: props.exhibit_props.id,
@@ -115,15 +115,15 @@ if (props.exhibit_props) {
 		kind_of_property_id: props.exhibit_props.kind_of_property_id,
 		
 		// Zugangsdaten
-		acquisition_info: acquisition_info,
+		acquisition_info: props.exhibit_props.acquisition_info,
 		
 		// Geräte- und Buchinformationen
 		manufacturer: props.exhibit_props.manufacturer,
-		manufacture_date: PartialDate.parse_iso(props.exhibit_props.manufacture_date),
+		manufacture_date: props.exhibit_props.manufacture_date,
 		original_price: props.exhibit_props.original_price,
 		
 		// Geräteinformationen
-		device_info: device_info,
+		device_info: props.exhibit_props.device_info,
 		
 		// Buchinformationen
 		book_info: props.exhibit_props.book_info,
@@ -196,7 +196,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						
 						<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" :grid_col="1" :grid_row="2"/>
 						
-						<InputNumberField :form="exhibit_form.current_value" label="Zeitwert" :grid_col="2" :grid_row="2"/>
+						<InputNumberField :form="exhibit_form.current_value" price label="Zeitwert" currency="EUR" :grid_col="2" :grid_row="2"/>
 					</div>
 				</Fieldset>
 				
@@ -209,7 +209,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						
 						<SelectField :form="exhibit_form.acquisition_info.kind" label="Zugangsart" :grid_col="1" :grid_row="3"/>
 						
-						<InputNumberField :form="exhibit_form.acquisition_info.purchasing_price" label="Kaufpreis" :grid_col="2" :grid_row="3"/>
+						<InputNumberField :form="exhibit_form.acquisition_info.purchasing_price" price label="Kaufpreis" currency="EUR" :grid_col="2" :grid_row="3"/>
 					</div>
 				</Fieldset>
 			</div>

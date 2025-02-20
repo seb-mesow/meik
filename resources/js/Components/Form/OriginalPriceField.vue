@@ -7,7 +7,7 @@ import AutoComplete from 'primevue/autocomplete';
 import { ICurrency } from '@/form/exhibitform';
 
 const props = defineProps<{
-	form_amount: UISingleValueForm2<number>,
+	form_amount: UISingleValueForm2<number|null>,
 	form_currency: UISelectForm<ICurrency>,
 	grid_col: number,
 	grid_col_span?: number,
@@ -27,6 +27,9 @@ const props = defineProps<{
 				:inputId="form_amount.html_id"
 				:modelValue="form_amount.ui_value_in_editing"
 				@update:modelValue="(v: number) => form_amount.on_change_ui_value_in_editing(v)"
+				:min="0"
+				:minFractionDigits="2"
+				:maxFractionDigits="2"
 				fluid
 			/>
 		</template>

@@ -1,5 +1,7 @@
 import { Config } from 'ziggy-js';
 
+export type NotUndefined<T> = T extends undefined ? never : T;
+
 export interface User {
     id: number;
     name: string;
