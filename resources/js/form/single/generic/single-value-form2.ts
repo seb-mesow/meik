@@ -24,6 +24,7 @@ export interface ISingleValueForm2<T, R extends boolean = false> {
 	set_value_in_editing(new_value_in_editing: T|null): void;
 	set_validate(validate: (value_in_editing: T|null|undefined) => Promise<string[]>): void;
 	set_is_required(required: boolean): void;
+	consider(): void;
 }
 
 export interface ISingleValueForm2Parent<T> {
@@ -114,8 +115,8 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	
 	public on_blur(event: Event): void {
 		if (!this.was_considered) {
-			this.was_considered = true;
 			this.set_value_in_editing_without_ui_value(() => {
+				this.was_considered = true;
 				let value_in_editing = this.value_in_editing;
 				// Before:
 				// `undefined` means "no value yet given",
@@ -134,8 +135,10 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	}
 	
 	public on_change_ui_value_in_editing(new_ui_value_in_editing: U): void {
-		this.was_considered = true;
-		this.set_value_in_editing_without_ui_value(() => this._create_value_from_ui_value(new_ui_value_in_editing));
+		this.set_value_in_editing_without_ui_value(() => {
+			this.was_considered = true;
+			return this._create_value_from_ui_value(new_ui_value_in_editing);
+		});
 	}
 	
 	public set_value_in_editing(new_value_in_editing: T|null|undefined): void {
@@ -153,6 +156,12 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		this.refresh(() => {
 			// @ts-expect-error
 			this.is_required.value = required;
+		});
+	}
+	
+	public consider(): void {
+		this.refresh(() => {
+			this.was_considered = true;
 		});
 	}
 	
