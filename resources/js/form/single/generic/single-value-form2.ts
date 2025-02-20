@@ -6,7 +6,7 @@ export interface UISingleValueForm2<U = string|undefined> {
 	readonly ui_value_in_editing: Readonly<Ref<U>>;
 	readonly ui_is_invalid: Readonly<Ref<boolean>>;
 	readonly ui_errs: Readonly<Ref<string[]>>;
-	readonly is_required: boolean;
+	readonly is_required: Readonly<Ref<boolean>>;
 	on_change_ui_value_in_editing(new_ui_value_in_editing: U): void;
 	on_blur(event: Event): void;
 }
@@ -23,6 +23,7 @@ export interface ISingleValueForm2<T, R extends boolean = false> {
 	get_value_in_editing(): T|null|undefined;
 	set_value_in_editing(new_value_in_editing: T|null): void;
 	set_validate(validate: (value_in_editing: T|null|undefined) => Promise<string[]>): void;
+	set_is_required(required: boolean): void;
 }
 
 export interface ISingleValueForm2Parent<T> {
@@ -77,7 +78,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	public ui_errs: Ref<string[]>;
 	public ui_is_invalid: Ref<boolean>;
 	public readonly html_id: string;
-	public readonly is_required: R;
+	public is_required: Ref<R>;
 	
 	private readonly _on_change: (form: ISingleValueForm2<T>) => void;
 	private _validate: (value_in_editing: T|null|undefined) => Promise<string[]>;
@@ -96,7 +97,8 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		console.log(`${this.html_id}: init: this.value_in_editing ==`);
 		console.log(this.value_in_editing);
 		
-		this.is_required = args.required;
+		//@ts-expect-error
+		this.is_required = ref(args.required);
 		this.errs = args.errs ?? [];
 		this.ui_errs = ref(this.errs);
 		
@@ -147,6 +149,13 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		});
 	}
 	
+	public set_is_required(required: boolean): void {
+		this.refresh(() => {
+			// @ts-expect-error
+			this.is_required.value = required;
+		});
+	}
+	
 	private set_value_in_editing_without_ui_value(setter: () => T|null|undefined): void {
 		this.refresh(() => {
 			this.value_in_editing = setter();
@@ -160,9 +169,9 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 				return this.last_validation_state;
 			} else {
 				
-				if (this.is_required && (this.value_in_editing === null || (!this.was_considered && this.value_in_editing === undefined))) {
+				if (this.is_required.value && (this.value_in_editing === null || (!this.was_considered && this.value_in_editing === undefined))) {
 					this.errs.push('Pflichtfeld');
-				} else if (!(!this.was_considered && !this.is_required && this.value_in_editing === undefined)) {
+				} else if (!(!this.was_considered && !this.is_required.value && this.value_in_editing === undefined)) {
 					try {
 						console.log(`Form ${this.html_id}: start validating ...`)
 						const further_errs: string[] = await this._validate(this.value_in_editing);
@@ -192,12 +201,12 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	public commit(): void {
 		let value = this.get_value_in_editing();
 		if (value === undefined) {
-			if (this.is_required) {
+			if (this.is_required.value) {
 				throw new Error(`SingleValueForm2::commit(): ${this.html_id}: value_in_editing is undefined, but required (=^= something other than 'no value')`);
 			} else {
 				value = null;
 			}
-		} else if (value === null && this.is_required) {
+		} else if (value === null && this.is_required.value) {
 			throw new Error(`SingleValueForm2::commit(): ${this.html_id}: value_in_editing is null, but required`);
 		}
 		// @ts-expect-error
@@ -215,13 +224,13 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	public get_value(): R extends true ? T : T|null {
 		let value = this.value;
 		if (this.value === undefined) {
-			if (this.is_required) {
+			if (this.is_required.value) {
 				throw new Error(`SingleValueForm2::get_value(): ${this.html_id}: value is undefined, but required (=^= something other than 'no value')`);
 			} else {
 				// @ts-expect-error
 				value = null;
 			}
-		} else if (this.value === null && this.is_required) {
+		} else if (this.value === null && this.is_required.value) {
 			throw new Error(`SingleValueForm2::get_value(): ${this.html_id}: value is null, but required`);
 		}
 		// @ts-expect-error

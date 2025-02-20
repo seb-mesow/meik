@@ -424,8 +424,10 @@ export class ExhibitForm implements IExhibitForm {
 					const value_in_editing = form.get_value_in_editing();
 					if (value_in_editing === null || value_in_editing == undefined) {
 						this.original_price.currency.set_validate(original_price_currency_not_validate);
+						this.original_price.currency.set_is_required(false);
 					} else {
 						this.original_price.currency.set_validate(original_price_currency_validate);
+						this.original_price.currency.set_is_required(true);
 					}
 				},
 			}, 'original_price_amount', this.common_fields),
