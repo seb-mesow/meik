@@ -12,11 +12,11 @@ import * as DateUtil from "@/util/date";
 import { StringForm } from "./single/generic/string-form";
 import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
 import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "./single/special/rubric-form";
-import { ILocation, ILocationForm, LocationForm } from "./single/special/location-form";
+import { ILocation, LocationForm } from "./single/special/location-form";
 import { IPlace, IPlaceForm, PlaceForm } from "./single/special/place-form";
 
 export interface IExhibitForm {
-	readonly id: Readonly<Ref<number|undefined>>;
+	readonly id: number|undefined;
 	
 	// Kerndaten
 	readonly inventory_number:  Readonly<UISingleValueForm2<string>>;
@@ -169,7 +169,7 @@ export interface IExhibitFormConstructorArgs {
 }
 
 export class ExhibitForm implements IExhibitForm {
-	public id: Ref<number|undefined>;
+	public readonly id: number|undefined;
 	
 	// Kerndaten
 	public readonly inventory_number: Readonly<ISingleValueForm2<string, true> & UISingleValueForm2<string>>;
@@ -251,7 +251,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		// UI-Werte
 		
-		this.id = ref(args.data?.id);
+		this.id = args.data?.id;
 		
 		// Kerndaten
 		this.name = new StringForm<true>({
@@ -472,7 +472,7 @@ export class ExhibitForm implements IExhibitForm {
 		};
 		
 		// Exponats-Typ
-		const args_exhibit_type_id: string = (device_info === undefined) ? 'book' : 'device';
+		const args_exhibit_type_id: string = (book_info === undefined) ? 'device' : 'book';
 		const type: IExhibitType|undefined = args.aux.selectable_values.exhibit_type.find((v) => v.id === args_exhibit_type_id);
 		if (!type) {
 			throw new Error("exhibit type not found");
@@ -549,7 +549,7 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	private exists_in_db(): boolean {
-		return this.id.value !== undefined;
+		return this.id !== undefined;
 	}
 	
 	public async click_delete(): Promise<void> {
@@ -569,7 +569,7 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	private async ajax_update(): Promise<void> {
-		if (this.id.value === undefined) {
+		if (this.id === undefined) {
 			throw new Error("undefined id");
 		}
 		
@@ -577,7 +577,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		const request_config: AxiosRequestConfig<ExhibitAJAX.Update.IRequestData> = {
 			method: "put",
-			url: route('ajax.exhibit.update', { exhibit_id: this.id.value }),
+			url: route('ajax.exhibit.update', { exhibit_id: this.id }),
 			data: request_data,
 		};
 		
@@ -593,7 +593,7 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	private async ajax_create(): Promise<void> {
-		if (this.id.value !== undefined) {
+		if (this.id !== undefined) {
 			throw new Error("defined id");
 		}
 		
