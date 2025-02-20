@@ -31,7 +31,10 @@ class CategoryController extends Controller
 		
 		['rubrics' => $rubric_props ] = $this->rubric_service->query($category_id, 0);
 		
+		$selectable_categories = $this->determinate_selectable_categories();
+		
 		return Inertia::render('Category/Category', [
+			'selectable_categories' => $selectable_categories,
 			'category' => [
 				'id' => $category->value,
 				'name' => $category->get_name(),
@@ -41,5 +44,16 @@ class CategoryController extends Controller
 				'count_per_page' => RubricService::DEFAULT_COUNT_PER_PAGE,
 			],
 		]);
+	}
+	
+	/**
+	 * @return array{ id: string, name: string }[]
+	 */
+	private function determinate_selectable_categories(): array {
+		$all_categories = Category::cases();
+		return array_map(static fn (Category $category): array => [
+			'id' => $category->get_id(),
+			'name' => $category->get_name(),
+		], $all_categories);
 	}
 }

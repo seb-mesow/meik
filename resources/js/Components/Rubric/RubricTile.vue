@@ -7,7 +7,8 @@ const RubricDialog = defineAsyncComponent(() => import('./RubricDialog.vue'));
 import axios, { AxiosRequestConfig } from "axios";
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import { IRubricProps } from '@/types/page_props/rubric_overview';
+import { IRubricFormConstructorArgs } from '@/form/rubricform';
+import { IRubricTileProps } from '@/types/page_props/rubric_tiles';
 
 const confirm_service = useConfirm();
 const emit = defineEmits({
@@ -19,13 +20,13 @@ const props = defineProps<{
 	rubric: {
 		id: string,
 		name: string,
+		category_id: string,
 	},
-	category_id: string,
 }>();
 const rubric = props.rubric;
 const rubric_id = ref(rubric.id);
 const rubric_name = ref(rubric.name);
-const category_id = ref(props.category_id);
+const rubric_category_id = ref(rubric.category_id);
 	
 console.log(`rubric_id == ${rubric_id.value}`);
 console.log(`rubric_name == ${rubric_name.value}`);
@@ -33,7 +34,19 @@ console.log(`rubric_name == ${rubric_name.value}`);
 const dialog = useDialog();
 const toast_service = useToast();
 
-const edit = () => {
+function create_dialog() {
+	const form_args: Omit<IRubricFormConstructorArgs,'dialog_ref'|'selectable_categories'> = {
+		data: {
+			id: rubric_id.value,
+			name: rubric_name.value,
+			category_id: rubric_category_id.value,
+		},
+		on_rubric_updated: (tile: IRubricTileProps) => {
+			rubric_id.value = tile.id;
+			rubric_name.value = tile.name;
+		},
+	};
+	
 	dialog.open(RubricDialog, {
 		props: {
 			header: 'Rubrik bearbeiten',
@@ -46,17 +59,7 @@ const edit = () => {
 			},
 			modal: true,
 		},
-		data: {
-			rubric: {
-				id: rubric_id.value,
-				name: rubric_name.value,
-			},
-			category_id: category_id.value,
-			on_updated: (tile: IRubricProps) => {
-				rubric_id.value = tile.id;
-				rubric_name.value = tile.name;
-			}
-		},
+		data: form_args,
 		onClose: (options) => {
 			const data = options?.data;
 			if (data) {
@@ -119,7 +122,7 @@ const ajax_delete = (): Promise<void> => {
 
 <template>
 	<div class="h-fit">
-		<Button @click="edit">Edit</Button>
+		<Button @click="create_dialog">Edit</Button>
 		<Button @click="delete_rubric($event)">Delete</Button>
 		<a :href="route('rubric.details', { rubric_id: rubric_id })">
 			<div class="rubric-tile">

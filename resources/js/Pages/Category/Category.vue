@@ -1,31 +1,27 @@
 <script setup lang="ts">
-import Button from 'primevue/button';
 import RubricTiles from '@/Components/Rubric/RubricTiles.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { defineAsyncComponent, ref } from 'vue';
+import { provide, ref } from 'vue';
 import Breadcrumb from 'primevue/breadcrumb';
 import { route } from 'ziggy-js';
-import { useDialog } from 'primevue/usedialog';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { IRubricProps } from '@/types/page_props/rubric_overview';
-import * as RubricAJAX from '@/types/ajax/rubric';
-const RubricDialog = defineAsyncComponent(() => import('../../Components/Rubric/RubricDialog.vue'));
+import DynamicDialog from 'primevue/dynamicdialog';
+import { IRubricTilesMainProps } from '@/types/page_props/rubric_tiles';
+import { ICategory } from '@/form/rubricform';
 
 const props = defineProps<{
+	selectable_categories: ICategory[],
+	rubric_tiles_main_props: IRubricTilesMainProps,
 	category: {
 		id: string,
 		name: string,
 	},
-	rubric_tiles_main_props: {
-		rubric_tiles: IRubricProps[],
-		count_per_page: number,
-	},
 }>();
+
 console.log(`Category/Category.vue: props ==`)
 console.log(props);
 
-const dialog = useDialog();
+provide('selectable_categories', props.selectable_categories);
 
 let rubricArray = ref(props.rubric_tiles_main_props.rubric_tiles);
 
@@ -44,104 +40,11 @@ const items = [
 	}
 ];
 
-const create = () => {
-	dialog.open(RubricDialog, {
-		props: {
-			header: 'Rubrik anlegen',
-			style: {
-				width: '50vw',
-			},
-			breakpoints: {
-				'960px': '75vw',
-				'640px': '90vw'
-			},
-			modal: true,
-		},
-		data: {
-			rubric: null,
-			category: props.category.id,
-			on_created: (tile: IRubricProps): void => append_tile(tile),
-		},
-		onClose: (options) => {
-			const data = options?.data;
-			if (data) {
-				reload()
-			}
-		}
-	});
-}
-
-const append_tile = (tile: IRubricProps) => {
-	rubricArray.value.push(tile);
-}
-
-const update_tile = (tile: IRubricProps) => {
-	for (const rubric of rubricArray.value) {
-		if (rubric.id === tile.id) {
-			rubric.name = tile.name
-			return;
-		}
-	}
-}
-
-const delete_tile = (id: string) => {
-	rubricArray.value = rubricArray.value.filter((rubric_tile: IRubricProps): boolean => rubric_tile.id !== id);
-}
-
-const reload = () => {
-	page.value = 0
-	load_rubrics()
-}
-
-const load_rubrics = (): void => {
-	if (isLoading.value) return;  // Verhindert mehrere Anfragen gleichzeitig
-	isLoading.value = true;
-
-	ajax_get_paginated()
-}
-
-const ajax_get_paginated = (): Promise<void> => {
-	const query_params: RubricAJAX.Query.IQueryParams = {
-		category_id: props.category.id,
-		page_number: page.value,
-	};
-	
-	const request_config: AxiosRequestConfig<RubricAJAX.Query.IRequestData> = {
-		method: "get",
-		url: route('ajax.rubric.query'),
-		params: query_params,
-	};
-	return axios.request(request_config).then(
-		(response: AxiosResponse<RubricAJAX.Query.I200ResponseData>) => {
-			isLoading.value = false;
-			if (page.value === 0) {
-				rubricArray.value = [];
-				rubricArray.value = response.data.rubrics;
-				// total_count = response.data.total_count
-				console.log('replace', rubricArray.value);
-			} else {
-				rubricArray.value.push(...response.data.rubrics);
-				// total_count = response.data.total_count
-				console.log('append');
-			}
-		}
-	);
-}
-
-const handleScroll = (event: Event) => {
-	const container = event.target as HTMLElement;
-	const bottomReached = container.scrollHeight === container.scrollTop + container.clientHeight;
-	console.log('trigger', bottomReached, !isLoading.value)
-	if (bottomReached && !isLoading.value) {
-
-		page.value = page.value + 1;
-		load_rubrics();  // Lädt die nächste Seite, wenn der Benutzer den unteren Rand erreicht
-	}
-}
-
 </script>
 
 <template>
+	<DynamicDialog />
+	
 	<Head title="Kategorien" />
 	<AuthenticatedLayout :disable_overflow="true">
 		

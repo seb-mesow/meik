@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import Button from 'primevue/button';
 import RubricTile from '@/Components/Rubric/RubricTile.vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
 import { defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue';
-import Breadcrumb from 'primevue/breadcrumb';
 import { route } from 'ziggy-js';
 import { useDialog } from 'primevue/usedialog';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { IRubricProps } from '@/types/page_props/rubric_overview';
 import * as RubricAJAX from '@/types/ajax/rubric';
-import { IRubricTilesMainProps } from '@/types/page_props/rubric_tiles';
+import { IRubricTileProps, IRubricTilesMainProps } from '@/types/page_props/rubric_tiles';
+import { IRubricFormConstructorArgs } from '@/form/rubricform';
+import Category from '@/Pages/Category/Category.vue';
+
 const RubricDialog = defineAsyncComponent(() => import('../../Components/Rubric/RubricDialog.vue'));
 
 const props = defineProps<{
@@ -29,7 +28,17 @@ let more_exist = true;
 
 let is_loading = false;
 
-const create = () => {
+function create_dialog() {
+	let preset: any = undefined;
+	if (props.category_id) {
+		preset = preset ?? {};
+		preset.category_id = props.category_id;
+	};
+	const form_args: Omit<IRubricFormConstructorArgs,'dialog_ref'|'selectable_categories'> = {
+		preset: preset,
+		on_rubric_created: (tile: IRubricTileProps): void => append_tile(tile),
+	};
+	
 	dialog.open(RubricDialog, {
 		props: {
 			header: 'Rubrik anlegen',
@@ -42,11 +51,7 @@ const create = () => {
 			},
 			modal: true,
 		},
-		data: {
-			rubric: null,
-			category: props.category_id,
-			on_created: (tile: IRubricProps): void => append_tile(tile),
-		},
+		data: form_args,
 		onClose: (options) => {
 			const data = options?.data;
 			if (data) {
@@ -56,11 +61,11 @@ const create = () => {
 	});
 }
 
-const append_tile = (tile: IRubricProps) => {
+function append_tile(tile: IRubricTileProps): void {
 	rubrics.value.push(tile);
 }
 
-const update_tile = (tile: IRubricProps) => {
+function update_tile(tile: IRubricTileProps): void {
 	for (const rubric of rubrics.value) {
 		if (rubric.id === tile.id) {
 			rubric.name = tile.name
@@ -70,7 +75,7 @@ const update_tile = (tile: IRubricProps) => {
 }
 
 const delete_tile = (id: string) => {
-	rubrics.value = rubrics.value.filter((rubric_tile: IRubricProps): boolean => rubric_tile.id !== id);
+	rubrics.value = rubrics.value.filter((rubric_tile: IRubricTileProps): boolean => rubric_tile.id !== id);
 }
 
 const reload = () => {
@@ -137,18 +142,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-		<div class="fixed bottom-4 right-4">
-			<Button @click="create">Neu</Button>
-		</div>
-		
-		<!-- Wrapper für den Scroll-Bereich -->
-		<div class="flex flex-wrap" @scroll="handleScroll($event)">
-			<!-- TODO handle category_id for RubricTiles -->
-			<RubricTile v-for="rubric in rubrics" :key="rubric.id"
-				:rubric="rubric"
-				:category_id="props.category_id"
-				@delete_tile="delete_tile"
-			/>
-		</div>
+	<div class="fixed bottom-4 right-4">
+		<Button @click="create_dialog">Neu</Button>
+	</div>
+	
+	<!-- Wrapper für den Scroll-Bereich -->
+	<div class="flex flex-wrap" @scroll="handleScroll($event)">
+		<!-- TODO handle category_id for RubricTiles -->
+		<RubricTile v-for="rubric in rubrics" :key="rubric.id"
+			:rubric="rubric"
+			@delete_tile="delete_tile"
+		/>
+	</div>
 	
 </template>

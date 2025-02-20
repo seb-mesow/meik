@@ -1,51 +1,83 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import * as RubricAJAX from "@/types/ajax/rubric";
-import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "./single/generic/single-value-form2";
+import { ISingleValueForm2, ISingleValueForm2Parent, UISingleValueForm2 } from "./single/generic/single-value-form2";
 import { route } from "ziggy-js";
-import { IRubricProps } from "@/types/page_props/rubric_overview";
+import { ISelectForm, SelectForm, UISelectForm } from "./single/generic/select-form";
+import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
+import { StringForm } from "./single/generic/string-form";
+import { IRubricTileProps } from "@/types/page_props/rubric_tiles";
+
+export type ICategory = Readonly<{
+	id: string,
+	name: string,
+}>;
 
 export interface IRubricForm {
-	readonly name: ISingleValueForm2<string>;
-	save(): void
+	readonly category: Readonly<UISelectForm<ICategory>>;
+	readonly name: Readonly<UISingleValueForm2<string>>;
+	click_save(): void;
 };
 
 export interface IRubricFormConstructorArgs {
-	id?: string,
-	name?: ISingleValueForm2ConstructorArgs<string>,
-	category_id: string,
+	data?: {
+		id: string,
+		category_id: string,
+		name: string,
+	},
+	preset?: {
+		category_id: string,
+	}
+	selectable_categories: ICategory[],
 	dialog_ref: any,
-	on_created?: (tile: IRubricProps) => void
-	on_updated?: (tile: IRubricProps) => void
+	on_rubric_created?: (tile: IRubricTileProps) => void,
+	on_rubric_updated?: (tile: IRubricTileProps) => void,
 };
 
 export class RubricForm implements IRubricForm {
 	private id?: string;
-	public name: SingleValueForm2<string>;
-	private category_id: string;
+	
+	public category: ISelectForm<ICategory, true> & UISelectForm<ICategory>;
+	public name: ISingleValueForm2<string, true> & UISingleValueForm2<string>;
+	
 	private dialog_ref: any;
-	private on_created: (tile: IRubricProps) => void; 
-	private on_updated: (tile: IRubricProps) => void; 
-
+	private _on_rubric_created: (tile: IRubricTileProps) => void; 
+	private _on_rubric_updated: (tile: IRubricTileProps) => void; 
+	
+	private readonly fields: IMultipleValueForm & ISingleValueForm2Parent<any>;
+	
 	public constructor(args: IRubricFormConstructorArgs) {
-		this.id = args.id;
+		this.id = args.data?.id;
 		
-		const name_args: ISingleValueForm2ConstructorArgs<string> = {
-			val: args.name?.val ?? '',
-			errs: args.name?.errs
-		};
-		this.name = new SingleValueForm2(name_args, 'name');
-		this.category_id = args.category_id ?? '';
+		this.fields = new MultipleValueForm({
+			// on_child_change: (form) => this.on_child_field_change(form),
+		});
+		
+		const category_id = args.data?.category_id ?? args.preset?.category_id;
+		
+		this.category = new SelectForm<ICategory, true>({
+			val: category_id ? { id: category_id, name: 'dummy_category_name'} : undefined, // TODO
+			required: true,
+			search_in: 'name',
+			selectable_options: args.selectable_categories,
+		}, 'category_id', this.fields);
+		
+		this.name = new StringForm<true>({
+			val: args.data?.name,
+			required: true,
+		}, 'name', this.fields);
 		
 		this.dialog_ref = args.dialog_ref;
-		this.on_created = args.on_created ?? (() => {});
-		this.on_updated = args.on_updated ?? (() => {});
+		this._on_rubric_created = args.on_rubric_created ?? (() => {});
+		this._on_rubric_updated = args.on_rubric_updated ?? (() => {});
 	}
 
 	private exists_in_db(): boolean {
 		return this.id !== undefined;
 	}
 
-	public async save(): Promise<void> {
+	public async click_save(): Promise<void> {
+		this.fields.commit();
+		
 		if (this.exists_in_db()) {
 			return this.ajax_update();
 		} else {
@@ -54,24 +86,29 @@ export class RubricForm implements IRubricForm {
 	} 
 
 	private async ajax_create(): Promise<void> {
-		console.log(`ajax_update(): this.category_id == ${this.category_id}`);
+		console.log(`ajax_update(): this.category_id == ${this.category.get_value().id}`);
 		
 		const request_config: AxiosRequestConfig<RubricAJAX.Create.IRequestData> = {
 			method: "post",
 			url: route('ajax.rubric.create'),
 			data: {
 				name: this.name.get_value(),
-				category_id: this.category_id,
+				category_id: this.category.get_value().id,
 			},
 		};
+		
 		return axios.request(request_config).then(
 			(response: AxiosResponse<RubricAJAX.Create.I200ResponseData>) => {
-				const new_rubric_id = response.data;
-				this.on_created({ id: new_rubric_id, name: this.name.get_value() });
+				const new_rubric_id : string = response.data;
+				this._on_rubric_created({
+					id: new_rubric_id,
+					name: this.name.get_value(),
+					category_id: this.category.get_value().id,
+				});
 				this.dialog_ref.close({
 					data: {
 						id: new_rubric_id,
-						name: this.name.val,
+						name: this.name,
 					}
 				});
 			}
@@ -87,18 +124,22 @@ export class RubricForm implements IRubricForm {
 			url: route('ajax.rubric.update', { rubric_id: this.id }),
 			data: {
 				name: this.name.get_value(),
-				category_id: this.category_id
+				category_id: this.category.get_value().id,
 			},
 		};
 		return axios.request(request_config).then(() => {
 			if (this.id === undefined) {
 				throw new Error("undefined id");
 			}
-			this.on_updated({ id: this.id, name: this.name.get_value() });
+			this._on_rubric_updated({
+				id: this.id,
+				name: this.name.get_value(),
+				category_id: this.category.get_value().id,
+			});
 			this.dialog_ref.close({
 				data: {
 					id: this.id,
-					name: this.name.val,
+					name: this.name,
 				}
 			});
 		});

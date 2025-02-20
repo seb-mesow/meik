@@ -1,30 +1,35 @@
 <script lang="ts" setup>
-import { IRubricForm, RubricForm } from "@/form/rubricform";
+import { ICategory, IRubricForm, IRubricFormConstructorArgs, RubricForm } from "@/form/rubricform";
 import Button from "primevue/button";
-import { inject, reactive, Reactive } from "vue";
+import { inject } from "vue";
 import InputTextField2 from "../Form/InputTextField2.vue";
+import SelectField from "../Form/SelectField.vue";
 
 const dialogRef: any = inject('dialogRef');
 
-const params = dialogRef.value.data;
+const selectable_categories: ICategory[]|undefined = inject('selectable_categories');
+if (selectable_categories === undefined) {
+	throw new Error('Assertation failed: selectable_categories not provide()-d')
+}
 
-const form: Reactive<IRubricForm> = reactive(new RubricForm({
-	id: params.rubric?.id,
-	name: {
-		val: params.rubric?.name,
-		errs: [],
-	},
-	category_id: params.category_id,
-	on_created: params.on_created,
-	dialog_ref: dialogRef
-}));
+const params: Omit<IRubricFormConstructorArgs,'dialog_ref'|'selectable_categories'> = dialogRef.value.data;
+
+const form: IRubricForm = new RubricForm({
+	data: params.data,
+	preset: params.preset,
+	selectable_categories: selectable_categories,
+	on_rubric_created: params.on_rubric_created,
+	on_rubric_updated: params.on_rubric_updated,
+	dialog_ref: dialogRef,
+});
 </script>
 
 <template>
-	<div>
-		<InputTextField2 :form="form.name" label="Name" />
-		<div class="flex justify-between mt-3">
-			<Button @click="form.save()" label="Speichern"/>
+	<div class="grid grid-cols-1 gap-x-3">
+		<SelectField :form="form.category" label="Kategorie" :grid_col="1" :grid_row="1"/>
+		<InputTextField2 :form="form.name" label="Name" :grid_col="1" :grid_row="1"/>
+		<div class="justify-between mt-3">
+			<Button @click="form.click_save()" label="Speichern"/>
 		</div>
 	</div>
 </template>
