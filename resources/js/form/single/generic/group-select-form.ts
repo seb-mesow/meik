@@ -43,6 +43,12 @@ export class GroupSelectForm<C = string, P = C, R extends boolean = false> exten
 		this.optionLabel = args.optionLabel;
 	}
 	
+	public on_blur(event: Event): void {
+		if (!this.is_overlay_shown) {
+			super.on_blur(event);
+		}
+	}
+	
 	public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
 		this.shown_suggestions.value = await this.get_shown_suggestions(event.query);
 	}
