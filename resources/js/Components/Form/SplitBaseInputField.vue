@@ -23,10 +23,10 @@ const _grid_row_end: number = _grid_row_start + 1;
 	>
 		<label :for="form1.html_id"
 			:style="`flex: ${flex1};`"
-		>{{ props.label1 + (form1.is_required ? ' *': '' ) }}</label>
+		>{{ props.label1 + (form1.is_required.value ? ' *': '' ) }}</label>
 		<label :for="form2.html_id"
 			:style="`flex: ${flex2};`"
-		>{{ props.label2 + (form2.is_required ? ' *': '' ) }}</label>
+		>{{ props.label2 + (form2.is_required.value ? ' *': '' ) }}</label>
 	</div>
 	<div :style="`grid-area: ${_grid_row_start+1} / ${grid_col} / ${_grid_row_end+1} / ${_grid_col_end};`"
 		class="flex gap-x-3"

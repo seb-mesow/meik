@@ -17,7 +17,7 @@ const _grid_row_end: number = _grid_row_start + 1;
 	<div :style="`grid-area: ${_grid_row_start} / ${grid_col} / ${_grid_row_end} / ${_grid_col_end};`"
 		class=""
 	>
-		<label :for="form.html_id">{{ props.label + (form.is_required ? ' *': '' ) }}</label>
+		<label :for="form.html_id">{{ props.label + (form.is_required.value ? ' *': '' ) }}</label>
 	</div>
 	<div :style="`grid-area: ${_grid_row_start+1} / ${grid_col} / ${_grid_row_end+1} / ${_grid_col_end};`"
 		class=""
