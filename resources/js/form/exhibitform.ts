@@ -12,7 +12,7 @@ import * as DateUtil from "@/util/date";
 import { StringForm } from "./single/generic/string-form";
 import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
 import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "./single/special/rubric-form";
-import { ILocation, LocationForm } from "./single/special/location-form";
+import { ILocation, ILocationForm, LocationForm } from "./single/special/location-form";
 import { IPlace, IPlaceForm, PlaceForm } from "./single/special/place-form";
 
 export interface IExhibitForm {
@@ -141,7 +141,7 @@ export interface IExhibitFormConstructorArgs {
 		// TODO im Constructor doch erstmal noch string
 		manufacture_date: string, // optional
 		original_price: { // optional
-			amount: number|number,
+			amount: number|null,
 			currency_id: string,
 		},
 		
@@ -282,7 +282,7 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'rubric', this.common_fields);
 		
 		this.location = new LocationForm<true>({
-			val: this.determinate_selectable_value_from_id(args.data?.location_id, this.selectable_values.location),
+			val: this.determinate_selectable_value_from_id<ILocation, true>(args.data?.location_id, this.selectable_values.location),
 			required: true,
 			selectable_options: args.aux.selectable_values.location,
 			on_change: async (form) => {
@@ -304,7 +304,7 @@ export class ExhibitForm implements IExhibitForm {
 			if (!this.selectable_values.initial_places) {
 				throw new Error("Assertation failed: this.selectable_values.initial_places is not defined, despite a place_id is present");
 			}
-			provided_place = this.determinate_selectable_value_from_id(args.data.place_id, this.selectable_values.initial_places);
+			provided_place = this.determinate_selectable_value_from_id<IPlace, true>(args.data.place_id, this.selectable_values.initial_places);
 		}
 		this.place = new PlaceForm<true>({
 			val: provided_place,
@@ -316,7 +316,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		// Bestandsdaten
 		this.preservation_state = new SelectForm<IPreservationState, true>({
-			val: this.determinate_selectable_value_from_id(args.data?.preservation_state_id, this.selectable_values.preservation_state),
+			val: this.determinate_selectable_value_from_id<IPreservationState, true>(args.data?.preservation_state_id, this.selectable_values.preservation_state),
 			selectable_options: this.selectable_values.preservation_state,
 			search_in: 'name',
 			optionLabel: 'name',
@@ -335,7 +335,7 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'current_value', this.common_fields);
 		
 		this.kind_of_property = new SelectForm<IKindOfProperty, true>({
-			val: this.determinate_selectable_value_from_id(args.data?.kind_of_property_id ?? '', this.selectable_values.kind_of_property),
+			val: this.determinate_selectable_value_from_id<IKindOfProperty, true>(args.data?.kind_of_property_id, this.selectable_values.kind_of_property),
 			selectable_options: this.selectable_values.kind_of_property,
 			search_in: 'name',
 			optionLabel: 'name',
@@ -370,7 +370,7 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'source', this.common_fields),
 			
 			kind: new SelectForm<IKindOfAcquisition>({
-				val: this.determinate_selectable_value_from_id(args.data?.acquisition_info.kind_id ?? '', this.selectable_values.kind_of_acquisition),
+				val: this.determinate_selectable_value_from_id<IKindOfAcquisition>(args.data?.acquisition_info.kind_id, this.selectable_values.kind_of_acquisition),
 				selectable_options: this.selectable_values.kind_of_acquisition,
 				optionLabel: 'name',
 				search_in: 'name',
@@ -410,10 +410,10 @@ export class ExhibitForm implements IExhibitForm {
 			}
 		};
 		
-		const original_price_amount = args.data?.original_price?.amount;
+		const original_price_amount = args.data?.original_price.amount;
 		this.original_price = {
 			amount: new SingleValueForm2<number, number>({
-				val: typeof original_price_amount === 'number' ? this.form_price_amount(original_price_amount) : undefined,
+				val: typeof original_price_amount === 'number' ? this.form_price_amount(original_price_amount) : original_price_amount,
 				on_change: (form) => {
 					const value_in_editing = form.get_value_in_editing();
 					if (value_in_editing === null || value_in_editing == undefined) {
@@ -425,11 +425,11 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'original_price_amount', this.common_fields),
 			
 			currency: new SelectForm<ICurrency>({
-				val: this.determinate_selectable_value_from_id(args.data?.original_price?.currency_id, this.selectable_values.currency),
+				val: this.determinate_selectable_value_from_id<ICurrency>(args.data?.original_price.currency_id, this.selectable_values.currency),
 				selectable_options: this.selectable_values.currency,
 				search_in: 'id',
 				optionLabel: 'id',
-				validate: (args.data?.original_price?.amount === undefined) ? original_price_currency_not_validate : original_price_currency_validate,
+				validate: (original_price_amount === null || original_price_amount === undefined) ? original_price_currency_not_validate : original_price_currency_validate,
 			}, 'original_price_currency', this.common_fields),
 		};
 		
@@ -453,7 +453,7 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'authors', this.book_fields),
 			
 			language: new SelectForm<ILanguage, true>({
-				val: this.determinate_selectable_value_from_id(book_info?.language_id ?? '', this.selectable_values.language),
+				val: this.determinate_selectable_value_from_id<ILanguage, true>(book_info?.language_id, this.selectable_values.language, true),
 				selectable_options: this.selectable_values.language,
 				search_in: 'name',
 				optionLabel: 'name',
@@ -494,11 +494,19 @@ export class ExhibitForm implements IExhibitForm {
 	
 	}
 	
-	private determinate_selectable_value_from_id<T extends { id: string }>(id: string|undefined, selectable_values: T[]): T|undefined {
+	private determinate_selectable_value_from_id<T extends { id: string }, R extends boolean = false>(id: string|undefined, selectable_values: T[], required?: R): R extends true ? T|undefined : T|null|undefined {
 		if (id === undefined) {
 			return undefined;
 		}
-		return selectable_values.find((selectable_value: T): boolean => selectable_value.id === id);
+		let value: T|null|undefined = selectable_values.find((selectable_value: T): boolean => selectable_value.id === id);
+		if (required && (value === null || value === undefined)) {
+			throw new Error(`ExhibitForm::determinate_selectable_value_from_id(): provided id ${id === undefined ? 'undefined' : "'"+id+"'"}, but no value could be found`);
+		}
+		if (value === undefined) {
+			value = null;
+		}
+		// @ts-expect-error
+		return value;
 	};
 	
 	private success_toast(msg: string): void {
@@ -608,6 +616,15 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	private create_or_update_request_data(): ExhibitAJAX.Create.IRequestData|ExhibitAJAX.Update.IRequestData {
+		const original_price_amount = this.request_price_amount(this.original_price.amount.get_value());
+		let original_price_currency_id = this.original_price.currency.get_value()?.id ?? '';
+		if (original_price_amount !== null && !original_price_currency_id) {
+			throw new Error(`Assertation failed: original_price.amount is given but not original_price.id`);
+		}
+		if (original_price_currency_id && original_price_amount === null) {
+			original_price_currency_id = '';
+		}
+		
 		const request_data: ExhibitAJAX.Create.IRequestData|ExhibitAJAX.Update.IRequestData = {
 			inventory_number: this.inventory_number.get_value(),
 			name: this.name.get_value(),
@@ -616,8 +633,8 @@ export class ExhibitForm implements IExhibitForm {
 			manufacture_date: this.manufacture_date.get_value()?.format_iso() ?? '',
 			preservation_state_id: this.preservation_state.get_value().id,
 			original_price: {
-				amount: this.request_price_amount(this.original_price.amount.get_value()),
-				currency_id: this.original_price.currency.get_value()?.id ?? '',
+				amount: original_price_amount,
+				currency_id: original_price_currency_id,
 			},
 			current_value: this.request_price_amount(this.current_value.get_value()),
 			acquisition_info: {

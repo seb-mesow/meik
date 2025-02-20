@@ -51,8 +51,8 @@ class AcquisitionInfo
 	public function __construct(
 		Carbon $date,
 		string $source,
-		KindOfAcquisition $kind,
-		int $purchasing_price,
+		KindOfAcquisition|null $kind,
+		int|null $purchasing_price,
 	) {
 		$this->date = $date;
 		$this->source = $source;
@@ -76,19 +76,19 @@ class AcquisitionInfo
 		$this->source = $source;
 	}
 	
-	public function get_kind(): KindOfAcquisition {
+	public function get_kind(): KindOfAcquisition|null {
 		return $this->kind;
 	}
 	
-	public function set_kind(KindOfAcquisition $kind): void {
+	public function set_kind(KindOfAcquisition|null $kind): void {
 		$this->kind = $kind;
 	}
 	
-	public function get_purchasing_price(): int {
+	public function get_purchasing_price(): int|null {
 		return $this->purchasing_price;
 	}
 	
-	public function set_purchasing_price(int $price): void {
+	public function set_purchasing_price(int|null $price): void {
 		$this->purchasing_price = $price;
 	}
 }

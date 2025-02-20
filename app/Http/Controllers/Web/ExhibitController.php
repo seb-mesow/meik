@@ -179,7 +179,7 @@ class ExhibitController extends Controller
 			'exhibit_props' => $form,
 			'category' => [
 				'id' => $category->value,
-				'name' => $category->get_pretty_name(),
+				'name' => $category->get_name(),
 			],
 			'rubric' => [
 				'id' => $rubric->get_id(),
@@ -202,7 +202,7 @@ class ExhibitController extends Controller
 			$category = $rubric->get_category();
 			$props['category'] = [
 				'id' => $category->value,
-				'name' => $category->get_pretty_name(),
+				'name' => $category->get_name(),
 			];
 			$props['rubric'] = [
 				'id' => $rubric->get_id(),
@@ -269,15 +269,15 @@ class ExhibitController extends Controller
 			// TODO connected_exhibits
 			
 			// Bestandsdaten
-			'preservation_state_id' => $exhibit->get_preservation_state()->value,
+			'preservation_state_id' => $exhibit->get_preservation_state()->get_id(),
 			'current_value' => $exhibit->get_current_value(),
-			'kind_of_property_id' => $exhibit->get_kind_of_property()->value,
+			'kind_of_property_id' => $exhibit->get_kind_of_property()->get_id(),
 			
 			// Zugangsdaten
 			'acquisition_info' => [
 				'date' => $this->date_time_util->format_as_iso_date($acquisition_info->get_date()),
 				'source'=> $acquisition_info->get_source(),
-				'kind_id' => $acquisition_info->get_kind()->value,
+				'kind_id' => $acquisition_info->get_kind()?->get_id() ?? '',
 				'purchasing_price' => $acquisition_info->get_purchasing_price(),
 			],
 			
@@ -285,8 +285,8 @@ class ExhibitController extends Controller
 			'manufacturer' => $exhibit->get_manufacturer(),
 			'manufacture_date' => $exhibit->get_manufacture_date(),
 			'original_price' => [
-				'amount' => $original_price->get_amount(),
-				'currency_id' => $original_price->get_currency()->value,
+				'amount' => $original_price?->get_amount(),
+				'currency_id' => $original_price?->get_currency()->get_id() ?? '',
 			],
 			
 			// Freitexte
@@ -303,7 +303,7 @@ class ExhibitController extends Controller
 			$book_info = $exhibit->get_book_info();
 			$exhibit_form['book_info'] = [
 				'authors' => $book_info->get_authors(),
-				'language_id' => $book_info->get_language()->value,
+				'language_id' => $book_info->get_language()->get_id(),
 				'isbn' => $book_info->get_isbn(),
 			];
 		}
@@ -344,7 +344,7 @@ class ExhibitController extends Controller
 			$result = $_this->rubric_repository->query($category->get_id());
 			return [
 				'id' => $category->get_id(),
-				'name' => $category->get_pretty_name(),
+				'name' => $category->get_name(),
 				'rubrics' => array_map(static fn(Rubric $rubric): array => [
 					'id' => $rubric->get_id(),
 					'name' => $rubric->get_name(),

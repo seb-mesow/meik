@@ -210,7 +210,7 @@ class ExhibitAPIController extends Controller
 		$rubric = $this->rubric_repository->get($exhibit->get_rubric_id());
 		$api_exhibit['rubric'] = $rubric->get_name();
 		$category = $rubric->get_category();
-		$api_exhibit['category'] = $category->get_pretty_name();
+		$api_exhibit['category'] = $category->get_name();
 		
 		$original_price = $exhibit->get_original_price();
 		$api_exhibit['original_price'] = [

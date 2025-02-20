@@ -44,7 +44,7 @@ class ImagesController extends Controller
 			],
 			'category' => [
 				'id' => $category->value,
-				'name' => $category->get_pretty_name()
+				'name' => $category->get_name()
 			],
 			'rubric' => [
 				'id' => $rubric->get_id(),

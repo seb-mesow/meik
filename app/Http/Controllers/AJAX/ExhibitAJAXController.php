@@ -43,48 +43,49 @@ class ExhibitAJAXController extends Controller
 		$manufacturer = (string) $request->input('manufacturer');
 		$manufacture_date = (string) $request->input('manufacture_date');
 		$preservation_state_id = (string) $request->input('preservation_state_id');
-		$original_price_arr = [
-			'amount' => (int) $request->input('original_price.amount'),
-			'currency_id' => (string) $request->input('original_price.currency_id'),
-		];
-		$current_value = (int) $request->input('current_value');
-		$acquisition_info_arr = $request->input('acquisition_info'); // alle Kind-Elemente sind z.Z. Strings.
+		$original_price_arr = $request->input('original_price');
+		$current_value = $request->input('current_value');
+		$acquisition_info_arr = $request->input('acquisition_info');
 		$kind_of_property_id = (string) $request->input('kind_of_property_id');
-		$device_info_arr = $request->input('device_info', null); // alle Kind-Elemente sind z.Z. Strings.
-		$book_info_arr = $request->input('book_info', null); // alle Kind-Elemente sind z.Z. Strings.
+		$device_info_arr = $request->input('device_info'); // alle Kind-Elemente sind z.Z. Strings.
+		$book_info_arr = $request->input('book_info'); // alle Kind-Elemente sind z.Z. Strings.
 		$place_id = (string) $request->input('place_id');
 		$rubric_id = (string) $request->input('rubric_id');
 		$connected_exhibit_ids = (array) $request->input('conntected_exhibit_ids');
 		
 		// wandle Eingabewerte um
 		$preservation_state = PreservationState::from($preservation_state_id);
-		$original_price = new Price(
-			amount: $original_price_arr['amount'],
-			currency: Currency::from($original_price_arr['currency_id']),
-		);
+		if (is_integer($original_price_arr['amount']) && (is_string($original_price_arr['currency_id']) && $original_price_arr['currency_id'] !== '')) {
+			$original_price = new Price(
+				amount: (int) $original_price_arr['amount'],
+				currency: Currency::from((string) $original_price_arr['currency_id']),
+			);
+		} else {
+			$original_price = null;
+		}
 		$acquisition_info = new AcquisitionInfo(
-			date: $this->date_time_util->parse_iso_date($acquisition_info_arr['date']),
-			source: $acquisition_info_arr['source'],
-			kind: KindOfAcquisition::from($acquisition_info_arr['kind_id']),
-			purchasing_price: $acquisition_info_arr['purchasing_price'],
+			date: $this->date_time_util->parse_iso_date((string) $acquisition_info_arr['date']),
+			source: (string) $acquisition_info_arr['source'],
+			kind: (is_string($acquisition_info_arr['kind_id']) && $acquisition_info_arr['kind_id'] !== '') ? KindOfAcquisition::from($acquisition_info_arr['kind_id']) : null,
+			purchasing_price: is_integer($acquisition_info_arr['purchasing_price']) ? $acquisition_info_arr['purchasing_price'] : null,
 		);
 		$kind_of_property = KindOfProperty::from($kind_of_property_id);
-		if ($device_info_arr === null) {
-			$device_info = null;
-		} else {
+		if (is_array($device_info_arr)) {
 			$device_info = new DeviceInfo(
-				manufactured_from_date: $device_info_arr['manufactured_from_date'],
-				manufactured_to_date: $device_info_arr['manufactured_to_date']
+				manufactured_from_date: (string) $device_info_arr['manufactured_from_date'],
+				manufactured_to_date: (string) $device_info_arr['manufactured_to_date']
 			);
-		}
-		if ($book_info_arr === null) {
-			$book_info = null;
 		} else {
+			$device_info = null;
+		}
+		if (is_array($book_info_arr)) {
 			$book_info = new BookInfo(
-				authors: $book_info_arr['authors'],
-				isbn: $book_info_arr['isbn'],
-				language: Language::from($book_info_arr['language_id']),
+				authors: (string) $book_info_arr['authors'],
+				isbn: (string) $book_info_arr['isbn'],
+				language: Language::from((string) $book_info_arr['language_id']),
 			);
+		} else {
+			$book_info = null;
 		}
 		
 		if ($exhibit) {

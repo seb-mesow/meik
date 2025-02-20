@@ -36,7 +36,7 @@ class RubricController extends Controller
 		return Inertia::render('Rubric/Rubric', [
 			'category' => [
 				'id' => $category->value,
-				'name' => $category->get_pretty_name(),
+				'name' => $category->get_name(),
 			],
 			'rubric' => [
 				'id' => $rubric->get_id(),
