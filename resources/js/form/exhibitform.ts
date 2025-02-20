@@ -203,7 +203,7 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly manufacture_date: Readonly<ISingleValueForm2<PartialDate.PartialDate> & UISingleValueForm2<string>>;
 	public readonly original_price: {
 		readonly amount: Readonly<ISingleValueForm2<number> & UISingleValueForm2<number|null>>;
-		readonly currency: Readonly<SelectForm<ICurrency>>;
+		readonly currency: Readonly<ISingleValueForm2<ICurrency, boolean> & UISelectForm<ICurrency>>;
 	};
 	
 	// Geräteinformationen
@@ -416,6 +416,7 @@ export class ExhibitForm implements IExhibitForm {
 		};
 		
 		const original_price_amount = args.data?.original_price.amount;
+		const original_price_amount_initially_provided: boolean = typeof original_price_amount === 'number';
 		this.original_price = {
 			amount: new SingleValueForm2<number, number>({
 				val: typeof original_price_amount === 'number' ? this.form_price_amount(original_price_amount) : original_price_amount,
@@ -425,6 +426,7 @@ export class ExhibitForm implements IExhibitForm {
 					if (value_in_editing === null || value_in_editing == undefined) {
 						this.original_price.currency.set_validate(original_price_currency_not_validate);
 						this.original_price.currency.set_is_required(false);
+						this.original_price.currency.set_is_required(false);
 					} else {
 						this.original_price.currency.set_validate(original_price_currency_validate);
 						this.original_price.currency.set_is_required(true);
@@ -432,13 +434,13 @@ export class ExhibitForm implements IExhibitForm {
 				},
 			}, 'original_price_amount', this.common_fields),
 			
-			currency: new SelectForm<ICurrency>({
+			currency: new SelectForm<ICurrency, boolean>({
 				val: this.determinate_selectable_value_from_id<ICurrency>(args.data?.original_price.currency_id, this.selectable_values.currency),
-				required: false,
+				required: original_price_amount_initially_provided,
 				selectable_options: this.selectable_values.currency,
 				search_in: 'id',
 				optionLabel: 'id',
-				validate: (original_price_amount === null || original_price_amount === undefined) ? original_price_currency_not_validate : original_price_currency_validate,
+				validate: original_price_amount_initially_provided ? original_price_currency_validate : original_price_currency_not_validate,
 			}, 'original_price_currency', this.common_fields),
 		};
 		
