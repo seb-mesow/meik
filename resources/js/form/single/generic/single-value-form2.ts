@@ -43,12 +43,12 @@ export interface MultipleValidationErrors {
  * @param R whether `get_value()` only returns `T` or `T|null`; default `false`
  */
 export interface ISingleValueForm2ConstructorArgs<T, R extends boolean = false> {
-	val?: R extends true ? T : T|null,
-	errs?: string[],
-	required?: R;
-	on_change?: (form: ISingleValueForm2<T>) => void,
-	validate?: (value_in_editing: T|null|undefined) => Promise<string[]>,
-}
+	required: R; // There is currently NO WAY to tell TypeScrípt to optionally require a property.
+	val: R extends true ? T|undefined : (T|null|undefined);
+	errs?: string[];
+	on_change?: (form: ISingleValueForm2<T>) => void;
+	validate?: (value_in_editing: T|null|undefined) => Promise<string[]>;
+};
 
 /**
  * @param T primary return value of `get_value()`, MUST NEVER BE `undefined`
@@ -96,8 +96,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		console.log(`${this.html_id}: init: this.value_in_editing ==`);
 		console.log(this.value_in_editing);
 		
-		//@ts-expect-error
-		this.is_required = args.required ?? false;
+		this.is_required = args.required;
 		this.errs = args.errs ?? [];
 		this.ui_errs = ref(this.errs);
 		

@@ -218,6 +218,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 					@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_ui_value_in_editing(v)"
 					:options="exhibit_types"
 					optionLabel="name"
+					:allowEmpty="false"
 				/>
 			</template>
 			
