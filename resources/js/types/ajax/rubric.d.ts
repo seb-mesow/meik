@@ -8,7 +8,11 @@ namespace Query {
 	};
 	export type IRequestData = never;
 	export type I200ResponseData = {
-		rubrics: { id: string, name: string }[],
+		rubrics: {
+			id: string,
+			name: string,
+			category_id: string,
+		}[],
 		total_count?: number,
 	};
 }
@@ -24,7 +28,6 @@ namespace Create {
 
 namespace Update {
 	export interface IRequestData {
-		// id: string,
 		name: string, 
 		category_id: string
 	};

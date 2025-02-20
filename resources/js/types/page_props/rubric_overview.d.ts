@@ -1,4 +1,4 @@
-export interface IRubricProps {
-	id: string,
-	name: string,
-}
+// export interface IRubricProps {
+// 	id: string,
+// 	name: string,
+// }
