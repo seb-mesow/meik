@@ -160,9 +160,9 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 				return this.last_validation_state;
 			} else {
 				
-				if (this.is_required && this.value_in_editing === null) {
+				if (this.is_required && (this.value_in_editing === null || (!this.was_considered && this.value_in_editing === undefined))) {
 					this.errs.push('Pflichtfeld');
-				} else {
+				} else if (!(!this.was_considered && !this.is_required && this.value_in_editing === undefined)) {
 					try {
 						console.log(`Form ${this.html_id}: start validating ...`)
 						const further_errs: string[] = await this._validate(this.value_in_editing);
