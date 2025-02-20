@@ -4,8 +4,8 @@ import * as PartialDate from "@/util/partial-date";
 /**
  * The partial date is optional.
  */
-export class PartialDateFrom extends SingleValueForm2<PartialDate.PartialDate|null, string> {
-	public constructor(args: ISingleValueForm2ConstructorArgs<PartialDate.PartialDate|null>, id: string|number, parent: ISingleValueForm2Parent<PartialDate.PartialDate|null>) {
+export class PartialDateFrom<R extends boolean = false> extends SingleValueForm2<PartialDate.PartialDate, string, R> {
+	public constructor(args: ISingleValueForm2ConstructorArgs<PartialDate.PartialDate, R>, id: string|number, parent: ISingleValueForm2Parent<PartialDate.PartialDate|null>) {
 		args.validate = async (value_in_editing): Promise<string[]> => {
 			value_in_editing?.validate();
 			return []; // do not forget !

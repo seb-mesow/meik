@@ -16,15 +16,23 @@ export interface ISelectOption {
 	name: string,
 }
 
-export interface ISelectForm<O extends ISelectOption> extends ISingleValueForm2<O> {};
+/**
+ * @param O internal value of options and primary return value of `get_value()`
+ * @param R whether `get_value()` only returns `O` or `O|null`; default `false`
+ */
+export interface ISelectForm<O extends ISelectOption, R extends boolean = false> extends ISingleValueForm2<O, R> {};
 
-export interface ISelectFormConstructorArgs<O extends ISelectOption> extends ISingleValueForm2ConstructorArgs<O> {
+export interface ISelectFormConstructorArgs<O extends ISelectOption, R extends boolean = false> extends ISingleValueForm2ConstructorArgs<O, R> {
 	search_in: 'name'|'id',
 	optionLabel?: string,
 	selectable_options?: O[],
 }
 
-export class SelectForm<O extends ISelectOption> extends SingleValueForm2<O, O|string|undefined> implements ISelectForm<O>, UISelectForm<O> {
+/**
+ * @param O internal value of options and primary return value of `get_value()`
+ * @param R whether `get_value()` only returns `O` or `O|null`; default `false`
+ */
+export class SelectForm<O extends ISelectOption, R extends boolean = false> extends SingleValueForm2<O, O|string|undefined, R> implements ISelectForm<O, R>, UISelectForm<O> {
 	public readonly shown_suggestions: Ref<Readonly<O[]>> = shallowRef([]);
 	public readonly optionLabel: string|undefined;
 	
@@ -32,7 +40,7 @@ export class SelectForm<O extends ISelectOption> extends SingleValueForm2<O, O|s
 	protected selectable_options: O[];
 	private get_query_counterpart: (option: O) => string;
 	
-	public constructor(args: ISelectFormConstructorArgs<O>, id: string|number, parent: ISingleValueForm2Parent<O>) {
+	public constructor(args: ISelectFormConstructorArgs<O, R>, id: string|number, parent: ISingleValueForm2Parent<O>) {
 		super(args, id, parent);
 		this.optionLabel = args.optionLabel;
 		this.selectable_options = args.selectable_options ?? [];
