@@ -69,6 +69,12 @@ export class SelectForm<O extends ISelectOption, R extends boolean = false> exte
 		return value ?? undefined;
 	}
 	
+	public on_blur(event: Event): void {
+		if (!this.is_overlay_shown) {
+			super.on_blur(event);
+		}
+	}
+	
 	public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
 		// useless spread operator required, because of
 		// https://github.com/primefaces/primevue/issues/5601
