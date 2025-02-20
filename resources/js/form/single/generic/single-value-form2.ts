@@ -11,11 +11,15 @@ export interface UISingleValueForm2<U = string|undefined> {
 	on_change_ui_value_in_editing(new_ui_value_in_editing: U): void;
 }
 
-export interface ISingleValueForm2<T = string> {
+/**
+ * @param T primary return value of `get_value()`, MUST NEVER BE `undefined`
+ * @param R whether `get_value()` only returns `T` or `T|null`; default `false`
+ */
+export interface ISingleValueForm2<T, R extends boolean = false> {
 	is_valid(): Promise<boolean>;
 	commit(): void;
 	rollback(): void;
-	get_value(): T;
+	get_value(): R extends true ? T : T|null;
 	get_value_in_editing(): T|null|undefined;
 	set_value_in_editing(new_value_in_editing: T|null): void;
 	set_validate(validate: (value_in_editing: T|null|undefined) => Promise<string[]>): void;
@@ -34,22 +38,30 @@ export interface MultipleValidationErrors {
 	errors: ValidationError[];
 }
 
-export interface ISingleValueForm2ConstructorArgs<T> {
+/**
+ * @param T primary return value of `get_value()`, MUST NEVER BE `undefined`
+ * @param R whether `get_value()` only returns `T` or `T|null`; default `false`
+ */
+export interface ISingleValueForm2ConstructorArgs<T, R extends boolean = false> {
 	val?: T,
 	errs?: string[],
-	required?: boolean;
+	required?: R extends true ? true : never;
 	on_change?: (form: ISingleValueForm2<T>) => void,
 	validate?: (value_in_editing: T|null|undefined) => Promise<string[]>,
 }
 
 /**
- * @param T return value of `get_value()`, MUST NEVER BE `undefined`
+ * @param T primary return value of `get_value()`, MUST NEVER BE `undefined`
  * @param U value of `ui_value_in_editing`
+ * @param R whether `get_value()` only returns `T` or `T|null`; default `false`
  */
-export class SingleValueForm2<T, U = T|undefined> implements
-	ISingleValueForm2<T>,
+export class SingleValueForm2<T, U, R extends boolean = false> implements
+	ISingleValueForm2<T, R>,
 	UISingleValueForm2<U>
 {
+	/**
+	 * is `undefined` until first time set
+	 */
 	private value: T|undefined;
 	
 	/**
@@ -70,7 +82,7 @@ export class SingleValueForm2<T, U = T|undefined> implements
 	private last_validation_state: boolean|undefined = undefined;
 	private is_valid_mutex: MutexInterface = new Mutex();
 	
-	public constructor(args: ISingleValueForm2ConstructorArgs<T>, id: string|number, parent: ISingleValueForm2Parent<T>) {
+	public constructor(args: ISingleValueForm2ConstructorArgs<T, R>, id: string|number, parent: ISingleValueForm2Parent<T>) {
 		this.html_id = typeof id === 'number' ? id.toString() : id;
 		this.value = args.val;
 		this.value_in_editing = this.value;
@@ -156,7 +168,7 @@ export class SingleValueForm2<T, U = T|undefined> implements
 		return this.value_in_editing;
 	}
 	
-	public get_value(): T {
+	public get_value(): R extends true ? T : T|null {
 		if (this.value === undefined) {
 			throw new Error(`SingleValueForm2::get_value(): ${this.html_id}: value is undefined (=^= something other than 'no value')`);
 		}

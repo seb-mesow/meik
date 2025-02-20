@@ -7,17 +7,17 @@ export type IPlace = Readonly<{
 	name: string,
 }>;
 
-export interface IPlaceForm extends ISelectForm<IPlace> {
+export interface IPlaceForm<R extends boolean = false>  extends ISelectForm<IPlace, R> {
 	set_selectable_places(selectable_places: IPlace[]): void;
 }
 
-export interface IPlaceFormConstructorArgs extends Pick<ISelectFormConstructorArgs<IPlace>, 'val'|'required'|'on_change'|'selectable_options'> {
+export interface IPlaceFormConstructorArgs<R extends boolean = false> extends Pick<ISelectFormConstructorArgs<IPlace, R>, 'val'|'required'|'on_change'|'selectable_options'> {
 }
 
-export class PlaceForm extends SelectForm<IPlace> implements IPlaceForm {
+export class PlaceForm<R extends boolean = false> extends SelectForm<IPlace, R> implements IPlaceForm<R> {
 	
-	public constructor(args: IPlaceFormConstructorArgs, id: string|number, parent: ISingleValueForm2Parent<IPlace>) {
-		const _args: ISelectFormConstructorArgs<IPlace> = {
+	public constructor(args: IPlaceFormConstructorArgs<R>, id: string|number, parent: ISingleValueForm2Parent<IPlace>) {
+		const _args: ISelectFormConstructorArgs<IPlace, R> = {
 			...args,
 			...{
 				search_in: 'name',

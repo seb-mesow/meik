@@ -10,17 +10,16 @@ export type ILocation = Readonly<{
 	name: string,
 }>;
 
-export interface ILocationForm extends ISelectForm<ILocation> {
+export interface ILocationForm<R extends boolean = false> extends ISelectForm<ILocation, R> {
 	get_all_places_in_value_in_editing(): Promise<IPlace[]>;
 };
 
-export interface ILocationFormConstructorArgs extends Pick<ISelectFormConstructorArgs<ILocation>, 'val'|'required'|'on_change'|'validate'|'selectable_options'> {
+export interface ILocationFormConstructorArgs<R extends boolean = false> extends Pick<ISelectFormConstructorArgs<ILocation, R>, 'val'|'required'|'on_change'|'validate'|'selectable_options'> {
 }
 
-export class LocationForm extends SelectForm<ILocation> implements ILocationForm {
-	
-	public constructor(args: ILocationFormConstructorArgs, id: string|number, parent: ISingleValueForm2Parent<ILocation>) {
-		const _args: ISelectFormConstructorArgs<ILocation> = {
+export class LocationForm<R extends boolean = false> extends SelectForm<ILocation, R> implements ILocationForm<R> {
+	public constructor(args: ILocationFormConstructorArgs<R>, id: string|number, parent: ISingleValueForm2Parent<ILocation>) {
+		const _args: ISelectFormConstructorArgs<ILocation, R> = {
 			...args,
 			...{
 				search_in: 'name',

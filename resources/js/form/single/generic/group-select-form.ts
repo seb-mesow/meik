@@ -16,9 +16,9 @@ export interface UIGroupSelectForm<C, P = C> extends UISingleValueForm2<C|string
 	optionLabel: string|undefined;
 }
 
-export interface IGroupSelectForm<C, P = C> extends ISingleValueForm2<C> {};
+export interface IGroupSelectForm<C, P = C, R extends boolean = false> extends ISingleValueForm2<C, R> {};
 
-export interface IGroupSelectFormConstructorArgs<C = string, P = C> extends ISingleValueForm2ConstructorArgs<C> {
+export interface IGroupSelectFormConstructorArgs<C = string, P = C, R extends boolean = false> extends ISingleValueForm2ConstructorArgs<C, R> {
 	optionLabel?: string, 
 	get_shown_suggestions?: (query: string) => Promise<Readonly<IGroupType<C, P>>[]>;
 }
@@ -29,14 +29,14 @@ export interface IGroupSelectFormConstructorArgs<C = string, P = C> extends ISin
  *
  * same for get_option_label
  */
-export class GroupSelectForm<C = string, P = C> extends SingleValueForm2<C, C|string|undefined> implements IGroupSelectForm<C, P>, UIGroupSelectForm<C, P> {
+export class GroupSelectForm<C = string, P = C, R extends boolean = false> extends SingleValueForm2<C, C|string|undefined, R> implements IGroupSelectForm<C, P, R>, UIGroupSelectForm<C, P> {
 	public readonly shown_suggestions: ShallowRef<Readonly<IGroupType<C, P>[]>>;
 	public readonly optionLabel: string | undefined; 
 	
 	private readonly _get_shown_suggestions: (query: string) => Promise<Readonly<IGroupType<C, P>>[]>;
 	private is_overlay_shown: boolean = false;
 	
-	public constructor(args: IGroupSelectFormConstructorArgs<C, P>, id: string|number, parent: ISingleValueForm2Parent<C>) {
+	public constructor(args: IGroupSelectFormConstructorArgs<C, P, R>, id: string|number, parent: ISingleValueForm2Parent<C>) {
 		super(args, id, parent);
 		this._get_shown_suggestions = args.get_shown_suggestions ?? (() => Promise.reject('no get_shown_suggestions()'));
 		this.shown_suggestions = shallowRef([]);

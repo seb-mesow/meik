@@ -15,15 +15,15 @@ export type ICategoryWithRubrics = Readonly<{
 	rubrics: IRubric[],
 }>;
 
-export interface IRubricFormConstructorArgs extends Pick<IGroupSelectFormConstructorArgs<IRubric, ICategory>, 'val'|'required'|'on_change'|'validate'> {
+export interface IRubricFormConstructorArgs<R extends boolean = false> extends Pick<IGroupSelectFormConstructorArgs<IRubric, ICategory, R>, 'val'|'required'|'on_change'|'validate'> {
 	selectable_categories_with_rubrics: ICategoryWithRubrics[];
 }
 
-export class RubricForm extends GroupSelectForm<IRubric, ICategory> {
+export class RubricForm<R extends boolean = false> extends GroupSelectForm<IRubric, ICategory, R> {
 	private readonly selectable_categories_with_rubrics: ICategoryWithRubrics[];
 	
-	public constructor(args: IRubricFormConstructorArgs, id: string|number, parent: ISingleValueForm2Parent<IRubric>) {
-		const _args: IGroupSelectFormConstructorArgs<IRubric, ICategory> = args;
+	public constructor(args: IRubricFormConstructorArgs<R>, id: string|number, parent: ISingleValueForm2Parent<IRubric>) {
+		const _args: IGroupSelectFormConstructorArgs<IRubric, ICategory, R> = args;
 		_args.optionLabel = 'name';
 		super(args, id, parent);
 		this.selectable_categories_with_rubrics = args.selectable_categories_with_rubrics;
