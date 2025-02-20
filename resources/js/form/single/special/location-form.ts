@@ -14,49 +14,20 @@ export interface ILocationForm extends ISelectForm<ILocation> {
 	get_all_places_in_value_in_editing(): Promise<IPlace[]>;
 };
 
-export interface ILocationFormConstructorArgs extends Pick<ISelectFormConstructorArgs<ILocation>, 'val'|'required'|'on_change'|'validate'> {
-	selectable_locations: ILocation[];
+export interface ILocationFormConstructorArgs extends Pick<ISelectFormConstructorArgs<ILocation>, 'val'|'required'|'on_change'|'validate'|'selectable_options'> {
 }
 
 export class LocationForm extends SelectForm<ILocation> implements ILocationForm {
-	private readonly selectable_locations: ILocation[];
 	
 	public constructor(args: ILocationFormConstructorArgs, id: string|number, parent: ISingleValueForm2Parent<ILocation>) {
-		const _args: ISelectFormConstructorArgs<ILocation> = args;
-		_args.optionLabel = 'name';
-		super(args, id, parent);
-		this.selectable_locations = args.selectable_locations;
-	}
-	
-	protected create_value_from_ui_value(ui_value: ILocation|string|undefined): ILocation|null|undefined {
-		// console.log(`LocationForm::create_value_from_ui_value(): ui_value ==`);
-		// console.log(ui_value);
-		if (!ui_value) {
-			return null;
-		}
-		if (typeof ui_value === 'string') {
-			const suggestions = this.search_suggestions(ui_value, (location_name, query) => location_name === query);
-			if (suggestions.length === 1) {
-				return suggestions[0];
-			}
-			return undefined; // multiple or no match
-		}
-		return ui_value;
-	}
-	
-	protected create_ui_value_from_value(value: ILocation|null): ILocation|undefined {
-		// console.log(`LocationForm::create_ui_value_from_value(): value ==`);
-		// console.log(value);	
-		return value ?? undefined;
-	}
-	
-	protected get_shown_suggestions(query: string): Promise<Readonly<ILocation[]>> {
-		return new Promise((resolve) => resolve(this.search_suggestions(query, (location_name, query) => location_name.includes(query))));
-	};
-	
-	private search_suggestions(query: string, filter_func: (location_name: string, query: string) => boolean): ILocation[] {
-		query = query.trim().toLowerCase();
-		return this.selectable_locations.filter((location) => filter_func(location.name.toLowerCase(), query));
+		const _args: ISelectFormConstructorArgs<ILocation> = {
+			...args,
+			...{
+				search_in: 'name',
+				optionLabel: 'name',
+			},
+		};
+		super(_args, id, parent);
 	}
 	
 	public async get_all_places_in_value_in_editing(): Promise<IPlace[]> {

@@ -11,31 +11,54 @@ export interface UISelectForm<O> extends UISingleValueForm2<O|string|undefined> 
 	optionLabel: string|undefined;
 }
 
-export interface ISelectForm<O> extends ISingleValueForm2<O> {};
-
-export interface ISelectFormConstructorArgs<O = string> extends ISingleValueForm2ConstructorArgs<O> {
-	optionLabel?: string,
-	get_shown_suggestions?: (query: string) => Promise<Readonly<O[]>>;
+export interface ISelectOption {
+	id: string,
+	name: string,
 }
 
-/**
- * Either the constructor argument get_shown_suggestions must be provided
- * or the function get_shown_suggestions() must be overridden in a subclass.
- *
- * same for get_option_label
- */
-export class SelectForm<O = string> extends SingleValueForm2<O, O|string|undefined> implements ISelectForm<O>, UISelectForm<O> {
-	public readonly shown_suggestions: Ref<Readonly<O[]>>;
+export interface ISelectForm<O extends ISelectOption> extends ISingleValueForm2<O> {};
+
+export interface ISelectFormConstructorArgs<O extends ISelectOption> extends ISingleValueForm2ConstructorArgs<O> {
+	search_in: 'name'|'id',
+	optionLabel?: string,
+	selectable_options?: O[],
+}
+
+export class SelectForm<O extends ISelectOption> extends SingleValueForm2<O, O|string|undefined> implements ISelectForm<O>, UISelectForm<O> {
+	public readonly shown_suggestions: Ref<Readonly<O[]>> = shallowRef([]);
 	public readonly optionLabel: string|undefined;
 	
-	private readonly _get_shown_suggestions: (query: string) => Promise<Readonly<O[]>>;
 	private is_overlay_shown: boolean = false;
+	protected selectable_options: O[];
+	private get_query_counterpart: (option: O) => string;
 	
 	public constructor(args: ISelectFormConstructorArgs<O>, id: string|number, parent: ISingleValueForm2Parent<O>) {
 		super(args, id, parent);
-		this._get_shown_suggestions = args.get_shown_suggestions ?? (() => Promise.reject('no get_shown_suggestions()'));
-		this.shown_suggestions = shallowRef([]);
 		this.optionLabel = args.optionLabel;
+		this.selectable_options = args.selectable_options ?? [];
+		if (args.search_in === 'name') {
+			this.get_query_counterpart = (option) => option.name.toLowerCase();
+		} else {
+			this.get_query_counterpart = (option) => option.id.toLowerCase(); 
+		}
+	}
+	
+	protected create_value_from_ui_value(ui_value: O|string|undefined): O|null|undefined {
+		if (!ui_value) {
+			return null;
+		}
+		if (typeof ui_value === 'string') {
+			const suggestions = this.search_suggestions(ui_value, (option_str, query) => option_str === query);
+			if (suggestions.length === 1) {
+				return suggestions[0];
+			}
+			return undefined; // multiple or no match
+		}
+		return ui_value;
+	}
+	
+	protected create_ui_value_from_value(value: O|null): O|undefined {
+		return value ?? undefined;
 	}
 	
 	public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
@@ -62,11 +85,12 @@ export class SelectForm<O = string> extends SingleValueForm2<O, O|string|undefin
 		}
 	}
 	
-	protected get_shown_suggestions(query: string): Promise<Readonly<O[]>> {
-		return this._get_shown_suggestions(query);
+	private get_shown_suggestions(query: string): Promise<Readonly<O[]>> {
+		return new Promise((resolve) => resolve(this.search_suggestions(query, (option_str, query) => option_str.includes(query))));
 	}
 	
-	// public get_option_label(option: O): string|undefined {
-	// 	return this.create_ui_value_from_value(option);
-	// }
+	private search_suggestions(query: string, filter_func: (option_str: string, query: string) => boolean): O[] {
+		query = query.trim().toLowerCase();
+		return this.selectable_options.filter((option) => filter_func(this.get_query_counterpart(option), query));
+	}
 }

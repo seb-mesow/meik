@@ -284,7 +284,7 @@ export class ExhibitForm implements IExhibitForm {
 		this.location = new LocationForm({
 			val: this.determinate_selectable_value_from_id(args.data?.location_id, this.selectable_values.location),
 			required: true,
-			selectable_locations: args.aux.selectable_values.location,
+			selectable_options: args.aux.selectable_values.location,
 			on_change: async (form) => {
 				if (form instanceof LocationForm && form.get_value_in_editing()) {
 					const selectable_places: IPlace[] = await form.get_all_places_in_value_in_editing();
@@ -309,7 +309,7 @@ export class ExhibitForm implements IExhibitForm {
 		this.place = new PlaceForm({
 			val: provided_place,
 			required: true,
-			initial_selectable_places: args.aux.selectable_values.initial_places,
+			selectable_options: args.aux.selectable_values.initial_places,
 		}, 'place', this.common_fields);
 		
 		// TODO connected_exhibits
@@ -317,22 +317,16 @@ export class ExhibitForm implements IExhibitForm {
 		// Bestandsdaten
 		this.preservation_state = new SelectForm<IPreservationState>({
 			val: this.determinate_selectable_value_from_id(args.data?.preservation_state_id, this.selectable_values.preservation_state),
+			selectable_options: this.selectable_values.preservation_state,
+			search_in: 'name',
 			optionLabel: 'name',
 			required: true,
-			get_shown_suggestions: (query: string): Promise<IPreservationState[]> => {
-				return this.find_suggestions_in_name(query, this.selectable_values.preservation_state);
-			},
-			validate: (value_in_editing) => new Promise((resolve) => {
-				if (value_in_editing) {
-					if (this.selectable_values.preservation_state.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
-						resolve([]);
-					} else {
-						resolve(['Bitte einen auswählbaren Erhaltungszustand angeben']);
-					}
-				} else {
-					resolve(['Bitte einen Erhaltungszustand angeben']);
+			validate: async (value_in_editing) => {
+				if (value_in_editing == undefined) {
+					return ['Bitte einen auswählbaren Erhaltungszustand angeben'];
 				}
-			}),
+				return [];
+			},
 		}, 'preservation_state', this.common_fields);
 		
 		const current_value = args.data?.current_value;
@@ -342,20 +336,16 @@ export class ExhibitForm implements IExhibitForm {
 		
 		this.kind_of_property = new SelectForm<IKindOfProperty>({
 			val: this.determinate_selectable_value_from_id(args.data?.kind_of_property_id ?? '', this.selectable_values.kind_of_property),
+			selectable_options: this.selectable_values.kind_of_property,
+			search_in: 'name',
 			optionLabel: 'name',
 			required: true,
-			get_shown_suggestions: (query: string): Promise<IKindOfProperty[]> => this.find_suggestions_in_name(query, this.selectable_values.kind_of_property),
-			validate: (value_in_editing) => new Promise((resolve) => {
-				if (value_in_editing) {
-					if (this.selectable_values.kind_of_property.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
-						resolve([]);
-					} else {
-						resolve(['Bitte eine auswählbare Besitzart angeben']);
-					}
-				} else {
-					resolve(['Bitte eine Besitzart angeben']);
+			validate: async (value_in_editing) => {
+				if (value_in_editing === undefined) {
+					return ['Bitte eine auswählbare Besitzart angeben'];
 				}
-			}),
+				return [];
+			},
 		}, 'kind_of_property', this.common_fields);
 		
 		// Zugangsdaten
@@ -381,19 +371,15 @@ export class ExhibitForm implements IExhibitForm {
 			
 			kind: new SelectForm<IKindOfAcquisition>({
 				val: this.determinate_selectable_value_from_id(args.data?.acquisition_info.kind_id ?? '', this.selectable_values.kind_of_acquisition),
+				selectable_options: this.selectable_values.kind_of_acquisition,
 				optionLabel: 'name',
-				get_shown_suggestions: (query: string): Promise<IKindOfAcquisition[]> => this.find_suggestions_in_name(query, this.selectable_values.kind_of_acquisition),
-				validate: (value_in_editing) => new Promise((resolve) => {
-					if (value_in_editing) {
-						if (this.selectable_values.kind_of_acquisition.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
-							resolve([]);
-						} else {
-							resolve(['Bitte eine auswählbare Zugangsart angeben']);
-						}
-					} else {
-						resolve(['Bitte eine Zugangsart angeben']);
+				search_in: 'name',
+				validate: async (value_in_editing) => {
+					if (value_in_editing === undefined) {
+						return ['Bitte eine auswählbare Zugangsart angeben'];
 					}
-				}),
+					return [];
+				},
 			}, 'kind_of_acquisition', this.common_fields),
 			
 			purchasing_price: new SingleValueForm2<number, number>({
@@ -440,7 +426,9 @@ export class ExhibitForm implements IExhibitForm {
 			
 			currency: new SelectForm<ICurrency>({
 				val: this.determinate_selectable_value_from_id(args.data?.original_price?.currency_id, this.selectable_values.currency),
-				get_shown_suggestions: (query: string): Promise<ICurrency[]> => this.find_suggestions_in_id(query, this.selectable_values.currency),
+				selectable_options: this.selectable_values.currency,
+				search_in: 'id',
+				optionLabel: 'id',
 				validate: (args.data?.original_price?.amount === undefined) ? original_price_currency_not_validate : original_price_currency_validate,
 			}, 'original_price_currency', this.common_fields),
 		};
@@ -466,20 +454,16 @@ export class ExhibitForm implements IExhibitForm {
 			
 			language: new SelectForm<ILanguage>({
 				val: this.determinate_selectable_value_from_id(book_info?.language_id ?? '', this.selectable_values.language),
+				selectable_options: this.selectable_values.language,
+				search_in: 'name',
 				optionLabel: 'name',
 				required: true,
-				get_shown_suggestions: (query: string): Promise<ILanguage[]> => this.find_suggestions_in_name(query, this.selectable_values.language),
-				validate: (value_in_editing) => new Promise((resolve) => {
-					if (value_in_editing) {
-						if (this.selectable_values.language.some((_selectable_value) => _selectable_value.id === value_in_editing.id)) {
-							resolve([]);
-						} else {
-							resolve(['Bitte eine auswählbare Sprache angeben']);
-						}
-					} else {
-						resolve(['Bitte eine Sprache angeben']);
+				validate: async (value_in_editing) => {
+					if (value_in_editing === undefined) {
+						return ['Bitte eine auswählbare Sprache angeben'];
 					}
-				}),
+					return [];
+				},
 			}, 'language', this.book_fields),
 			
 			isbn: new StringForm({
@@ -517,27 +501,10 @@ export class ExhibitForm implements IExhibitForm {
 		return selectable_values.find((selectable_value: T): boolean => selectable_value.id === id);
 	};
 	
-	private find_suggestions_in_name<T extends { name: string }>(query: string, selectable_values: T[]): Promise<T[]> {
-		// return new Promise((resolve) => {
-			query = query.trim();
-			if (query.length > 0) {
-				query = query.toLowerCase();
-				return Promise.resolve(selectable_values.filter((selectable_value: T): boolean => selectable_value.name.toLowerCase().includes(query)));
-			} else {
-				return Promise.resolve(selectable_values);
-			}
-	};
-	
-	private find_suggestions_in_id<T extends { id: string }>(query: string, selectable_values: T[]): Promise<T[]> {
-		query = query.toLowerCase();
-		return Promise.resolve(
-			selectable_values.filter((selectable_value: T): boolean => selectable_value.id.toLowerCase().includes(query))
-		);
-	};
-	
 	private success_toast(msg: string): void {
 		this.toast_service.add({ severity: 'success', summary: msg, life: 3000 });
 	}
+	
 	private failed_toast(msg: string): void {
 		this.toast_service.add({ severity: 'error', summary: msg, life: 3000 });
 	}
@@ -553,7 +520,7 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	private commit(): void {
-		this.get_all_multiple_value_forms().forEach(multiple_form => multiple_form.commit());
+		this.determinate_relevant_multiple_value_forms().forEach(multiple_form => multiple_form.commit());
 	}
 	
 	private rollback(): void {
