@@ -130,6 +130,7 @@ if (props.exhibit_props) {
 	}
 }
 const exhibit_form: IExhibitForm = new ExhibitForm(form_constructor_args);
+const does_exist: boolean = exhibit_form.id !== undefined;
 const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\nMONAT JJJJ\nJJJJ';
 </script>
 
@@ -147,8 +148,8 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			</Breadcrumb>
 		</template>
 
-		<div class="flex gap-x-3">
-			<div class="basis-2/3 grid grid-cols-3 gap-x-3">
+		<div class="gap-x-3" :class="{ 'flex': does_exist, 'basis-2/3': does_exist }">
+			<div class="grid grid-cols-3 gap-x-3" :class="{ 'basis-2/3': does_exist }">
 				<!-- Kerndaten -->
 				<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" :grid_col="1" :grid_col_span="2" :grid_row="1"/>
 					
@@ -170,12 +171,11 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				<SelectField :form="exhibit_form.place" label="Platz" :grid_col="3" :grid_row="3"/>
 			</div>
 			
-			<div class="basis-1/3">
+			<div v-if="exhibit_form.id !== undefined" class="basis-1/3">
 				<!-- Button oben rechts -->
 				<ExportButton/>
 				
-				<a v-if="exhibit_form.id !== undefined"
-					:href="route('exhibit.images.details', { exhibit_id: exhibit_form.id })">
+				<a :href="route('exhibit.images.details', { exhibit_id: exhibit_form.id })">
 					<img v-if="props.exhibit_props?.title_image"
 						class="m-auto max-h-[15rem]"
 						:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })"
@@ -186,7 +186,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 		
 		<div class="flex flex-wrap gap-x-3 items-start">
 			<!-- Bestandsdaten -->
-			<Fieldset legend="Bestandsdaten *" toggleable :collapsed="exhibit_form.id !== undefined" class="basis-[30rem] flex-1">
+			<Fieldset legend="Bestandsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1">
 				<div class="grid grid-cols-2 gap-x-3">
 					<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" :grid_col="1" :grid_row="1"/>
 					
@@ -197,7 +197,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			</Fieldset>
 			
 			<!-- Zugangsdaten -->
-			<Fieldset legend="Zugangsdaten *" toggleable :collapsed="exhibit_form.id !== undefined" class="basis-[30rem] flex-1">
+			<Fieldset legend="Zugangsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1">
 				<div class="grid grid-cols-2 gap-x-3">
 					<DateField :form="exhibit_form.acquisition_info.date" label="Datum" :grid_col="1" :grid_row="1"/>
 					
@@ -264,7 +264,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			:disabled="!exhibit_form.is_save_button_enabled.value"
 			:loading="exhibit_form.is_save_button_loading.value"
 			type='button'
-			:label="exhibit_form.id === undefined ? 'Anlegen' : 'Stammdaten speichern'"
+			:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'"
 			@click="exhibit_form.click_save()"
 		/>
 		
