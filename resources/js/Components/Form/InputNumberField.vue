@@ -21,6 +21,7 @@ const props = defineProps<{
 			:inputId="form.html_id"
 			:modelValue="form.ui_value_in_editing"
 			@update:modelValue="(v: number) => form.on_change_ui_value_in_editing(v)"
+			@blur="form.on_blur($event)"
 			:min="price ? 0 : null"
 			:minFractionDigits="price ? 2 : null"
 			:maxFractionDigits="price ? 2 : null"

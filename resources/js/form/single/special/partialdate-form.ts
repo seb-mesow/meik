@@ -27,7 +27,7 @@ export class PartialDateFrom<R extends boolean = false> extends SingleValueForm2
 		}
 	}
 
-	protected create_ui_value_from_value(value: PartialDate.PartialDate|null): string {
+	protected create_ui_value_from_value(value: PartialDate.PartialDate|null|undefined): string {
 		return value?.format_pretty() ?? '';
 	}
 }

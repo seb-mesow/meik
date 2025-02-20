@@ -27,6 +27,7 @@ const props = defineProps<{
 				:inputId="form_amount.html_id"
 				:modelValue="form_amount.ui_value_in_editing"
 				@update:modelValue="(v: number) => form_amount.on_change_ui_value_in_editing(v)"
+				@blur="form_amount.on_blur($event)"
 				:min="0"
 				:minFractionDigits="2"
 				:maxFractionDigits="2"
@@ -39,6 +40,7 @@ const props = defineProps<{
 				:id="form_currency.html_id" :name="form_currency.html_id"
 				:modelValue="form_currency.ui_value_in_editing"
 				@update:modelValue="(v: U) => form_currency.on_change_ui_value_in_editing(v)"
+				@blur="form_currency.on_blur($event)"
 				:invalid="form_currency.ui_is_invalid.value"
 				dropdown
 				:suggestions="form_currency.shown_suggestions.value"
