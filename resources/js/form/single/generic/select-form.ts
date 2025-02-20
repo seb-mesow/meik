@@ -65,7 +65,7 @@ export class SelectForm<O extends ISelectOption, R extends boolean = false> exte
 		return ui_value;
 	}
 	
-	protected create_ui_value_from_value(value: O|null): O|undefined {
+	protected create_ui_value_from_value(value: O|null|undefined): O|undefined {
 		return value ?? undefined;
 	}
 	

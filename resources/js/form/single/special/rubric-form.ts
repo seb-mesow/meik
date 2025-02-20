@@ -45,7 +45,7 @@ export class RubricForm<R extends boolean = false> extends GroupSelectForm<IRubr
 		return ui_value;
 	}
 	
-	protected create_ui_value_from_value(value: IRubric|null): string|undefined {
+	protected create_ui_value_from_value(value: IRubric|null|undefined): string|undefined {
 		return value ? value.name : undefined;
 	}
 	

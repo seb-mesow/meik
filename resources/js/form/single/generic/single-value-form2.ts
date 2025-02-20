@@ -1,14 +1,14 @@
 import { ref, Ref } from "vue";
 import { Mutex, MutexInterface } from 'async-mutex';
-import { NotUndefined } from "@/types";
 
 export interface UISingleValueForm2<U = string|undefined> {
 	readonly html_id: string;
 	readonly ui_value_in_editing: Readonly<Ref<U>>;
 	readonly ui_is_invalid: Readonly<Ref<boolean>>;
-	readonly errs: Readonly<Ref<string[]>>;
+	readonly ui_errs: Readonly<Ref<string[]>>;
 	readonly is_required: boolean;
 	on_change_ui_value_in_editing(new_ui_value_in_editing: U): void;
+	on_blur(event: Event): void;
 }
 
 /**
@@ -74,7 +74,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	private value_in_editing: T|null|undefined;
 	
 	public ui_value_in_editing: Ref<U>;
-	public errs: Ref<string[]>;
+	public ui_errs: Ref<string[]>;
 	public ui_is_invalid: Ref<boolean>;
 	public readonly html_id: string;
 	public readonly is_required: R;
@@ -83,16 +83,24 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	private _validate: (value_in_editing: T|null|undefined) => Promise<string[]>;
 	private readonly parent: ISingleValueForm2Parent<T>;
 	
+	private was_considered: boolean = false;
 	private last_validation_state: boolean|undefined = undefined;
 	private is_valid_mutex: MutexInterface = new Mutex();
+	private errs: string[];
 	
 	public constructor(args: ISingleValueForm2ConstructorArgs<T, R>, id: string|number, parent: ISingleValueForm2Parent<T>) {
 		this.html_id = typeof id === 'number' ? id.toString() : id;
 		this.value = args.val;
 		this.value_in_editing = this.value;
+		
+		console.log(`${this.html_id}: init: this.value_in_editing ==`);
+		console.log(this.value_in_editing);
+		
 		//@ts-expect-error
 		this.is_required = args.required ?? false;
-		this.errs = ref(args.errs ?? []);
+		this.errs = args.errs ?? [];
+		this.ui_errs = ref(this.errs);
+		
 		//@ts-expect-error
 		this.ui_value_in_editing = ref(this.create_ui_value_from_value(this.value));
 		this.ui_is_invalid = ref(false);
@@ -103,8 +111,29 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		this.parent.register_child(this);
 	}
 	
+	public on_blur(event: Event): void {
+		if (!this.was_considered) {
+			this.was_considered = true;
+			this.set_value_in_editing_without_ui_value(() => {
+				let value_in_editing = this.value_in_editing;
+				// Before:
+				// `undefined` means "no value yet given",
+				// `null` means `no value explicitly given`
+				// And do not show validation errors yet.
+				if (value_in_editing === undefined) {
+					value_in_editing = null;
+				}
+				// After:
+				// `undefined` means "no single, valid value could be determianted from the ui_value."
+				// `null` means `no value explicitly given
+				// And show validation errors from now on.
+				return value_in_editing;
+			});
+		}
+	}
+	
 	public on_change_ui_value_in_editing(new_ui_value_in_editing: U): void {
-		// TODO awaited hook here for place form
+		this.was_considered = true;
 		this.set_value_in_editing_without_ui_value(() => this._create_value_from_ui_value(new_ui_value_in_editing));
 	}
 	
@@ -127,24 +156,34 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	
 	public async is_valid(): Promise<boolean> {
 		return this.is_valid_mutex.runExclusive(async () => {
-			// TODO still return true, if the user had never touched/focused the field
+
 			if (this.last_validation_state !== undefined) {
 				return this.last_validation_state;
 			} else {
+				
 				if (this.is_required && this.value_in_editing === null) {
-					this.errs.value.push('Pflichtfeld');
+					this.errs.push('Pflichtfeld');
 				} else {
 					try {
 						console.log(`Form ${this.html_id}: start validating ...`)
 						const further_errs: string[] = await this._validate(this.value_in_editing);
 						console.log(`Form ${this.html_id}: ended validating ...`)
-						this.errs.value.push(...further_errs);
+						this.errs.push(...further_errs);
 					} catch (e) {
 						this.handle_exceptions(e);
 						// throw errors have priority over returned errors
 					}
 				}
-				const is_valid = this.errs.value.length < 1;
+				
+				const is_valid = this.errs.length < 1;
+				if (this.was_considered) {
+					this.ui_is_invalid.value = !is_valid;
+					this.ui_errs.value = this.errs;
+				} else {
+					this.ui_is_invalid.value = false;
+					this.ui_errs.value = [];
+				}
+				
 				this.last_validation_state = is_valid;
 				return is_valid;
 			}
@@ -167,9 +206,6 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	}
 	
 	public rollback(): void {
-		// if (this.value === undefined) {
-			// throw new Error(`SingleValueForm2::rollback(): ${this.html_id}: value is undefined (=^= something other than 'no value')`);
-		// }
 		this.set_value_in_editing(this.value);
 	}
 	
@@ -197,7 +233,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	/**
 	 * receives `null` in the explicit absense of any value
 	 *
-	 * receives `undefined`, if a not yet considered field is rolled back
+	 * receives `undefined` during initialization of a field in a completely new form or when a not yet considered field is rolled back
 	 */
 	protected create_ui_value_from_value(value: T|null|undefined): U {
 		//@ts-expect-error
@@ -225,15 +261,13 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	
 	private refresh(inner: () => void): void {
 		console.log(`Form ${this.html_id} refreshing`);
-		this.errs.value = [];
+		this.errs = [];
 		
 		inner();
 		
 		this.last_validation_state = undefined;
 		// do NOT wait / fire and forget
-		async () => {
-			this.ui_is_invalid.value = await this.is_valid();
-		}
+		this.is_valid();
 		this._on_change(this);
 		this.parent.on_child_change(this);
 	}
@@ -242,11 +276,11 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		if ('errors' in err && Array.isArray(err.errors)) {
 			for (const _err of err.errors) {
 				if ('message' in _err && typeof _err.message === 'string') {
-					this.errs.value.push(_err.message);
+					this.errs.push(_err.message);
 				}
 			}
 		} else if ('message' in err && typeof err.message === 'string') {
-			this.errs.value.push(err.message);
+			this.errs.push(err.message);
 		}
 	}
 }

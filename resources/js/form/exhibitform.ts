@@ -353,7 +353,7 @@ export class ExhibitForm implements IExhibitForm {
 		const acquistion_purchasing_price = args.data?.acquisition_info.purchasing_price;
 		this.acquisition_info = {
 			date: new SingleValueForm2<Date, Date, true>({
-				val: acquistion_date ? DateUtil.parse_iso_date(acquistion_date) : new Date(),
+				val: acquistion_date ? DateUtil.parse_iso_date(acquistion_date) : undefined,
 				required: true,
 				validate: (value_in_editing) => new Promise((resolve) => {
 					if (value_in_editing) {
@@ -365,7 +365,7 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'acquisition_date', this.common_fields),
 			
 			source: new StringForm<true>({
-				val: args.data?.acquisition_info.source ?? '',
+				val: args.data?.acquisition_info.source,
 				required: true,
 			}, 'source', this.common_fields),
 			
@@ -449,7 +449,7 @@ export class ExhibitForm implements IExhibitForm {
 		const book_info = args.data?.book_info;
 		this.book_info = {
 			authors: new StringForm({
-				val: book_info?.authors ?? ''
+				val: book_info?.authors,
 			}, 'authors', this.book_fields),
 			
 			language: new SelectForm<ILanguage, true>({
@@ -467,7 +467,7 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'language', this.book_fields),
 			
 			isbn: new StringForm({
-				val: book_info?.isbn ?? ''
+				val: book_info?.isbn,
 			}, 'isbn', this.book_fields),
 		};
 		

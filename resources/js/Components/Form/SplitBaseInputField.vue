@@ -32,10 +32,10 @@ const _grid_row_end: number = _grid_row_start + 1;
 		class="flex gap-x-3"
 	>
 		<div :style="`flex: ${flex1};`">
-			<p v-for="error in form1.errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+			<p v-for="error in form1.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
 		</div>
 		<div :style="`flex: ${flex2};`">
-			<p v-for="error in form2.errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+			<p v-for="error in form2.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
 		</div>
 	</div>
 	<div :style="`grid-area: ${_grid_row_start+2} / ${grid_col} / ${_grid_row_end+2} / ${_grid_col_end};`"

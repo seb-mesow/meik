@@ -21,6 +21,7 @@ const props = defineProps<{
 			:id="form.html_id" :name="form.html_id"
 			:modelValue="form.ui_value_in_editing"
 			@update:modelValue="form.on_change_ui_value_in_editing($event)"
+			@blur="form.on_blur($event)"
 			:invalid="form.ui_is_invalid.value"
 			dropdown
 			:suggestions="form.shown_suggestions.value"

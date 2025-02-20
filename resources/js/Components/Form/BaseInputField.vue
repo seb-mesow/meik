@@ -22,7 +22,7 @@ const _grid_row_end: number = _grid_row_start + 1;
 	<div :style="`grid-area: ${_grid_row_start+1} / ${grid_col} / ${_grid_row_end+1} / ${_grid_col_end};`"
 		class=""
 		>
-		<p v-for="error in form.errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+		<p v-for="error in form.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
 	</div>
 	<div :style="`grid-area: ${_grid_row_start+2} / ${grid_col} / ${_grid_row_end+2} / ${_grid_col_end};`"
 		class=""

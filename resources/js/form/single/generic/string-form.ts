@@ -5,7 +5,7 @@ export class StringForm<R extends boolean = false> extends SingleValueForm2<stri
 		return (ui_value === '') ? null : ui_value;
 	}
 	
-	protected create_ui_value_from_value(value: string|null): string {
-		return (value === null) ? '' : value;
+	protected create_ui_value_from_value(value: string|null|undefined): string {
+		return value ?? '';
 	}
 }
