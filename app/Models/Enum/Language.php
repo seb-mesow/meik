@@ -23,6 +23,10 @@ enum Language: string
 	case CHINESE = 'zho';
 	case SAXON = 'sn';
 	
+	public function get_id(): string {
+		return $this->value;
+	}
+	
 	public function get_name(): string {
 		return match($this) {
 			self::GERMAN => 'Deutsch',

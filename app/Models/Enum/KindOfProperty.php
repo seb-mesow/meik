@@ -23,6 +23,10 @@ enum KindOfProperty: string
 	 */
 	case RENT = 'rent';
 	
+	public function get_id(): string {
+		return $this->value;
+	}
+	
 	public function get_name(): string {
 		return match($this) {
 			self::PROPERTY => 'Eigentum',

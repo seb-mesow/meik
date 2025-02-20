@@ -103,6 +103,10 @@ enum Currency: string
 	 */
 	case RUR = 'RUR';
 	
+	public function get_id(): string {
+		return $this->value;
+	}
+	
 	public function get_name(): string {
 		return match($this) {
 			self::EUR => 'Euro',
