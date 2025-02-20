@@ -74,7 +74,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 * 
 	 * bei Büchern: Erscheinungsjahr der konkreten Auflage/Jahr des Druckes (öffentlich)
 	 * 
-	 * optional
+	 * optional (dann leerer String)
 	 * 
 	 * @Accessor(getter="get_year_of_construction")
 	 */
@@ -196,8 +196,8 @@ class Exhibit implements IntIdentifiable, Revisionable
 		string $manufacturer,
 		string $manufacture_date,
 		PreservationState $preservation_state,
-		Price $original_price,
-		int $current_value,
+		Price|null $original_price,
+		int|null $current_value,
 		AcquisitionInfo $acquisition_info,
 		KindOfProperty $kind_of_property,
 		?DeviceInfo $device_info = null,
@@ -274,7 +274,9 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 * @throws InvalidPartialDateString
 	 */
 	public function set_manufacture_date(string $manufacture_date): void {
-		App::make(PartialDateValidator::class)->validate_string($manufacture_date);
+		if ($manufacture_date !== '') {
+			App::make(PartialDateValidator::class)->validate_string($manufacture_date);
+		}
 		$this->manufacture_date = $manufacture_date;
 	}
 	
@@ -287,19 +289,19 @@ class Exhibit implements IntIdentifiable, Revisionable
 	}
 	
 	
-	public function get_original_price(): Price {
+	public function get_original_price(): Price|null {
 		return $this->original_price;
 	}
 
-	public function set_original_price(Price $original_price): void {
+	public function set_original_price(Price|null $original_price): void {
 		$this->original_price = $original_price;
 	}
 	
-	public function get_current_value(): int {
+	public function get_current_value(): int|null {
 		return $this->current_value;
 	}
 
-	public function set_current_value(int $current_value): void {
+	public function set_current_value(int|null $current_value): void {
 		$this->current_value = $current_value;
 	}
 	

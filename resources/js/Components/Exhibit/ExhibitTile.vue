@@ -8,7 +8,7 @@ const props = defineProps<{
 	exhibit: IExhibitTileProps;
 }>();
 
-const exhibit_manufacture_date: PartialDate = PartialDate.parse_iso(props.exhibit.manufacture_date);
+const exhibit_manufacture_date: PartialDate|null = props.exhibit.manufacture_date === '' ? null : PartialDate.parse_iso(props.exhibit.manufacture_date);
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const exhibit_manufacture_date: PartialDate = PartialDate.parse_iso(props.exhibi
 			</div>
 			<div class="flex flex-col pl-4">
 				<p class="truncate w-72" style="font-size: larger;">{{ props.exhibit.name + " (" + props.exhibit.inventory_number + ")" }}</p>
-				<p class="truncate w-72"> {{ "Baujahr: " + exhibit_manufacture_date.format_pretty() }}</p>
+				<p class="truncate w-72"> {{ "Baujahr: " + ( exhibit_manufacture_date ? exhibit_manufacture_date.format_pretty() : '' ) }}</p>
 				<p class="truncate w-72"> {{ "Hersteller: " + props.exhibit.manufacturer }}</p>
 				<p class="truncate w-72"> {{ "Standort: " + props.exhibit.location_name + " - " + props.exhibit.place_name }}</p>
 			</div>

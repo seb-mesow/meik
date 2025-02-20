@@ -32,7 +32,7 @@ use stdClass;
  *     manufacture_date: string,
  *     preservation_state: string,
  *     original_price: PriceDoc,
- *     current_value: int,
+ *     current_value: int|null,
  *     acquisition_info: AcquisitionInfoDoc,
  *     kind_of_property: string,
  *     device_info?: DeviceInfoDoc,
@@ -44,7 +44,7 @@ use stdClass;
  * }
  * 
  * @phpstan-type PriceDoc object{
- *    amount: int,
+ *    amount: int|null,
  *    currency: string
  * }
  * 
@@ -52,7 +52,7 @@ use stdClass;
  *    date: string,
  *    source: string,
  *    kind: string,
- *    purchasing_price: int
+ *    purchasing_price: int|null
  * }
  * 
  * @phpstan-type DeviceInfoDoc object{
@@ -217,13 +217,13 @@ final class ExhibitRepository
 		$exhibit_doc->short_description = $exhibit->get_short_description();
 		$exhibit_doc->manufacturer = $exhibit->get_manufacturer();
 		$exhibit_doc->manufacture_date = $exhibit->get_manufacture_date();
-		$exhibit_doc->preservation_state = $exhibit->get_preservation_state()->value;
+		$exhibit_doc->preservation_state = $exhibit->get_preservation_state()->get_id();
 		
 		$original_price = $exhibit->get_original_price();
 		/** @var PriceDoc */
 		$original_price_doc = new stdClass();
-		$original_price_doc->amount = $original_price->get_amount();
-		$original_price_doc->currency = $original_price->get_currency();
+		$original_price_doc->amount = $original_price?->get_amount();
+		$original_price_doc->currency = $original_price?->get_currency()->get_id();
 		$exhibit_doc->original_price = $original_price_doc;
 		
 		$exhibit_doc->current_value = $exhibit->get_current_value();
@@ -233,11 +233,11 @@ final class ExhibitRepository
 		$acquisition_info_doc = new stdClass(); 
 		$acquisition_info_doc->date = $acquisition_info->get_date()->format(self::ISO_8601_DATE_FORMAT);
 		$acquisition_info_doc->source = $acquisition_info->get_source();
-		$acquisition_info_doc->kind = $acquisition_info->get_kind()->value;
+		$acquisition_info_doc->kind = $acquisition_info->get_kind()?->get_id() ?? '';
 		$acquisition_info_doc->purchasing_price = $acquisition_info->get_purchasing_price();
 		$exhibit_doc->acquisition_info = $acquisition_info_doc;
 		
-		$exhibit_doc->kind_of_property = $exhibit->get_kind_of_property()->value;
+		$exhibit_doc->kind_of_property = $exhibit->get_kind_of_property()->get_id();
 		
 		if ($exhibit->is_device()) {
 			$device_info = $exhibit->get_device_info();
@@ -253,7 +253,7 @@ final class ExhibitRepository
 			$book_info_doc = new stdClass();
 			$book_info_doc->authors = $book_info->get_authors();
 			$book_info_doc->isbn = $book_info->get_isbn();
-			$book_info_doc->language = $book_info->get_language()->value;
+			$book_info_doc->language = $book_info->get_language()->get_id();
 			$exhibit_doc->book_info = $book_info_doc;
 			// $exhibit_doc->device_info = null
 		}
@@ -281,16 +281,20 @@ final class ExhibitRepository
 		$acquisition_info = new AcquisitionInfo(
 			date: Carbon::createFromFormat(self::ISO_8601_DATE_FORMAT, $acquisition_info_doc->date),
 			source: $acquisition_info_doc->source,
-			kind: KindOfAcquisition::from($acquisition_info_doc->kind),
+			kind: $acquisition_info_doc->kind ? KindOfAcquisition::from($acquisition_info_doc->kind) : null,
 			purchasing_price: $acquisition_info_doc->purchasing_price,
 		);
 		
 		/** @var PriceDoc */
 		$original_price_doc = $exhibit_doc->original_price;
-		$original_price = new Price(
-			amount: $original_price_doc->amount,
-			currency: Currency::from($original_price_doc->currency),
-		);
+		if (is_integer( $original_price_doc->amount) && $original_price_doc->currency !== '') {
+			$original_price = new Price(
+				amount: $original_price_doc->amount,
+				currency: Currency::from($original_price_doc->currency),
+			);
+		} else {
+			$original_price = null;
+		}
 		
 		if (property_exists($exhibit_doc, 'device_info')) {
 			/** @var DeviceInfoDoc */

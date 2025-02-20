@@ -14,12 +14,13 @@ export class PartialDateFrom<R extends boolean = false> extends SingleValueForm2
 	}
 	
 	protected create_value_from_ui_value(ui_value: string): PartialDate.PartialDate|null|undefined {
-		// console.log("PartialDateForm::create_value_from_ui_value(): ui_value ==");
-		// console.log(ui_value);
+		console.log("PartialDateForm::create_value_from_ui_value(): ui_value ==");
+		console.log(ui_value);
 		try {
 			return PartialDate.PartialDate.parse_pretty(ui_value);
 		} catch (e) {
 			if (e instanceof PartialDate.Errors.NoPartialDate) {
+				console.log('no partial date');
 				return null;
 			}
 			throw e;

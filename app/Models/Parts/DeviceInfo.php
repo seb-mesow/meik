@@ -14,18 +14,18 @@ class DeviceInfo
 	 * 
 	 * gültige Formate: YYYY, YYYY-MM, YYYY-MM-DD
 	 * 
-	 * optional
+	 * optional (dann leerer String)
 	 */
-	private ?string $manufactured_from_date;
+	private string $manufactured_from_date;
 	
 	/**
 	 * partielles Enddatum des Vertriebs dieses Produktes
 	 * 
 	 * gültige Formate: YYYY, YYYY-MM, YYYY-MM-DD (öffentlich)
 	 * 
-	 * optional
+	 * optional (dann leerer String)
 	 */
-	private ?string $manufactured_to_date;
+	private string $manufactured_to_date;
 	
 	public function __construct(
 		string $manufactured_from_date,
@@ -63,6 +63,9 @@ class DeviceInfo
 	 * @throws InvalidPartialDateString
 	 */
 	private function validate_partial_date_string(string $partial_date_string): void {
+		if ($partial_date_string === '') {
+			return;
+		}
 		App::make(PartialDateValidator::class)->validate_string($partial_date_string);
 	}
 }

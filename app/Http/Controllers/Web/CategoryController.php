@@ -18,7 +18,7 @@ class CategoryController extends Controller
 	public function overview(): InertiaResponse {
 		$categories = array_map(static fn(Category $category): array => [
 			'id' => $category->value,
-			'name' => $category->get_pretty_name(),
+			'name' => $category->get_name(),
 		], Category::cases());
 		
 		return Inertia::render('Category/CategoryOverview', [
@@ -34,7 +34,7 @@ class CategoryController extends Controller
 		return Inertia::render('Category/Category', [
 			'category' => [
 				'id' => $category->value,
-				'name' => $category->get_pretty_name(),
+				'name' => $category->get_name(),
 			],
 			'rubric_tiles_main_props' => [
 				'rubric_tiles' => $rubric_props,
