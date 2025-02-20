@@ -12,9 +12,7 @@ use App\Models\Enum\Language;
 use App\Models\Enum\PreservationState;
 use App\Models\Exhibit;
 use App\Models\Location;
-use App\Models\Parts\AcquisitionInfo;
 use App\Models\Parts\FreeText;
-use App\Models\Parts\Price;
 use App\Models\Place;
 use App\Models\Rubric;
 use App\Repository\ExhibitRepository;
@@ -24,9 +22,7 @@ use App\Service\ExhibitService;
 use App\Service\ImageService;
 use App\Repository\RubricRepository;
 use App\Util\DateTimeUtil;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -213,38 +209,6 @@ class ExhibitController extends Controller
 		return Inertia::render('Exhibit/Exhibit', $props);
 	}
 
-	public function create(Request $request): RedirectResponse
-	{
-		$inventory_number = $request->input('inventory_number');
-		$name = $request->input('name');
-		$short_description = $request->input('short_description');
-		$manufacturer = $request->input('manufacturer');
-		
-		$exhibit = new Exhibit(
-			inventory_number: $inventory_number,
-			name: $name,
-			place_id: '',
-			rubric_id: '',
-			connected_exhibit_ids: [],
-			short_description: $short_description,
-			manufacturer: $manufacturer,
-			manufacture_date: '9999-12-31',
-			preservation_state: PreservationState::FULLY_FUNCTIONAL,
-			original_price: new Price(amount: 0, currency: Currency::EUR),
-			current_value: 99999,
-			acquisition_info: new AcquisitionInfo(
-				date: Carbon::create(year: 2025, month: 2, day: 8),
-				source: 'HERKUNFT',
-				kind: KindOfAcquisition::FIND,
-				purchasing_price: 99999,
-			),
-			kind_of_property: KindOfProperty::LOAN,
-		);
-		$this->exhibit_repository->insert($exhibit);
-		// sleep(5); // TODO entfernen
-		return redirect()->intended(route('exhibit.details', [$exhibit->get_id()], absolute: false));
-	}
-
 	/**
 	 * @return ExhibitProps
 	 */
@@ -405,7 +369,7 @@ class ExhibitController extends Controller
 			'currency' => $all_currencies,
 			'language' => $all_languages,
 		];
-		if ($all_initial_places) {
+		if (isset($all_initial_places)) {
 			$selectable_values['initial_places'] = $all_initial_places;
 		}
 		return $selectable_values;
