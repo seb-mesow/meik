@@ -10,16 +10,16 @@ enum Category: string
 	case BOOK = 'book';
 	case OTHER = 'other';
 	
-	public function get_pretty_name(): string {
+	public function get_id(): string {
+		return $this->value;
+	}
+	
+	public function get_name(): string {
 		return match($this) {
 			self::HARDWARE => 'Hardware',
 			self::SOFTWARE => 'Software',
 			self::BOOK => 'Bücher',
 			self::OTHER => 'Sonstiges',
 		};
-	}
-	
-	public function get_id(): string {
-		return $this->value;
 	}
 }

@@ -28,6 +28,10 @@ enum KindOfAcquisition: string
 	 */
 	case LOAN_OR_RENT = 'loan_or_rent';
 	
+	public function get_id(): string {
+		return $this->value;
+	}
+	
 	public function get_name(): string {
 		return match($this) {
 			self::PURCHASE => 'Kauf',

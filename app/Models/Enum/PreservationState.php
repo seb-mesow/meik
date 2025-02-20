@@ -28,6 +28,10 @@ enum PreservationState: string
 	 */
 	case DISPLAY_ONLY = 'display_only';
 	
+	public function get_id(): string {
+		return $this->value;
+	}
+	
 	public function get_name(): string {
 		return match($this) {
 			self::FULLY_FUNCTIONAL => 'voll funktionsfähig',
