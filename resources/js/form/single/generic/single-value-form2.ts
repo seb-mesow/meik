@@ -1,5 +1,6 @@
 import { ref, Ref } from "vue";
 import { Mutex, MutexInterface } from 'async-mutex';
+import { NotUndefined } from "@/types";
 
 export interface UISingleValueForm2<U = string|undefined> {
 	readonly html_id: string;
@@ -33,19 +34,23 @@ export interface MultipleValidationErrors {
 	errors: ValidationError[];
 }
 
-export interface ISingleValueForm2ConstructorArgs<T = string> {
-	val?: T|null,
+export interface ISingleValueForm2ConstructorArgs<T> {
+	val?: T,
 	errs?: string[],
 	required?: boolean;
 	on_change?: (form: ISingleValueForm2<T>) => void,
 	validate?: (value_in_editing: T|null|undefined) => Promise<string[]>,
 }
 
-export class SingleValueForm2<T = string, U = T|undefined> implements
+/**
+ * @param T return value of `get_value()`, MUST NEVER BE `undefined`
+ * @param U value of `ui_value_in_editing`
+ */
+export class SingleValueForm2<T, U = T|undefined> implements
 	ISingleValueForm2<T>,
 	UISingleValueForm2<U>
 {
-	private value: T|null;
+	private value: T|undefined;
 	
 	/**
 	 * prefilled cache for this.create_value_from_ui_value_and_validate(this.ui_value_in_editing.value);
@@ -67,7 +72,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	
 	public constructor(args: ISingleValueForm2ConstructorArgs<T>, id: string|number, parent: ISingleValueForm2Parent<T>) {
 		this.html_id = typeof id === 'number' ? id.toString() : id;
-		this.value = args.val ?? null; // The provided value is never undefined.
+		this.value = args.val;
 		this.value_in_editing = this.value;
 		this.is_required = args.required ?? false;
 		this.errs = ref(args.errs ?? []);
@@ -86,7 +91,7 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 		this.set_value_in_editing_without_ui_value(() => this._create_value_from_ui_value(new_ui_value_in_editing));
 	}
 	
-	public set_value_in_editing(new_value_in_editing: T|null): void {
+	public set_value_in_editing(new_value_in_editing: T): void {
 		this.ui_value_in_editing.value = this.create_ui_value_from_value(new_value_in_editing);
 		this.set_value_in_editing_without_ui_value(() => new_value_in_editing);
 	}
@@ -131,10 +136,19 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	
 	public commit(): void {
 		const value = this.get_value_in_editing();
-		this.value = (value === undefined) ? null : value;
+		if (value === undefined) {
+			throw new Error(`SingleValueForm2::commit(): ${this.html_id}: value is undefined (=^= something other than 'no value')`);
+		}
+		if (this.is_required && value === null) {
+			throw new Error(`SingleValueForm2::commit(): ${this.html_id}: value is null, but required`);
+		}
+		this.value = value as T;
 	}
 	
 	public rollback(): void {
+		if (this.value === undefined) {
+			throw new Error(`SingleValueForm2::rollback(): ${this.html_id}: value is undefined (=^= something other than 'no value')`);
+		}
 		this.set_value_in_editing(this.value);
 	}
 	
@@ -143,13 +157,19 @@ export class SingleValueForm2<T = string, U = T|undefined> implements
 	}
 	
 	public get_value(): T {
-		if (this.value === null) {
-			throw new Error("SingleValueForm2::get_value(): val is undefined");
+		if (this.value === undefined) {
+			throw new Error(`SingleValueForm2::get_value(): ${this.html_id}: value is undefined (=^= something other than 'no value')`);
 		}
 		return this.value;
 	}
 	
-	protected create_ui_value_from_value(value: T|null): U {
+	
+	/**
+	 * receives `null` in the absense of any value
+	 * 
+	 * never receives `undefined`
+	 */
+	protected create_ui_value_from_value(value: T): U {
 		//@ts-expect-error
 		return value;
 	}

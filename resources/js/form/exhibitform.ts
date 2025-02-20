@@ -6,7 +6,7 @@ import { ToastServiceMethods } from "primevue/toastservice";
 import { UISelectForm, SelectForm } from "./single/generic/select-form";
 import { UIGroupSelectForm } from "./single/generic/group-select-form";
 import { ref, Ref } from "vue";
-import { PartialDate } from "@/util/partial-date";
+import * as PartialDate from "@/util/partial-date";
 import { PartialDateFrom } from "./single/special/partialdate-form";
 import * as DateUtil from "@/util/date";
 import { StringForm } from "./single/generic/string-form";
@@ -19,9 +19,9 @@ export interface IExhibitForm {
 	readonly id?: number;
 	
 	// Kerndaten
-	readonly inventory_number: Readonly<UISingleValueForm2>;
-	readonly name: Readonly<UISingleValueForm2>;
-	readonly short_description: Readonly<UISingleValueForm2>;
+	readonly inventory_number:  Readonly<UISingleValueForm2<string>>;
+	readonly name: Readonly<UISingleValueForm2<string>>;
+	readonly short_description: Readonly<UISingleValueForm2<string>>;
 	readonly rubric: Readonly<UIGroupSelectForm<IRubric, ICategory>>;
 	readonly location: Readonly<UISelectForm<ILocation>>;
 	readonly place: Readonly<UISelectForm<IPlace>>;
@@ -29,15 +29,15 @@ export interface IExhibitForm {
 	
 	// Bestandsdaten
 	readonly preservation_state: Readonly<UISelectForm<IPreservationState>>;
-	readonly current_value: Readonly<UISingleValueForm2<number>>;
+	readonly current_value: Readonly<UISingleValueForm2<number|null>>;
 	readonly kind_of_property: Readonly<UISelectForm<IKindOfProperty>>;
 	
 	// Zugangsdaten
 	readonly acquisition_info: Readonly<{
 		readonly date: Readonly<UISingleValueForm2<Date>>;
-		readonly source: Readonly<UISingleValueForm2>;
+		readonly source: Readonly<UISingleValueForm2<string>>;
 		readonly kind: Readonly<UISelectForm<IKindOfAcquisition>>;
-		readonly purchasing_price: Readonly<UISingleValueForm2<number>>;
+		readonly purchasing_price: Readonly<UISingleValueForm2<number|null>>;
 	}>;
 	
 	// Exponats-Typ
@@ -46,24 +46,24 @@ export interface IExhibitForm {
 	readonly show_book_info: Readonly<Ref<boolean>>;
 	
 	// Geräte- und Buchinformationen
-	readonly manufacturer: Readonly<UISingleValueForm2>;
+	readonly manufacturer: Readonly<UISingleValueForm2<string>>;
 	readonly manufacture_date: Readonly<UISingleValueForm2>;
 	readonly original_price: Readonly<{
-		readonly amount: Readonly<UISingleValueForm2<number>>;
+		readonly amount: Readonly<UISingleValueForm2<number|null>>;
 		readonly currency: Readonly<UISelectForm<ICurrency>>;
 	}>;
 	
 	// Geräteinformationen
 	readonly device_info: Readonly<{
-		readonly manufactured_from_date: Readonly<UISingleValueForm2>;
-		readonly manufactured_to_date: Readonly<UISingleValueForm2>;
+		readonly manufactured_from_date: Readonly<UISingleValueForm2<string>>;
+		readonly manufactured_to_date: Readonly<UISingleValueForm2<string>>;
 	}>;
 	
 	// Buchinformationen
 	readonly book_info: Readonly<{
-		readonly authors: Readonly<UISingleValueForm2>;
+		readonly authors: Readonly<UISingleValueForm2<string>>;
 		readonly language: Readonly<UISelectForm<ILanguage>>;
-		readonly isbn: Readonly<UISingleValueForm2>;
+		readonly isbn: Readonly<UISingleValueForm2<string>>;
 	}>;
 	
 	click_delete(): void;
@@ -117,7 +117,7 @@ export interface IExhibitFormConstructorArgs {
 		// Kerndaten
 		inventory_number: string,
 		name: string,
-		short_description?: string, // optional
+		short_description: string, // optional
 		rubric: IRubric,
 		location_id: string,
 		place_id: string,
@@ -125,38 +125,37 @@ export interface IExhibitFormConstructorArgs {
 		
 		// Bestandsdaten
 		preservation_state_id: string,
-		current_value?: number, // optional
+		current_value: number|null, // optional
 		kind_of_property_id: string,
 		
 		// Zugangsdaten
 		acquisition_info: {
-			date: Date,
+			date: string,
 			source: string,
 			kind_id: string,
-			purchasing_price?: number, // optional
+			purchasing_price: number|null, // optional
 		},
 		
 		// Geräte- und Buchinformationen
 		manufacturer: string,
 		// TODO im Constructor doch erstmal noch string
-		manufacture_date?: PartialDate, // optional
-		original_price?: { // optional
-			amount: number,
+		manufacture_date: string, // optional
+		original_price: { // optional
+			amount: number|number,
 			currency_id: string,
 		},
 		
 		// Geräteinformationen
 		device_info?: {
-			// TODO im Constructor doch erstmal noch string
-			manufactured_from_date?: PartialDate, // optional
-			manufactured_to_date?: PartialDate, // optional
+			manufactured_from_date: string, // optional
+			manufactured_to_date: string, // optional
 		}
 		
 		// Buchinformationen
 		book_info?: {
-			authors?: string, // optional
+			authors: string, // optional
 			language_id: string,
-			isbn?: string, // optional
+			isbn: string, // optional
 		}
 	},
 	
@@ -173,9 +172,9 @@ export class ExhibitForm implements IExhibitForm {
 	public id?: number | undefined;
 	
 	// Kerndaten
-	public readonly inventory_number: SingleValueForm2<string>;
-	public readonly name: Readonly<SingleValueForm2<string>>;
-	public readonly short_description: SingleValueForm2<string>;
+	public readonly inventory_number: Readonly<ISingleValueForm2<string> & UISingleValueForm2<string>>;
+	public readonly name: Readonly<ISingleValueForm2<string> & UISingleValueForm2<string>>;
+	public readonly short_description: Readonly<ISingleValueForm2<string> & UISingleValueForm2<string>>;
 	public readonly rubric: ISingleValueForm2<IRubric> & UIGroupSelectForm<IRubric, ICategory>
 	public readonly location: ISingleValueForm2<ILocation> & UISelectForm<ILocation>;
 	public readonly place: IPlaceForm & UISelectForm<IPlace>;
@@ -183,15 +182,15 @@ export class ExhibitForm implements IExhibitForm {
 
 	// Bestandsdaten
 	public readonly preservation_state: Readonly<SelectForm<IPreservationState>>;
-	public readonly current_value: Readonly<SingleValueForm2<number, number>>;
+	public readonly current_value: Readonly<ISingleValueForm2<number|null> & UISingleValueForm2<number|null>>;
 	public readonly kind_of_property: Readonly<SelectForm<IKindOfProperty>>;
 	
 	// Zugangsdaten
 	public readonly acquisition_info: Readonly<{
 		readonly date: Readonly<SingleValueForm2<Date, Date>>;
-		readonly source: Readonly<SingleValueForm2>;
+		readonly source: Readonly<ISingleValueForm2<string> & UISingleValueForm2<string>>;
 		readonly kind: Readonly<SelectForm<IKindOfAcquisition>>;
-		readonly purchasing_price: Readonly<SingleValueForm2<number, number>>;
+		readonly purchasing_price: Readonly<ISingleValueForm2<number|null> & UISingleValueForm2<number|null>>;
 	}>;
 	
 	// Exponats-Typ
@@ -200,24 +199,24 @@ export class ExhibitForm implements IExhibitForm {
 	public show_book_info: Ref<boolean>;
 	
 	// Geräte- und Buchinformationen
-	public readonly manufacturer: Readonly<SingleValueForm2>;
-	public readonly manufacture_date: Readonly<SingleValueForm2<PartialDate, string>>;
+	public readonly manufacturer: Readonly<ISingleValueForm2<string> & UISingleValueForm2<string>>;
+	public readonly manufacture_date: Readonly<ISingleValueForm2<PartialDate.PartialDate|null> & UISingleValueForm2<string>>;
 	public readonly original_price: {
-		readonly amount: Readonly<SingleValueForm2<number, number>>;
+		readonly amount: Readonly<ISingleValueForm2<number|null> & UISingleValueForm2<number|null>>;
 		readonly currency: Readonly<SelectForm<ICurrency>>;
 	};
 	
 	// Geräteinformationen
 	public readonly device_info: {
-		readonly manufactured_from_date: Readonly<SingleValueForm2<PartialDate, string>>;
-		readonly manufactured_to_date: Readonly<SingleValueForm2<PartialDate, string>>;
+		readonly manufactured_from_date: Readonly<ISingleValueForm2<PartialDate.PartialDate|null> & UISingleValueForm2<string>>;
+		readonly manufactured_to_date: Readonly<ISingleValueForm2<PartialDate.PartialDate|null> & UISingleValueForm2<string>>;
 	};
 	
 	// Buchinformationen
 	public readonly book_info: {
-		readonly authors: Readonly<SingleValueForm2>;
+		readonly authors: Readonly<ISingleValueForm2<string> & UISingleValueForm2<string>>;
 		readonly language: Readonly<SelectForm<ILanguage>>;
-		readonly isbn: Readonly<SingleValueForm2>;
+		readonly isbn: Readonly<ISingleValueForm2<string> & UISingleValueForm2<string>>;
 	}
 	
 	// Auswahlwerte
@@ -256,18 +255,18 @@ export class ExhibitForm implements IExhibitForm {
 		
 		// Kerndaten
 		this.name = new StringForm({
-			val: args.data?.name ?? '',
+			val: args.data?.name,
 			required: true,
 		}, 'name', this.common_fields);
 		
 		this.inventory_number = new StringForm({
-			val: args.data?.inventory_number ?? '',
+			val: args.data?.inventory_number,
 			required: true,
 		}, 'inventory_number', this.common_fields);
 		
 		
 		this.short_description = new StringForm({
-			val: args.data?.short_description ?? ''
+			val: args.data?.short_description
 		}, 'short_description', this.common_fields);
 		
 		this.rubric = new RubricForm({
@@ -283,7 +282,7 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'rubric', this.common_fields);
 		
 		this.location = new LocationForm({
-			val: this.determinate_selectable_value_from_id(args.data?.location_id ?? '', this.selectable_values.location),
+			val: this.determinate_selectable_value_from_id(args.data?.location_id, this.selectable_values.location),
 			required: true,
 			selectable_locations: args.aux.selectable_values.location,
 			on_change: async (form) => {
@@ -300,7 +299,7 @@ export class ExhibitForm implements IExhibitForm {
 			},
 		}, 'location', this.common_fields);
 		
-		let provided_place = null;
+		let provided_place = undefined;
 		if (args.data?.place_id) {
 			if (!this.selectable_values.initial_places) {
 				throw new Error("Assertation failed: this.selectable_values.initial_places is not defined, despite a place_id is present");
@@ -317,7 +316,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		// Bestandsdaten
 		this.preservation_state = new SelectForm<IPreservationState>({
-			val: this.determinate_selectable_value_from_id(args.data?.preservation_state_id ?? '', this.selectable_values.preservation_state),
+			val: this.determinate_selectable_value_from_id(args.data?.preservation_state_id, this.selectable_values.preservation_state),
 			optionLabel: 'name',
 			required: true,
 			get_shown_suggestions: (query: string): Promise<IPreservationState[]> => {
@@ -336,8 +335,9 @@ export class ExhibitForm implements IExhibitForm {
 			}),
 		}, 'preservation_state', this.common_fields);
 		
-		this.current_value = new SingleValueForm2<number, number>({
-			val: this.form_price_amount(args.data?.current_value),
+		const current_value = args.data?.current_value;
+		this.current_value = new SingleValueForm2<number|null, number|null>({
+			val: typeof current_value === 'number' ? this.form_price_amount(current_value) : undefined,
 		}, 'current_value', this.common_fields);
 		
 		this.kind_of_property = new SelectForm<IKindOfProperty>({
@@ -359,9 +359,11 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'kind_of_property', this.common_fields);
 		
 		// Zugangsdaten
+		const acquistion_date = args.data?.acquisition_info.date;
+		const acquistion_purchasing_price = args.data?.acquisition_info.purchasing_price;
 		this.acquisition_info = {
 			date: new SingleValueForm2<Date, Date>({
-				val: args.data?.acquisition_info.date ?? new Date(),
+				val: acquistion_date ? DateUtil.parse_iso_date(acquistion_date) : new Date(),
 				required: true,
 				validate: (value_in_editing) => new Promise((resolve) => {
 					if (value_in_editing) {
@@ -395,18 +397,18 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'kind_of_acquisition', this.common_fields),
 			
 			purchasing_price: new SingleValueForm2<number, number>({
-				val: this.form_price_amount(args.data?.acquisition_info.purchasing_price),
+				val: typeof acquistion_purchasing_price === 'number' ? this.form_price_amount(acquistion_purchasing_price) : undefined
 			}, 'purchasing_price', this.common_fields),
 		};
 		
 		// Geräte- und Buchinformationen
 		this.manufacturer = new StringForm({
-			val: args.data?.manufacturer ?? '',
+			val: args.data?.manufacturer,
 			required: true,
 		}, 'manufacturer', this.common_fields);
 		
 		this.manufacture_date = new PartialDateFrom({
-			val: args.data?.manufacture_date
+			val: this.form_partial_date(args.data?.manufacture_date),
 		}, 'manufacture_date', this.common_fields);
 		
 		const original_price_currency_not_validate = async () => [];
@@ -422,9 +424,10 @@ export class ExhibitForm implements IExhibitForm {
 			}
 		};
 		
+		const original_price_amount = args.data?.original_price?.amount;
 		this.original_price = {
 			amount: new SingleValueForm2<number, number>({
-				val: this.form_price_amount(args.data?.original_price?.amount),
+				val: typeof original_price_amount === 'number' ? this.form_price_amount(original_price_amount) : undefined,
 				on_change: (form) => {
 					const value_in_editing = form.get_value_in_editing();
 					if (value_in_editing === null || value_in_editing == undefined) {
@@ -446,11 +449,11 @@ export class ExhibitForm implements IExhibitForm {
 		const device_info = args.data?.device_info;
 		this.device_info = {
 			manufactured_from_date: new PartialDateFrom({
-				val: device_info?.manufactured_from_date
+				val: this.form_partial_date(device_info?.manufactured_from_date),
 			}, 'manufactured_from_date', this.device_fields),
 			
 			manufactured_to_date: new PartialDateFrom({
-				val: device_info?.manufactured_to_date
+				val: this.form_partial_date(device_info?.manufactured_to_date),
 			}, 'manufactured_to_date', this.device_fields),
 		}
 		
@@ -643,7 +646,7 @@ export class ExhibitForm implements IExhibitForm {
 			name: this.name.get_value(),
 			short_description: this.short_description.get_value(),
 			manufacturer: this.manufacturer.get_value(),
-			manufacture_date: this.manufacture_date.get_value().format_iso(),
+			manufacture_date: this.manufacture_date.get_value()?.format_iso() ?? '',
 			preservation_state_id: this.preservation_state.get_value().id,
 			original_price: {
 				amount: this.request_price_amount(this.original_price.amount.get_value()),
@@ -664,8 +667,8 @@ export class ExhibitForm implements IExhibitForm {
 		};
 		if (this.type.get_value().id === 'device') {
 			request_data.device_info = {
-				manufactured_from_date: this.device_info.manufactured_from_date.get_value().format_iso(),
-				manufactured_to_date: this.device_info.manufactured_to_date.get_value().format_iso(),
+				manufactured_from_date: this.device_info.manufactured_from_date.get_value()?.format_iso() ?? '',
+				manufactured_to_date: this.device_info.manufactured_to_date.get_value()?.format_iso() ?? '',
 			};
 		}
 		if (this.type.get_value().id === 'book') {
@@ -678,11 +681,18 @@ export class ExhibitForm implements IExhibitForm {
 		return request_data;
 	}
 	
-	private form_price_amount(amount: number|undefined): number|undefined {
-		return (amount === undefined) ? amount : (amount / 100);
+	private form_partial_date(partial_date_iso: string|undefined): PartialDate.PartialDate|undefined {
+		if (partial_date_iso === '' || partial_date_iso === undefined) {
+			return undefined;
+		}
+		return PartialDate.PartialDate.parse_iso(partial_date_iso);
 	}
 	
-	private request_price_amount(amount: number): number {
-		return Math.round(amount * 100);
+	private form_price_amount(amount: number): number {
+		return amount / 100;
+	}
+	
+	private request_price_amount(amount: number|null): number|null {
+		return (amount === null) ? null : Math.round(amount * 100);
 	}
 }

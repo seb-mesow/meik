@@ -19,15 +19,15 @@ namespace Create {
 		manufacture_date: string,
 		preservation_state_id: string,
 		original_price: {
-			amount: number,
+			amount: number|null,
 			currency_id: string,
 		},
-		current_value: number,
+		current_value: number|null,
 		acquisition_info: {
 			date: string,
 			source: string,
 			kind_id: string,
-			purchasing_price: number,
+			purchasing_price: number|null,
 		},
 		kind_of_property_id: string,
 		device_info?: {
