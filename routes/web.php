@@ -44,10 +44,11 @@ Route::middleware('auth')->group(function () {
 	# --- Exhibits ---
 	Route::get('/exhibits', [ExhibitController::class, 'overview'])->name('exhibit.overview');
 	
-	Route::get('/exhibit/new', [ExhibitController::class, 'new'])->name('exhibit.new');
-	Route::post('/exhibit', [ExhibitController::class, 'create'])->name('exhibit.create');
-	Route::get('/exhibit/{exhibit_id}', [ExhibitController::class, 'details'])->name('exhibit.details');
-	Route::delete('/exhibit/{exhibit_id}', [ExhibitController::class, 'delete'])->name('exhibit.delete');
+	Route::get('/exhibit/new', [ExhibitController::class, 'new'])
+		->name('exhibit.new');
+	
+	Route::get('/exhibit/{exhibit_id}', [ExhibitController::class, 'details'])
+		->name('exhibit.details');
 	
 	# --- Images ---
 	Route::get('/exhibit/{exhibit_id}/images', [ImagesController::class, 'details'])

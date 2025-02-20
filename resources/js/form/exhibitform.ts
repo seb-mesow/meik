@@ -16,7 +16,7 @@ import { ILocation, ILocationForm, LocationForm } from "./single/special/locatio
 import { IPlace, IPlaceForm, PlaceForm } from "./single/special/place-form";
 
 export interface IExhibitForm {
-	readonly id?: number;
+	readonly id: Readonly<Ref<number|undefined>>;
 	
 	// Kerndaten
 	readonly inventory_number:  Readonly<UISingleValueForm2<string>>;
@@ -169,7 +169,7 @@ export interface IExhibitFormConstructorArgs {
 }
 
 export class ExhibitForm implements IExhibitForm {
-	public id?: number | undefined;
+	public id: Ref<number|undefined>;
 	
 	// Kerndaten
 	public readonly inventory_number: Readonly<ISingleValueForm2<string, true> & UISingleValueForm2<string>>;
@@ -251,7 +251,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		// UI-Werte
 		
-		this.id = args.data?.id;
+		this.id = ref(args.data?.id);
 		
 		// Kerndaten
 		this.name = new StringForm<true>({
@@ -549,7 +549,7 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	private exists_in_db(): boolean {
-		return this.id !== undefined;
+		return this.id.value !== undefined;
 	}
 	
 	public async click_delete(): Promise<void> {
@@ -569,7 +569,7 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	private async ajax_update(): Promise<void> {
-		if (this.id === undefined) {
+		if (this.id.value === undefined) {
 			throw new Error("undefined id");
 		}
 		
@@ -577,7 +577,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		const request_config: AxiosRequestConfig<ExhibitAJAX.Update.IRequestData> = {
 			method: "put",
-			url: route('ajax.exhibit.update', { exhibit_id: this.id }),
+			url: route('ajax.exhibit.update', { exhibit_id: this.id.value }),
 			data: request_data,
 		};
 		
@@ -593,24 +593,24 @@ export class ExhibitForm implements IExhibitForm {
 	}
 	
 	private async ajax_create(): Promise<void> {
-		if (this.id !== undefined) {
+		if (this.id.value !== undefined) {
 			throw new Error("defined id");
 		}
 		
 		const request_data: ExhibitAJAX.Create.IRequestData = this.create_or_update_request_data();
 		
 		const request_config: AxiosRequestConfig<ExhibitAJAX.Update.IRequestData> = {
-			method: "put",
+			method: "post",
 			url: route('ajax.exhibit.create'),
 			data: request_data,
 		};
 		
 		return axios.request(request_config).then(
 			(response: AxiosResponse<ExhibitAJAX.Create.I200ResponseData>) => {
-				this.success_toast(`neues Exponat mit ID ${response.data} gespeichert`);
+				window.location.replace(route('exhibit.details', { exhibit_id: response.data }));
 			},
 			() => {
-				this.success_toast('neues Exponat konnte nicht gespeichert');
+				this.failed_toast('neues Exponat konnte nicht gespeichert');
 			}
 		);
 	}

@@ -72,7 +72,7 @@ class AcquisitionInfo
 		return $this->source;
 	}
 	
-	public function set_source(Carbon $source): void {
+	public function set_source(string $source): void {
 		$this->source = $source;
 	}
 	
