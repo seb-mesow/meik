@@ -267,6 +267,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		this.short_description = new StringForm({
 			val: args.data?.short_description,
+			required: false,
 		}, 'short_description', this.common_fields);
 		
 		this.rubric = new RubricForm<true>({
@@ -332,6 +333,7 @@ export class ExhibitForm implements IExhibitForm {
 		const current_value = args.data?.current_value;
 		this.current_value = new SingleValueForm2<number, number>({
 			val: typeof current_value === 'number' ? this.form_price_amount(current_value) : undefined,
+			required: false,
 		}, 'current_value', this.common_fields);
 		
 		this.kind_of_property = new SelectForm<IKindOfProperty, true>({
@@ -371,6 +373,7 @@ export class ExhibitForm implements IExhibitForm {
 			
 			kind: new SelectForm<IKindOfAcquisition>({
 				val: this.determinate_selectable_value_from_id<IKindOfAcquisition>(args.data?.acquisition_info.kind_id, this.selectable_values.kind_of_acquisition),
+				required: false,
 				selectable_options: this.selectable_values.kind_of_acquisition,
 				optionLabel: 'name',
 				search_in: 'name',
@@ -383,7 +386,8 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'kind_of_acquisition', this.common_fields),
 			
 			purchasing_price: new SingleValueForm2<number, number>({
-				val: typeof acquistion_purchasing_price === 'number' ? this.form_price_amount(acquistion_purchasing_price) : undefined
+				val: typeof acquistion_purchasing_price === 'number' ? this.form_price_amount(acquistion_purchasing_price) : undefined,
+				required: false,
 			}, 'purchasing_price', this.common_fields),
 		};
 		
@@ -395,6 +399,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		this.manufacture_date = new PartialDateFrom({
 			val: this.form_partial_date(args.data?.manufacture_date),
+			required: false,
 		}, 'manufacture_date', this.common_fields);
 		
 		const original_price_currency_not_validate = async () => [];
@@ -414,6 +419,7 @@ export class ExhibitForm implements IExhibitForm {
 		this.original_price = {
 			amount: new SingleValueForm2<number, number>({
 				val: typeof original_price_amount === 'number' ? this.form_price_amount(original_price_amount) : original_price_amount,
+				required: false,
 				on_change: (form) => {
 					const value_in_editing = form.get_value_in_editing();
 					if (value_in_editing === null || value_in_editing == undefined) {
@@ -426,6 +432,7 @@ export class ExhibitForm implements IExhibitForm {
 			
 			currency: new SelectForm<ICurrency>({
 				val: this.determinate_selectable_value_from_id<ICurrency>(args.data?.original_price.currency_id, this.selectable_values.currency),
+				required: false,
 				selectable_options: this.selectable_values.currency,
 				search_in: 'id',
 				optionLabel: 'id',
@@ -438,10 +445,12 @@ export class ExhibitForm implements IExhibitForm {
 		this.device_info = {
 			manufactured_from_date: new PartialDateFrom({
 				val: this.form_partial_date(device_info?.manufactured_from_date),
+				required: false,
 			}, 'manufactured_from_date', this.device_fields),
 			
 			manufactured_to_date: new PartialDateFrom({
 				val: this.form_partial_date(device_info?.manufactured_to_date),
+				required: false,
 			}, 'manufactured_to_date', this.device_fields),
 		}
 		
@@ -450,6 +459,7 @@ export class ExhibitForm implements IExhibitForm {
 		this.book_info = {
 			authors: new StringForm({
 				val: book_info?.authors,
+				required: false,
 			}, 'authors', this.book_fields),
 			
 			language: new SelectForm<ILanguage, true>({
@@ -468,6 +478,7 @@ export class ExhibitForm implements IExhibitForm {
 			
 			isbn: new StringForm({
 				val: book_info?.isbn,
+				required: false,
 			}, 'isbn', this.book_fields),
 		};
 		
@@ -482,6 +493,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		this.type = new SingleValueForm2<IExhibitType, IExhibitType, true>({
 			val: type,
+			required: true,
 			on_change: (form: ISingleValueForm2<IExhibitType>) => {
 				const type = form.get_value_in_editing();
 				if (!type) {
