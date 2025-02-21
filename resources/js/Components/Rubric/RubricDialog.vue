@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { ICategory, IRubricForm, IRubricFormConstructorArgs, RubricForm } from "@/form/rubricform";
+import { ICategory, IDialogRef, IRubricForm, IRubricFormConstructorArgs, RubricForm } from "@/form/rubricform";
 import Button from "primevue/button";
-import { inject } from "vue";
+import { inject, Ref } from "vue";
 import InputTextField2 from "../Form/InputTextField2.vue";
 import SelectField from "../Form/SelectField.vue";
 
-const dialogRef: any = inject('dialogRef');
+// @ts-expect-error
+const dialogRef: Ref<IDialogRef> = inject('dialogRef');
 
 const selectable_categories: ICategory[]|undefined = inject('selectable_categories');
 if (selectable_categories === undefined) {
@@ -20,7 +21,7 @@ const form: IRubricForm = new RubricForm({
 	selectable_categories: selectable_categories,
 	on_rubric_created: params.on_rubric_created,
 	on_rubric_updated: params.on_rubric_updated,
-	dialog_ref: dialogRef,
+	dialog_ref: dialogRef.value,
 });
 </script>
 
@@ -28,8 +29,6 @@ const form: IRubricForm = new RubricForm({
 	<div class="grid grid-cols-1 gap-x-3">
 		<SelectField :form="form.category" label="Kategorie" :grid_col="1" :grid_row="1"/>
 		<InputTextField2 :form="form.name" label="Name" :grid_col="1" :grid_row="2"/>
-		<div class="justify-between mt-3">
-			<Button @click="form.click_save()" label="Speichern"/>
-		</div>
 	</div>
+	<Button class="mt-3" @click="form.click_save()" label="Speichern"/>
 </template>

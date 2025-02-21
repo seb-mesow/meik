@@ -6,6 +6,7 @@ import { ISelectForm, SelectForm, UISelectForm } from "./single/generic/select-f
 import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
 import { StringForm } from "./single/generic/string-form";
 import { IRubricTileProps } from "@/types/page_props/rubric_tiles";
+import { DynamicDialogCloseOptions } from "primevue/dynamicdialogoptions";
 
 export type ICategory = Readonly<{
 	id: string,
@@ -18,6 +19,15 @@ export interface IRubricForm {
 	click_save(): void;
 };
 
+export interface IDialogRef {
+	data: Omit<IRubricFormConstructorArgs, 'dialog_ref'|'selectable_categories'>,
+	close(tile: IRubricTileProps): void;
+}
+
+export interface ICloseOptions extends DynamicDialogCloseOptions {
+	data: IRubricTileProps;
+}
+
 export interface IRubricFormConstructorArgs {
 	data?: {
 		id: string,
@@ -28,7 +38,7 @@ export interface IRubricFormConstructorArgs {
 		category_id: string,
 	}
 	selectable_categories: ICategory[],
-	dialog_ref: any,
+	dialog_ref: IDialogRef,
 	on_rubric_created?: (tile: IRubricTileProps) => void,
 	on_rubric_updated?: (tile: IRubricTileProps) => void,
 };
@@ -39,7 +49,7 @@ export class RubricForm implements IRubricForm {
 	public category: ISelectForm<ICategory, true> & UISelectForm<ICategory>;
 	public name: ISingleValueForm2<string, true> & UISingleValueForm2<string>;
 	
-	private dialog_ref: any;
+	private dialog_ref: IDialogRef;
 	private _on_rubric_created: (tile: IRubricTileProps) => void; 
 	private _on_rubric_updated: (tile: IRubricTileProps) => void; 
 	
@@ -107,10 +117,9 @@ export class RubricForm implements IRubricForm {
 					category_id: this.category.get_value().id,
 				});
 				this.dialog_ref.close({
-					data: {
-						id: new_rubric_id,
-						name: this.name,
-					}
+					id: new_rubric_id,
+					name: this.name.get_value(),
+					category_id: this.category.get_value().id,
 				});
 			}
 		);
@@ -138,10 +147,9 @@ export class RubricForm implements IRubricForm {
 				category_id: this.category.get_value().id,
 			});
 			this.dialog_ref.close({
-				data: {
-					id: this.id,
-					name: this.name,
-				}
+				id: this.id,
+				name: this.name.get_value(),
+				category_id: this.category.get_value().id,
 			});
 		});
 	}
