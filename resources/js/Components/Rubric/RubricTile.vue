@@ -7,7 +7,7 @@ const RubricDialog = defineAsyncComponent(() => import('./RubricDialog.vue'));
 import axios, { AxiosRequestConfig } from "axios";
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import { IRubricFormConstructorArgs } from '@/form/rubricform';
+import { ICloseOptions, IRubricFormConstructorArgs } from '@/form/rubricform';
 import { IRubricTileProps } from '@/types/page_props/rubric_tiles';
 
 const confirm_service = useConfirm();
@@ -60,11 +60,12 @@ function create_dialog() {
 			modal: true,
 		},
 		data: form_args,
-		onClose: (options) => {
-			const data = options?.data;
+		onClose: (opts: ICloseOptions) => {
+			const data = opts.data;
 			if (data) {
 				rubric_id.value = data.id;
 				rubric_name.value = data.name;
+				rubric_category_id.value = data.category_id;
 			}
 		}
 	});

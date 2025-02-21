@@ -53,10 +53,10 @@ function create_dialog() {
 		},
 		data: form_args,
 		onClose: (options) => {
-			const data = options?.data;
-			if (data) {
-				reload()
-			}
+			// const data = options?.data;
+			// if (data) {
+			// 	reload()
+			// }
 		}
 	});
 }
@@ -148,7 +148,6 @@ onBeforeUnmount(() => {
 	
 	<!-- Wrapper für den Scroll-Bereich -->
 	<div class="flex flex-wrap" @scroll="handleScroll($event)">
-		<!-- TODO handle category_id for RubricTiles -->
 		<RubricTile v-for="rubric in rubrics" :key="rubric.id"
 			:rubric="rubric"
 			@delete_tile="delete_tile"
