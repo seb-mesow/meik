@@ -27,7 +27,7 @@ const form: IRubricForm = new RubricForm({
 <template>
 	<div class="grid grid-cols-1 gap-x-3">
 		<SelectField :form="form.category" label="Kategorie" :grid_col="1" :grid_row="1"/>
-		<InputTextField2 :form="form.name" label="Name" :grid_col="1" :grid_row="1"/>
+		<InputTextField2 :form="form.name" label="Name" :grid_col="1" :grid_row="2"/>
 		<div class="justify-between mt-3">
 			<Button @click="form.click_save()" label="Speichern"/>
 		</div>
