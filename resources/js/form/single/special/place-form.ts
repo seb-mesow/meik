@@ -11,7 +11,7 @@ export interface IPlaceForm<R extends boolean = false>  extends ISelectForm<IPla
 	set_selectable_places(selectable_places: IPlace[]): void;
 }
 
-export interface IPlaceFormConstructorArgs<R extends boolean = false> extends Pick<ISelectFormConstructorArgs<IPlace, R>, 'val'|'required'|'on_change'|'selectable_options'> {
+export interface IPlaceFormConstructorArgs<R extends boolean = false> extends Pick<ISelectFormConstructorArgs<IPlace, R>, 'val_id'|'required'|'on_change'|'selectable_options'> {
 }
 
 export class PlaceForm<R extends boolean = false> extends SelectForm<IPlace, R> implements IPlaceForm<R> {

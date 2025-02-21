@@ -58,6 +58,7 @@ export class RubricForm implements IRubricForm {
 			val: category_id ? { id: category_id, name: 'dummy_category_name'} : undefined, // TODO
 			required: true,
 			search_in: 'name',
+			optionLabel: 'name',
 			selectable_options: args.selectable_categories,
 		}, 'category_id', this.fields);
 		

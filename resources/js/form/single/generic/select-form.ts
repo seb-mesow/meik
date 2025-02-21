@@ -1,4 +1,4 @@
-import { Ref, shallowRef } from "vue";
+import { Ref, shallowRef, Static } from "vue";
 import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 
@@ -22,11 +22,15 @@ export interface ISelectOption {
  */
 export interface ISelectForm<O extends ISelectOption, R extends boolean = false> extends ISingleValueForm2<O, R> {};
 
-export interface ISelectFormConstructorArgs<O extends ISelectOption, R extends boolean = false> extends ISingleValueForm2ConstructorArgs<O, R> {
+export interface ISelectFormConstructorArgs<O extends ISelectOption, R extends boolean = false> extends Omit<ISingleValueForm2ConstructorArgs<O, R>, 'val'> {
+	val_id: string|undefined,
+	selectable_options: O[]|undefined,
 	search_in: 'name'|'id',
 	optionLabel?: string,
-	selectable_options?: O[],
 }
+
+type _FilterFunc = (option_str: string, criteria: string) => boolean;
+type _QueryCounterpartGetter<O extends ISelectOption> = (option: O) => string;
 
 /**
  * @param O internal value of options and primary return value of `get_value()`
@@ -35,19 +39,39 @@ export interface ISelectFormConstructorArgs<O extends ISelectOption, R extends b
 export class SelectForm<O extends ISelectOption, R extends boolean = false> extends SingleValueForm2<O, O|string|undefined, R> implements ISelectForm<O, R>, UISelectForm<O> {
 	public readonly shown_suggestions: Ref<Readonly<O[]>> = shallowRef([]);
 	public readonly optionLabel: string|undefined;
-	
+		
 	private is_overlay_shown: boolean = false;
 	protected selectable_options: O[];
-	private get_query_counterpart: (option: O) => string;
+	private _search_counterpart: (option: O) => string;
+	
+	private static readonly id_counterpart: _QueryCounterpartGetter<ISelectOption> = (option) => option.id.toLowerCase();
+	private static readonly name_counterpart: _QueryCounterpartGetter<ISelectOption> = (option) => option.name.toLowerCase();
+	private static readonly partial_match_filter: _FilterFunc = (option_str, criteria) => option_str.includes(criteria);
+	private static readonly full_match_filter: _FilterFunc = (option_str, criteria) => option_str === criteria;
 	
 	public constructor(args: ISelectFormConstructorArgs<O, R>, id: string|number, parent: ISingleValueForm2Parent<O>) {
-		super(args, id, parent);
+		let initial_value: O|undefined = undefined;
+		if (args.val_id !== undefined) {
+			if (args.selectable_options === undefined || args.selectable_options?.length < 0) {
+				throw new Error(`Assertation failed: SelectForm::constrcutor(): ${id}: val_id is provided, but there are no selectable_options .`);
+			} else {
+				// until the super() call we are only allowed to use static methods :-/
+				initial_value = SelectForm._find_one_suggestion(SelectForm.full_match_filter, SelectForm.id_counterpart, args.val_id, args.selectable_options);
+			}
+		}
+		
+		const _args : ISingleValueForm2ConstructorArgs<O, R> = {
+			...args,
+			...{ val: initial_value },
+		};
+		super(_args, id, parent);
+		
 		this.optionLabel = args.optionLabel;
 		this.selectable_options = args.selectable_options ?? [];
 		if (args.search_in === 'name') {
-			this.get_query_counterpart = (option) => option.name.toLowerCase();
+			this._search_counterpart = SelectForm.name_counterpart;
 		} else {
-			this.get_query_counterpart = (option) => option.id.toLowerCase(); 
+			this._search_counterpart = SelectForm.id_counterpart;
 		}
 	}
 	
@@ -56,7 +80,7 @@ export class SelectForm<O extends ISelectOption, R extends boolean = false> exte
 			return null;
 		}
 		if (typeof ui_value === 'string') {
-			const suggestions = this.search_suggestions(ui_value, (option_str, query) => option_str === query);
+			const suggestions = this.search_many_suggestions(SelectForm.full_match_filter, this._search_counterpart, ui_value);
 			if (suggestions.length === 1) {
 				return suggestions[0];
 			}
@@ -99,12 +123,40 @@ export class SelectForm<O extends ISelectOption, R extends boolean = false> exte
 		}
 	}
 	
-	private get_shown_suggestions(query: string): Promise<Readonly<O[]>> {
-		return new Promise((resolve) => resolve(this.search_suggestions(query, (option_str, query) => option_str.includes(query))));
+	private get_shown_suggestions(criteria: string): Promise<Readonly<O[]>> {
+		return new Promise((resolve) => resolve(this.search_many_suggestions(SelectForm.partial_match_filter, this._search_counterpart, criteria)));
 	}
 	
-	private search_suggestions(query: string, filter_func: (option_str: string, query: string) => boolean): O[] {
-		query = query.trim().toLowerCase();
-		return this.selectable_options.filter((option) => filter_func(this.get_query_counterpart(option), query));
+	private search_many_suggestions(filter: _FilterFunc, counterpart: _QueryCounterpartGetter<O>, criteria: string): O[] {
+		return SelectForm._search_many_suggestions(filter, counterpart, criteria, this.selectable_options);
 	}
+	
+	private static _search_many_suggestions<_O extends ISelectOption>(filter: _FilterFunc, counterpart: _QueryCounterpartGetter<_O>, criteria: string, selectable_options: _O[]): _O[] {
+		criteria = criteria.trim().toLowerCase();
+		return selectable_options.filter((option) => filter(counterpart(option), criteria));
+	}
+	
+	private find_one_suggestion(filter: _FilterFunc, counterpart: _QueryCounterpartGetter<O>, criteria: string): O|undefined {
+		return SelectForm._find_one_suggestion(filter, counterpart, criteria, this.selectable_options);
+	}
+	
+	private static _find_one_suggestion<_O extends ISelectOption>(filter: _FilterFunc, counterpart: _QueryCounterpartGetter<_O>, criteria: string, selectable_options: _O[]): _O|undefined {
+		criteria = criteria.trim().toLowerCase();
+		return selectable_options.find((option) => filter(counterpart(option), criteria));
+	}
+	
+	private determinate_selectable_value_from_id<T extends { id: string }, R extends boolean = false>(id: string|undefined, selectable_values: T[], required?: R): R extends true ? T|undefined : T|null|undefined {
+		if (id === undefined) {
+			return undefined;
+		}
+		let value: T|null|undefined = selectable_values.find((selectable_value: T): boolean => selectable_value.id === id);
+		if (required && (value === null || value === undefined)) {
+			throw new Error(`ExhibitForm::determinate_selectable_value_from_id(): provided id ${id === undefined ? 'undefined' : "'"+id+"'"}, but no value could be found`);
+		}
+		if (value === undefined) {
+			value = null;
+		}
+		// @ts-expect-error
+		return value;
+	};
 }

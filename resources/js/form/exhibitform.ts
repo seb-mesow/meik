@@ -283,7 +283,7 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'rubric', this.common_fields);
 		
 		this.location = new LocationForm<true>({
-			val: this.determinate_selectable_value_from_id<ILocation, true>(args.data?.location_id, this.selectable_values.location),
+			val_id: args.data?.location_id,
 			required: true,
 			selectable_options: args.aux.selectable_values.location,
 			on_change: async (form) => {
@@ -300,15 +300,8 @@ export class ExhibitForm implements IExhibitForm {
 			},
 		}, 'location', this.common_fields);
 		
-		let provided_place = undefined;
-		if (args.data?.place_id) {
-			if (!this.selectable_values.initial_places) {
-				throw new Error("Assertation failed: this.selectable_values.initial_places is not defined, despite a place_id is present");
-			}
-			provided_place = this.determinate_selectable_value_from_id<IPlace, true>(args.data.place_id, this.selectable_values.initial_places);
-		}
 		this.place = new PlaceForm<true>({
-			val: provided_place,
+			val_id: args.data?.place_id,
 			required: true,
 			selectable_options: args.aux.selectable_values.initial_places,
 		}, 'place', this.common_fields);
@@ -317,7 +310,7 @@ export class ExhibitForm implements IExhibitForm {
 		
 		// Bestandsdaten
 		this.preservation_state = new SelectForm<IPreservationState, true>({
-			val: this.determinate_selectable_value_from_id<IPreservationState, true>(args.data?.preservation_state_id, this.selectable_values.preservation_state),
+			val_id: args.data?.preservation_state_id,
 			selectable_options: this.selectable_values.preservation_state,
 			search_in: 'name',
 			optionLabel: 'name',
@@ -337,7 +330,7 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'current_value', this.common_fields);
 		
 		this.kind_of_property = new SelectForm<IKindOfProperty, true>({
-			val: this.determinate_selectable_value_from_id<IKindOfProperty, true>(args.data?.kind_of_property_id, this.selectable_values.kind_of_property),
+			val_id: args.data?.kind_of_property_id,
 			selectable_options: this.selectable_values.kind_of_property,
 			search_in: 'name',
 			optionLabel: 'name',
@@ -372,7 +365,7 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'source', this.common_fields),
 			
 			kind: new SelectForm<IKindOfAcquisition>({
-				val: this.determinate_selectable_value_from_id<IKindOfAcquisition>(args.data?.acquisition_info.kind_id, this.selectable_values.kind_of_acquisition),
+				val_id: args.data?.acquisition_info.kind_id,
 				required: false,
 				selectable_options: this.selectable_values.kind_of_acquisition,
 				optionLabel: 'name',
@@ -435,7 +428,7 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'original_price_amount', this.common_fields),
 			
 			currency: new SelectForm<ICurrency, boolean>({
-				val: this.determinate_selectable_value_from_id<ICurrency>(args.data?.original_price.currency_id, this.selectable_values.currency),
+				val_id: args.data?.original_price.currency_id,
 				required: original_price_amount_initially_provided,
 				selectable_options: this.selectable_values.currency,
 				search_in: 'id',
@@ -467,7 +460,7 @@ export class ExhibitForm implements IExhibitForm {
 			}, 'authors', this.book_fields),
 			
 			language: new SelectForm<ILanguage, true>({
-				val: this.determinate_selectable_value_from_id<ILanguage, true>(book_info?.language_id, this.selectable_values.language, true),
+				val_id: book_info?.language_id,
 				selectable_options: this.selectable_values.language,
 				search_in: 'name',
 				optionLabel: 'name',

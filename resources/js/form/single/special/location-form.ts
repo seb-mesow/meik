@@ -14,7 +14,7 @@ export interface ILocationForm<R extends boolean = false> extends ISelectForm<IL
 	get_all_places_in_value_in_editing(): Promise<IPlace[]>;
 };
 
-export interface ILocationFormConstructorArgs<R extends boolean = false> extends Pick<ISelectFormConstructorArgs<ILocation, R>, 'val'|'required'|'on_change'|'validate'|'selectable_options'> {
+export interface ILocationFormConstructorArgs<R extends boolean = false> extends Pick<ISelectFormConstructorArgs<ILocation, R>, 'val_id'|'required'|'on_change'|'validate'|'selectable_options'> {
 }
 
 export class LocationForm<R extends boolean = false> extends SelectForm<ILocation, R> implements ILocationForm<R> {
