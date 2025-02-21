@@ -55,7 +55,7 @@ export class RubricForm implements IRubricForm {
 		const category_id = args.data?.category_id ?? args.preset?.category_id;
 		
 		this.category = new SelectForm<ICategory, true>({
-			val: category_id ? { id: category_id, name: 'dummy_category_name'} : undefined, // TODO
+			val_id: category_id,
 			required: true,
 			search_in: 'name',
 			optionLabel: 'name',

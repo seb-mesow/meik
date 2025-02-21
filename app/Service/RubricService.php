@@ -10,6 +10,7 @@ use App\Repository\RubricRepository;
  * @phpstan-type IRubricProps array{
  *     id: int,
  *     name: string,
+ *     category_id: string,
  * }
  */
 final class RubricService {
@@ -42,6 +43,7 @@ final class RubricService {
 		return [
 			'id' => $rubric->get_id(),
 			'name' => $rubric->get_name(),
+			'category_id' => $rubric->get_category()->get_id(),
 		];
 	}
 }
