@@ -8,6 +8,7 @@ import { route } from 'ziggy-js';
 import DynamicDialog from 'primevue/dynamicdialog';
 import { IRubricTilesMainProps } from '@/types/page_props/rubric_tiles';
 import { ICategory } from '@/form/rubricform';
+import ConfirmDialog from 'primevue/confirmdialog';
 
 const props = defineProps<{
 	selectable_categories: ICategory[],
@@ -44,6 +45,7 @@ const items = [
 
 <template>
 	<DynamicDialog />
+	<ConfirmDialog :draggable="false"/>
 	
 	<Head title="Kategorien" />
 	<AuthenticatedLayout :disable_overflow="true">
