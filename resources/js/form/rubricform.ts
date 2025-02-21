@@ -7,6 +7,7 @@ import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value
 import { StringForm } from "./single/generic/string-form";
 import { IRubricTileProps } from "@/types/page_props/rubric_tiles";
 import { DynamicDialogCloseOptions } from "primevue/dynamicdialogoptions";
+import { ref, Ref } from "vue";
 
 export type ICategory = Readonly<{
 	id: string,
@@ -17,6 +18,8 @@ export interface IRubricForm {
 	readonly category: Readonly<UISelectForm<ICategory>>;
 	readonly name: Readonly<UISingleValueForm2<string>>;
 	click_save(): void;
+	readonly is_save_button_enabled: Readonly<Ref<boolean>>;
+	readonly is_save_button_loading: Readonly<Ref<boolean>>;
 };
 
 export interface IDialogRef {
@@ -48,6 +51,8 @@ export class RubricForm implements IRubricForm {
 	
 	public category: ISelectForm<ICategory, true> & UISelectForm<ICategory>;
 	public name: ISingleValueForm2<string, true> & UISingleValueForm2<string>;
+	public readonly is_save_button_enabled: Ref<boolean, boolean>;
+	public readonly is_save_button_loading: Ref<boolean, boolean>;
 	
 	private dialog_ref: IDialogRef;
 	private _on_rubric_created: (tile: IRubricTileProps) => void; 
@@ -58,8 +63,13 @@ export class RubricForm implements IRubricForm {
 	public constructor(args: IRubricFormConstructorArgs) {
 		this.id = args.data?.id;
 		
+		this.is_save_button_enabled = ref(false);
+		this.is_save_button_loading = ref(false);
+		
 		this.fields = new MultipleValueForm({
-			// on_child_change: (form) => this.on_child_field_change(form),
+			on_child_change: async (form) => {
+				this.is_save_button_enabled.value = await form.is_valid();
+			},
 		});
 		
 		const category_id = args.data?.category_id ?? args.preset?.category_id;
@@ -70,6 +80,12 @@ export class RubricForm implements IRubricForm {
 			search_in: 'name',
 			optionLabel: 'name',
 			selectable_options: args.selectable_categories,
+			validate: async (value_in_editing) => {
+				if (value_in_editing === undefined) {
+					return ['Bitte eine auswählbare Kategorie angeben'];
+				}
+				return [];
+			},
 		}, 'category_id', this.fields);
 		
 		this.name = new StringForm<true>({
@@ -89,12 +105,17 @@ export class RubricForm implements IRubricForm {
 	public async click_save(): Promise<void> {
 		this.fields.commit();
 		
-		if (this.exists_in_db()) {
-			return this.ajax_update();
-		} else {
-			return this.ajax_create();
+		this.is_save_button_loading.value = true;
+		try {
+			if (this.exists_in_db()) {
+				return this.ajax_update();
+			} else {
+				return this.ajax_create();
+			}
+		} catch {
+			this.is_save_button_loading.value = false;
 		}
-	} 
+	}
 
 	private async ajax_create(): Promise<void> {
 		console.log(`ajax_update(): this.category_id == ${this.category.get_value().id}`);

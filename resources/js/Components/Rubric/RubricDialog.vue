@@ -27,8 +27,14 @@ const form: IRubricForm = new RubricForm({
 
 <template>
 	<div class="grid grid-cols-1 gap-x-3">
-		<SelectField :form="form.category" label="Kategorie" :grid_col="1" :grid_row="1"/>
-		<InputTextField2 :form="form.name" label="Name" :grid_col="1" :grid_row="2"/>
+		<SelectField :form="form.category" label="Kategorie" :grid_col="1" :grid_row="1" />
+		<InputTextField2 :form="form.name" label="Name" :grid_col="1" :grid_row="2" />
 	</div>
-	<Button class="mt-3" @click="form.click_save()" label="Speichern"/>
+	<Button
+		@click="form.click_save()"
+		:disabled="!form.is_save_button_enabled.value || form.is_save_button_loading.value"
+		:loading="form.is_save_button_loading.value"
+		label="Speichern"
+		class="mt-3"
+	/>
 </template>

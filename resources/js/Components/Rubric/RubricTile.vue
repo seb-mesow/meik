@@ -2,7 +2,7 @@
 import { route } from 'ziggy-js';
 import { useDialog } from 'primevue/usedialog';
 import Button from 'primevue/button';
-import { defineAsyncComponent, reactive, Ref, ref } from 'vue';
+import { defineAsyncComponent, ref } from 'vue';
 const RubricDialog = defineAsyncComponent(() => import('./RubricDialog.vue'));
 import axios, { AxiosRequestConfig } from "axios";
 import { useConfirm } from 'primevue/useconfirm';

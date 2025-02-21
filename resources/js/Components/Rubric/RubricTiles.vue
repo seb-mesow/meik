@@ -8,7 +8,6 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as RubricAJAX from '@/types/ajax/rubric';
 import { IRubricTileProps, IRubricTilesMainProps } from '@/types/page_props/rubric_tiles';
 import { IRubricFormConstructorArgs } from '@/form/rubricform';
-import Category from '@/Pages/Category/Category.vue';
 
 const RubricDialog = defineAsyncComponent(() => import('../../Components/Rubric/RubricDialog.vue'));
 

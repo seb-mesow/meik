@@ -261,7 +261,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 		</Fieldset>
 		
 		<Button
-			:disabled="!exhibit_form.is_save_button_enabled.value"
+			:disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
 			:loading="exhibit_form.is_save_button_loading.value"
 			type='button'
 			:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'"
