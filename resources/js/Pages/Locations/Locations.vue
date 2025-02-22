@@ -107,7 +107,7 @@ function child_form(data: any, index: number): UILocationForm {
 			</Column>
 			<Column field="is_public" header="öffentlich" style="width: 25%">
 				<template #body="{ data, index }">
-					<i v-if="child_form(data, index).is_public.ui_value_in_editing" class="pi pi-check" />
+					<i v-if="child_form(data, index).is_public.ui_value_in_editing.value" class="pi pi-check" />
 				</template>
 				<template #editor="{ data, index }">
 					<div>

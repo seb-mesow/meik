@@ -44,7 +44,7 @@ export interface ILocationFormConstructorArgs {
 export class LocationForm implements ILocationForm, UILocationForm {
 	public readonly id: Ref<string|undefined>;
 	public readonly name: SingleValueForm2<string, string, true>;
-	public readonly is_public: SingleValueForm2<boolean, boolean, true>;
+	public readonly is_public: SingleValueForm2<boolean, boolean, false>;
 	public delete_button_enabled: boolean;
 	
 	private readonly parent: ILocationFormParent;
@@ -63,9 +63,9 @@ export class LocationForm implements ILocationForm, UILocationForm {
 			val: args.data?.name,
 			required: true,
 		}, 'name', this.fields);
-		this.is_public = new SingleValueForm2<boolean, boolean, true>({
+		this.is_public = new SingleValueForm2<boolean, boolean, false>({
 			val: args.data?.is_public,
-			required: true,
+			required: false,
 		}, 'is_public', this.fields);
 		
 		this.delete_button_enabled = true;
@@ -178,7 +178,7 @@ export class LocationForm implements ILocationForm, UILocationForm {
 			url: route('ajax.location.create'),
 			data: {
 				name: this.name.get_value(),
-				is_public: this.is_public.get_value(),
+				is_public: this.is_public.get_value() ?? false,
 			},
 		};
 		return axios.request(request_config).then(
@@ -203,6 +203,7 @@ export class LocationForm implements ILocationForm, UILocationForm {
 			url: route('ajax.location.update', { location_id: this.id.value }),
 			data: {
 				name: this.name.get_value(),
+				//@ts-expect-error
 				is_public: this.is_public.get_value(),
 			}
 		};
