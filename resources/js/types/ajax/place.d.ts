@@ -6,7 +6,7 @@ export namespace Query {
 	};
 	export interface I200ResponseData {
 		places: { id: string, name: string }[],
-		total_count?: number,
+		total_count: number, // Größe der Ergebnismenge unter Berücksichtigung der Suchkriterien
 	};
 }
 

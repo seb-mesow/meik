@@ -63,10 +63,9 @@ final class PlaceRepository
 	 * }
 	 */
 	public function query(?string $location_id = null, ?int $page_number = null, ?int $count_per_page = null): array {
-		$client = $this->client->reduce(false);
-		
+		$client = $this->client;
 		if ($location_id !== null) {
-			$client = $client->key($location_id);
+			$client = $this->client->key($location_id);
 		}
 		
 		if ($page_number !== null) {
@@ -79,19 +78,26 @@ final class PlaceRepository
 		// Hinweis: Es ist möglich mehrere Queries auf einmal auszuführen
 		// /{db}/_design/{ddoc}/_view/{view}/queries
 		$response = $client
+			->reduce(false)
 			->include_docs(true)
 			->getView(self::MODEL_TYPE_ID, 'by-location-id');
-		$places = $this->create_places_from_view_response($response);
+			$places = $this->create_places_from_view_response($response);
+		
+		// Der Client setzt die Query-Parameter mit Ende einer Request zurück.
+		if ($location_id !== null) {
+			$client = $client->key($location_id);
+		}
 		
 		$response = $client
+			->reduce(true)
+			->include_docs(false)
 			->getView(self::MODEL_TYPE_ID, 'by-location-id');
 		$total_count = $response->rows[0]?->value ?? 0;
 		
-		$ret = [ 'places' => $places ];
-		if (isset($total_count)) {
-			$ret['total_count'] = $total_count;
-		}
-		return $ret;
+		return [
+			'places' => $places,
+			'total_count' => $total_count,
+		];
 	}
 	
 	public function find(string $id): ?Place {
