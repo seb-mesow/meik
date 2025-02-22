@@ -9,16 +9,16 @@ import { StringForm } from "./single/generic/string-form";
 import { ref, Ref } from "vue";
 
 export interface UIPlaceForm {
-	delete(event: any): void;
+	request_delete(event: any): void;
 	readonly id?: Ref<string|undefined>;
 	readonly name: Readonly<UISingleValueForm2<string>>;
 	readonly delete_button_enabled: boolean;
 };
 
 export interface IPlaceForm {
-	delete(event: any): void;
+	request_delete(event: any): void;
 	init_editing(): void;
-	try_save(): void;
+	try_save(): Promise<void>;
 	cancel_editing(): void;
 	readonly delete_button_enabled: boolean;
 };
@@ -113,7 +113,7 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 		console.log("Ende");
 	}
 	
-	public async cancel_editing(): Promise<void> {
+	public cancel_editing(): void {
 		console.log('PlaceForm::cancel_editing()');
 		console.log(`this.id === ${this.id}`);
 		
@@ -136,40 +136,35 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 		}
 	}
 	
-	public async delete(event: any): Promise<void> {
+	public request_delete(event: any): void {
 		if (!this.exists_in_db()) {
 			this.parent.delete_form(this);
 			return;
 		}
-		return new Promise((resolve: () => void, reject: () => void) => {
-			this.confirm_service.require({
-				target: event.currentTarget,
-				message: "Sind Sie sicher das Sie den Platz löschen wollen?",
-				icon: 'pi pi-exclamation-triangle',
-				rejectProps: {
-					label: 'Abbrechen',
-					severity: 'secondary',
-					outlined: true
-				},
-				acceptProps: {
-					label: 'Bestätigen'
-				},
-				accept: () => {
-					this.accept_delete().then(resolve, reject)
-				},
-				reject: reject
-			});
+		this.confirm_service.require({
+			target: event.currentTarget,
+			message: "Sind Sie sicher das Sie den Platz löschen wollen?",
+			icon: 'pi pi-exclamation-triangle',
+			rejectProps: {
+				label: 'Abbrechen',
+				severity: 'secondary',
+				outlined: true
+			},
+			acceptProps: {
+				label: 'Bestätigen'
+			},
+			accept: () => {
+				this.accept_delete()
+			},
 		});
 	};
 	
 	private accept_delete(): Promise<void> {
 		return new Promise((resolve: () => void, reject: () => void) => {
 			this.ajax_delete().then(() => {
-				this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich gelöscht.', life: 3000 });
 				this.parent.delete_form(this);
 				resolve();
 			}, () => {
-				this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Platz konnte nicht gelöscht werden.', life: 3000 });
 				reject();
 			});
 		});
@@ -189,7 +184,10 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 				console.log(`PlaceForm::ajax_create(): response.data ===`)
 				console.log(response.data);
 				this.id.value = response.data
-			}
+				this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich angelegt.', life: 3000 });
+			}, () => {
+				this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Platz konnte nicht angelegt werden.', life: 3000 });
+			},
 		);
 	}
 	
@@ -223,6 +221,10 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 			method: "delete",
 			url: route('ajax.place.delete', { place_id: this.id.value })
 		};
-		return axios.request(request_config);
+		return axios.request(request_config).then(() => {
+			this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich gelöscht.', life: 3000 });
+		}, () => {
+			this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Platz konnte nicht gelöscht werden.', life: 3000 });
+		});
 	}
 }

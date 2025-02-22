@@ -14,8 +14,8 @@ import { route } from "ziggy-js";
 import { ref, Ref, ShallowRef, shallowRef } from "vue";
 
 export interface IPlacesForm {
-	readonly children: Readonly<ShallowRef<(IPlaceForm&UIPlaceForm)[]>>;
-	readonly children_in_editing: ShallowRef<PlaceForm[]>;
+	readonly children: Readonly<ShallowRef<(IPlaceForm & UIPlaceForm)[]>>;
+	readonly children_in_editing: ShallowRef<(IPlaceForm & UIPlaceForm)[]>;
 	readonly create_button_enabled: Ref<boolean>;
 	readonly count_per_page: number;
 	readonly total_count: number;
@@ -38,8 +38,8 @@ export interface IPlacesFormConstructorArgs {
 }
 
 export class PlacesForm implements IPlacesForm, IPlaceFormParent {
-	public readonly children: ShallowRef<PlaceForm[]>;
-	public readonly children_in_editing: ShallowRef<PlaceForm[]>;
+	public readonly children: ShallowRef<(IPlaceForm & UIPlaceForm)[]>;
+	public readonly children_in_editing: ShallowRef<(IPlaceForm & UIPlaceForm)[]>;
 	public readonly create_button_enabled: Ref<boolean>;
 	public count_per_page: number;
 	public total_count: number;
@@ -65,7 +65,8 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 	}
 	
 	public prepend_new_form(): void {
-		this.create_button_enabled.value = false;
+		// this.create_button_enabled.value = false;
+		
 		const new_child_in_editing: PlaceForm = new PlaceForm({
 			// delete_button_enabled: true,
 			parent: this,
@@ -81,10 +82,11 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 	}
 	
 	public delete_form(place: PlaceForm): void {
-		this.children.value = this.children.value.filter((rows_place: PlaceForm): boolean => rows_place !== place);
-		if (place.id === undefined) {
-			this.create_button_enabled.value = true;
-		}
+		console.log(`PlacesForm::delete_form()`);
+		this.children.value = this.children.value.filter((rows_place: IPlaceForm): boolean => rows_place !== place);
+		// if (place.exists_in_db()) {
+		// 	this.create_button_enabled.value = true;
+		// }
 	}
 	
 	public append_form_in_editing(form: PlaceForm): void {
@@ -101,7 +103,7 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 		console.log('PlacesForm::on_row_edit_init()');
 		let { data } = event;
 		const _data: PlaceForm = data;
-		this.create_button_enabled.value = false;
+		// this.create_button_enabled.value = false;
 		_data.init_editing();
 		// Die zu bearbeitende Zeile wird automatisch zu editing_rows kopiert.
 		// Dabei wird nur eine FLACHE Kopie erzeugt.
@@ -129,7 +131,8 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 		// console.log(newData);
 		// TODo what about newData
 		this.children.value[event.index].cancel_editing();
-		this.create_button_enabled.value = true;
+		
+		this.create_button_enabled.value = true; // correct as long as only one row is edited
 	}
 	
 	private async ajax_get_paginated(params: PlaceAJAX.Query.IQueryParams): Promise<void> {
