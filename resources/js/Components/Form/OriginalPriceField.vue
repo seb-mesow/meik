@@ -25,7 +25,7 @@ const props = defineProps<{
 			<!-- @vue-expect-error -->
 			<InputNumber
 				:inputId="form_amount.html_id"
-				:modelValue="form_amount.ui_value_in_editing"
+				:modelValue="form_amount.ui_value_in_editing.value"
 				@update:modelValue="(v: number) => form_amount.on_change_ui_value_in_editing(v)"
 				@blur="form_amount.on_blur($event)"
 				:min="0"
