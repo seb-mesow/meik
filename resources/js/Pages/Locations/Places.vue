@@ -11,7 +11,7 @@ import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import Breadcrumb from 'primevue/breadcrumb';
 import { IPlaceInitPageProps, IPlacesInitPageProps } from '@/types/page_props/place';
-import { IPlacesForm, PlacesForm } from '@/form/placessform';
+import { UIPlacesForm, PlacesForm } from '@/form/placessform';
 import { UIPlaceForm } from '@/form/placeform';
 
 const props = defineProps<{
@@ -21,7 +21,7 @@ const props = defineProps<{
 
 const home = {
 	icon: 'pi pi-home',
-	url: route('exhibit.overview'),
+	url: route('category.overview'),
 };
 const items = [
 	{
@@ -37,7 +37,7 @@ const items = [
 const confirm_service = useConfirm();
 const toast_service = useToast();
 
-const form: IPlacesForm = new PlacesForm({
+const form: UIPlacesForm = new PlacesForm({
 	location_id: props.init_props.location_id,
 	places: props.init_props.places.map((_props: IPlaceInitPageProps) => {
 		return {
@@ -50,6 +50,7 @@ const form: IPlacesForm = new PlacesForm({
 	toast_service: toast_service,
 	confirm_service: confirm_service,
 });
+
 function child_form(data: any, index: number): UIPlaceForm {
 	// return data;
 	return form.children.value[index];
@@ -59,6 +60,7 @@ function child_form(data: any, index: number): UIPlaceForm {
 <template>
 	<Toast />
 	<ConfirmPopup/>
+	
 	<AuthenticatedLayout>
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
@@ -118,6 +120,7 @@ function child_form(data: any, index: number): UIPlaceForm {
 					/>
 				</template>
 			</Column>
+			<template #empty>Dieser Standort hat keine Plätze.</template>
 		</DataTable>
 		
 	</AuthenticatedLayout>

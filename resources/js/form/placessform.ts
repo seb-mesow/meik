@@ -13,9 +13,9 @@ import { IPlaceInitPageProps } from "@/types/page_props/place";
 import { route } from "ziggy-js";
 import { ref, Ref, ShallowRef, shallowRef } from "vue";
 
-export interface IPlacesForm {
-	readonly children: Readonly<ShallowRef<(IPlaceForm & UIPlaceForm)[]>>;
-	readonly children_in_editing: ShallowRef<(IPlaceForm & UIPlaceForm)[]>;
+export interface UIPlacesForm {
+	readonly children: Readonly<ShallowRef<UIPlaceForm[]>>;
+	readonly children_in_editing: ShallowRef<UIPlaceForm[]>;
 	readonly create_button_enabled: Ref<boolean>;
 	readonly count_per_page: number;
 	readonly total_count: Ref<number>;
@@ -38,7 +38,7 @@ export interface IPlacesFormConstructorArgs {
 	confirm_service: ConfirmationServiceMethods,
 }
 
-export class PlacesForm implements IPlacesForm, IPlaceFormParent {
+export class PlacesForm implements UIPlacesForm, IPlaceFormParent {
 	public readonly children: ShallowRef<(IPlaceForm & UIPlaceForm)[]>;
 	public readonly children_in_editing: ShallowRef<(IPlaceForm & UIPlaceForm)[]>;
 	public readonly create_button_enabled: Ref<boolean>;
@@ -75,8 +75,12 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 		// https://stackoverflow.com/questions/64605833/primevue-editingrows
 		// https://stackoverflow.com/questions/68750466/how-do-i-keep-editor-mode-on-when-detecting-invalid-data-with-primevues-datatab
 		this.children_in_editing.value = [ new_child_in_editing, ...this.children_in_editing.value ];
+		this.children.value = [new_child_in_editing, ...this.children.value];
 		
-		this.children.value.unshift(new_child_in_editing);
+		console.log(`PlacesForm::prepend_new_form(): this.children_in_editing.value ===`);
+		console.log(this.children_in_editing.value);
+		console.log(`PlacesForm::prepend_new_form(): this.children.value ===`);
+		console.log(this.children.value);
 	}
 	
 	public delete_form(place: PlaceForm): void {
@@ -115,7 +119,7 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 			await this.children.value[event.index].try_save();
 			// Die Rows sollen bewusst nicht geupdated werden:
 			// Alle vorher angezeigten Zeilen und die neue Zeile sollen zunächst erstmal bleiben.
-		} catch (e) {}
+		} catch(e) {}
 	};
 	
 	public async on_row_edit_cancel(event: DataTableRowEditCancelEvent) {
