@@ -6,10 +6,11 @@ import { ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from ".
 import { route } from "ziggy-js";
 import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
 import { StringForm } from "./single/generic/string-form";
+import { ref, Ref } from "vue";
 
 export interface UIPlaceForm {
 	delete(event: any): void;
-	readonly id?: string;
+	readonly id?: Ref<string|undefined>;
 	readonly name: Readonly<UISingleValueForm2<string>>;
 	readonly delete_button_enabled: boolean;
 };
@@ -35,15 +36,14 @@ export interface IPlaceFormConstructorArgs {
 		id: string,
 		name: string,
 	},
-	delete_button_enabled?: boolean,
 	parent: IPlaceFormParent,
 	toast_service: ToastServiceMethods,
 	confirm_service: ConfirmationServiceMethods,
 };
 
 export class PlaceForm implements IPlaceForm, UIPlaceForm {
-	public id: string|undefined;
-	public name: SingleValueForm2<string, string, true>;
+	public readonly id: Ref<string|undefined>;
+	public readonly name: SingleValueForm2<string, string, true>;
 	public delete_button_enabled: boolean;
 	
 	private readonly parent: IPlaceFormParent;
@@ -60,42 +60,48 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 		this.toast_service = args.toast_service;
 		this.confirm_service = args.confirm_service;
 		
-		this.id = args.data?.id;
+		this.id = ref(args.data?.id);
 		this.name = new StringForm<true>({
 			val: args.data?.name,
 			required: true,
 		}, 'name', this.fields);
-		this.delete_button_enabled = args.delete_button_enabled ?? true;
+		
+		this.delete_button_enabled = true;
+		if (args.data === undefined) {
+			this.init_editing();
+		}
 	}
 	
 	private exists_in_db(): boolean {
-		return this.id !== undefined;
+		return this.id.value !== undefined;
 	}
 
 	public init_editing(): void {
 		console.log('PlaceForm::init_editing()');
-		console.log(`this.id === ${this.id}`);
-		console.log(`this.name.val === ${this.name.get_value()}`);
-		console.log(`this.name.ui_value_in_editing ===`);
-		console.log(this.name.ui_value_in_editing),
-		this.delete_button_enabled = false;
+		console.log(this.name.ui_value_in_editing);
+		// this.delete_button_enabled = this.exists_in_db();
 	}
 	
+	/**
+	 * @throws `Error` if form is invalid
+	 */
 	public async try_save(): Promise<void> {
-		console.log('PlaceForm::on_row_edit_save()');
-		console.log(`this.name.val === ${this.name.get_value()}`);
-		console.log(`this.name.val_in_editing === ${this.name.get_value_in_editing()}`);
+		console.log('PlaceForm::try_save()');
+		// console.log(`this.name.val === ${this.name.get_value()}`);
+		// console.log(`this.name.val_in_editing === ${this.name.get_value_in_editing()}`);
 		// this ist direkt das Objekt in der rows-Property oder ein Proxy darauf.
 		
 		// Die bearbeitete Zeile wird automatisch aus editing_rows entfernt;
 		
 		if (!(await this.fields.is_valid())) {
+			this.fields.consider();
+			
 			// this.toast_service.add({ severity: 'error', summary: 'Name notwendig', detail: 'Das Feld "Name" darf nicht leer sein', life: 3000 });
 			
 			this.parent.append_form_in_editing(this);
 			// Es muss das IDENTISCHE Zeilen-Objekt in editing_rows erhalten blieben
 			// (newData ist ein Kopie und damit zwar gleich aber nicht identisch.)
-			return;
+			throw new Error('PlaceForm is invalid.');
 		}
 		
 		// Werte der Zeile im Objekt rows setzen:
@@ -110,15 +116,14 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 	public async cancel_editing(): Promise<void> {
 		console.log('PlaceForm::cancel_editing()');
 		console.log(`this.id === ${this.id}`);
-		console.log(`this.name.val === ${this.name.get_value()}`);
 		
 		this.name.rollback();
 		
 		if (this.exists_in_db()) {
-			// war update
+			// was update
 			this.delete_button_enabled = true;
 		} else {
-			// war create
+			// was create
 			this.parent.delete_form(this);
 		}
 	}
@@ -131,7 +136,11 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 		}
 	}
 	
-	public delete(event: any): Promise<void> {
+	public async delete(event: any): Promise<void> {
+		if (!this.exists_in_db()) {
+			this.parent.delete_form(this);
+			return;
+		}
 		return new Promise((resolve: () => void, reject: () => void) => {
 			this.confirm_service.require({
 				target: event.currentTarget,
@@ -155,21 +164,19 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 	
 	private accept_delete(): Promise<void> {
 		return new Promise((resolve: () => void, reject: () => void) => {
-			this.ajax_delete().then(
-				() => {
-					this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich gelöscht.', life: 3000 });
-					this.parent.delete_form(this);
-					resolve();
-				},
-				() => {
-					this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Platz konnte nicht gelöscht werden.', life: 3000 });
-					reject();
-				}
-			);
+			this.ajax_delete().then(() => {
+				this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich gelöscht.', life: 3000 });
+				this.parent.delete_form(this);
+				resolve();
+			}, () => {
+				this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Platz konnte nicht gelöscht werden.', life: 3000 });
+				reject();
+			});
 		});
 	}
 	
 	private ajax_create(): Promise<void> {
+		console.log(`PlaceForm::ajax_create(): begin`)
 		const request_config: AxiosRequestConfig<PlaceAJAX.Create.IRequestData> = {
 			method: "post",
 			url: route('ajax.place.create', { location_id: this.parent.location_id }),
@@ -179,41 +186,42 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 		};
 		return axios.request(request_config).then(
 			(response: AxiosResponse<PlaceAJAX.Create.I200ResponseData>) => {
-				this.id = response.data
+				console.log(`PlaceForm::ajax_create(): response.data ===`)
+				console.log(response.data);
+				this.id.value = response.data
 			}
 		);
 	}
 	
 	private async ajax_update(): Promise<void> {
-		if (!this.id) {
+		console.log(`PlaceForm::ajax_update(): begin`);
+		if (!this.id.value) {
 			throw new Error("undefined id");
 		}
 		console.log(`PlaceForm::ajax_update(): this.name.get_value() ===`);
 		console.log(this.name.get_value());
 		const request_config: AxiosRequestConfig<PlaceAJAX.Update.IRequestData> = {
 			method: "put",
-			url: route('ajax.place.update', { place_id: this.id }),
+			url: route('ajax.place.update', { place_id: this.id.value }),
 			data: {
 				name: this.name.get_value(),
 			},
 		};
-		try {
-			await axios.request(request_config).then(() => {
-				this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich geändert.', life: 3000 });
-			});
-		} catch (e) {
+		return axios.request(request_config).then(() => {
+			this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich geändert.', life: 3000 });
+		}, () => {
 			this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Platz konnte nicht geändert werden.', life: 3000 });
-			throw e;
-		}
+		});
 	}
 	
 	private ajax_delete(): Promise<void> {
-		if (!this.id) {
+		console.log(`PlaceForm::ajax_delete(): begin`);
+		if (!this.id.value) {
 			throw new Error("undefined id");
 		}
 		const request_config: AxiosRequestConfig<PlaceAJAX.Delete.IRequestData> = {
 			method: "delete",
-			url: route('ajax.place.delete', { place_id: this.id })
+			url: route('ajax.place.delete', { place_id: this.id.value })
 		};
 		return axios.request(request_config);
 	}

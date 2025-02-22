@@ -114,24 +114,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	}
 	
 	public on_blur(event: Event): void {
-		if (!this.was_considered) {
-			this.set_value_in_editing_without_ui_value(() => {
-				this.was_considered = true;
-				let value_in_editing = this.value_in_editing;
-				// Before:
-				// `undefined` means "no value yet given",
-				// `null` means `no value explicitly given`
-				// And do not show validation errors yet.
-				if (value_in_editing === undefined) {
-					value_in_editing = null;
-				}
-				// After:
-				// `undefined` means "no single, valid value could be determianted from the ui_value."
-				// `null` means `no value explicitly given
-				// And show validation errors from now on.
-				return value_in_editing;
-			});
-		}
+		this.consider();
 	}
 	
 	public on_change_ui_value_in_editing(new_ui_value_in_editing: U): void {
@@ -161,9 +144,25 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	}
 	
 	public consider(): void {
-		this.refresh(() => {
-			this.was_considered = true;
-		});
+		console.log(`SingleValueForm2::consider(): ${this.html_id}`);
+		if (!this.was_considered) {
+			this.set_value_in_editing_without_ui_value(() => {
+				this.was_considered = true;
+				let value_in_editing = this.value_in_editing;
+				// Before:
+				// `undefined` means "no value yet given",
+				// `null` means "no value explicitly given"
+				// And do not show validation errors yet.
+				if (value_in_editing === undefined) {
+					value_in_editing = null;
+				}
+				// After:
+				// `undefined` means "no single, valid value could be determianted from the ui_value."
+				// `null` means "no value explicitly given"
+				// And show validation errors from now on.
+				return value_in_editing;
+			});
+		}
 	}
 	
 	private set_value_in_editing_without_ui_value(setter: () => T|null|undefined): void {
@@ -179,9 +178,14 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 				return this.last_validation_state;
 			} else {
 				
+				// console.log(`Form ${this.html_id}: is_required === ${this.is_required.value}`);
+				// console.log(`Form ${this.html_id}: was_considered === ${this.was_considered}`);
+				// console.log(`Form ${this.html_id}: value_in_editing ===`);
+				// console.log(this.value_in_editing);
+				
 				if (this.is_required.value && (this.value_in_editing === null || (!this.was_considered && this.value_in_editing === undefined))) {
 					this.errs.push('Pflichtfeld');
-				} else if (!(!this.was_considered && !this.is_required.value && this.value_in_editing === undefined)) {
+				} else if (!(!this.was_considered && this.value_in_editing === undefined && !this.is_required.value)) {
 					try {
 						console.log(`Form ${this.html_id}: start validating ...`)
 						const further_errs: string[] = await this._validate(this.value_in_editing);

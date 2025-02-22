@@ -11,15 +11,15 @@ import { ToastServiceMethods } from "primevue/toastservice";
 import { ConfirmationServiceMethods } from "primevue/confirmationservice";
 import { IPlaceInitPageProps } from "@/types/page_props/place";
 import { route } from "ziggy-js";
-import { ShallowRef, shallowRef } from "vue";
+import { ref, Ref, ShallowRef, shallowRef } from "vue";
 
 export interface IPlacesForm {
 	readonly children: Readonly<ShallowRef<(IPlaceForm&UIPlaceForm)[]>>;
 	readonly children_in_editing: ShallowRef<PlaceForm[]>;
-	readonly create_button_enabled: boolean;
+	readonly create_button_enabled: Ref<boolean>;
 	readonly count_per_page: number;
 	readonly total_count: number;
-	prepend_form(): void;
+	prepend_new_form(): void;
 	on_page(event: DataTablePageEvent): void
 	on_row_edit_init(event: DataTableRowEditInitEvent): void;
 	on_row_edit_save(event: DataTableRowEditSaveEvent): void;
@@ -40,7 +40,7 @@ export interface IPlacesFormConstructorArgs {
 export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 	public readonly children: ShallowRef<PlaceForm[]>;
 	public readonly children_in_editing: ShallowRef<PlaceForm[]>;
-	public create_button_enabled: boolean;
+	public readonly create_button_enabled: Ref<boolean>;
 	public count_per_page: number;
 	public total_count: number;
 	public readonly location_id: string;
@@ -58,16 +58,16 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 			toast_service: this.toast_service,
 			confirm_service: this.confirm_service,
 		})));
-		this.count_per_page = this.children.value.length;
+		this.count_per_page = 10;
 		this.total_count = args.total_count;
-		this.create_button_enabled = true;
+		this.create_button_enabled = ref(true);
 		this.children_in_editing = shallowRef([]);
 	}
 	
-	public prepend_form(): void {
-		this.create_button_enabled = false;
+	public prepend_new_form(): void {
+		this.create_button_enabled.value = false;
 		const new_child_in_editing: PlaceForm = new PlaceForm({
-			delete_button_enabled: false,
+			// delete_button_enabled: true,
 			parent: this,
 			toast_service: this.toast_service,
 			confirm_service: this.confirm_service,
@@ -82,6 +82,9 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 	
 	public delete_form(place: PlaceForm): void {
 		this.children.value = this.children.value.filter((rows_place: PlaceForm): boolean => rows_place !== place);
+		if (place.id === undefined) {
+			this.create_button_enabled.value = true;
+		}
 	}
 	
 	public append_form_in_editing(form: PlaceForm): void {
@@ -98,7 +101,7 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 		console.log('PlacesForm::on_row_edit_init()');
 		let { data } = event;
 		const _data: PlaceForm = data;
-		this.create_button_enabled = false;
+		this.create_button_enabled.value = false;
 		_data.init_editing();
 		// Die zu bearbeitende Zeile wird automatisch zu editing_rows kopiert.
 		// Dabei wird nur eine FLACHE Kopie erzeugt.
@@ -109,27 +112,24 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 		// let { data, newData } = event;
 		// data ist das Form
 		// newData ist ein davon kopiertes Object
-		return this.children.value[event.index].try_save().then(
-			() => {
-				// Die Rows sollen bewusst nicht geupdated werden:
-				// Alle vorher angezeigten Zeilen und die neue Zeile sollen zunächst erstmal bleiben.
-				this.create_button_enabled = true;
-			},
-			() => {},
-		);
+		return this.children.value[event.index].try_save().then(() => {
+			// Die Rows sollen bewusst nicht geupdated werden:
+			// Alle vorher angezeigten Zeilen und die neue Zeile sollen zunächst erstmal bleiben.
+			this.create_button_enabled.value = true;
+		}, () => {});
 	};
 	
 	public async on_row_edit_cancel(event: DataTableRowEditCancelEvent) {
 		console.log('PlacesForm::on_row_edit_cancel()');
-		let { data, newData } = event;
-		const _data: PlaceForm = data;
-		console.log("_data ==");
-		console.log(_data);
-		console.log("newData ==");
-		console.log(newData);
+		// let { data, newData } = event;
+		// const _data: PlaceForm = data;
+		// console.log("_data ==");
+		// console.log(_data);
+		// console.log("newData ==");
+		// console.log(newData);
 		// TODo what about newData
-		_data.cancel_editing();
-		this.create_button_enabled = true;
+		this.children.value[event.index].cancel_editing();
+		this.create_button_enabled.value = true;
 	}
 	
 	private async ajax_get_paginated(params: PlaceAJAX.Query.IQueryParams): Promise<void> {
@@ -161,7 +161,7 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 				parent: this,
 				toast_service: this.toast_service,
 				confirm_service: this.confirm_service,
-				delete_button_enabled: true,
+				// delete_button_enabled: true,
 			});
 		});
 	}

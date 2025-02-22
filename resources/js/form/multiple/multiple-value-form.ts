@@ -4,6 +4,7 @@ export interface IMultipleValueForm {
 	is_valid(): Promise<boolean>;
 	commit(): void;
 	rollback(): void;
+	consider(): void;
 }
 
 export interface IMultipleValueFormConstructorArgs {
@@ -59,5 +60,9 @@ export class MultipleValueForm implements IMultipleValueForm, ISingleValueForm2P
 	
 	public rollback(): void {
 		this.children.keys().forEach((child) => child.rollback());
+	}
+	
+	public consider(): void {
+		this.children.keys().forEach((child) => child.consider());
 	}
 }
