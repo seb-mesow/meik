@@ -1,11 +1,7 @@
-import {
-	IGetLocationsPaginated200ResponseData,
-	IGetLocationsPaginatedQueryParams
-} from "@/types/ajax/location";
+import * as LocationAJAX from "@/types/ajax/location";
 import {
 	ILocationForm,
 	ILocationFormParent,
-	ILocationFormConstructorArgs as IRealLocationFormConstructorArgs,
 	LocationForm
 } from "./locationform";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
@@ -14,13 +10,14 @@ import { ToastServiceMethods } from "primevue/toastservice";
 import { ConfirmationServiceMethods } from "primevue/confirmationservice";
 import { ILocationInitPageProps } from "@/types/page_props/location";
 import { route } from "ziggy-js";
+import { ref, Ref } from "vue";
 
 export interface ILocationsForm {
 	readonly children: Readonly<ILocationForm[]>;
-	readonly create_button_enabled: boolean;
+	readonly is_create_button_enabled: boolean;
 	readonly children_in_editing: Readonly<ILocationForm[]>;
 	readonly count_per_page: number;
-	readonly total_count: number;
+	readonly total_count: Ref<number>;
 	prepend_form(): void;
 	on_page(event: DataTablePageEvent): void
 	on_row_edit_init(event: DataTableRowEditInitEvent): void;
@@ -28,13 +25,18 @@ export interface ILocationsForm {
 	on_row_edit_cancel(event: DataTableRowEditCancelEvent): void;
 };
 
-export type ILocationFormConstructorArgs = Pick<IRealLocationFormConstructorArgs, 
-	'id' | 'name' | 'is_public'
->;
+// export type ILocationFormConstructorArgs = Pick<IRealLocationFormConstructorArgs, 
+// 	'id' | 'name' | 'is_public'
+// >;
 
 export interface ILocationsFormConstructorArgs {
-	locations: ILocationFormConstructorArgs[],
+	locations: {
+		id: string,
+		name: string,
+		is_public: boolean,
+	}[],
 	total_count: number,
+	count_per_page: number, // muss zweckmäßiger im Backend angegeben werden, damit nicht mehr Daten als nötig im Backend geladen werden
 	toast_service: ToastServiceMethods,
 	confirm_service: ConfirmationServiceMethods,
 }
@@ -42,9 +44,9 @@ export interface ILocationsFormConstructorArgs {
 export class LocationsForm implements ILocationsForm, ILocationFormParent {
 	public children: LocationForm[];
 	public readonly children_in_editing: LocationForm[];
-	public create_button_enabled: boolean;
+	public is_create_button_enabled: boolean;
 	public count_per_page: number;
-	public total_count: number;
+	public total_count: Ref<number>;
 	
 	private toast_service: ToastServiceMethods;
 	private confirm_service: ConfirmationServiceMethods;
@@ -52,22 +54,24 @@ export class LocationsForm implements ILocationsForm, ILocationFormParent {
 	public constructor(args: ILocationsFormConstructorArgs) {
 		this.toast_service = args.toast_service;
 		this.confirm_service = args.confirm_service;
-		this.children = args.locations.map((_args: ILocationFormConstructorArgs): LocationForm => new LocationForm({
-			id: _args.id,
-			name: _args.name,
-			is_public: _args.is_public,
+		this.children = args.locations.map((_args): LocationForm => new LocationForm({
+			data: {
+				id: _args.id,
+				name: _args.name,
+				is_public: _args.is_public,
+			},
 			parent: this,
 			toast_service: this.toast_service,
 			confirm_service: this.confirm_service,
 		}));
 		this.count_per_page = this.children.length;
-		this.total_count = args.total_count;
-		this.create_button_enabled = true;
+		this.total_count = ref(args.total_count);
+		this.is_create_button_enabled = true;
 		this.children_in_editing = [];
 	}
 	
 	public prepend_form(): void {
-		this.create_button_enabled = false;
+		this.is_create_button_enabled = false;
 		const new_child_in_editing: LocationForm = new LocationForm({
 			delete_button_enabled: false,
 			parent: this,
@@ -87,14 +91,16 @@ export class LocationsForm implements ILocationsForm, ILocationFormParent {
 	}
 	
 	public async on_page(event: DataTablePageEvent): Promise<void> {
-		return this.ajax_get_paginated({ page_number: event.page, count_per_page: event.rows });
+		const data = await this.ajax_get_paginated({ page_number: event.page, count_per_page: event.rows });
+		this.set_children_from_props(data.locations);
+		this.total_count.value = data.total_count;
 	}
 	
 	public async on_row_edit_init(event: DataTableRowEditInitEvent): Promise<void> {
 		console.log('LocationsForm::on_row_edit_init()');
 		let { data } = event;
 		const _data: LocationForm = data;
-		this.create_button_enabled = false;
+		this.is_create_button_enabled = false;
 		_data.init_editing();
 		// Die zu bearbeitende Zeile wird automatisch zu editing_rows hinzugefügt.
 	}
@@ -113,7 +119,7 @@ export class LocationsForm implements ILocationsForm, ILocationFormParent {
 			() => {
 				// Die Rows sollen bewusst nicht geupdated werden:
 				// Alle vorher angezeigten Zeilen und die neue Zeile sollen zunächst erstmal bleiben.
-				this.create_button_enabled = true;
+				this.is_create_button_enabled = true;
 			},
 			() => {}
 		);
@@ -129,36 +135,27 @@ export class LocationsForm implements ILocationsForm, ILocationFormParent {
 		console.log(newData);
 		// TODo what about newData
 		_data.cancel_editing();
-		this.create_button_enabled = true;
+		this.is_create_button_enabled = true;
 	}
 	
-	private async ajax_get_paginated(params: IGetLocationsPaginatedQueryParams): Promise<void> {
+	private async ajax_get_paginated(params: { page_number: number, count_per_page: number }): Promise<LocationAJAX.Query.I200ResponseData> {
 		console.log(`ajax.location.get_paginated ${params.page_number} ${params.count_per_page}`);
-		const request_config: AxiosRequestConfig<IGetLocationsPaginatedQueryParams> = {
+		const request_config: AxiosRequestConfig<never> = {
 			method: "get",
-			url: route('ajax.location.get_paginated'),
-			params: params // bei GET nicht data !
+			url: route('ajax.location.query'),
+			params: params, // bei GET nicht data !
 		};
-		return axios.request(request_config).then(
-			(response: AxiosResponse<IGetLocationsPaginated200ResponseData>) => {
-				this.count_per_page = params.count_per_page;
-				this.set_children_from_props(response.data.locations);
-				this.total_count = response.data.total_count;
-			}
-		);
+		const response: AxiosResponse<LocationAJAX.Query.I200ResponseData> = await axios.request(request_config);
+		return response.data;
 	}
 	
 	private set_children_from_props(props: ILocationInitPageProps[]): void {
 		this.children = props.map((prop_location: ILocationInitPageProps): LocationForm => {
 			return new LocationForm({
-				id: prop_location.id,
-				name: { 
-					val: prop_location.name,
-					errs: [],
-				},
-				is_public: { 
-					val: prop_location.is_public,
-					errs: [],
+				data: {
+					id: prop_location.id,
+					name: prop_location.name,
+					is_public: prop_location.is_public,
 				},
 				parent: this,
 				toast_service: this.toast_service,
