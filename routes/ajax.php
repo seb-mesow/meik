@@ -16,9 +16,8 @@ Route::prefix('ajax')->group(static function () {
 		->name('ajax.user.set_admin');
 
 	# --- Locations / Standorte ---
-	// TODO name should be ajax.location.query
-	Route::get('/locations', [LocationAJAXController::class, 'get_paginated'])
-		->name('ajax.location.get_paginated');
+	Route::get('/locations', [LocationAJAXController::class, 'query'])
+		->name('ajax.location.query');
 
 	Route::post('/location', [LocationAJAXController::class, 'create'])
 		->name('ajax.location.create');

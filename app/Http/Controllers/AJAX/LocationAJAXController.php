@@ -6,32 +6,29 @@ namespace App\Http\Controllers\AJAX;
 use App\Http\Controllers\Controller;
 use App\Models\Location;
 use App\Repository\LocationRepository;
+use App\Service\LocationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LocationAJAXController extends Controller
 {
 	public function __construct(
-		private readonly LocationRepository $location_repository
+		private readonly LocationRepository $location_repository,
+		private readonly LocationService $location_service,
 	) {}
 
-	public function get_paginated(Request $request): JsonResponse {
-		$page_number = (int) $request->query('page_number');
-		$count_per_page = (int) $request->query('count_per_page');
+	public function query(Request $request): JsonResponse {
+		$page_number = $request->query('page_number');
+		$count_per_page = $request->query('count_per_page');
 		
-		[ 'locations' => $locations, 'total_count' => $total_count ] =
-			$this->location_repository->get_paginated($page_number, $count_per_page);
-		/** @var Location[] $locations */
-		/** @var int $total_count */
-		$locations_json = array_map(static fn(Location $location): array => [
-			'id' => $location->get_id(),
-			'name' => $location->get_name(),
-			'is_public' => $location->get_is_public(),
-		] , $locations);
-		return response()->json([
-			'locations' => $locations_json,
-			'total_count' => $total_count
-		]);
+		$page_number = is_string($page_number) ? (int) $page_number : null;
+		$count_per_page = is_string($count_per_page) ? (int) $count_per_page : null;
+		
+		assert(($page_number === null) == ($count_per_page === null));
+		
+		$result = $this->location_service->query($page_number, $count_per_page);
+		
+		return response()->json($result);
 	}
 
 	public function create(Request $request): JsonResponse {

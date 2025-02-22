@@ -54,21 +54,25 @@ final class LocationRepository
 	 *     total_count: int
 	 * }
 	 */
-	public function get_paginated(int $page_number, int $count_per_page): array {
-		$response = $this->client
-			->limit($count_per_page)
-			->skip($page_number * $count_per_page)
+	public function query(?int $page_number = null, ?int $count_per_page = null): array {
+		$client = $this->client;
+		if ($page_number !== null) {
+			assert($count_per_page !== null);
+			$client = $client
+				->limit($count_per_page)
+				->skip($page_number * $count_per_page);
+		}
+		
+		$response = $client
+			->reduce(false)
 			->include_docs(true)
 			->getView(self::MODEL_TYPE_ID, 'all');
-			$_this = $this;
 		
-		$locations = array_map(static function(stdClass $row) use ($_this): Location {
-			return $_this->create_location_from_doc($row->doc);
-		}, $response->rows);
+		$locations = $this->create_locations_from_view_response($response);
 		
 		return [
 			'locations' => $locations,
-			'total_count' => $response->total_rows,
+			'total_count' => $response->total_rows, // nur eine Request nötig, da zur Zeit keine Suchkriterien angebar
 		];
 	}
 	
@@ -163,5 +167,15 @@ final class LocationRepository
 		$location_doc->name = $location->get_name();
 		$location_doc->is_public = $location->get_is_public();
 		return $location_doc;
+	}
+	
+	/**
+	 * @return Location[]
+	 */
+	private function create_locations_from_view_response(stdClass $response): array {
+		$_this = $this;
+		return array_map(static function(stdClass $row) use ($_this): Location {
+			return $_this->create_location_from_doc($row->doc);
+		}, $response->rows);
 	}
 }
