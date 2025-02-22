@@ -1,8 +1,8 @@
 import * as LocationAJAX from "@/types/ajax/location";
 import {
-	ILocationForm,
 	ILocationFormParent,
-	LocationForm
+	LocationForm,
+	UILocationForm
 } from "./locationform";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { DataTablePageEvent, DataTableRowEditCancelEvent, DataTableRowEditInitEvent, DataTableRowEditSaveEvent } from "primevue/datatable";
@@ -10,12 +10,12 @@ import { ToastServiceMethods } from "primevue/toastservice";
 import { ConfirmationServiceMethods } from "primevue/confirmationservice";
 import { ILocationInitPageProps } from "@/types/page_props/location";
 import { route } from "ziggy-js";
-import { ref, Ref } from "vue";
+import { ref, Ref, shallowRef, ShallowRef } from "vue";
 
-export interface ILocationsForm {
-	readonly children: Readonly<ILocationForm[]>;
-	readonly is_create_button_enabled: boolean;
-	readonly children_in_editing: Readonly<ILocationForm[]>;
+export interface UILocationsForm {
+	readonly children: Readonly<ShallowRef<UILocationForm[]>>;
+	readonly children_in_editing: Readonly<ShallowRef<UILocationForm[]>>;
+	readonly create_button_enabled: Ref<boolean>;
 	readonly count_per_page: number;
 	readonly total_count: Ref<number>;
 	prepend_form(): void;
@@ -24,10 +24,6 @@ export interface ILocationsForm {
 	on_row_edit_save(event: DataTableRowEditSaveEvent): void;
 	on_row_edit_cancel(event: DataTableRowEditCancelEvent): void;
 };
-
-// export type ILocationFormConstructorArgs = Pick<IRealLocationFormConstructorArgs, 
-// 	'id' | 'name' | 'is_public'
-// >;
 
 export interface ILocationsFormConstructorArgs {
 	locations: {
@@ -41,10 +37,10 @@ export interface ILocationsFormConstructorArgs {
 	confirm_service: ConfirmationServiceMethods,
 }
 
-export class LocationsForm implements ILocationsForm, ILocationFormParent {
-	public children: LocationForm[];
-	public readonly children_in_editing: LocationForm[];
-	public is_create_button_enabled: boolean;
+export class LocationsForm implements UILocationsForm, ILocationFormParent {
+	public readonly children: ShallowRef<LocationForm[]>;
+	public readonly children_in_editing: ShallowRef<LocationForm[]>;
+	public create_button_enabled: Ref<boolean>;
 	public count_per_page: number;
 	public total_count: Ref<number>;
 	
@@ -54,7 +50,7 @@ export class LocationsForm implements ILocationsForm, ILocationFormParent {
 	public constructor(args: ILocationsFormConstructorArgs) {
 		this.toast_service = args.toast_service;
 		this.confirm_service = args.confirm_service;
-		this.children = args.locations.map((_args): LocationForm => new LocationForm({
+		this.children = shallowRef(args.locations.map((_args): LocationForm => new LocationForm({
 			data: {
 				id: _args.id,
 				name: _args.name,
@@ -63,31 +59,35 @@ export class LocationsForm implements ILocationsForm, ILocationFormParent {
 			parent: this,
 			toast_service: this.toast_service,
 			confirm_service: this.confirm_service,
-		}));
-		this.count_per_page = this.children.length;
+		})));
+		this.count_per_page = args.count_per_page;
 		this.total_count = ref(args.total_count);
-		this.is_create_button_enabled = true;
-		this.children_in_editing = [];
+		this.create_button_enabled = ref(true);
+		this.children_in_editing = shallowRef([]);
 	}
 	
 	public prepend_form(): void {
-		this.is_create_button_enabled = false;
 		const new_child_in_editing: LocationForm = new LocationForm({
-			delete_button_enabled: false,
 			parent: this,
 			toast_service: this.toast_service,
 			confirm_service: this.confirm_service,
 		});
-		this.children_in_editing.unshift(new_child_in_editing);
-		this.children.unshift(new_child_in_editing);
+		
+		// https://stackoverflow.com/questions/64605833/primevue-editingrows
+		// https://stackoverflow.com/questions/68750466/how-do-i-keep-editor-mode-on-when-detecting-invalid-data-with-primevues-datatab
+		this.children_in_editing.value = [new_child_in_editing, ...this.children_in_editing.value];
+		this.children.value = [new_child_in_editing, ...this.children.value];
 	}
 	
 	public delete_form(location: LocationForm): void {
-		this.children = this.children.filter((rows_location: LocationForm): boolean => rows_location !== location);
+		console.log(`LocationsForm::delete_form()`);
+		this.children.value = this.children.value.filter((rows_location: LocationForm): boolean => rows_location !== location);
 	}
 	
 	public append_form_in_editing(form: LocationForm): void {
-		this.children_in_editing.unshift(form);
+		// https://stackoverflow.com/questions/64605833/primevue-editingrows
+		// https://stackoverflow.com/questions/68750466/how-do-i-keep-editor-mode-on-when-detecting-invalid-data-with-primevues-datatab
+		this.children_in_editing.value = [...this.children_in_editing.value, form];
 	}
 	
 	public async on_page(event: DataTablePageEvent): Promise<void> {
@@ -100,46 +100,44 @@ export class LocationsForm implements ILocationsForm, ILocationFormParent {
 		console.log('LocationsForm::on_row_edit_init()');
 		let { data } = event;
 		const _data: LocationForm = data;
-		this.is_create_button_enabled = false;
 		_data.init_editing();
 		// Die zu bearbeitende Zeile wird automatisch zu editing_rows hinzugefügt.
+		// Dabei wird nur eine FLACHE Kopie erzeugt.
 	}
 	
 	public async on_row_edit_save(event: DataTableRowEditSaveEvent): Promise<void> {
 		console.log('LocationsForm::on_row_edit_save()');
-		let { data, newData } = event;
-		const _data: LocationForm = data;
+		
+		// let { data, newData } = event;
 		// data ist das Form
 		// newData ist ein davon kopiertes Object
-		console.log("_data ==");
-		console.log(_data);
-		console.log("newData ==");
-		console.log(newData);
-		_data.try_save(newData).then(
-			() => {
-				// Die Rows sollen bewusst nicht geupdated werden:
-				// Alle vorher angezeigten Zeilen und die neue Zeile sollen zunächst erstmal bleiben.
-				this.is_create_button_enabled = true;
-			},
-			() => {}
-		);
+		
+		try {
+			await this.children.value[event.index].try_save();
+			// Die Rows sollen bewusst nicht geupdated werden:
+			// Alle vorher angezeigten Zeilen und die neue Zeile sollen zunächst erstmal bleiben.
+		} catch(e) {
+			console.log('LocationsForm::on_row_edit_save(): EXCEPTION');
+			console.log('LocationsForm::on_row_edit_save(): this.children_in_editing.value ===');
+			console.log(this.children_in_editing.value);
+		}
 	};
 	
 	public async on_row_edit_cancel(event: DataTableRowEditCancelEvent) {
 		console.log('LocationsForm::on_row_edit_cancel()');
-		let { data, newData } = event;
-		const _data: LocationForm = data;
-		console.log("_data ==");
-		console.log(_data);
-		console.log("newData ==");
-		console.log(newData);
+		// let { data, newData } = event;
+		// const _data: LocationForm = data;
+		// console.log("_data ==");
+		// console.log(_data);
+		// console.log("newData ==");
+		// console.log(newData);
 		// TODo what about newData
-		_data.cancel_editing();
-		this.is_create_button_enabled = true;
+		this.children.value[event.index].cancel_editing();
 	}
 	
 	private async ajax_get_paginated(params: { page_number: number, count_per_page: number }): Promise<LocationAJAX.Query.I200ResponseData> {
-		console.log(`ajax.location.get_paginated ${params.page_number} ${params.count_per_page}`);
+		console.log(`LocationsForm::ajax.location.get_paginated ${params.page_number} ${params.count_per_page}`);
+		
 		const request_config: AxiosRequestConfig<never> = {
 			method: "get",
 			url: route('ajax.location.query'),
@@ -150,7 +148,7 @@ export class LocationsForm implements ILocationsForm, ILocationFormParent {
 	}
 	
 	private set_children_from_props(props: ILocationInitPageProps[]): void {
-		this.children = props.map((prop_location: ILocationInitPageProps): LocationForm => {
+		this.children.value = props.map((prop_location: ILocationInitPageProps): LocationForm => {
 			return new LocationForm({
 				data: {
 					id: prop_location.id,
@@ -160,7 +158,6 @@ export class LocationsForm implements ILocationsForm, ILocationFormParent {
 				parent: this,
 				toast_service: this.toast_service,
 				confirm_service: this.confirm_service,
-				delete_button_enabled: true,
 			});
 		});
 	}

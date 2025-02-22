@@ -32,8 +32,8 @@ class LocationAJAXController extends Controller
 	}
 
 	public function create(Request $request): JsonResponse {
-		$name = (string) $request->input('val.name.val');
-		$is_public = (bool) $request->input('val.is_public.val');
+		$name = (string) $request->input('name');
+		$is_public = (bool) $request->input('is_public');
 		
 		$location = new Location(
 			name: $name,
@@ -44,8 +44,8 @@ class LocationAJAXController extends Controller
 	}
 
 	public function update(Request $request, string $location_id): void {
-		$name = (string) $request->input('val.name.val');
-		$is_public = (bool) $request->input('val.is_public.val');
+		$name = (string) $request->input('name');
+		$is_public = (bool) $request->input('is_public');
 		
 		$location = $this->location_repository->get($location_id);
 		$location->set_name($name);
