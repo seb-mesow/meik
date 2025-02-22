@@ -11,13 +11,17 @@ export namespace Query {
 }
 
 export namespace Create {
-	export type IRequestData = string; // name
+	export interface IRequestData {
+		name: string, // Newer JSON spec does not allow a single string. The root must be an object.
+	};
 	export type I200ResponseData = string; // new ID
 	export type I422ResponseData = string[]; // errs
 }
 
 export namespace Update {
-	export type IRequestData = string; // new name
+	export interface IRequestData {
+		name: string, // Newer JSON spec does not allow a single string. The root must be an object.
+	};
 	export type I200ResponseData = never;
 	export type I422ResponseData = string[]; // errs
 }

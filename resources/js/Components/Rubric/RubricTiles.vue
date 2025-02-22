@@ -102,7 +102,7 @@ async function ajax_get_paginated(): Promise<void> {
 	if (props.category_id) {
 		query_params.category_id = props.category_id;
 	}
-	const request_config: AxiosRequestConfig = {
+	const request_config: AxiosRequestConfig<never> = {
 		method: "get",
 		url: route('ajax.rubric.query'),
 		params: query_params,
