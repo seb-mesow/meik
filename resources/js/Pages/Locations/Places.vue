@@ -5,7 +5,6 @@ import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Card from 'primevue/card';
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
@@ -47,6 +46,7 @@ const form: IPlacesForm = new PlacesForm({
 		};
 	}),
 	total_count: props.init_props.total_count,
+	count_per_page: props.init_props.count_per_page,
 	toast_service: toast_service,
 	confirm_service: confirm_service,
 });
@@ -78,7 +78,7 @@ function child_form(data: any, index: number): UIPlaceForm {
 		<DataTable
 			:value="form.children.value"
 			paginator
-			:totalRecords="form.total_count"
+			:totalRecords="form.total_count.value"
 			:rows="form.count_per_page"
 			:rowsPerPageOptions="[10, 20, 50]"
 			@page="form.on_page($event)"

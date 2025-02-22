@@ -18,7 +18,7 @@ export interface IPlacesForm {
 	readonly children_in_editing: ShallowRef<(IPlaceForm & UIPlaceForm)[]>;
 	readonly create_button_enabled: Ref<boolean>;
 	readonly count_per_page: number;
-	readonly total_count: number;
+	readonly total_count: Ref<number>;
 	prepend_new_form(): void;
 	on_page(event: DataTablePageEvent): void
 	on_row_edit_init(event: DataTableRowEditInitEvent): void;
@@ -33,6 +33,7 @@ export interface IPlacesFormConstructorArgs {
 		name: string,
 	}[],
 	total_count: number,
+	count_per_page: number, // muss zweckmäßiger im Backend angegeben werden, damit nicht mehr Daten als nötig im Backend geladen werden
 	toast_service: ToastServiceMethods,
 	confirm_service: ConfirmationServiceMethods,
 }
@@ -42,7 +43,7 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 	public readonly children_in_editing: ShallowRef<(IPlaceForm & UIPlaceForm)[]>;
 	public readonly create_button_enabled: Ref<boolean>;
 	public count_per_page: number;
-	public total_count: number;
+	public total_count: Ref<number>;
 	public readonly location_id: string;
 	
 	private toast_service: ToastServiceMethods;
@@ -58,17 +59,14 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 			toast_service: this.toast_service,
 			confirm_service: this.confirm_service,
 		})));
-		this.count_per_page = 10;
-		this.total_count = args.total_count;
+		this.count_per_page = args.count_per_page;
+		this.total_count = ref(args.total_count);
 		this.create_button_enabled = ref(true);
 		this.children_in_editing = shallowRef([]);
 	}
 	
 	public prepend_new_form(): void {
-		// this.create_button_enabled.value = false;
-		
 		const new_child_in_editing: PlaceForm = new PlaceForm({
-			// delete_button_enabled: true,
 			parent: this,
 			toast_service: this.toast_service,
 			confirm_service: this.confirm_service,
@@ -84,9 +82,6 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 	public delete_form(place: PlaceForm): void {
 		console.log(`PlacesForm::delete_form()`);
 		this.children.value = this.children.value.filter((rows_place: IPlaceForm): boolean => rows_place !== place);
-		// if (place.exists_in_db()) {
-		// 	this.create_button_enabled.value = true;
-		// }
 	}
 	
 	public append_form_in_editing(form: PlaceForm): void {
@@ -96,7 +91,9 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 	}
 	
 	public async on_page(event: DataTablePageEvent): Promise<void> {
-		return this.ajax_get_paginated({ page_number: event.page, count_per_page: event.rows });
+		const data = await this.ajax_get_paginated({ page_number: event.page, count_per_page: event.rows });
+		this.set_children_from_props(data.places);
+		this.total_count.value = data.total_count;
 	}
 	
 	public async on_row_edit_init(event: DataTableRowEditInitEvent): Promise<void> {
@@ -114,11 +111,12 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 		// let { data, newData } = event;
 		// data ist das Form
 		// newData ist ein davon kopiertes Object
-		return this.children.value[event.index].try_save().then(() => {
+		
+		try {
+			await this.children.value[event.index].try_save();
 			// Die Rows sollen bewusst nicht geupdated werden:
 			// Alle vorher angezeigten Zeilen und die neue Zeile sollen zunächst erstmal bleiben.
-			this.create_button_enabled.value = true;
-		}, () => {});
+		} catch (e) {}
 	};
 	
 	public async on_row_edit_cancel(event: DataTableRowEditCancelEvent) {
@@ -131,27 +129,19 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 		// console.log(newData);
 		// TODo what about newData
 		this.children.value[event.index].cancel_editing();
-		
-		this.create_button_enabled.value = true; // correct as long as only one row is edited
 	}
 	
-	private async ajax_get_paginated(params: PlaceAJAX.Query.IQueryParams): Promise<void> {
-		console.log(`ajax.place.get_paginated ${params.page_number} ${params.count_per_page}`);
+	private async ajax_get_paginated(params: { page_number: number, count_per_page: number }): Promise<PlaceAJAX.Query.I200ResponseData> {
+		console.log(`PlacesForm::ajax_get_paginated(): page ${params.page_number}, count_per_page ${params.count_per_page}`);
+		
+		const _params: PlaceAJAX.Query.IQueryParams = { ...params, location_id: this.location_id };
 		const request_config: AxiosRequestConfig<never> = {
 			method: "get",
-			url: route('ajax.place.get_paginated', { location_id: this.location_id }),
-			params: params // bei GET nicht data !
+			url: route('ajax.place.query'),
+			params: _params // bei GET nicht data !
 		};
-		return axios.request(request_config).then(
-			(response: AxiosResponse<PlaceAJAX.Query.I200ResponseData>) => {
-				// TODO check
-				// @ts-expect-error
-				this.count_per_page = params.count_per_page;
-				this.set_children_from_props(response.data.places);
-				// @ts-expect-error
-				this.total_count = response.data.total_count;
-			}
-		);
+		const response: AxiosResponse<PlaceAJAX.Query.I200ResponseData> = await axios.request(request_config);
+		return response.data;
 	}
 	
 	private set_children_from_props(props: IPlaceInitPageProps[]): void {
@@ -164,7 +154,6 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 				parent: this,
 				toast_service: this.toast_service,
 				confirm_service: this.confirm_service,
-				// delete_button_enabled: true,
 			});
 		});
 	}

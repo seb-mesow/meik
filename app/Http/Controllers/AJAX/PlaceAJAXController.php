@@ -26,6 +26,8 @@ class PlaceAJAXController extends Controller
 		$page_number = is_string($page_number) ? (int) $page_number : null;
 		$count_per_page = is_string($count_per_page) ? (int) $count_per_page : null;
 		
+		assert(($page_number === null) == ($count_per_page === null));
+		
 		$result = $this->place_service->query($location_id, $page_number, $count_per_page);
 		
 		return response()->json($result);
