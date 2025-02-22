@@ -100,7 +100,6 @@ export class PlacesForm implements IPlacesForm, IPlaceFormParent {
 		console.log('PlacesForm::on_row_edit_init()');
 		let { data } = event;
 		const _data: PlaceForm = data;
-		// this.create_button_enabled.value = false;
 		_data.init_editing();
 		// Die zu bearbeitende Zeile wird automatisch zu editing_rows kopiert.
 		// Dabei wird nur eine FLACHE Kopie erzeugt.
