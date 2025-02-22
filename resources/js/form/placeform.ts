@@ -20,7 +20,6 @@ export interface IPlaceForm {
 	init_editing(): void;
 	try_save(): Promise<void>;
 	cancel_editing(): void;
-	readonly delete_button_enabled: boolean;
 };
 
 // um eine zirkuläre Abhängigkeit zu vermeiden:
@@ -50,9 +49,6 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 	private readonly toast_service: ToastServiceMethods;
 	private readonly confirm_service: ConfirmationServiceMethods;
 	
-	public readonly dummy_ob_inside = { test: 'shdfsdhjfg'};
-	
-	// TODO remove
 	private readonly fields: IMultipleValueForm & ISingleValueForm2Parent<any> = new MultipleValueForm();
 	
 	public constructor(args: IPlaceFormConstructorArgs) {
@@ -78,8 +74,6 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 
 	public init_editing(): void {
 		console.log('PlaceForm::init_editing()');
-		console.log(this.name.ui_value_in_editing);
-		// this.delete_button_enabled = this.exists_in_db();
 	}
 	
 	/**
@@ -105,7 +99,7 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 		}
 		
 		// Werte der Zeile im Objekt rows setzen:
-		this.name.commit();
+		this.fields.commit();
 
 		await this.save();
 		
@@ -115,9 +109,9 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 	
 	public cancel_editing(): void {
 		console.log('PlaceForm::cancel_editing()');
-		console.log(`this.id === ${this.id}`);
+		console.log(`this.id === ${this.id.value}`);
 		
-		this.name.rollback();
+		this.fields.rollback();
 		
 		if (this.exists_in_db()) {
 			// was update
@@ -141,6 +135,7 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 			this.parent.delete_form(this);
 			return;
 		}
+		
 		this.confirm_service.require({
 			target: event.currentTarget,
 			message: "Sind Sie sicher das Sie den Platz löschen wollen?",
@@ -148,13 +143,13 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 			rejectProps: {
 				label: 'Abbrechen',
 				severity: 'secondary',
-				outlined: true
+				outlined: true,
 			},
 			acceptProps: {
 				label: 'Bestätigen'
 			},
 			accept: () => {
-				this.accept_delete()
+				this.accept_delete();
 			},
 		});
 	};
@@ -183,7 +178,7 @@ export class PlaceForm implements IPlaceForm, UIPlaceForm {
 			(response: AxiosResponse<PlaceAJAX.Create.I200ResponseData>) => {
 				console.log(`PlaceForm::ajax_create(): response.data ===`)
 				console.log(response.data);
-				this.id.value = response.data
+				this.id.value = response.data;
 				this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Platz wurde erfolgreich angelegt.', life: 3000 });
 			}, () => {
 				this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Platz konnte nicht angelegt werden.', life: 3000 });

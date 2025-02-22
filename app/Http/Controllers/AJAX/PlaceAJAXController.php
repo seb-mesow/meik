@@ -34,8 +34,9 @@ class PlaceAJAXController extends Controller
 	}
 	
 	public function create(Request $request, string $location_id): JsonResponse {
-		$name = (string) $request->input('name');
 		// TODO assert, that $location_id exists
+		$name = (string) $request->input('name');
+		
 		$place = new Place(
 			name: $name,
 			location_id: $location_id
