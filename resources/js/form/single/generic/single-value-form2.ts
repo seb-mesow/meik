@@ -75,7 +75,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	 */
 	private value_in_editing: T|null|undefined;
 	
-	public ui_value_in_editing: Ref<U>;
+	public readonly ui_value_in_editing: Ref<U>;
 	public ui_errs: Ref<string[]>;
 	public ui_is_invalid: Ref<boolean>;
 	public readonly html_id: string;
@@ -135,6 +135,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	}
 	
 	public on_change_ui_value_in_editing(new_ui_value_in_editing: U): void {
+		this.ui_value_in_editing.value = new_ui_value_in_editing;
 		this.set_value_in_editing_without_ui_value(() => {
 			this.was_considered = true;
 			return this._create_value_from_ui_value(new_ui_value_in_editing);

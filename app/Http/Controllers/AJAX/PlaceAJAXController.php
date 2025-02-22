@@ -32,7 +32,7 @@ class PlaceAJAXController extends Controller
 	}
 	
 	public function create(Request $request, string $location_id): JsonResponse {
-		$name = (string) $request->input();
+		$name = (string) $request->input('name');
 		// TODO assert, that $location_id exists
 		$place = new Place(
 			name: $name,
@@ -43,7 +43,7 @@ class PlaceAJAXController extends Controller
 	}
 	
 	public function update(Request $request, string $place_id): void {
-		$name = (string) $request->input();
+		$name = (string) $request->input('name');
 		
 		$place = $this->place_repository->get($place_id);
 		$place->set_name($name);
