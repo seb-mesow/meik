@@ -2,7 +2,6 @@
 import { route } from 'ziggy-js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import { Reactive, reactive } from 'vue';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
@@ -13,7 +12,8 @@ import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import Breadcrumb from 'primevue/breadcrumb';
 import { ILocationsInitPageProps } from '@/types/page_props/location';
-import { ILocationsForm, LocationsForm } from '@/form/locationsform';
+import { UILocationsForm, LocationsForm } from '@/form/locationsform';
+import { UILocationForm } from '@/form/locationform';
 
 const props = defineProps<{
 	init_props: ILocationsInitPageProps
@@ -21,7 +21,7 @@ const props = defineProps<{
 
 const home = {
 	icon: 'pi pi-home',
-	url: route('exhibit.overview'),
+	url: route('category.overview'),
 };
 const items = [
 	{
@@ -33,18 +33,24 @@ const items = [
 const confirm_service = useConfirm();
 const toast_service = useToast();
 
-const form: Reactive<ILocationsForm> = reactive(new LocationsForm({
+const form: UILocationsForm = new LocationsForm({
 	locations: props.init_props.locations,
 	total_count: props.init_props.total_count,
 	count_per_page: props.init_props.count_per_page,
 	toast_service: toast_service,
 	confirm_service: confirm_service,
-}));
+});
+
+function child_form(data: any, index: number): UILocationForm {
+	// return data;
+	return form.children.value[index];
+}
 </script>
 
 <template>
 	<Toast/>
 	<ConfirmPopup/>
+	
 	<AuthenticatedLayout>
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
@@ -58,58 +64,79 @@ const form: Reactive<ILocationsForm> = reactive(new LocationsForm({
 		</template>
 		
 		<div class="fixed bottom-4 right-4">
-			<Button severity="info" :disabled="!form.is_create_button_enabled" icon="pi pi-plus" @click="form.prepend_form()" />
+			<Button severity="info" :disabled="!form.create_button_enabled" icon="pi pi-plus" @click="form.prepend_form()" />
 		</div>
 		
 		<DataTable
-			:value="form.children"
+			:value="form.children.value"
 			paginator
-			:totalRecords="form.total_count"
+			:totalRecords="form.total_count.value"
 			:rows="form.count_per_page"
 			:rowsPerPageOptions="[10, 20, 50]"
 			@page="form.on_page($event)"
 			lazy
-			v-model:editingRows="form.children_in_editing"
+			v-model:editingRows="form.children_in_editing.value"
 			editMode="row"
 			@row-edit-init="form.on_row_edit_init($event)"
 			@row-edit-save="form.on_row_edit_save($event)"
 			@row-edit-cancel="form.on_row_edit_cancel($event)"
 		>
 			<Column field="name" header="Name" style="width: 25%">
-				<template #body="{ data }">
-					<a v-if="data.id"
-						class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-						:href="data.get_place_overview_url_path()"
-					>
-						{{ data.name.ui_value_in_editing }}
-					</a>
-					<span v-else class="text-green-600">Neuer Standort</span>
+				<template #body="{ data, index }">
+					<span v-if="child_form(data, index).id.value !== undefined"><a
+						class="text-blue-600 dark:text-blue-500 hover:underline"
+						:href="child_form(data, index).get_place_overview_url_path()"
+					>{{ child_form(data, index).name.ui_value_in_editing }}</a></span>
 				</template>
-				<template #editor="{ data }">
-					<!-- {{ data }} -->
-					<InputText v-model="data.name.ui_val_in_editing" autofocus fluid />
+				<template #editor="{ data, index }">
+					<div>
+						<p v-for="error in child_form(data, index).name.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+					</div>
+					<!-- @vue-expect-error -->
+					<InputText
+						type=text
+						:id="child_form(data, index).name.html_id"
+						:name="child_form(data, index).name.html_id"
+						:modelValue="child_form(data, index).name.ui_value_in_editing.value"
+						@update:modelValue="(v: string) => child_form(data, index).name.on_change_ui_value_in_editing(v)"
+						@blur="child_form(data, index).name.on_blur($event)"
+						:invalid="child_form(data, index).name.ui_is_invalid.value"
+						fluid
+					/>
 				</template>
 			</Column>
 			<Column field="is_public" header="öffentlich" style="width: 25%">
-				<template #body="{ data }">
-					<template v-if="data.is_public.ui_value_in_editing">
-						<i class="pi pi-check"></i>
-					</template>
+				<template #body="{ data, index }">
+					<i v-if="child_form(data, index).is_public.ui_value_in_editing" class="pi pi-check" />
 				</template>
-				<template #editor="{ data }">
-					<Checkbox v-model="data.is_public.ui_val_in_editing" binary />
+				<template #editor="{ data, index }">
+					<div>
+						<p v-for="error in child_form(data, index).is_public.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+					</div>
+					<div class="py-(--p-inputtext-padding-y) px-(--p-inputtext-padding-x) text-[1rem] border border-transparent" >
+						<Checkbox
+							:id="child_form(data, index).is_public.html_id"
+							:name="child_form(data, index).is_public.html_id"
+							:modelValue="child_form(data, index).is_public.ui_value_in_editing.value"
+							@update:modelValue="(v: boolean) => child_form(data, index).is_public.on_change_ui_value_in_editing(v)"
+							@blur="child_form(data, index).is_public.on_blur($event)"
+							:invalid="child_form(data, index).is_public.ui_is_invalid.value"
+							binary
+						/>
+					</div>
 				</template>
 			</Column>
 			<Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
 			<Column style="width: 10%; min-width: 8rem">
-				<template #body="{ data }">
+				<template #body="{ data, index }">
 					<Button
-						:disabled="!data.delete_button_enabled"
+						:disabled="!child_form(data, index).delete_button_enabled"
 						class="border-none" icon="pi pi-trash" outlined rounded severity="danger"
-						@click="data.delete($event)"
+						@click="child_form(data, index).request_delete($event)"
 					/>
 				</template>
 			</Column>
+			<template #empty>keine Standorte vorhanden</template>
 		</DataTable>
 		
 	</AuthenticatedLayout>
