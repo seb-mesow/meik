@@ -3,7 +3,7 @@ import { UIImageForm } from '@/form/special/multiple/image-form';
 import Button from 'primevue/button';
 import ToggleButton from 'primevue/togglebutton';
 import { onBeforeMount, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, reactive, shallowReactive, shallowRef, useTemplateRef, watch } from 'vue';
-import InputTextField2 from '../Form/InputTextField2.vue';
+import InputText from '@/Components/Form/Wrapper/InputText.vue';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
@@ -42,11 +42,11 @@ const props = defineProps<{
 				<p>oder klicken</p>
 			</div>
 		</div>
-		<div class="grid grid-col-2 gap-x-3">
-			<InputTextField2 class="description-field" label="Beschreibung"
-				:form="form.description"
-				:grid_col="1" :grid_row="1"
-			/>
+		<div class="flex gap-x-3">
+			<div class="flex-grow">
+				<label :for="form.description.html_id">Beschreibung</label>
+				<InputText :form="form.description" />
+			</div>
 			<ToggleButton class="w-28" style="grid-area: 3 / 2 / 3 / 2;" onLabel='öffentlich' offLabel="intern"
 				:modelValue="form.is_public.ui_value_in_editing.value"
 				@update:modelValue="(v: boolean) => form.is_public.on_change_ui_value_in_editing(v)"
