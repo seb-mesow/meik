@@ -316,11 +316,11 @@ class ExhibitController extends Controller
 			];
 		}, $all_categories_with_rubrics);
 		
-		$all_locations = $this->location_repository->get_all();
+		$all_locations = $this->location_repository->query();
 		$all_locations = array_map(static fn(Location $location): array => [
 			'id' => $location->get_id(),
 			'name' => $location->get_name(),
-		], $all_locations);
+		], $all_locations['locations']);
 		
 		if ($location_id) {
 			$all_initial_places = $this->place_repository->get_all_in_location($location_id);
