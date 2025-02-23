@@ -116,7 +116,7 @@ async function ajax_get_paginated(): Promise<void> {
 	};
 	return axios.request(request_config).then(
 		(response: AxiosResponse<RubricAJAX.Query.I200ResponseData>) => {
-			rubrics.value.push(...response.data.rubrics)
+			rubrics.value.push(...response.data.rubrics);
 			page_number++;
 			more_exist = response.data.rubrics.length >= props.main_props.count_per_page;
 			is_loading = false;
