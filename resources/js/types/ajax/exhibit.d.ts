@@ -1,9 +1,10 @@
 import { IExhibitTileProps } from "../page_props/exhibit_overview";
 
-namespace GetTilesPaginated {
+namespace Query {
 	export interface IQueryParams {
-		page_number: number,
 		rubric_id?: string,
+		page_number?: number,
+		count_per_page?: number,
 	};
 	export type IRequestDate = never;
 	export type I200ResponseData = IExhibitTileProps[]; // vielleicht ist irgendwann mal total_count nötig

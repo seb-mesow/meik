@@ -84,8 +84,6 @@ use JMS\Serializer\SerializerBuilder;
  */
 class ExhibitAPIController extends Controller
 {
-	private const int DEFAULT_COUNT_PER_PAGE = 25;
-	
 	private Serializer $serializer;
 
 	public function __construct(
@@ -102,10 +100,22 @@ class ExhibitAPIController extends Controller
 	// TODO define response objects
 	public function get_exhibits_paginated(Request $request): JsonResponse
 	{
-		$page_number = (int) $request->query('page_number', 0);
-		$count_per_page = (int) $request->query('count_per_page', (string) self::DEFAULT_COUNT_PER_PAGE);
+		$page_number = $request->query('page_number');
+		$count_per_page = $request->query('count_per_page');
 		
-		$exhibits = $this->exhibit_repository->get_paginated($page_number, $count_per_page);
+		$page_number = is_string($page_number) ? trim($page_number) : null;
+		$page_number = $page_number === '' ? null : $page_number;
+		$page_number = is_numeric($page_number) ? (int) $page_number : null;
+		$count_per_page = is_string($count_per_page) ? trim($count_per_page) : null;
+		$count_per_page = $count_per_page === '' ? null : $count_per_page;
+		$count_per_page = is_numeric($count_per_page) ? (int) $count_per_page : null;
+		
+		assert(($page_number === null) === ($count_per_page === null));
+		
+		$exhibits = $this->exhibit_repository->query(
+			page_number: $page_number,
+			count_per_page: $count_per_page,
+		);
 		
 		return response()->json(json_decode($this->serializer->serialize($exhibits, 'json', (new SerializationContext))));
 	}

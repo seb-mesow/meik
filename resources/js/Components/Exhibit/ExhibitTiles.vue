@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { route } from 'ziggy-js';
 import * as ExhibitAJAX from '@/types/ajax/exhibit';
-import { ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios from 'axios';
 import { IExhibitTilesMainProps } from '@/types/page_props/exhibit_tiles';
@@ -15,12 +15,14 @@ const props = defineProps<{
 
 const exhibits = ref(props.main_props.exhibit_tiles);
 
+
+
+// ----- Infinite Scrolling -----------------------------------------------
+
 // This site was loaded with page_number 0.
 // So for the first AJAX the page_number is 1.
 let page_number = 1;
-
 let more_exhibits_exist = true;
-
 let is_loading = false;
 
 async function load_exhibits(): Promise<void> {
@@ -36,20 +38,21 @@ async function load_exhibits(): Promise<void> {
 }
 
 async function ajax_get_paginated(): Promise<void> {
-	const query_params: ExhibitAJAX.GetTilesPaginated.IQueryParams = {
+	const query_params: ExhibitAJAX.Query.IQueryParams = {
 		page_number: page_number,
+		count_per_page: props.main_props.count_per_page,
 	};
 	if (props.rubric_id) {
 		query_params.rubric_id = props.rubric_id;
 	}
 	const request_config: AxiosRequestConfig = {
 		method: "get",
-		url: route('ajax.exhibit.get_tiles_paginated'),
+		url: route('ajax.exhibit.tiles.query'),
 		params: query_params,
 	};
 	return axios.request(request_config).then(
-		(response: AxiosResponse<ExhibitAJAX.GetTilesPaginated.I200ResponseData>) => {
-			exhibits.value.push(...response.data)
+		(response: AxiosResponse<ExhibitAJAX.Query.I200ResponseData>) => {
+			exhibits.value.push(...response.data);
 			page_number++;
 			more_exhibits_exist = response.data.length >= props.main_props.count_per_page;
 			is_loading = false;
@@ -57,19 +60,26 @@ async function ajax_get_paginated(): Promise<void> {
 	);
 }
 
-function handleScroll(event: Event): void {
+const handleScroll = (event: Event) => {
+	console.log("handleScroll");
 	const container = event.target as HTMLElement;
-	// console.log(`trigger: scrollHeight == ${container.scrollHeight}, diff == ${container.scrollTop + container.clientHeight}`);
-	const diff: number = container.scrollHeight * 1.0 
-						- container.scrollTop * 1.0 
-						- container.clientHeight * 1.0;
+	const diff: number = document.body.scrollHeight - (window.innerHeight + window.scrollY)
 	// console.log(`trigger: overall diff == ${diff}`);
 	const bottom_reached = diff <= 1; // a difference of zero is to restrictive
 	if (bottom_reached && !is_loading) {
-		// console.log(`trigger: bottom_reached == ${bottom_reached}, is_loading == ${is_loading}`);
+		console.log(`trigger: bottom_reached == ${bottom_reached}, is_loading == ${is_loading}`);
 		load_exhibits();  // Lädt die nächste Seite, wenn der Benutzer den unteren Rand erreicht
 	}
 }
+
+onMounted(() => {
+	window.addEventListener('scroll', handleScroll);
+	window.addEventListener('resize', handleScroll);
+});
+onBeforeUnmount(() => {
+	window.removeEventListener('scroll', handleScroll);
+	window.removeEventListener('resize', handleScroll);
+});
 </script>
 
 <template>

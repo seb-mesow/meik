@@ -135,7 +135,7 @@ final class ExhibitRepository
 	 * 
 	 * @return Exhibit[]
 	 */
-	public function get_paginated(int $page_number, int $count_per_page, array $additonal_selectors = []): array
+	public function query(array $additonal_selectors = [], ?int $page_number = null, ?int $count_per_page = null): array
 	{
 		$selectors = [
 			'_id' => [
@@ -143,17 +143,24 @@ final class ExhibitRepository
 			]
 		];
 		$selectors = array_merge($selectors, $additonal_selectors);
-
-		$response = $this->client
-			->limit($count_per_page)
-			->skip($page_number * $count_per_page)
+		
+		$client = $this->client;
+		if ($page_number !== null && $count_per_page !== null) {
+			$client = $client
+				->limit($count_per_page)
+				->skip($page_number * $count_per_page);
+		} else {
+			$client = $client->limit(PHP_INT_MAX);
+		}
+		
+		$response = $client
 			->find([
 				'$and' => [
 					$selectors
 				]
 			])
 			->docs;
-			
+		
 		$_this = $this;
 		$exhibits = array_map(static function (stdClass $doc) use ($_this): Exhibit {
 			return $_this->create_exhibit_from_doc($doc);

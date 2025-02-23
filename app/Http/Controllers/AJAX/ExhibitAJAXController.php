@@ -220,12 +220,25 @@ class ExhibitAJAXController extends Controller
 		return response($result->getString(), 200)->header('Content-Type', 'image/png');
 	}
 
-	public function get_tiles_paginated(Request $request): JsonResponse
+	public function tiles_query(Request $request): JsonResponse
 	{
-		$rubric_id = (string) $request->query('rubric_id');
-		$page_number = (int) $request->query('page_number');
+		// TODO enable search by location_id
+		$rubric_id = $request->query('rubric_id');
+		$page_number = $request->query('page_number');
+		$count_per_page = $request->query('count_per_page');
 		
-		if ($rubric_id === '') {
+		$rubric_id = is_string($rubric_id) ? trim($rubric_id) : null;
+		$rubric_id = $rubric_id === '' ? null : $rubric_id;
+		$page_number = is_string($page_number) ? trim($page_number) : null;
+		$page_number = $page_number === '' ? null : $page_number;
+		$page_number = is_numeric($page_number) ? (int) $page_number : null;
+		$count_per_page = is_string($count_per_page) ? trim($count_per_page) : null;
+		$count_per_page = $count_per_page === '' ? null : $count_per_page;
+		$count_per_page = is_numeric($count_per_page) ? (int) $count_per_page : null;
+		
+		assert(($page_number === null) == ($count_per_page === null));
+		
+		if ($rubric_id === null) {
 			$selectors = [];
 		} else {
 			$selectors = [
@@ -235,7 +248,11 @@ class ExhibitAJAXController extends Controller
 			];
 		};
 		
-		$exhibits_json = $this->exhibit_service->determinate_tiles_props(page_number: $page_number, selectors: $selectors);
+		$exhibits_json = $this->exhibit_service->determinate_tiles_props(
+			page_number: $page_number,
+			count_per_page: $count_per_page,
+			selectors: $selectors,
+		);
 		
 		return response()->json( $exhibits_json);
 	}
