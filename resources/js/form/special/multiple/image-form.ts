@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, SingleValueForm2 } from "@/form/generic/single/single-value-form2";
+import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "@/form/generic/single/single-value-form2";
 import {
 	IImageIDsOrder,
 	ICreateImageRequestData,
@@ -16,12 +16,14 @@ import {
 } from "@/types/ajax/image";
 import { route } from "ziggy-js";
 import { ref, Ref } from "vue";
+import { IMultipleValueForm, MultipleValueForm } from "@/form/generic/multiple/multiple-value-form";
+import { StringForm } from "@/form/generic/single/string-form";
 
-export interface IImageForm {
+export interface UIImageForm {
 	readonly id?: string;
 	readonly ui_id: number;
-	readonly description: ISingleValueForm2<string>;
-	readonly is_public: ISingleValueForm2<boolean>;
+	readonly description: Readonly<UISingleValueForm2<string>>;
+	readonly is_public: Readonly<UISingleValueForm2<boolean>>;
 	readonly file_url: Readonly<Ref<string>>;
 	on_dragover(e: DragEvent): void;
 	on_drop(e: DragEvent): void;
@@ -31,6 +33,9 @@ export interface IImageForm {
 	readonly is_save_button_loading: Readonly<Ref<boolean>>;
 	readonly has_changes: Readonly<Ref<boolean>>; // muss reactive sein, damit als Property für Button verwendbar
 	readonly is_delete_button_loading: Readonly<Ref<boolean>>;
+}
+
+export interface IImageForm {
 }
 
 // um eine zirkuläre Abhängigkeit zu vermeiden:
@@ -44,48 +49,51 @@ export interface IImageFormParent {
 }
 
 export interface IImageFormConstructorArgs {
-	id?: string,
-	description?: ISingleValueForm2ConstructorArgs<string>,
-	is_public?: ISingleValueForm2ConstructorArgs<boolean>,
+	data?: {
+		id: string,
+		description: string,
+		is_public: boolean,
+	},
 	parent: IImageFormParent,
 	ui_id: number,
 }
 
-export class ImageForm implements IImageForm {
+export class ImageForm implements UIImageForm, IImageForm {
 	public id?: string;
 	public readonly ui_id: number;
-	public description: SingleValueForm2<string>;
-	public is_public: SingleValueForm2<boolean>;
-	public is_save_button_loading: Ref<boolean> = ref(false);
-	public has_changes: Ref<boolean>;
-	public is_delete_button_loading: Ref<boolean> = ref(false);
-	public file_url: Ref<string>;
-	
-	private errs: string[] = [];
+	public readonly description: ISingleValueForm2<string, false> & UISingleValueForm2<string>;
+	public readonly is_public: ISingleValueForm2<boolean, true> & UISingleValueForm2<boolean>;
+	public readonly is_save_button_loading: Ref<boolean> = ref(false);
+	public readonly has_changes: Ref<boolean>;
+	public readonly is_delete_button_loading: Ref<boolean> = ref(false);
+	public readonly file_url: Ref<string>;
 	
 	private readonly parent: IImageFormParent;
+	
+	private readonly fields: IMultipleValueForm & ISingleValueForm2Parent<any> = new MultipleValueForm();
 	
 	private file?: File;
 	private new_file: boolean = false;
 	
 	public constructor(args: IImageFormConstructorArgs) {
-		this.id = args.id;
-		this.description = new SingleValueForm2({
-			val: args.description?.val ?? '',
-			errs: args.description?.errs,
+		this.id = args.data?.id;
+		
+		this.description = new StringForm<true>({
+			val: args.data?.description,
+			required: true,
 			on_change: () => {
 				console.log(`recieved change from description`);
 				this.has_changes.value = true;
 			},
-		}, 'description');
-		this.is_public = new SingleValueForm2({
-			val: args.is_public?.val ?? false,
-			errs: args.is_public?.errs,
+		}, 'description', this.fields);
+		this.is_public = new SingleValueForm2<boolean, boolean, true>({
+			val: args.data?.is_public,
+			required: true,
 			on_change: () => {
 				console.log(`recieved change from is_public`);
 				this.has_changes.value = true; 
 			},
-		}, 'is_public');
+		}, 'is_public', this.fields);
 		this.parent = args.parent;
 		this.ui_id = args.ui_id;
 		console.log(`construct: this.ui_id == ${this.ui_id}`);
@@ -194,8 +202,8 @@ export class ImageForm implements IImageForm {
 		}
 		const request_data: ICreateImageRequestData = {
 			index: this.parent.get_index_for_persisting(this),
-			description: this.description.val,
-			is_public: this.is_public.val,
+			description: this.description.get_value() ?? '',
+			is_public: this.is_public.get_value(),
 			image: this.file,
 		}
 		const request_config: AxiosRequestConfig<ICreateImageRequestData> = {
@@ -215,9 +223,6 @@ export class ImageForm implements IImageForm {
 			},
 			(err) => {
 				const response: AxiosResponse<ICreateImage422ResponseData> = err.response;
-				this.errs = response.data.errs;
-				this.description.errs = response.data.description;
-				this.is_public.errs = response.data.is_public;
 				console.log('ajax_create fail');
 			}
 		);
@@ -237,11 +242,11 @@ export class ImageForm implements IImageForm {
 			method: "post",
 			url: route('ajax.exhibit.image.replace', { exhibit_id: this.parent.exhibit_id, image_id: this.id }),
 			headers: {
-				'Content-Type': 'multipart/form-data'
+				'Content-Type': 'multipart/form-data',
 			},
 			data: {
-				description: this.description.val,
-				is_public: this.is_public.val,
+				description: this.description.get_value() ?? '',
+				is_public: this.is_public.get_value(),
 				image: this.file,
 			},
 		};
@@ -253,11 +258,11 @@ export class ImageForm implements IImageForm {
 			},
 			(err: AxiosError<IReplaceImage422ResponseData>) => {
 				const response: AxiosResponse<IReplaceImage422ResponseData>|undefined = err.response;
-				if (response) {
-					this.errs = response.data.errs;
-					this.description.errs = response.data.description;
-					this.is_public.errs = response.data.is_public;
-				}
+				// if (response) {
+				// 	this.errs = response.data.errs;
+				// 	this.description.errs = response.data.description;
+				// 	this.is_public.errs = response.data.is_public;
+				// }
 				console.log('ajax_replace() fail');
 			}
 		);
@@ -278,7 +283,7 @@ export class ImageForm implements IImageForm {
 				console.log('ajax_delete() success');
 			},
 			(response: AxiosResponse<IDeleteImage422ResponseData>) => {
-				this.errs = response.data;
+				// this.errs = response.data;
 				console.log('ajax_delete() fail');
 			}
 		);
@@ -292,8 +297,8 @@ export class ImageForm implements IImageForm {
 			method: "patch",
 			url: route('ajax.image.update_meta_data', { image_id: this.id }),
 			data: {
-				description: this.description.val,
-				is_public: this.is_public.val,
+				description: this.description.get_value() ?? '',
+				is_public: this.is_public.get_value(),
 			}
 		};
 		console.log('ajax_update_metadata()');
@@ -302,9 +307,9 @@ export class ImageForm implements IImageForm {
 				console.log('ajax_update_meta_data() success');
 			},
 			(response: AxiosResponse<IUpdateImageMetaData422ResponseData>) => {
-				this.errs = response.data.errs;
-				this.description.errs = response.data.description;
-				this.is_public.errs = response.data.is_public;
+				// this.errs = response.data.errs;
+				// this.description.errs = response.data.description;
+				// this.is_public.errs = response.data.is_public;
 				console.log('ajax_update_meta_data() fail');
 			}
 		);
