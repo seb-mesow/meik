@@ -166,16 +166,24 @@ final class ExhibitRepository
 	 * @param array $selectors
 	 * @return Exhibit[]
 	 */
-	public function get_by_selectors(array $selectors): array
+	public function query_by_selectors(array $selectors): array
 	{
-		$docs = $this->client->find(
-			$selectors
-		)->docs;
+		$first_key = array_key_first($selectors);
+		assert($first_key === '$and');
+		$selectors[$first_key][] = [
+			'_id' => [
+				'$beginsWith' => self::ID_PREFIX,
+			],
+		];
+		
+		$response = $this->client
+			->limit(PHP_INT_MAX)
+			->find($selectors);
 
 		$_this = $this;
 		return array_map(static function (stdClass $doc) use ($_this): Exhibit {
 			return $_this->create_exhibit_from_doc($doc);
-		}, $docs);
+		}, $response->docs);
 	}
 	
 	public function insert(Exhibit $exhibit): void
