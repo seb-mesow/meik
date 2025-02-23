@@ -159,6 +159,11 @@ export interface IExhibitFormConstructorArgs {
 		}
 	},
 	
+	// Voreinstellungen
+	preset?: {
+		rubric?: IRubric,
+	},
+	
 	aux: {
 		// Auswahlwerte
 		selectable_values: ISelectableValues,
@@ -271,7 +276,7 @@ export class ExhibitForm implements IExhibitForm {
 		}, 'short_description', this.common_fields);
 		
 		this.rubric = new RubricForm<true>({
-			val: args.data?.rubric,
+			val: args.data?.rubric ?? args.preset?.rubric,
 			required: true,
 			selectable_categories_with_rubrics: args.aux.selectable_values.categories_with_rubrics,
 			validate: async (value_in_editing) => {

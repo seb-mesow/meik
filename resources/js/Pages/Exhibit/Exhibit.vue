@@ -128,6 +128,10 @@ if (props.exhibit_props) {
 		// Buchinformationen
 		book_info: props.exhibit_props.book_info,
 	}
+} else {
+	form_constructor_args.preset = {
+		rubric: props.rubric,
+	};
 }
 const exhibit_form: IExhibitForm = new ExhibitForm(form_constructor_args);
 const does_exist: boolean = exhibit_form.id !== undefined;
