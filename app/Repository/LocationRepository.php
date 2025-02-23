@@ -35,12 +35,15 @@ final class LocationRepository
 	}
 	
 	/**
+	 * @deprecated use `query()` instead
 	 * @var string $id
 	 * @return Location[]
 	 */
 	public function get_all(): array
 	{
-		$res = $this->client->find([
+		$res = $this->client
+			->limit(PHP_INT_MAX)
+			->find([
 			'_id' => [
 				'$beginsWith' => self::ID_PREFIX
 			],
