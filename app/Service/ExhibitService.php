@@ -26,7 +26,6 @@ use App\Repository\PlaceRepository;
  * }
  */
 final class ExhibitService {
-	public const int DEFAULT_COUNT_PER_PAGE = 20;
 	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
@@ -39,11 +38,13 @@ final class ExhibitService {
 	 * @param Exhibit[] $exhibits
 	 * @return IExhibitTileProps[]
 	 */
-	public function determinate_tiles_props(int $page_number, int $count_per_page = self::DEFAULT_COUNT_PER_PAGE, array $selectors = []): array {
-		$exhibits = $this->exhibit_repository->get_paginated(
+	public function determinate_tiles_props(array $selectors = [], ?int $page_number = null, ?int $count_per_page = null): array {
+		assert(($page_number === null) === ($count_per_page === null));
+		
+		$exhibits = $this->exhibit_repository->query(
+			additonal_selectors: $selectors,
 			page_number: $page_number,
 			count_per_page: $count_per_page,
-			additonal_selectors: $selectors,
 		);
 		
 		$_this = $this;

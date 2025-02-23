@@ -127,6 +127,8 @@ use Inertia\Response as InertiaResponse;
  */
 class ExhibitController extends Controller
 {
+	public const int INITIAL_COUNT_PER_PAGE = 20;
+	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly LocationRepository $location_repository,
@@ -139,9 +141,12 @@ class ExhibitController extends Controller
 
 	public function overview(Request $request): InertiaResponse
 	{
-		$rubric_id = (string) $request->query('rubric_id', "");
+		$rubric_id = $request->query('rubric_id');
 		
-		if ($rubric_id === "") {
+		$rubric_id = is_string($rubric_id) ? trim($rubric_id) : null;
+		$rubric_id = $rubric_id === '' ? null : $rubric_id;
+		
+		if ($rubric_id === null) {
 			$selectors = [];
 		} else {
 			$selectors = [
@@ -151,11 +156,15 @@ class ExhibitController extends Controller
 			];
 		}
 		
-		$exhibit_tiles = $this->exhibit_service->determinate_tiles_props(page_number: 0, selectors: $selectors);
+		$exhibit_tiles = $this->exhibit_service->determinate_tiles_props(
+			selectors: $selectors,
+			page_number: 0,
+			count_per_page: self::INITIAL_COUNT_PER_PAGE,
+		);
 		
 		return Inertia::render('Exhibit/ExhibitOverview', [
 			'exhibit_tiles' => $exhibit_tiles,
-			'count_per_page' => ExhibitService::DEFAULT_COUNT_PER_PAGE,
+			'count_per_page' => self::INITIAL_COUNT_PER_PAGE,
 		]);
 	}
 
