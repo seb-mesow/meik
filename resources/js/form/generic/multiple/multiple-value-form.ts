@@ -1,4 +1,4 @@
-import { ISingleValueForm2, ISingleValueForm2Parent } from "../single/generic/single-value-form2";
+import { ISingleValueForm2, ISingleValueForm2Parent } from "../single/single-value-form2";
 
 export interface IMultipleValueForm {
 	is_valid(): Promise<boolean>;

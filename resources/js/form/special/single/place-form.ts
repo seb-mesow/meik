@@ -1,6 +1,5 @@
-import { ReactiveFlags } from "vue";
-import { ISelectForm, ISelectFormConstructorArgs, SelectForm } from "../generic/select-form";
-import { ISingleValueForm2Parent } from "../generic/single-value-form2";
+import { ISelectForm, ISelectFormConstructorArgs, SelectForm } from "@/form/generic/single/select-form";
+import { ISingleValueForm2Parent } from "@/form/generic/single/single-value-form2";
 
 export type IPlace = Readonly<{
 	id: string,

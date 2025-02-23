@@ -1,6 +1,6 @@
 import { IImageIDsOrder } from "@/types/ajax/image";
-import { IImageForm, IImageFormParent, ImageForm } from "./imageform";
-import { IImageFormConstructorArgs as IRealImageFormConstructorArgs } from "./imageform";
+import { IImageForm, IImageFormParent, ImageForm } from "../multiple/image-form";
+import { IImageFormConstructorArgs as IRealImageFormConstructorArgs } from "../multiple/image-form";
 import { reactive, Reactive, ShallowReactive, shallowReactive, shallowRef, ShallowRef, unref } from "vue";
 
 export interface IImagesForm {

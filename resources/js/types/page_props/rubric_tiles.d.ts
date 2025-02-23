@@ -1,4 +1,4 @@
-import { ICategory } from "@/form/rubricform";
+import { ICategory } from "@/form/special/multiple/rubric-form";
 
 export interface IRubricTileProps {
 	id: string,

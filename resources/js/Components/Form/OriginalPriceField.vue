@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import SplitBaseInputField from './SplitBaseInputField.vue';
-import { UISelectForm } from '@/form/single/generic/select-form';
-import { UISingleValueForm2 } from '@/form/single/generic/single-value-form2';
+import { UISelectForm } from '@/form/generic/single/select-form';
+import { UISingleValueForm2 } from '@/form/generic/single/single-value-form2';
 import InputNumber from 'primevue/inputnumber';
 import AutoComplete from 'primevue/autocomplete';
-import { ICurrency } from '@/form/exhibitform';
+import { ICurrency } from '@/form/special/multiple/exhibit-form';
 
 const props = defineProps<{
 	form_amount: UISingleValueForm2<number|null>,

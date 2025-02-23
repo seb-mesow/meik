@@ -1,4 +1,4 @@
-import { ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2 } from "../generic/single-value-form2";
+import { ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2 } from "../../generic/single/single-value-form2";
 import * as PartialDate from "@/util/partial-date";
 
 /**

@@ -3,7 +3,7 @@ import {
 	IFreeTextForm,
 	IFreeTextFormConstructorArgs as IRealFreeTextFormConstructorArgs,
 	IFreeTextFormParent
-} from "./freetextform";
+} from "@/form/special/multiple/freetext-form";
 import {
 	IFreeTextIndicesOrder
 } from "@/types/ajax/freetext";

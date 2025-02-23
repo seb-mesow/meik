@@ -3,7 +3,7 @@ import {
 	ILocationFormParent,
 	LocationForm,
 	UILocationForm
-} from "./locationform";
+} from "@/form/special/multiple/location-form";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { DataTablePageEvent, DataTableRowEditCancelEvent, DataTableRowEditInitEvent, DataTableRowEditSaveEvent } from "primevue/datatable";
 import { ToastServiceMethods } from "primevue/toastservice";

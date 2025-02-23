@@ -12,7 +12,7 @@ import {
 	IExhibitForm,
 	IExhibitFormConstructorArgs,
 	IExhibitType,
-} from '@/form/exhibitform';
+} from '@/form/special/multiple/exhibit-form';
 import SelectField from '@/Components/Form/SelectField.vue';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';

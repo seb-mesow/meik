@@ -2,11 +2,11 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import * as LocationAJAX from "@/types/ajax/location";
 import { ToastServiceMethods } from "primevue/toastservice";
 import { ConfirmationServiceMethods } from "primevue/confirmationservice";
-import { ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single/generic/single-value-form2";
+import { ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "@/form/generic/single/single-value-form2";
 import { route } from "ziggy-js";
-import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
+import { IMultipleValueForm, MultipleValueForm } from "@/form/generic/multiple/multiple-value-form";
 import { ref, Ref } from "vue";
-import { StringForm } from "./single/generic/string-form";
+import { StringForm } from "@/form/generic/single/string-form";
 
 export interface UILocationForm {
 	request_delete(event: any): void;

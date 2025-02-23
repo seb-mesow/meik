@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ICategory, IDialogRef, IRubricForm, IRubricFormConstructorArgs, RubricForm } from "@/form/rubricform";
+import { ICategory, IDialogRef, IRubricForm, IRubricFormConstructorArgs, RubricForm } from "@/form/special/multiple/rubric-form";
 import Button from "primevue/button";
 import { inject, Ref } from "vue";
 import InputTextField2 from "../Form/InputTextField2.vue";
