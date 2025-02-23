@@ -6,6 +6,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { IImagesInitPageProps } from '@/types/page_props/images';
 import Breadcrumb from 'primevue/breadcrumb';
 import Carousel from 'primevue/carousel';
+import ImageOrder from '@/Components/Exhibit/ImageOrder.vue';
 
 const props = defineProps<{
 	name: string,
@@ -73,22 +74,19 @@ const form: IImagesForm = new ImagesForm({
 				</template>
 			</Breadcrumb>
 		</template>
-		<div class="carousel">
-			<Carousel
-				:value="form.children.value"
-				>
-				<template #item="{ data }">
-					<Image :form="data"/>
-				</template>
-			</Carousel>
+		
+		<div class="flex gap-x-3">
+			<!-- <div class="carousel">
+				<Carousel
+					:value="form.children.value"
+					>
+					<template #item="{ data }">
+						<Image :form="data"/>
+					</template>
+				</Carousel>
+			</div> -->
+			<ImageOrder />
 		</div>
-		<!-- <div class="_images">
-			<div class="_image" v-for="image_id in init_props.images">
-				<img
-					:src="route('ajax.image.get_file', { image_id: image_id.id })"
-				>
-			</div>
-		</div> -->
 	</AuthenticatedLayout>
 </template>
 <style lang="css" scoped>
