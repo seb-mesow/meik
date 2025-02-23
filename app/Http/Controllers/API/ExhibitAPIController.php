@@ -212,11 +212,12 @@ class ExhibitAPIController extends Controller
 		$category = $rubric->get_category();
 		$api_exhibit['category'] = $category->get_name();
 		
-		$original_price = $exhibit->get_original_price();
-		$api_exhibit['original_price'] = [
-			'amount' => $original_price->get_amount_in_main_unit(),
-			'currency' => $original_price->get_currency()->value,
-		];
+		if ($original_price = $exhibit->get_original_price()) {
+			$api_exhibit['original_price'] = [
+				'amount' => $original_price->get_amount_in_main_unit(),
+				'currency' => $original_price->get_currency()->get_id(),
+			];
+		}
 		
 		if ($exhibit->is_device()) {
 			$device_info = $exhibit->get_device_info();
@@ -230,7 +231,7 @@ class ExhibitAPIController extends Controller
 			$api_exhibit['book_info'] = [
 				'authors' => $book_info->get_authors(),
 				'isbn' => $book_info->get_isbn(),
-				'language' => $book_info->get_language()->value,
+				'language' => $book_info->get_language()->get_id(),
 			];
 			// $api_exhibit['device_info'] = null
 		}
