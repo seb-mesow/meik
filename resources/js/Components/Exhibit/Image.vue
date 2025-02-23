@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IImageForm } from '@/form/special/multiple/image-form';
+import { UIImageForm } from '@/form/special/multiple/image-form';
 import Button from 'primevue/button';
 import ToggleButton from 'primevue/togglebutton';
 import { onBeforeMount, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, reactive, shallowReactive, shallowRef, useTemplateRef, watch } from 'vue';
@@ -7,7 +7,7 @@ import InputTextField2 from '../Form/InputTextField2.vue';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
-	form: Readonly<IImageForm>
+	form: Readonly<UIImageForm>
 }>();
 
 // Vue.js Lessons Learned:
@@ -24,17 +24,17 @@ const props = defineProps<{
 
 <template>
 	<div class="page">
-		<img v-if="props.form.file_url.value"
+		<img v-if="form.file_url.value"
 			class="image"
-			:src="props.form.file_url.value"
+			:src="form.file_url.value"
 			draggable="true"
-			@dragover="props.form.on_dragover"
-			@drop="props.form.on_drop"
+			@dragover="form.on_dragover"
+			@drop="form.on_drop"
 		>
 		<div v-else
 			class="drop-zone"
-			@dragover="props.form.on_dragover"
-			@drop="props.form.on_drop"
+			@dragover="form.on_dragover"
+			@drop="form.on_drop"
 		>
 			<div class="drop-zone-text">
 				<i class="drop-zone-icon pi pi-upload"/>
@@ -42,25 +42,28 @@ const props = defineProps<{
 				<p>oder klicken</p>
 			</div>
 		</div>
-		<div class="inputs">
+		<div class="grid grid-col-2 gap-x-3">
 			<InputTextField2 class="description-field" label="Beschreibung"
-				:form="props.form.description"
+				:form="form.description"
+				:grid_col="1" :grid_row="1"
 			/>
-			<ToggleButton class="w-28" onLabel='öffentlich' offLabel="intern"
-				:modelValue="props.form.is_public.val_in_editing"
-				@update:modelValue="(v) => props.form.is_public.on_change_val_in_editing(v)"
+			<ToggleButton class="w-28" style="grid-area: 3 / 2 / 3 / 2;" onLabel='öffentlich' offLabel="intern"
+				:modelValue="form.is_public.ui_value_in_editing.value"
+				@update:modelValue="(v: boolean) => form.is_public.on_change_ui_value_in_editing(v)"
 			/>
 		</div>
 		<div class="buttons">
-			<p>{{ props.form.description.val }}</p>
-			<p>{{ props.form.has_changes }}</p>
-			<Button @click="props.form.click_save()" label="Speichern"
-				:loading="props.form.is_save_button_loading.value"
-				:disabled="!(props.form.has_changes.value)"
-				/>
-			<Button @click="props.form.click_delete()" label="Löschen" severity="danger"
-				:loading="props.form.is_delete_button_loading.value"
+			<Button @click="form.click_save()" label="Speichern"
+			:loading="form.is_save_button_loading.value"
+			:disabled="!(form.has_changes.value)"
 			/>
+			<Button @click="form.click_delete()" label="Löschen" severity="danger"
+			:loading="form.is_delete_button_loading.value"
+			/>
+		</div>
+		<div>
+			<p>{{ form.description.ui_value_in_editing }}</p>
+			<p>{{ form.has_changes }}</p>
 		</div>
 	</div>
 </template>
@@ -97,12 +100,6 @@ const props = defineProps<{
 	margin-left: auto;
 	margin-right: auto;
 	padding: 1rem
-}
-.inputs {
-	margin-top: 1em;
-	display: flex;
-	justify-content: space-between;
-	gap: 1rem;
 }
 .description-field {
 	flex: 1;
