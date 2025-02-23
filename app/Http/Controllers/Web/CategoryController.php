@@ -11,6 +11,8 @@ use Inertia\Response as InertiaResponse;
 
 class CategoryController extends Controller
 {
+	private const int RUBRIC_INITAL_COUNT_PER_PAGE = 20;
+	
 	public function __construct(
 		private readonly RubricService $rubric_service,
 	) {}
@@ -29,19 +31,19 @@ class CategoryController extends Controller
 	public function details(string $category_id): InertiaResponse {
 		$category = Category::from($category_id);
 		
-		['rubrics' => $rubric_props ] = $this->rubric_service->query($category_id, 0);
+		['rubrics' => $rubric_props ] = $this->rubric_service->query($category_id, 0, self::RUBRIC_INITAL_COUNT_PER_PAGE);
 		
 		$selectable_categories = $this->determinate_selectable_categories();
 		
 		return Inertia::render('Category/Category', [
 			'selectable_categories' => $selectable_categories,
 			'category' => [
-				'id' => $category->value,
+				'id' => $category->get_id(),
 				'name' => $category->get_name(),
 			],
 			'rubric_tiles_main_props' => [
 				'rubric_tiles' => $rubric_props,
-				'count_per_page' => RubricService::DEFAULT_COUNT_PER_PAGE,
+				'count_per_page' => self::RUBRIC_INITAL_COUNT_PER_PAGE,
 			],
 		]);
 	}
