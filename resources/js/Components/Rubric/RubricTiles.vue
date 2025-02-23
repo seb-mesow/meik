@@ -15,17 +15,14 @@ const props = defineProps<{
 	main_props: IRubricTilesMainProps,
 	category_id?: string,
 }>();
-const dialog = useDialog();
 
 const rubrics = ref(props.main_props.rubric_tiles);
 
-// This site was loaded with page_number 0.
-// So for the first AJAX the page_number is 1.
-let page_number = 1;
 
-let more_exist = true;
 
-let is_loading = false;
+// ----- Dialog -------------------------------------------------------------------
+
+const dialog = useDialog();
 
 function create_dialog() {
 	let preset: any = undefined;
@@ -60,6 +57,10 @@ function create_dialog() {
 	});
 }
 
+
+
+// ----- Tiles-Verwaltung --------------------------------------------------------
+
 function append_tile(tile: IRubricTileProps): void {
 	rubrics.value.push(tile);
 }
@@ -77,10 +78,15 @@ const delete_tile = (id: string) => {
 	rubrics.value = rubrics.value.filter((rubric_tile: IRubricTileProps): boolean => rubric_tile.id !== id);
 }
 
-const reload = () => {
-	page_number = 0;
-	load_rubrics();
-}
+
+
+// ----- Infinite Scrolling ------------------------------------------------------------
+
+// This site was loaded with page_number 0.
+// So for the first AJAX the page_number is 1.
+let page_number = 1;
+let more_exist = true;
+let is_loading = false;
 
 async function load_rubrics(): Promise<void> {
 	if (is_loading) {
@@ -98,6 +104,7 @@ async function load_rubrics(): Promise<void> {
 async function ajax_get_paginated(): Promise<void> {
 	const query_params: RubricAJAX.Query.IQueryParams = {
 		page_number: page_number,
+		count_per_page: props.main_props.count_per_page,
 	};
 	if (props.category_id) {
 		query_params.category_id = props.category_id;
@@ -137,7 +144,6 @@ onBeforeUnmount(() => {
 	window.removeEventListener('scroll', handleScroll);
 	window.removeEventListener('resize', handleScroll);
 });
-
 </script>
 
 <template>

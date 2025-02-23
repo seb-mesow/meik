@@ -26,8 +26,11 @@ class RubricAJAXController extends Controller
 		$count_per_page = $request->query('count_per_page');
 		
 		$category_id = is_string($category_id) ? trim($category_id) : null;
+		$category_id = $category_id === '' ? null : $category_id;
 		$page_number = is_string($page_number) ? (int) $page_number : null;
 		$count_per_page = is_string($count_per_page) ? (int) $count_per_page : null;
+		
+		assert(($page_number === null) == ($count_per_page === null));
 		
 		$result = $this->rubric_service->query($category_id, $page_number, $count_per_page);
 		

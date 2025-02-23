@@ -27,7 +27,7 @@ final class RubricService {
 	 * }
 	 */
 	public function query(?string $category_id = null, ?int $page_number = null, ?int $count_per_page = null): array {
-		$count_per_page ??= self::DEFAULT_COUNT_PER_PAGE;
+		assert(($page_number === null) === ($count_per_page === null));
 		
 		$result = $this->rubric_repository->query($category_id, $page_number, $count_per_page);
 		
