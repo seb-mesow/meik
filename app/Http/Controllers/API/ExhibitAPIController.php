@@ -149,7 +149,7 @@ class ExhibitAPIController extends Controller
 			'$and' => $selectorParts
 		];
 
-		$exhibits = $this->exhibit_repository->get_by_selectors($selectors);
+		$exhibits = $this->exhibit_repository->query_by_selectors($selectors);
 		$search_item = $this->create_search_items_from_exhibits($exhibits);
 		return response()->json($search_item);
 	}
@@ -184,7 +184,7 @@ class ExhibitAPIController extends Controller
 		$selectors = [
 			'$and' => $selectorParts
 		];
-		$exhibits = $this->exhibit_repository->get_by_selectors($selectors);
+		$exhibits = $this->exhibit_repository->query_by_selectors($selectors);
 
 		return response()->json(json_decode($this->serializer->serialize($exhibits, 'json', (new SerializationContext))));
 	}
