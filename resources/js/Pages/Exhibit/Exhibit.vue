@@ -62,6 +62,12 @@ if (props.rubric) {
 		url: route('rubric.details', { rubric_id: props.rubric.id }),
 	});
 }
+if (props.category === undefined && props.rubric === undefined) {
+	items.push({
+		label: 'Exponate',
+		url: route('exhibit.overview'),
+	});
+}
 items.push({
 	label: props.exhibit_props?.name ?? 'Neues Exponat',
 });
