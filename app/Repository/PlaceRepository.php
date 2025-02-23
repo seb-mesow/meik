@@ -68,8 +68,7 @@ final class PlaceRepository
 			$client = $this->client->key($location_id);
 		}
 		
-		if ($page_number !== null) {
-			assert($count_per_page !== null);
+		if ($page_number !== null && $count_per_page !== null) {
 			$client = $client
 				->limit($count_per_page)
 				->skip($page_number * $count_per_page);

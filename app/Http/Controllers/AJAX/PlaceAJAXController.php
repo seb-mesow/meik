@@ -23,8 +23,13 @@ class PlaceAJAXController extends Controller
 		$count_per_page = $request->query('count_per_page');
 		
 		$location_id = is_string($location_id) ? trim($location_id) : null;
-		$page_number = is_string($page_number) ? (int) $page_number : null;
-		$count_per_page = is_string($count_per_page) ? (int) $count_per_page : null;
+		$location_id = $location_id === '' ? null : $location_id;
+		$page_number = is_string($page_number) ? trim($page_number) : null;
+		$page_number = $page_number === '' ? null : $page_number;
+		$page_number = is_numeric($page_number) ? (int) $page_number : null;
+		$count_per_page = is_string($count_per_page) ? trim($count_per_page) : null;
+		$count_per_page = $count_per_page === '' ? null : $count_per_page;
+		$count_per_page = is_numeric($count_per_page) ? (int) $count_per_page : null;
 		
 		assert(($page_number === null) == ($count_per_page === null));
 		
