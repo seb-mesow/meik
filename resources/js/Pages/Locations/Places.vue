@@ -11,8 +11,8 @@ import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import Breadcrumb from 'primevue/breadcrumb';
 import { IPlaceInitPageProps, IPlacesInitPageProps } from '@/types/page_props/place';
-import { UIPlacesForm, PlacesForm } from '@/form/placessform';
-import { UIPlaceForm } from '@/form/placeform';
+import { UIPlacesForm, PlacesForm } from '@/form/special/overview/places-form';
+import { UIPlaceForm } from '@/form/special/multiple/place-form';
 
 const props = defineProps<{
 	location_name: string,

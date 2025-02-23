@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FreeTextField from './FreeTextField.vue';
 import Button from 'primevue/button';
-import { FreeTextsForm, IFreeTextsForm, IFreeTextFormConstructorArgs } from '@/form/freetextsform';
+import { FreeTextsForm, IFreeTextsForm, IFreeTextFormConstructorArgs } from '@/form/special/overview/freetexts-form';
 import { IFreeTextsProps } from '@/types/page_props/freetexts';
 import { IFreeTextProps } from '@/types/page_props/freetext';
 import { reactive } from 'vue';

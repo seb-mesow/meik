@@ -1,19 +1,19 @@
-import { ISingleValueForm2, UISingleValueForm2, SingleValueForm2, ISingleValueForm2Parent } from "./single/generic/single-value-form2";
+import { ISingleValueForm2, UISingleValueForm2, SingleValueForm2, ISingleValueForm2Parent } from "../../generic/single/single-value-form2";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { route } from "ziggy-js";
 import * as ExhibitAJAX from '@/types/ajax/exhibit';
 import { ToastServiceMethods } from "primevue/toastservice";
-import { UISelectForm, SelectForm } from "./single/generic/select-form";
-import { UIGroupSelectForm } from "./single/generic/group-select-form";
+import { UISelectForm, SelectForm } from "../../generic/single/select-form";
+import { UIGroupSelectForm } from "../../generic/single/group-select-form";
 import { ref, Ref } from "vue";
 import * as PartialDate from "@/util/partial-date";
-import { PartialDateFrom } from "./single/special/partialdate-form";
+import { PartialDateFrom } from "../single/partialdate-form";
 import * as DateUtil from "@/util/date";
-import { StringForm } from "./single/generic/string-form";
-import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
-import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "./single/special/rubric-form";
-import { ILocation, LocationForm } from "./single/special/location-form";
-import { IPlace, IPlaceForm, PlaceForm } from "./single/special/place-form";
+import { StringForm } from "../../generic/single/string-form";
+import { IMultipleValueForm, MultipleValueForm } from "../../generic/multiple/multiple-value-form";
+import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "../single/rubric-form";
+import { ILocation, LocationForm } from "../single/location-form";
+import { IPlace, IPlaceForm, PlaceForm } from "../single/place-form";
 
 export interface IExhibitForm {
 	readonly id: number|undefined;

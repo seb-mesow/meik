@@ -7,7 +7,7 @@ const RubricDialog = defineAsyncComponent(() => import('./RubricDialog.vue'));
 import axios, { AxiosRequestConfig } from "axios";
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import { ICloseOptions, IRubricFormConstructorArgs } from '@/form/rubricform';
+import { ICloseOptions, IRubricFormConstructorArgs } from '@/form/special/multiple/rubric-form';
 import { IRubricTileProps } from '@/types/page_props/rubric_tiles';
 
 const confirm_service = useConfirm();

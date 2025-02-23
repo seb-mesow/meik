@@ -7,7 +7,7 @@ import Breadcrumb from 'primevue/breadcrumb';
 import { route } from 'ziggy-js';
 import DynamicDialog from 'primevue/dynamicdialog';
 import { IRubricTilesMainProps } from '@/types/page_props/rubric_tiles';
-import { ICategory } from '@/form/rubricform';
+import { ICategory } from '@/form/special/multiple/rubric-form';
 import ConfirmDialog from 'primevue/confirmdialog';
 
 const props = defineProps<{

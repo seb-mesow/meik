@@ -1,10 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import * as RubricAJAX from "@/types/ajax/rubric";
-import { ISingleValueForm2, ISingleValueForm2Parent, UISingleValueForm2 } from "./single/generic/single-value-form2";
+import { ISingleValueForm2, ISingleValueForm2Parent, UISingleValueForm2 } from "../../generic/single/single-value-form2";
 import { route } from "ziggy-js";
-import { ISelectForm, SelectForm, UISelectForm } from "./single/generic/select-form";
-import { IMultipleValueForm, MultipleValueForm } from "./multiple/multiple-value-form";
-import { StringForm } from "./single/generic/string-form";
+import { ISelectForm, SelectForm, UISelectForm } from "../../generic/single/select-form";
+import { IMultipleValueForm, MultipleValueForm } from "../../generic/multiple/multiple-value-form";
+import { StringForm } from "../../generic/single/string-form";
 import { IRubricTileProps } from "@/types/page_props/rubric_tiles";
 import { DynamicDialogCloseOptions } from "primevue/dynamicdialogoptions";
 import { ref, Ref } from "vue";

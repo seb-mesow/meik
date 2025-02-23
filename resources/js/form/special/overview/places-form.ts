@@ -4,7 +4,7 @@ import {
 	IPlaceFormParent,
 	PlaceForm,
 	UIPlaceForm
-} from "./placeform";
+} from "../multiple/place-form";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { DataTablePageEvent, DataTableRowEditCancelEvent, DataTableRowEditInitEvent, DataTableRowEditSaveEvent } from "primevue/datatable";
 import { ToastServiceMethods } from "primevue/toastservice";

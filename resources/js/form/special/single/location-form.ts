@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { ISelectForm, ISelectFormConstructorArgs, SelectForm } from "../generic/select-form";
-import { ISingleValueForm2Parent } from "../generic/single-value-form2";
-import { IPlace } from "./place-form";
+import { ISelectForm, ISelectFormConstructorArgs, SelectForm } from "../../generic/single/select-form";
+import { ISingleValueForm2Parent } from "../../generic/single/single-value-form2";
+import { IPlace } from "@/form/special/single/place-form";
 import * as PlaceAJAX from '@/types/ajax/place';
 import { route } from "ziggy-js";
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { route } from 'ziggy-js';
 import Image from '@/Components/Exhibit/Image.vue';
-import { IImageFormConstructorArgs, IImagesForm, ImagesForm } from '@/form/imagesform';
+import { IImageFormConstructorArgs, IImagesForm, ImagesForm } from '@/form/special/overview/images-form';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { IImageInitPageProps, IImagesInitPageProps } from '@/types/page_props/images';
 import Breadcrumb from 'primevue/breadcrumb';

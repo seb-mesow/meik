@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BaseInputField from './BaseInputField.vue';
 import InputText from 'primevue/inputtext';
-import { UISingleValueForm2 } from '@/form/single/generic/single-value-form2';
+import { UISingleValueForm2 } from '@/form/generic/single/single-value-form2';
 
 const props = defineProps<{
 	label: string,

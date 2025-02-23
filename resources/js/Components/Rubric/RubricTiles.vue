@@ -7,7 +7,7 @@ import { useDialog } from 'primevue/usedialog';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as RubricAJAX from '@/types/ajax/rubric';
 import { IRubricTileProps, IRubricTilesMainProps } from '@/types/page_props/rubric_tiles';
-import { IRubricFormConstructorArgs } from '@/form/rubricform';
+import { IRubricFormConstructorArgs } from '@/form/special/multiple/rubric-form';
 
 const RubricDialog = defineAsyncComponent(() => import('../../Components/Rubric/RubricDialog.vue'));
 

@@ -3,7 +3,7 @@ import InputField from '../Form/old/InputField.vue';
 import RichTextEditor from '../Form/RichTextEditor.vue';
 import ToggleButton from 'primevue/togglebutton';
 import Button from 'primevue/button';
-import { IFreeTextForm } from '@/form/freetextform';
+import { IFreeTextForm } from '@/form/special/multiple/freetext-form';
 
 const props = defineProps<{
 	form: Readonly<IFreeTextForm>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IImageForm } from '@/form/imageform';
+import { IImageForm } from '@/form/special/multiple/image-form';
 import Button from 'primevue/button';
 import ToggleButton from 'primevue/togglebutton';
 import { onBeforeMount, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, reactive, shallowReactive, shallowRef, useTemplateRef, watch } from 'vue';

@@ -1,8 +1,8 @@
-import { ICurrency, IKindOfAcquisition, IKindOfProperty, ILanguage, IPreservationState } from "@/form/exhibitform";
+import { ICurrency, IKindOfAcquisition, IKindOfProperty, ILanguage, IPreservationState } from "@/form/special/multiple/exhibit-form";
 import { IFreeTextsPageProps } from "./freetexts"
 import { IPlace } from "@/form/single/special/place-form";
-import { ICategoryWithRubrics } from "@/form/single/special/rubric-form";
-import { ILocation } from "@/form/single/special/location-form";
+import { ICategoryWithRubrics } from "@/form/special/single/rubric-form";
+import { ILocation } from "@/form/special/single/location-form";
 
 export interface ISelectableValuesProps {
 	categories_with_rubrics: ICategoryWithRubrics[],
