@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { route } from 'ziggy-js';
 import Image from '@/Components/Exhibit/Image.vue';
-import { IImageFormConstructorArgs, IImagesForm, ImagesForm } from '@/form/special/overview/images-form';
+import { IImagesForm, ImagesForm } from '@/form/special/overview/images-form';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { IImageInitPageProps, IImagesInitPageProps } from '@/types/page_props/images';
+import { IImagesInitPageProps } from '@/types/page_props/images';
 import Breadcrumb from 'primevue/breadcrumb';
 import Carousel from 'primevue/carousel';
-import { reactive, Reactive, ShallowReactive, shallowReactive, ShallowRef, shallowRef, watch } from 'vue';
 
 const props = defineProps<{
 	name: string,
@@ -28,11 +27,11 @@ const home = {
 let items: { label: string, url?: string }[] = [];
 items.push({
 	label: props.category.name,
-	url: route('rubric.overview', { category_id: props.category.id })
+	url: route('category.details', { category_id: props.category.id })
 });
 items.push({
 	label: props.rubric.name,
-	url: route('exhibit.overview', { rubric: props.rubric.id })
+	url: route('rubric.details', { rubric_id: props.rubric.id })
 });
 items.push({
 	label: props.name,
@@ -42,25 +41,18 @@ items.push({
 	label: 'Bilder'
 });
 
-const images: IImageFormConstructorArgs[] = props.init_props.images.map((_props: IImageInitPageProps): IImageFormConstructorArgs => {
-	return {
-		id: _props.id,
-		description: {
-			val: _props.description,
-			errs: [],
-		},
-		is_public:{ 
-			val: _props.is_public,
-			errs: [],
-		},
-	};
+const form: IImagesForm = new ImagesForm({
+	data: {
+		exhibit_id: props.init_props.exhibit_id,
+		images: props.init_props.images.map((_prop) => {
+			return {
+				id: _prop.id,
+				description: _prop.description,
+				is_public: _prop.is_public,
+			};
+		}),
+	},
 });
-images.push({});
-
-const form: ShallowReactive<IImagesForm> = shallowReactive(new ImagesForm({
-	exhibit_id: props.init_props.exhibit_id,
-	images: images,
-}));
 // const children = form.children
 // watch(children, (children) => {
 // 	const new_order: string = children.reduce((acc, cur) => {

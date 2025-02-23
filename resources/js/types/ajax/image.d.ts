@@ -46,6 +46,7 @@ export type IDeleteImageRequestData = never;
 export type IDeleteImage200ResponseData = IImageIndicesOrder;
 export type IDeleteImage422ResponseData = string[]; // errs
 
+// TODO does this still work?
 export type IMoveImageRequestData = number; // new index
 export type IMoveImage200ResponseData = IImageIDsOrder;
 export type IMoveImage422ResponseData = string[]; // errs
