@@ -138,6 +138,8 @@ class ExhibitSeeder extends Seeder
 		'Frances Allen'
 	];
 	
+	private const string SPECIAL_RUBRIC_ID = 'PC';
+	
 	/**
 	 * @var Exhibit[]
 	 */
@@ -146,6 +148,8 @@ class ExhibitSeeder extends Seeder
 	private readonly array $all_place_ids;
 	
 	private readonly array $all_rubric_ids;
+	
+	private readonly string $special_rubric_id;
 	
 	/**
 	 * @var string[]
@@ -165,7 +169,16 @@ class ExhibitSeeder extends Seeder
 	) {
 		$this->client = $client;
 		$this->all_place_ids = array_map(static fn(Place $place): string => $place->get_id(), $this->place_repository->get_all());
-		$this->all_rubric_ids = array_map(static fn(Rubric $rubric): string => $rubric->get_id(), $this->rubric_repository->get_all());
+		
+		$all_rubrics = $this->rubric_repository->get_all();
+		$all_rubric_ids = [];
+		foreach ($all_rubrics as $rubric) {
+			$all_rubric_ids[] = $rubric->get_id();
+			if ($rubric->get_name() === self::SPECIAL_RUBRIC_ID && !isset($this->special_rubric_id)) {
+				$this->special_rubric_id = $rubric->get_id();
+			}
+		}
+		$this->all_rubric_ids = $all_rubric_ids;
 	}
 	
 	/**
@@ -312,6 +325,7 @@ class ExhibitSeeder extends Seeder
 			)) : null),
 			place_id: $place_id ?? fake()->randomElement($this->all_place_ids),
 			rubric_id: $rubric_id ?? fake()->randomElement($this->all_rubric_ids),
+			// rubric_id: $this->special_rubric_id,
 			connected_exhibit_ids: $connected_exhibit_ids ?? [],
 			free_texts: $free_texts ?? [],
 		);
