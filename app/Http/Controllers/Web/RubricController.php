@@ -31,7 +31,11 @@ class RubricController extends Controller
 			]
 		];
 		
-		$exhibit_tile_props = $this->exhibit_service->determinate_tiles_props(page_number: 0, selectors: $selectors);
+		$exhibit_tile_props = $this->exhibit_service->determinate_tiles_props(
+			selectors: $selectors,
+			page_number: 0,
+			count_per_page: ExhibitController::INITIAL_COUNT_PER_PAGE,
+		);
 		
 		return Inertia::render('Rubric/Rubric', [
 			'category' => [
@@ -44,7 +48,7 @@ class RubricController extends Controller
 			],
 			'exhibit_tiles_main_props' => [
 				'exhibit_tiles' => $exhibit_tile_props,
-				'count_per_page' => ExhibitService::DEFAULT_COUNT_PER_PAGE,
+				'count_per_page' => ExhibitController::INITIAL_COUNT_PER_PAGE,
 			]
 		]);
 	}
