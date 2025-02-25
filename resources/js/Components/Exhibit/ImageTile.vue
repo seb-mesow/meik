@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import { UIImageForm } from '@/form/special/multiple/image-form';
+import { onMounted } from 'vue';
 
-defineProps<{
+const props = defineProps<{
 	form: UIImageForm,
 }>();
-
+onMounted(() => {
+	props.form.on_mounted();
+});
 </script>
 
 <template>
-	<div class="image-tile flex items-center gap-x-3">
+	<div class="image-tile flex items-center gap-x-3 cursor-grab"
+		:id="'image-tile-' + form.ui_id"
+		draggable="true"
+		@dragstart="form.on_tile_dragstart"
+		@dragend="form.on_tile_dragend"
+	>
 		<div class="border border-black">
 			<i class="m-auto ms-[-.5rem] pi pi-bars"/>
 		</div>
@@ -32,5 +40,8 @@ defineProps<{
 	color: black;
 	background-color: #808080;
 	display: flex;
+}
+.image-tile-dragging {
+	cursor: grapping;
 }
 </style>

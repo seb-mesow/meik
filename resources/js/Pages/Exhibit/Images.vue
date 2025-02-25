@@ -76,7 +76,7 @@ const form: IImagesForm = new ImagesForm({
 		</template>
 		
 		<div class="flex gap-x-3">
-			<!-- <div class="carousel">
+			<div class="carousel basis-2/3">
 				<Carousel
 					:value="form.children.value"
 					>
@@ -84,8 +84,8 @@ const form: IImagesForm = new ImagesForm({
 						<Image :form="data"/>
 					</template>
 				</Carousel>
-			</div> -->
-			<ImageOrder />
+			</div>
+			<ImageOrder class="basis-1/3" :form="form" />
 		</div>
 	</AuthenticatedLayout>
 </template>
