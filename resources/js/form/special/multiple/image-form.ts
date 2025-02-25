@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "@/form/generic/single/single-value-form2";
+import { ISingleValueForm2, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "@/form/generic/single/single-value-form2";
 import {
 	IImageIDsOrder,
 	ICreateImageRequestData,
@@ -33,9 +33,14 @@ export interface UIImageForm {
 	readonly is_save_button_loading: Readonly<Ref<boolean>>;
 	readonly has_changes: Readonly<Ref<boolean>>; // muss reactive sein, damit als Property für Button verwendbar
 	readonly is_delete_button_loading: Readonly<Ref<boolean>>;
+	on_mounted(): void;
+	on_tile_dragstart(event: DragEvent): void;
+	on_tile_dragend(event: DragEvent): void;
 }
 
 export interface IImageForm {
+	readonly tile: HTMLElement;
+	readonly ui_id: number;
 }
 
 // um eine zirkuläre Abhängigkeit zu vermeiden:
@@ -46,6 +51,7 @@ export interface IImageFormParent {
 	delete_form(form: IImageForm): void;
 	delete_form_and_update_order(args: { form: IImageForm, new_ids_order: IImageIDsOrder }): void;
 	update_order(new_ids_order: IImageIDsOrder ): void;
+	set_currently_dragged_tile(image: IImageForm): void;
 }
 
 export interface IImageFormConstructorArgs {
@@ -67,6 +73,7 @@ export class ImageForm implements UIImageForm, IImageForm {
 	public readonly has_changes: Ref<boolean>;
 	public readonly is_delete_button_loading: Ref<boolean> = ref(false);
 	public readonly file_url: Ref<string>;
+	public tile: HTMLElement = null as any;
 	
 	private readonly parent: IImageFormParent;
 	
@@ -103,7 +110,7 @@ export class ImageForm implements UIImageForm, IImageForm {
 		// this.dragover_event_listener = (e: DragEvent) => { this.on_dragover(e); };
 		// this.drop_event_listener = (e: DragEvent) => { this.on_drop(e); };
 	}
-	
+
 	public exists_in_db(): boolean {
 		return (typeof this.id === 'string') && (this.id.length > 0);
 	}
@@ -157,6 +164,19 @@ export class ImageForm implements UIImageForm, IImageForm {
 			return route('ajax.image.get_image', { image_id: this.id });
 		}
 		return '';
+	}
+	
+	public on_mounted(): void {
+		this.tile = document.getElementById('image-tile-' + this.ui_id) as HTMLElement;
+	}
+	
+	public on_tile_dragstart(event: DragEvent): void {
+		this.tile.classList.add('image-tile-dragging');
+		this.parent.set_currently_dragged_tile(this);
+	}
+	
+	public on_tile_dragend(event: DragEvent): void {
+		this.tile.classList.remove('image-tile-dragging');
 	}
 	
 	public async click_save(): Promise<void> {
