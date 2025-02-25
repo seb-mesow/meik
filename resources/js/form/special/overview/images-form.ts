@@ -27,6 +27,8 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 	
 	private tile_container: HTMLElement = null as any;
 	private currently_dragged_tile: IImageForm = null as any;
+	private currently_not_dragged_tiles : IImageForm[] = [];
+	private current_tile_order: IImageForm[] = [];
 	
 	public constructor(args: IImagesFormConstructorArgs) {
 		this.exhibit_id = args.data.exhibit_id;
@@ -112,34 +114,52 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 	
 	public set_currently_dragged_tile(image: IImageForm): void {
 		this.currently_dragged_tile = image;
+		this.currently_not_dragged_tiles = this.children.value.filter((child) => child !== image);
+		this.current_tile_order = this.children.value;
 	}
 	
 	public on_tile_container_dragover(event: DragEvent): void {
 		event.preventDefault();
-		const elem_below = this.determinate_closest_draggable_element_below(event);
-		if (elem_below) {
-			this.tile_container.insertBefore(this.currently_dragged_tile.tile, elem_below);
+		const old_pos = this.current_tile_order.findIndex((tile) => tile === this.currently_dragged_tile);
+		if (old_pos >= 0) {
+			this.current_tile_order.splice(old_pos, 1);
+		}
+		const tile_below = this.determinate_closest_draggable_tile_below(event);
+		if (tile_below) {
+			this.tile_container.insertBefore(this.currently_dragged_tile.tile, tile_below.tile);
+			const pos_after = this.current_tile_order.findIndex((tile) => tile === tile_below);
+			if (pos_after >= 0) {
+				this.current_tile_order.splice(pos_after, 0, this.currently_dragged_tile);
+			}
 		} else {
 			this.tile_container.appendChild(this.currently_dragged_tile.tile);
+			this.current_tile_order.push(this.currently_dragged_tile);
 		}
 	}
 	
-	private determinate_closest_draggable_element_below(drag_over_event: MouseEvent): Element|null {
-		const elems: NodeListOf<Element> = this.tile_container.querySelectorAll('.image-tile:not(.image-tile-dragging)');
+	public on_tile_drag_end(tile: IImageForm, event: DragEvent): void {
+		let str = 'drop: aktuelle Reihenfolge:';
+		this.current_tile_order.forEach(tile => {
+			str += ' ' + tile.ui_id;
+		});
+		console.log(str);
+	}
+	
+	private determinate_closest_draggable_tile_below(drag_over_event: MouseEvent): IImageForm|null {
 		let cur_smallest_distance_below_mouse: number = Number.POSITIVE_INFINITY;
-		let closest_element_below: Element|null = null;
+		let closest_tile_below: IImageForm|null = null;
 		const mouse_y = drag_over_event.clientY;
 		let log_str = '';
-		elems.forEach((elem, index) => {
-			const box = elem.getBoundingClientRect();
+		this.currently_not_dragged_tiles.forEach((tile, index) => {
+			const box = tile.tile.getBoundingClientRect();
 			const distance_below_mouse = (box.top + box.bottom)/2 - mouse_y;
 			if (distance_below_mouse > 0 && distance_below_mouse < cur_smallest_distance_below_mouse) {
 				cur_smallest_distance_below_mouse = distance_below_mouse;
-				closest_element_below = elem;
+				closest_tile_below = tile;
 			}
 			log_str += ' ' + Math.round(distance_below_mouse);
 		});
 		console.log(log_str);
-		return closest_element_below;
+		return closest_tile_below;
 	}
 }

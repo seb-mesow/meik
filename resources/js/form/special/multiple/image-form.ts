@@ -52,6 +52,7 @@ export interface IImageFormParent {
 	delete_form_and_update_order(args: { form: IImageForm, new_ids_order: IImageIDsOrder }): void;
 	update_order(new_ids_order: IImageIDsOrder ): void;
 	set_currently_dragged_tile(image: IImageForm): void;
+	on_tile_drag_end(tile: IImageForm, event: DragEvent): void;
 }
 
 export interface IImageFormConstructorArgs {
@@ -177,6 +178,7 @@ export class ImageForm implements UIImageForm, IImageForm {
 	
 	public on_tile_dragend(event: DragEvent): void {
 		this.tile.classList.remove('image-tile-dragging');
+		this.parent.on_tile_drag_end(this, event);
 	}
 	
 	public async click_save(): Promise<void> {

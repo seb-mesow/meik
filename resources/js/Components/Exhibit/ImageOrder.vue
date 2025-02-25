@@ -13,7 +13,9 @@ onMounted(() => {
 </script>
 
 <template>
-	<div id="image-tile-container" @dragover="form.on_tile_container_dragover" >
+	<div id="image-tile-container"
+		@dragover="form.on_tile_container_dragover"
+	>
 		<ImageTile v-for="image in form.children.value" :key="image.ui_id" :form="image" />
 	</div>
 </template>
