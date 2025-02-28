@@ -115,7 +115,7 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 	public set_currently_dragged_tile(image: IImageForm): void {
 		this.currently_dragged_tile = image;
 		this.currently_not_dragged_tiles = this.children.value.filter((child) => child !== image);
-		this.current_tile_order = this.children.value;
+		this.current_tile_order = [ ...this.children.value]; // so eine Kopie sein, daher spread
 	}
 	
 	public on_tile_container_dragover(event: DragEvent): void {
@@ -142,6 +142,7 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 		this.current_tile_order.forEach(tile => {
 			str += ' ' + tile.ui_id;
 		});
+		this.children.value = this.current_tile_order as (IImageForm & UIImageForm)[];
 		console.log(str);
 	}
 	
