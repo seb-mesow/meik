@@ -70,15 +70,15 @@ const props = defineProps<{
 
 <style lang="css" scoped>
 .drop-zone {
-	margin-left: auto;
-	margin-right: auto;
-	width: 32rem;
-	height: 18rem;
+	/* margin-left: auto; */
+	/* margin-right: auto; */
+	/* width: 32rem; */
+	/* height: 18rem; */
 	border: 0.2rem dashed;
 	border-color: rgb(0, 0, 0);
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	/* display: flex; */
+	/* justify-content: center; */
+	/* align-items: center; */
 }
 .p-dark .drop-zone {
 	border-color: white;
