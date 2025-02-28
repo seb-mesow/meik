@@ -15,55 +15,55 @@ onBeforeMount(() => {
 
 <template>
 	<div class="navbar-underlay">
-	<nav>
-		<div class="navbar">
-			<img class="logo" :src="isc_logo_url">
-			<div>
-				<a :href="route('exhibit.overview')">
-					<div class="link">
-						<div class="icon-box">
-							<span class="icon material-symbols-outlined">
-								archive
-							</span>
+		<nav>
+			<div class="navbar">
+				<img class="logo" :src="isc_logo_url">
+				<div>
+					<a :href="route('exhibit.overview')">
+						<div class="link">
+							<div class="icon-box">
+								<span class="icon material-symbols-outlined">
+									archive
+								</span>
+							</div>
+							<div class="label-box">
+								<span class="label">Exponate</span>
+							</div>
 						</div>
-						<div class="label-box">
-							<span class="label">Exponate</span>
+					</a>
+					
+					<a :href="route('location.overview')">
+						<div class="link">
+							<div class="icon-box">
+								<span class="icon material-symbols-outlined">
+									location_on
+								</span>
+							</div>
+							<div class="label-box">
+								<span class="label">Standorte</span>
+							</div>
 						</div>
-					</div>
-				</a>
-				
-				<a :href="route('location.overview')">
-					<div class="link">
-						<div class="icon-box">
-							<span class="icon material-symbols-outlined">
-								location_on
-							</span>
+					</a>
+					
+					<a :href="route('user.overview')">
+						<div class="link">
+							<div class="icon-box">
+								<span class="icon material-symbols-outlined">
+									person
+								</span>
+							</div>
+							<div class="label-box">
+								<span>Benutzer</span>
+							</div>
 						</div>
-						<div class="label-box">
-							<span class="label">Standorte</span>
-						</div>
-					</div>
-				</a>
-				
-				<a :href="route('user.overview')">
-					<div class="link">
-						<div class="icon-box">
-							<span class="icon material-symbols-outlined">
-								person
-							</span>
-						</div>
-						<div class="label-box">
-							<span>Benutzer</span>
-						</div>
-					</div>
-				</a>
+					</a>
+				</div>
+				<Button @click="dark_mode?.toggle()">
+					<i id="dark_mode_icon" class="pi pi-sun"/>
+				</Button>
+				<img class="logo" :src="fv_logo_url">
 			</div>
-			<Button @click="dark_mode?.toggle()">
-				<i id="dark_mode_icon" class="pi pi-sun"/>
-			</Button>
-			<img class="logo" :src="fv_logo_url">
-		</div>
-	</nav>
+		</nav>
 	</div>
 </template>
 
