@@ -11,14 +11,13 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="image-tile flex items-center gap-x-3 cursor-grab"
+	<div class="image-tile md:h-30 h-15 md:p-3 p-2 my-3 flex items-center gap-x-3 cursor-grab"
 		:id="'image-tile-' + form.ui_id"
 		draggable="true"
 		@dragstart="form.on_tile_dragstart"
 		@dragend="form.on_tile_dragend"
 	>
 		<div class="border border-black">
-			<p>{{ form.ui_id }}</p>
 			<i class="m-auto ms-[-.5rem] pi pi-bars"/>
 		</div>
 		<div class="h-full aspect-video border border-black">
@@ -34,10 +33,7 @@ onMounted(() => {
 
 <style lang="css" scoped>
 .image-tile {
-	height: 8rem;
 	border-radius: 1rem;
-	padding: 1rem;
-	margin: 10px;
 	color: black;
 	background-color: #808080;
 	display: flex;
