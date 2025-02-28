@@ -75,9 +75,9 @@ const form: IImagesForm = new ImagesForm({
 			</Breadcrumb>
 		</template>
 		
-		<div class="flex gap-x-3">
-			<div class="carousel basis-2/3">
-				<Carousel
+		<div class="flex flex-wrap gap-x-3">
+			<div class="flex-2 max-w-4xl">
+				<Carousel class=""
 					:value="form.children.value"
 					>
 					<template #item="{ data }">
@@ -85,16 +85,11 @@ const form: IImagesForm = new ImagesForm({
 					</template>
 				</Carousel>
 			</div>
-			<ImageOrder class="basis-1/3" :form="form" />
+			<ImageOrder class="flex-1 max-w-2xl" :form="form" />
 		</div>
 	</AuthenticatedLayout>
 </template>
 <style lang="css" scoped>
-.carousel {
-	margin-left: auto;
-	margin-right: auto;
-	width: 40rem;
-}
 ._images {
 	display: flex;
 	flex-wrap: wrap;
