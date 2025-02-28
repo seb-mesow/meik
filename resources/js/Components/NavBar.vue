@@ -105,7 +105,7 @@ onBeforeMount(() => {
 	width: 67%;
 	text-align: center;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 64rem) {
 	.navbar-underlay {
 		flex-basis: 3rem;
 	}

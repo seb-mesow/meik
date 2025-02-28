@@ -35,7 +35,7 @@ onBeforeMount(() => {
 					</Button>
 			</header>
 			
-			<main class="border border-green-500 p-4">
+			<main class="overflow-auto lg:p-4 p-2 border-yellow-800 border-2">
 				<slot />
 			</main>
 			
