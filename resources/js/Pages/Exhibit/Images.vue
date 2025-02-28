@@ -65,7 +65,7 @@ const form: IImagesForm = new ImagesForm({
 <template>
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb :home="home" :model="items">
+			<Breadcrumb class="border border-white !overflow-x-visible" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -75,8 +75,8 @@ const form: IImagesForm = new ImagesForm({
 			</Breadcrumb>
 		</template>
 		
-		<div class="flex flex-wrap gap-x-3">
-			<div class="flex-2 max-w-4xl">
+		<div class="w-[100%] flex flex-wrap gap-x-3">
+			<!-- <div class="flex-2 max-w-4xl min-w-2xs border-green-500 border">
 				<Carousel class=""
 					:value="form.children.value"
 					>
@@ -84,8 +84,12 @@ const form: IImagesForm = new ImagesForm({
 						<Image :form="data"/>
 					</template>
 				</Carousel>
+				<div class="m-auto">
+					jfsdjkfhsdj
+				</div>
 			</div>
-			<ImageOrder class="flex-1 max-w-2xl" :form="form" />
+			<ImageOrder class="flex-1 max-w-2xl min-w-sm" :form="form" />
+			<ImageOrder class="flex-1 max-w-2xl min-w-2xs" :form="form" /> -->
 		</div>
 	</AuthenticatedLayout>
 </template>

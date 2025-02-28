@@ -23,21 +23,28 @@ onBeforeMount(() => {
 		<NavBar />
 		
 		<!-- Page Content -->
-		<div class="grow-1">
+		<div class="grow-1 border border-red-500 overflow-hidden">
+		<!-- <div class="grow-1"> -->
 			
 			<!-- Page Heading -->
-			<header class="bg-white h-fit min-h-16 shadow dark:bg-gray-800 items-center flex">
-				<slot name="header"/>
-				<!-- Darkmode-Toogle: neue Platzierung-->
-				<Button class="pl-4 pr-4 py-2 px-2 shadow-md postion: relative" @click="dark_mode?.toggle()"> <!-- TODO: Funktion aus Navbar.vue noch übertragen -->
-					<i id="dark_mode_icon" class="pi pi-sun"/>
-				</Button>
+			<header class="bg-white shadow dark:bg-gray-800 items-center w-full flex flex-no-wrap overflow-auto justify-between border border-yellow-500">
+					<slot name="header"/>
+					<!-- Darkmode-Toogle: neue Platzierung-->
+					<Button class="pl-4 pr-4 py-2 px-2 shadow-md postion: relative" @click="dark_mode?.toggle()">
+						<i id="dark_mode_icon" class="pi pi-sun"/>
+					</Button>
 			</header>
 			
-			<main class="p-4">
+			<main class="border border-green-500 p-4">
 				<slot />
 			</main>
 			
 		</div>
 	</div>
 </template>
+<style lang="css">
+.p-breadcrumb {
+	background: var(--p-breadcrumb-background);
+  	padding: var(--p-breadcrumb-padding);
+}
+</style>
