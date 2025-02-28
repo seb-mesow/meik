@@ -18,12 +18,12 @@ onBeforeMount(() => {
 <template>
 	<!-- Hier keine Popups, Toasts, DynamicDialog usw. einfügen! -->
 	<!-- Stattdessen diese nur in solchen Seiten einfügen, wo sie auch benötigt werden -->
-	<div class="flex">
+	<div class="w-full flex flex-no-wrap">
 		
 		<NavBar />
 		
 		<!-- Page Content -->
-		<div class="flex-grow">
+		<div class="grow-1">
 			
 			<!-- Page Heading -->
 			<header class="bg-white h-fit min-h-16 shadow dark:bg-gray-800 items-center flex">
@@ -34,7 +34,7 @@ onBeforeMount(() => {
 				</Button>
 			</header>
 			
-			<main class="p-4 h-full">
+			<main class="p-4">
 				<slot />
 			</main>
 			
