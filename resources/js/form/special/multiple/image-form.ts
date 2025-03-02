@@ -1,19 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { ISingleValueForm2, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "@/form/generic/single/single-value-form2";
-import {
-	IImageIDsOrder,
-	ICreateImageRequestData,
-	ICreateImage200ResponseData,
-	ICreateImage422ResponseData,
-	IDeleteImageRequestData,
-	IDeleteImage200ResponseData,
-	IDeleteImage422ResponseData,
-	IReplaceImageRequestData,
-	IReplaceImage422ResponseData,
-	IReplaceImage200ResponseData,
-	IUpdateImageMetaDataRequestData,
-	IUpdateImageMetaData422ResponseData
-} from "@/types/ajax/image";
+import * as ImageAJAX from "@/types/ajax/image";
 import { route } from "ziggy-js";
 import { ref, Ref } from "vue";
 import { IMultipleValueForm, MultipleValueForm } from "@/form/generic/multiple/multiple-value-form";
@@ -49,8 +36,8 @@ export interface IImageFormParent {
 	readonly exhibit_id: number;
 	get_index_for_persisting(form: IImageForm): number;
 	delete_form(form: IImageForm): void;
-	delete_form_and_update_order(args: { form: IImageForm, new_ids_order: IImageIDsOrder }): void;
-	update_order(new_ids_order: IImageIDsOrder ): void;
+	delete_form_and_update_order(args: { form: IImageForm, new_ids_order: ImageAJAX.IImageIDsOrder }): void;
+	update_order(new_ids_order: ImageAJAX.IImageIDsOrder ): void;
 	set_currently_dragged_tile(image: IImageForm): void;
 	on_tile_drag_end(tile: IImageForm, event: DragEvent): void;
 }
@@ -222,13 +209,13 @@ export class ImageForm implements UIImageForm, IImageForm {
 		if (!this.file || !this.new_file) {
 			throw new Error("no file to upload");
 		}
-		const request_data: ICreateImageRequestData = {
+		const request_data: ImageAJAX.Create.IRequestData = {
 			index: this.parent.get_index_for_persisting(this),
 			description: this.description.get_value() ?? '',
 			is_public: this.is_public.get_value(),
 			image: this.file,
 		}
-		const request_config: AxiosRequestConfig<ICreateImageRequestData> = {
+		const request_config: AxiosRequestConfig<ImageAJAX.Create.IRequestData> = {
 			method: "post",
 			url: route('ajax.exhibit.image.create', { exhibit_id: this.parent.exhibit_id }),
 			headers: {
@@ -238,13 +225,13 @@ export class ImageForm implements UIImageForm, IImageForm {
 		};
 		console.log('ajax_create');
 		return axios.request(request_config).then(
-			(response: AxiosResponse<ICreateImage200ResponseData>) => {
+			(response: AxiosResponse<ImageAJAX.Create.I200ResponseData>) => {
 				this.id = response.data.id;
 				this.parent.update_order(response.data.ids_order);
 				console.log('ajax_create success');
 			},
 			(err) => {
-				const response: AxiosResponse<ICreateImage422ResponseData> = err.response;
+				const response: AxiosResponse<ImageAJAX.Create.I422ResponseData> = err.response;
 				console.log('ajax_create fail');
 			}
 		);
@@ -260,7 +247,7 @@ export class ImageForm implements UIImageForm, IImageForm {
 		if (!this.file) {
 			throw new Error("no file to upload");
 		}
-		const request_config: AxiosRequestConfig<IReplaceImageRequestData> = {
+		const request_config: AxiosRequestConfig<ImageAJAX.Replace.IRequestData> = {
 			method: "post",
 			url: route('ajax.exhibit.image.replace', { exhibit_id: this.parent.exhibit_id, image_id: this.id }),
 			headers: {
@@ -274,12 +261,12 @@ export class ImageForm implements UIImageForm, IImageForm {
 		};
 		console.log('ajax_replace() begin');
 		return axios.request(request_config).then(
-			(response: AxiosResponse<IReplaceImage200ResponseData>) => {
+			(response: AxiosResponse<ImageAJAX.Replace.I200ResponseData>) => {
 				this.id = response.data;
 				console.log('ajax_replace() success');
 			},
-			(err: AxiosError<IReplaceImage422ResponseData>) => {
-				const response: AxiosResponse<IReplaceImage422ResponseData>|undefined = err.response;
+			(err: AxiosError<ImageAJAX.Replace.I422ResponseData>) => {
+				const response: AxiosResponse<ImageAJAX.Replace.I422ResponseData>|undefined = err.response;
 				// if (response) {
 				// 	this.errs = response.data.errs;
 				// 	this.description.errs = response.data.description;
@@ -294,17 +281,17 @@ export class ImageForm implements UIImageForm, IImageForm {
 		if (!this.id) {
 			throw new Error("undefined ID");
 		}
-		const request_config: AxiosRequestConfig<IDeleteImageRequestData> = {
+		const request_config: AxiosRequestConfig<ImageAJAX.Delete.IRequestData> = {
 			method: "delete",
 			url: route('ajax.exhibit.image.delete', { exhibit_id: this.parent.exhibit_id, image_id: this.id })
 		};
 		console.log('ajax_delete() begin');
 		return axios.request(request_config).then(
-			(response: AxiosResponse<IDeleteImage200ResponseData>) => {
+			(response: AxiosResponse<ImageAJAX.Delete.I200ResponseData>) => {
 				this.parent.delete_form_and_update_order({ form: this, new_ids_order: response.data });
 				console.log('ajax_delete() success');
 			},
-			(response: AxiosResponse<IDeleteImage422ResponseData>) => {
+			(response: AxiosResponse<ImageAJAX.Delete.I422ResponseData>) => {
 				// this.errs = response.data;
 				console.log('ajax_delete() fail');
 			}
@@ -315,7 +302,7 @@ export class ImageForm implements UIImageForm, IImageForm {
 		if (!this.id) {
 			throw new Error("undefined ID");
 		}
-		const request_config: AxiosRequestConfig<IUpdateImageMetaDataRequestData> = {
+		const request_config: AxiosRequestConfig<ImageAJAX.UpdateMetaData.IRequestData> = {
 			method: "patch",
 			url: route('ajax.image.update_meta_data', { image_id: this.id }),
 			data: {
@@ -328,7 +315,7 @@ export class ImageForm implements UIImageForm, IImageForm {
 			(response: AxiosResponse) => {
 				console.log('ajax_update_meta_data() success');
 			},
-			(response: AxiosResponse<IUpdateImageMetaData422ResponseData>) => {
+			(response: AxiosResponse<ImageAJAX.UpdateMetaData.I422ResponseData>) => {
 				// this.errs = response.data.errs;
 				// this.description.errs = response.data.description;
 				// this.is_public.errs = response.data.is_public;
