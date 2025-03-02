@@ -108,6 +108,58 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 		console.log(`new_order == ${new_order}`);
 	}
 	
+	public update_order2(new_ids_order: IImageIDsOrder): void {
+		function updateOrderWithChunks(originalArray: any[], partialArray: any[]): any[] {
+			const chunks: any[][] = [];
+			let currentChunk: any[] = [];
+			const leadingElements: any[] = [];
+		
+			// Create chunks based on the partial array
+			for (const item of originalArray) {
+				if (partialArray.includes(item)) {
+					// If we have a current chunk, push it to chunks
+					if (currentChunk.length > 0) {
+						chunks.push(currentChunk);
+						currentChunk = [];
+					}
+					// Start a new chunk with the item from the partial array
+					currentChunk.push(item);
+				} else {
+					// If the item is not in the partial array, add it to the current chunk
+					if (currentChunk.length === 0) {
+						// If no chunk has started, it's a leading element
+						leadingElements.push(item);
+					}
+					currentChunk.push(item);
+				}
+			}
+		
+			// Push the last chunk if it exists
+			if (currentChunk.length > 0) {
+				chunks.push(currentChunk);
+			}
+		
+			// Sort chunks based on the order in the partial array
+			const sortedChunks = chunks.sort((a, b) => {
+				const indexA = partialArray.indexOf(a[0]);
+				const indexB = partialArray.indexOf(b[0]);
+				return indexA - indexB;
+			});
+		
+			// Flatten the sorted chunks into a single array
+			const resultArray = leadingElements.concat(sortedChunks.flat());
+		
+			return resultArray;
+		}
+		
+		// Example usage:
+		const originalArray = ['apple', 'banana', 'cherry', 'date', 'fig', 'grape'];
+		const partialArray = ['cherry', 'banana', 'fig'];
+		
+		const updatedArray = updateOrderWithChunks(originalArray, partialArray);
+		console.log(updatedArray); // Output: ['apple', 'banana', 'cherry', 'date', 'fig', 'grape']
+	}
+	
 	public on_mounted(): void {
 		this.tile_container = document.getElementById('image-tile-container') as HTMLElement;
 	}

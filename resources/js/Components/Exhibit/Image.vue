@@ -47,9 +47,17 @@ const props = defineProps<{
 				<label :for="form.description.html_id">Beschreibung</label>
 				<InputText :form="form.description" />
 			</div>
-			<ToggleButton class="w-28" style="grid-area: 3 / 2 / 3 / 2;" onLabel='öffentlich' offLabel="intern"
+			<ToggleButton
+				class="w-28"
+				style="grid-area: 3 / 2 / 3 / 2;"
+				onLabel='öffentlich'
+				offLabel='intern'
 				:modelValue="form.is_public.ui_value_in_editing.value"
 				@update:modelValue="(v: boolean) => form.is_public.on_change_ui_value_in_editing(v)"
+				:dt="{ colorScheme: {
+					light: { background: '{gray-200}', hoverBackground: '{gray-300}', color: 'black',checkedBackground: '{amber-400}', checkedColor: 'black' },
+					dark: { background: '{gray-400}',  color: 'black', hoverBackground: '{gray-300}', hoverColor: 'black', checkedBackground: '{amber-400}', checkedColor: 'black' }
+				} }"
 			/>
 		</div>
 		<div class="buttons">
