@@ -1,18 +1,11 @@
 <script setup lang="ts">
 import NavBar from '@/Components/NavBar.vue';
-import DarkMode from '@/util/dark-mode';
-import { onBeforeMount } from 'vue';
-import Button from 'primevue/button';
+import DarkModeToggle from '@/Components/DarkModeToggle.vue';
 
 const props = defineProps<{
 	disable_overflow?: boolean
 }>();
 const disable_overflow: boolean = props.disable_overflow ?? false;
-
-let dark_mode: DarkMode;
-onBeforeMount(() => {
-	dark_mode = new DarkMode();
-});
 </script>
 
 <template>
@@ -28,11 +21,8 @@ onBeforeMount(() => {
 			
 			<!-- Page Heading -->
 			<header class="bg-white shadow dark:bg-gray-800 items-center w-full flex flex-no-wrap overflow-auto justify-between border border-yellow-500">
-					<slot name="header"/>
-					<!-- Darkmode-Toogle: neue Platzierung-->
-					<Button class="pl-4 pr-4 py-2 px-2 shadow-md postion: relative" @click="dark_mode?.toggle()">
-						<i id="dark_mode_icon" class="pi pi-sun"/>
-					</Button>
+				<slot name="header"/>
+				<DarkModeToggle/>
 			</header>
 			
 			<main class="overflow-auto lg:p-4 p-2 border-yellow-800 border-2">
