@@ -1,1 +1,12 @@
 @import 'tailwindcss';
+
+:root {
+	--meik-is-internal-bg-color-light: var(--color-gray-200);
+	--meik-is-internal-bg-color-light-hover: var(--color-gray-300);
+	--meik-is-internal-bg-color-dark: var(--color-gray-400);
+	--meik-is-internal-bg-color-dark-hover: var(--color-gray-300);
+	--meik-is-public-bg-color-light: var(--color-amber-400);
+	--meik-is-public-bg-color-light-hover: var(--color-amber-500);
+	--meik-is-public-bg-color-dark: var(--color-amber-400);
+	--meik-is-public-bg-color-dark-hover: var(--color-amber-300);
+}
