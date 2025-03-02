@@ -44,25 +44,27 @@ function on_is_public_button_mouseleave(event: MouseEvent): void {
 
 <template>
 	<div class="page">
-		<img v-if="form.file_url.value"
-			class="image"
-			:src="form.file_url.value"
-			draggable="true"
-			@dragover="form.on_dragover"
-			@drop="form.on_drop"
-		>
-		<div v-else
-			class="drop-zone"
-			@dragover="form.on_dragover"
-			@drop="form.on_drop"
-		>
-			<div class="drop-zone-text">
-				<i class="drop-zone-icon pi pi-upload"/>
-				<p>Bild hierein ziehen</p>
-				<p>oder klicken</p>
+		<div class="w-full aspect-[16/9]">
+			<img v-if="form.file_url.value"
+				class="h-full w-full object-contain"
+				:src="form.file_url.value"
+				draggable="true"
+				@dragover="form.on_dragover"
+				@drop="form.on_drop"
+			>
+			<div v-else
+				class="h-full w-full border-4 border-dashed border-black dark:border-white grid justify-items-center items-center"
+				@dragover="form.on_dragover"
+				@drop="form.on_drop"
+			>
+				<div class="text-center">
+					<i class="drop-zone-icon pi pi-upload"/>
+					<p>Bild hierein ziehen</p>
+					<p>oder klicken</p>
+				</div>
 			</div>
 		</div>
-		<div class="flex gap-x-3">
+		<div class="pt-3 flex gap-x-3">
 			<div class="flex-grow">
 				<label :for="form.description.html_id">Beschreibung</label>
 				<InputText :form="form.description" />
@@ -131,11 +133,6 @@ function on_is_public_button_mouseleave(event: MouseEvent): void {
 	/* height: 2rem; */
 	/* width: 20rem;  */
 	/* background-color: lightcoral; */
-}
-.image {
-	margin-left: auto;
-	margin-right: auto;
-	padding: 1rem
 }
 .description-field {
 	flex: 1;
