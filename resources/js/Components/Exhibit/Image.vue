@@ -2,8 +2,8 @@
 import { UIImageForm } from '@/form/special/multiple/image-form';
 import Button from 'primevue/button';
 import ToggleButton from 'primevue/togglebutton';
-import { onBeforeMount, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, reactive, shallowReactive, shallowRef, useTemplateRef, watch } from 'vue';
 import InputText from '@/Components/Form/Wrapper/InputText.vue';
+import DarkMode from '@/util/dark-mode';
 
 // (interne) Attribute der Komponente
 const props = defineProps<{
@@ -18,7 +18,27 @@ const props = defineProps<{
 // - Werte/Objekte die keine Properties sind bleiben gleich! Weil die setup()-Funktion nicht nochmal ausgeführt wird.
 //
 // EventListener immer besser über den @-Shortcut setzen als über .addEventListener()
-// 
+
+function on_is_public_button_mouseenter(event: MouseEvent): void {
+	if (props.form.is_public.ui_value_in_editing.value) {
+		if (DarkMode.is_dark.value) {
+			// @ts-expect-error
+			event.target.style['background-color'] = 'var(--meik-is-public-bg-color-dark-hover)';
+		} else {
+			// @ts-expect-error
+			event.target.style['background-color'] = 'var(--meik-is-public-bg-color-light-hover)';
+		}
+	}
+}
+function on_is_public_button_mouseleave(event: MouseEvent): void {
+	if (DarkMode.is_dark.value) {
+		// @ts-expect-error
+		event.target.style['background-color'] = null;
+	} else {
+		// @ts-expect-error
+		event.target.style['background-color'] = null;
+	}
+}
 
 </script>
 
@@ -55,9 +75,17 @@ const props = defineProps<{
 				:modelValue="form.is_public.ui_value_in_editing.value"
 				@update:modelValue="(v: boolean) => form.is_public.on_change_ui_value_in_editing(v)"
 				:dt="{ colorScheme: {
-					light: { background: '{gray-200}', hoverBackground: '{gray-300}', color: 'black',checkedBackground: '{amber-400}', checkedColor: 'black' },
-					dark: { background: '{gray-400}',  color: 'black', hoverBackground: '{gray-300}', hoverColor: 'black', checkedBackground: '{amber-400}', checkedColor: 'black' }
-				} }"
+					light: {
+						background: 'var(--meik-is-internal-bg-color-light)', hoverBackground: 'var(--meik-is-internal-bg-color-light-hover)', color: 'black', hoverColor: 'black',
+						checkedBackground: 'var(--meik-is-public-bg-color-light)', checkedColor: 'black'
+					},
+					dark: {
+						background: 'var(--meik-is-internal-bg-color-dark)', hoverBackground: 'var(--meik-is-internal-bg-color-dark-hover)', color: 'black', hoverColor: 'black', 
+						checkedBackground: 'var(--meik-is-public-bg-color-dark)', checkedColor: 'black',
+					}
+				}}"
+				@mouseenter="on_is_public_button_mouseenter"
+				@mouseleave="on_is_public_button_mouseleave"
 			/>
 		</div>
 		<div class="buttons">
