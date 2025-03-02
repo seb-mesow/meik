@@ -37,7 +37,7 @@ export interface IImageFormParent {
 	get_index_for_persisting(form: IImageForm): number;
 	delete_form(form: IImageForm): void;
 	delete_form_and_update_order(args: { form: IImageForm, new_ids_order: ImageAJAX.IImageIDsOrder }): void;
-	update_order(new_ids_order: ImageAJAX.IImageIDsOrder ): void;
+	update_order_by_partial_order(new_ids_order: ImageAJAX.IImageIDsOrder ): void;
 	set_currently_dragged_tile(image: IImageForm): void;
 	on_tile_drag_end(tile: IImageForm, event: DragEvent): void;
 }
@@ -73,16 +73,16 @@ export class ImageForm implements UIImageForm, IImageForm {
 	public constructor(args: IImageFormConstructorArgs) {
 		this.id = args.data?.id;
 		
-		this.description = new StringForm<true>({
+		this.description = new StringForm<false>({
 			val: args.data?.description,
-			required: true,
+			required: false,
 			on_change: () => {
 				console.log(`recieved change from description`);
 				this.has_changes.value = true;
 			},
 		}, 'description', this.fields);
 		this.is_public = new SingleValueForm2<boolean, boolean, true>({
-			val: args.data?.is_public,
+			val: args.data?.is_public ?? false,
 			required: true,
 			on_change: () => {
 				console.log(`recieved change from is_public`);
@@ -170,8 +170,7 @@ export class ImageForm implements UIImageForm, IImageForm {
 	
 	public async click_save(): Promise<void> {
 		// Werte der Zeile im Objekt rows setzen:
-		this.description.commit();
-		this.is_public.commit();
+		this.fields.commit();
 		this.has_changes.value = false;
 		
 		this.is_save_button_loading.value = true;
@@ -227,7 +226,7 @@ export class ImageForm implements UIImageForm, IImageForm {
 		return axios.request(request_config).then(
 			(response: AxiosResponse<ImageAJAX.Create.I200ResponseData>) => {
 				this.id = response.data.id;
-				this.parent.update_order(response.data.ids_order);
+				this.parent.update_order_by_partial_order(response.data.ids_order);
 				console.log('ajax_create success');
 			},
 			(err) => {

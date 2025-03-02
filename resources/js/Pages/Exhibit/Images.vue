@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { route } from 'ziggy-js';
 import Image from '@/Components/Exhibit/Image.vue';
-import { IImagesForm, ImagesForm } from '@/form/special/overview/images-form';
+import { UIImagesForm, ImagesForm } from '@/form/special/overview/images-form';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { IImagesInitPageProps } from '@/types/page_props/images';
 import Breadcrumb from 'primevue/breadcrumb';
@@ -42,7 +42,7 @@ items.push({
 	label: 'Bilder'
 });
 
-const form: IImagesForm = new ImagesForm({
+const form: UIImagesForm = new ImagesForm({
 	data: {
 		exhibit_id: props.init_props.exhibit_id,
 		images: props.init_props.images.map((_prop) => {
@@ -78,7 +78,7 @@ const form: IImagesForm = new ImagesForm({
 		<div class="w-[100%] lg:flex lg:flex-wrap gap-3">
 			<div class="lg:flex-2 lg:min-w-2xl min-w-xs border-green-500 border-2">
 				<Carousel class=""
-					:value="form.children.value"
+					:value="form.children_in_editing.value"
 					>
 					<template #item="{ data }">
 						<Image :form="data"/>

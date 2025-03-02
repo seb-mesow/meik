@@ -18,6 +18,7 @@ onMounted(() => {
 		@dragend="form.on_tile_dragend"
 	>
 		<div class="border border-black">
+			<p>{{ form.ui_id }}</p>
 			<i class="m-auto ms-[-.5rem] pi pi-bars"/>
 		</div>
 		<div class="h-full aspect-video border border-black">
@@ -26,6 +27,7 @@ onMounted(() => {
 			>
 		</div>
 		<div class="border border-black">
+			<p>{{ form.id }}</p>
 			<p>{{ form.description.ui_value_in_editing }}</p>
 		</div>
 	</div>
