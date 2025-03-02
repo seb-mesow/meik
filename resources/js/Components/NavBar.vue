@@ -3,14 +3,7 @@ import { route } from 'ziggy-js';
 import isc_logo_url from '../../images/Logo_isc_300x122.jpg';
 import fv_logo_url from '../../images/FV_ISC.jpg';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
-import Button from 'primevue/button';
-import { onBeforeMount } from 'vue';
-import DarkMode from '@/util/dark-mode';
-
-let dark_mode: DarkMode;
-onBeforeMount(() => {
-	dark_mode = new DarkMode();
-});
+import DarkModeToggle from './DarkModeToggle.vue';
 </script>
 
 <template>
@@ -58,9 +51,7 @@ onBeforeMount(() => {
 						</div>
 					</a>
 				</div>
-				<Button @click="dark_mode?.toggle()">
-					<i id="dark_mode_icon" class="pi pi-sun"/>
-				</Button>
+				<DarkModeToggle/>
 				<img class="logo" :src="fv_logo_url">
 			</div>
 		</nav>
