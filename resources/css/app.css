@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.p-dark, .p-dark *));
+
 :root {
 	--meik-is-internal-bg-color-light: var(--color-gray-200);
 	--meik-is-internal-bg-color-light-hover: var(--color-gray-300);
