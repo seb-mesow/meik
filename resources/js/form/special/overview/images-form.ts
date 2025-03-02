@@ -1,11 +1,18 @@
 import { IImageIDsOrder } from "@/types/ajax/image";
 import { UIImageForm, IImageFormParent, ImageForm, IImageForm } from "../multiple/image-form";
 import { shallowRef, ShallowRef } from "vue";
+import { update_order_from_partial_order } from "@/util/update-order";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import * as ImageAJAX from '@/types/ajax/image';
+import { route } from "ziggy-js";
 
-export interface IImagesForm {
-	readonly children: ShallowRef<Readonly<UIImageForm[]>>;
+export interface UIImagesForm {
+	readonly children_in_editing: ShallowRef<Readonly<UIImageForm[]>>;
 	on_mounted(): void;
 	on_tile_container_dragover(event: DragEvent): void;
+	click_add(): void;
+	click_image_order_save(): void;
+	click_image_order_rollback(): void;
 }
 
 export interface IImagesFormConstructorArgs {
@@ -19,9 +26,9 @@ export interface IImagesFormConstructorArgs {
 	},
 }
 
-export class ImagesForm implements IImagesForm, IImageFormParent {
+export class ImagesForm implements UIImagesForm, IImageFormParent {
 	public readonly exhibit_id: number;
-	public children: ShallowRef<(IImageForm & UIImageForm)[]>;
+	public children_in_editing: ShallowRef<(IImageForm & UIImageForm)[]>;
 	
 	private next_ui_id: number = 0;
 	
@@ -29,10 +36,11 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 	private currently_dragged_tile: IImageForm = null as any;
 	private currently_not_dragged_tiles : IImageForm[] = [];
 	private current_tile_order: IImageForm[] = [];
+	private children: (IImageForm & UIImageForm)[];
 	
 	public constructor(args: IImagesFormConstructorArgs) {
 		this.exhibit_id = args.data.exhibit_id;
-		this.children = shallowRef(args.data.images.map((_args): ImageForm => new ImageForm({
+		this.children = args.data.images.map((_args): ImageForm => new ImageForm({
 			data: {
 				id: _args.id,
 				description: _args.description,
@@ -40,12 +48,20 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 			},
 			parent: this,
 			ui_id: this.next_ui_id++,
-		})));
+		}));
+		this.children_in_editing = shallowRef([...this.children]); // copy of array useful
+	}
+
+	public click_add(): void {
+		this.children_in_editing.value = [ ...this.children_in_editing.value, new ImageForm({
+			parent: this,
+			ui_id: this.next_ui_id++,
+		})];
 	}
 	
 	public get_index_for_persisting(form: IImageForm): number {
 		let index = 0;
-		for (const child_form of this.children.value) {
+		for (const child_form of this.children_in_editing.value) {
 			if (child_form.ui_id === form.ui_id) {
 				return index;
 			}
@@ -57,9 +73,13 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 	}
 	
 	public delete_form(form: IImageForm): void {
-		const prev_cnt = this.children.value.length;
-		this.children.value = this.children.value.filter((_form: IImageForm): boolean => _form.ui_id !== form.ui_id);
-		if (this.children.value.length !== prev_cnt - 1) {
+		const prev_cnt = this.children_in_editing.value.length;
+		this.children_in_editing.value = this.children_in_editing.value.filter((_form: IImageForm): boolean => _form.ui_id !== form.ui_id);
+		if (this.children_in_editing.value.length !== prev_cnt - 1) {
+			new Error("Assertation failed: count of forms remains equal, despite deleting form");
+		}
+		this.children = this.children.filter((_form: IImageForm): boolean => _form.ui_id !== form.ui_id);
+		if (this.children.length !== prev_cnt - 1) {
 			new Error("Assertation failed: count of forms remains equal, despite deleting form");
 		}
 		console.log(`form ${form.ui_id} deleted`)
@@ -67,97 +87,28 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 	
 	public delete_form_and_update_order(args: { form: IImageForm, new_ids_order: IImageIDsOrder }): void {
 		// no ui_id necessary
-		const old_order: string = this.children.value.reduce((acc, cur, index, array) => {
+		const old_order: string = this.children_in_editing.value.reduce((acc, cur, index, array) => {
 			return acc + ", " + cur.ui_id;
 		}, '');
 		console.log(`delete: old_order == ${old_order}`);
 		
 		this.delete_form(args.form);
-		this.update_order(args.new_ids_order);
+		this.update_order_by_partial_order(args.new_ids_order);
 		console.log(`form ${args.form.ui_id} removed`)
 	}
 	
-	public update_order(new_ids_order: IImageIDsOrder): void {
-		const old_order: string = this.children.value.reduce((acc, cur, index, array) => {
-			return acc + ", " + cur.ui_id;
-		}, '');
-		console.log(`old_order == ${old_order}`);
-		
-		const children_in_db_in_new_order = new_ids_order.map((id: string): (IImageForm & UIImageForm) => {
-			for (const form of this.children.value) {
-				if (form.id === id) {
-					return form;
-				}
-			}
-			throw new Error(`unknown Image ID ${id} for update_order()`);
-		});
-		let children_in_db_in_new_order_index = 0;
-		
-		for (const index in this.children.value) {
-			if (this.children.value[index].exists_in_db()) {
-				this.children.value[index] = children_in_db_in_new_order[children_in_db_in_new_order_index++];
-			}
-		}
-		if (children_in_db_in_new_order_index !== children_in_db_in_new_order.length) {
-			throw new Error("Assertation failed: children_in_db_in_new_order_index should equal children_in_db_in_new_order.length");
-		}
-		
-		const new_order: string = this.children.value.reduce((acc, cur) => {
-			return acc + ", " + cur.ui_id;
-		}, '');
-		console.log(`new_order == ${new_order}`);
+	public update_order_by_partial_order(new_ids_order: IImageIDsOrder): void {
+		console.log(`new_ids_order == ${new_ids_order.join(', ')}`);
+		this.log_order('old_order', this.children_in_editing.value);
+		this.children_in_editing.value = update_order_from_partial_order(this.children_in_editing.value, new_ids_order);
+		this.log_order('new__order', this.children_in_editing.value);
 	}
 	
-	public update_order2(new_ids_order: IImageIDsOrder): void {
-		function updateOrderWithChunks(originalArray: any[], partialArray: any[]): any[] {
-			const chunks: any[][] = [];
-			let currentChunk: any[] = [];
-			const leadingElements: any[] = [];
-		
-			// Create chunks based on the partial array
-			for (const item of originalArray) {
-				if (partialArray.includes(item)) {
-					// If we have a current chunk, push it to chunks
-					if (currentChunk.length > 0) {
-						chunks.push(currentChunk);
-						currentChunk = [];
-					}
-					// Start a new chunk with the item from the partial array
-					currentChunk.push(item);
-				} else {
-					// If the item is not in the partial array, add it to the current chunk
-					if (currentChunk.length === 0) {
-						// If no chunk has started, it's a leading element
-						leadingElements.push(item);
-					}
-					currentChunk.push(item);
-				}
-			}
-		
-			// Push the last chunk if it exists
-			if (currentChunk.length > 0) {
-				chunks.push(currentChunk);
-			}
-		
-			// Sort chunks based on the order in the partial array
-			const sortedChunks = chunks.sort((a, b) => {
-				const indexA = partialArray.indexOf(a[0]);
-				const indexB = partialArray.indexOf(b[0]);
-				return indexA - indexB;
-			});
-		
-			// Flatten the sorted chunks into a single array
-			const resultArray = leadingElements.concat(sortedChunks.flat());
-		
-			return resultArray;
-		}
-		
-		// Example usage:
-		const originalArray = ['apple', 'banana', 'cherry', 'date', 'fig', 'grape'];
-		const partialArray = ['cherry', 'banana', 'fig'];
-		
-		const updatedArray = updateOrderWithChunks(originalArray, partialArray);
-		console.log(updatedArray); // Output: ['apple', 'banana', 'cherry', 'date', 'fig', 'grape']
+	private log_order(var_name: string, image_order: { ui_id: number, id?: string}[]): void {
+		const new_order: string = image_order.reduce((acc, cur) => {
+			return acc + '\n' + cur.ui_id + ': ' + (cur.id === undefined ? 'undefined' : cur.id);
+		}, '');
+		console.log(`${var_name} ==${new_order}`);
 	}
 	
 	public on_mounted(): void {
@@ -166,8 +117,8 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 	
 	public set_currently_dragged_tile(image: IImageForm): void {
 		this.currently_dragged_tile = image;
-		this.currently_not_dragged_tiles = this.children.value.filter((child) => child !== image);
-		this.current_tile_order = [ ...this.children.value]; // so eine Kopie sein, daher spread
+		this.currently_not_dragged_tiles = this.children_in_editing.value.filter((child) => child !== image);
+		this.current_tile_order = [ ...this.children_in_editing.value]; // so eine Kopie sein, daher spread
 	}
 	
 	public on_tile_container_dragover(event: DragEvent): void {
@@ -194,7 +145,7 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 		this.current_tile_order.forEach(tile => {
 			str += ' ' + tile.ui_id;
 		});
-		this.children.value = this.current_tile_order as (IImageForm & UIImageForm)[];
+		this.children_in_editing.value = this.current_tile_order as (IImageForm & UIImageForm)[];
 		console.log(str);
 	}
 	
@@ -214,5 +165,32 @@ export class ImagesForm implements IImagesForm, IImageFormParent {
 		});
 		console.log(log_str);
 		return closest_tile_below;
+	}
+	
+	public click_image_order_save(): void {
+		this.ajax_move();
+	}
+	
+	public click_image_order_rollback(): void {
+		throw new Error("Method not implemented.");
+	}
+	
+	private async ajax_move(): Promise<void> {
+		const cur_ids_order: string[] = [];
+		for (const image of this.children_in_editing.value) {
+			if (image.id !== undefined) {
+				cur_ids_order.push(image.id);
+			}
+		}
+		
+		const request_config: AxiosRequestConfig<ImageAJAX.Move.IRequestData> = {
+			method: 'patch',
+			url: route('ajax.exhibit.image.move', this.exhibit_id),
+			data: cur_ids_order,
+		};
+		
+		return axios.request(request_config).then((response: AxiosResponse) => {
+			this.children = this.children_in_editing.value;
+		});
 	}
 }

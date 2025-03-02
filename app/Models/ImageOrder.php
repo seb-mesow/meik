@@ -105,6 +105,23 @@ class ImageOrder implements IntIdentifiable, Revisionable
 		}
 		throw new RuntimeException("Image ID not found");
 	}
-
+	
+	/**
+	 * @param string[] $new_ids_order
+	 * @return void
+	 */
+	public function set_image_order_ids(array $new_ids_order): void {
+		foreach($this->image_ids as $existent_image_id) {
+			if (!in_array($existent_image_id, $new_ids_order)) {
+				throw new RuntimeException('new image id order missed existent ID ' . $existent_image_id);
+			}
+		}
+		foreach($new_ids_order as $new_image_id) {
+			if (!in_array($new_image_id, $this->image_ids)) {
+				throw new RuntimeException('new image id order has surplus ID ' . $new_image_id);
+			}
+		}
+		$this->image_ids = $new_ids_order;
+	}
 }
 

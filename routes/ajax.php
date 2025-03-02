@@ -96,7 +96,7 @@ Route::prefix('ajax')->group(static function () {
 	Route::delete('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'delete'])
 		->name('ajax.exhibit.image.delete');
 	
-	Route::patch('/exhibit/{exhibit_id}/image/{image_id}', [ImageAJAXController::class, 'move'])
+	Route::patch('/exhibit/{exhibit_id}/images', [ImageAJAXController::class, 'move'])
 		->name('ajax.exhibit.image.move');
 
 	// --- Rubriken ---

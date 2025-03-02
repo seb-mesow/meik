@@ -94,13 +94,15 @@ class ImageAJAXController extends Controller
 		return response()->json($ids_order);
 	}
 	
-	public function move(Request $request, int $exhibit_id, string $image_id): JsonResponse {
-		$new_index = $request->input();
+	public function move(Request $request, int $exhibit_id): JsonResponse {
+		$new_ids_order = $request->input();
+		assert(is_array($new_ids_order));
+		
 		$image_order = $this->image_order_repository->get($exhibit_id);
-		$image_order->move_image_id($image_id, $new_index);
+		$image_order->set_image_order_ids($new_ids_order);
 		$this->image_order_repository->update($image_order);
-		$ids_order = $image_order->get_image_ids();
-		return response()->json($ids_order);
+		
+		return response()->json();
 	}
 	
 	public function get_image(string $image_id): Response {

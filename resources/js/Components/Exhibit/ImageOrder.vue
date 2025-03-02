@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import ImageTile from './ImageTile.vue';
-import { IImagesForm } from '@/form/special/overview/images-form';
-import Form from '../Form/Form.vue';
+import { UIImagesForm } from '@/form/special/overview/images-form';
+import Button from 'primevue/button';
 
 const props = defineProps<{
-	form: IImagesForm;
+	form: UIImagesForm;
 }>();
 onMounted(() => {
 	props.form.on_mounted();
@@ -13,10 +13,17 @@ onMounted(() => {
 </script>
 
 <template>
-	<div id="image-tile-container"
-		@dragover="form.on_tile_container_dragover"
-	>
-		<ImageTile v-for="image in form.children.value" :key="image.ui_id" :form="image" />
+	<div>
+		<div id="image-tile-container"
+			@dragover="form.on_tile_container_dragover"
+		>
+			<ImageTile v-for="image in form.children_in_editing.value" :key="image.ui_id" :form="image" />
+		</div>
+		<Button @click="form.click_add()" label="Hinzufügen" />
+		<div class="flex justify-between">
+			<Button @click="form.click_image_order_save()" label="Speichern" />
+			<Button @click="form.click_image_order_rollback()" label="Zurücksetzen" />
+		</div>
 	</div>
 </template>
 
