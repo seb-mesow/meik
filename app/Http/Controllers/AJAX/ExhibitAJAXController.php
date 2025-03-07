@@ -108,6 +108,7 @@ class ExhibitAJAXController extends Controller
 			}
 			$exhibit->set_place_id($place_id);
 			$exhibit->set_connected_exhibit_ids($connected_exhibit_ids);
+			$exhibit->set_rubric_id($rubric_id);
 		} else {
 			// neues Exhibit erzeugen
 			$exhibit = new Exhibit(
@@ -261,5 +262,65 @@ class ExhibitAJAXController extends Controller
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		return $this->word_service->get_data_sheet($exhibit);
+	}
+
+	public function search_exhibits(Request $request)
+	{
+		$query = $request->query('query');
+		$queryParts = explode(' ', $query);
+		$excluded_ids = $request->query('excluded');
+		$selectors = [];
+		foreach ($queryParts as $queryPart) {
+			if(!$queryPart) {
+				continue;
+			}
+			$selector = [
+				'$or' => [
+					[
+						'manufacturer' => [
+							'$regex' => '(?i)' . $queryPart // Regex für manufacturer
+						]
+					],
+					[
+						'name' => [
+							'$regex' => '(?i)' . $queryPart // Regex für name
+						]
+					],
+					[
+						'inventory_number' => [
+							'$eq' => $queryPart // Exakte Übereinstimmung für inventory_number
+						]
+					]
+				]
+			];
+
+			$selectorParts[] = $selector;
+		}
+		// Das ist derzeitig etwas unnötig da wir nur 1 exhibit mitgeben
+		foreach ($excluded_ids as $excluded_exhibit) {
+			$excluded = [
+				'$and' => [
+					[
+						'_id' => [
+							'$not' => [
+								'$eq' => 'exhibit:' . $excluded_exhibit
+							]
+						]
+					]
+				]
+			];
+			$selectorParts[] = $excluded;
+		}
+
+		$selectors = [
+			'$and' => $selectorParts
+		];
+
+		$exhibits = $this->exhibit_repository->query_by_selectors($selectors);
+		$exhibits_json = array_map(static fn(Exhibit $exhibit): array => [
+			'id' => $exhibit->get_id(),
+			'name' => $exhibit->get_name(),
+		], $exhibits);
+		return $exhibits_json;
 	}
 }

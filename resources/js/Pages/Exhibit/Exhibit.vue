@@ -25,6 +25,9 @@ import { PartialDate } from '@/util/partial-date';
 import DateField from '@/Components/Form/DateField.vue';
 import * as DateUtil from '@/util/date';
 import OriginalPriceField from '@/Components/Form/OriginalPriceField.vue';
+import { ref } from 'vue';
+import { AutoComplete, AutoCompleteCompleteEvent } from 'primevue';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
@@ -39,6 +42,9 @@ const props = defineProps<{
 		name: string,
 	}
 }>();
+
+const suggested_exhibits = ref([]);
+const connected_exhibits = ref(props.connected_exhibits);
 
 console.log('props.selectable_values ==');
 console.log(props.selectable_values);
@@ -142,10 +148,33 @@ if (props.exhibit_props) {
 const exhibit_form: IExhibitForm = new ExhibitForm(form_constructor_args);
 const does_exist: boolean = exhibit_form.id !== undefined;
 const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\nMONAT JJJJ\nJJJJ';
+
+async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> {
+	const query = event.query
+	const request_config: AxiosRequestConfig = {
+		method: "get",
+		url: route(`ajax.exhibit.search`),
+		// Hier könnten auch weitere exhibit id eingebracht werden. 
+		params: {
+			'excluded': [props.exhibit_props?.id],
+			'query': query
+		}
+	};
+	return axios.request(request_config).then(
+		(response: AxiosResponse) => {
+			suggested_exhibits.value = response.data
+
+			props.connected_exhibits?.
+
+			console.log(suggested_exhibits.value)
+		}
+	);
+}
+
 </script>
 
 <template>
-	<Toast/>
+	<Toast />
 	<AuthenticatedLayout>
 		<template #header>
 			<Breadcrumb :home="home" :model="items">
@@ -269,7 +298,20 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				
 			</div>
 		</Fieldset>
-		
+
+		<p>
+			<label for="multiple-ac-1">Verknüpfte Exponate</label>
+		</p>
+		<AutoComplete
+			@complete="search_exhibits"
+			v-model="exhibit_form.connected_exhibit_ids"
+			inputId="multiple-ac-1"
+			multiple fluid dropdown
+			forceSelection
+			:suggestions="suggested_exhibits"
+			optionLabel="name"
+		/>
+
 		<Button
 			:disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
 			:loading="exhibit_form.is_save_button_loading.value"
