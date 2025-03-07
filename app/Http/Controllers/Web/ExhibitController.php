@@ -177,7 +177,7 @@ class ExhibitController extends Controller
 		$rubric = $this->rubric_repository->get($exhibit->get_rubric_id());
 		$category = $rubric->get_category();
 		
-		$selectable_values = $this->determinate_selectable_values($place->get_location_id());
+		$selectable_values = $this->determinate_selectable_values($exhibit, $place->get_location_id());
 		
 		return Inertia::render('Exhibit/Exhibit', [
 			'selectable_values' => $selectable_values,
@@ -189,7 +189,7 @@ class ExhibitController extends Controller
 			'rubric' => [
 				'id' => $rubric->get_id(),
 				'name' => $rubric->get_name(),
-			],
+			]
 		]);
 	}
 
@@ -240,7 +240,7 @@ class ExhibitController extends Controller
 			'location_id' => $place->get_location_id(),
 			'place_id' => $place->get_id(),
 			// TODO connected_exhibits
-			
+			'connected_exhibit_ids' => $exhibit->get_connected_exhibit_ids(),
 			// Bestandsdaten
 			'preservation_state_id' => $exhibit->get_preservation_state()->get_id(),
 			'current_value' => $exhibit->get_current_value(),
@@ -309,7 +309,7 @@ class ExhibitController extends Controller
 	 * @param ?string $location_id 
 	 * @return SelectableValues
 	 */
-	private function determinate_selectable_values(?string $location_id = null): array {
+	private function determinate_selectable_values(?Exhibit $exhibit = null, ?string $location_id = null): array {
 		$_this = $this;
 		$all_categories_with_rubrics = Category::cases();
 		$all_categories_with_rubrics = array_map(static function (Category $category) use ($_this): array {
@@ -369,6 +369,17 @@ class ExhibitController extends Controller
 			'name' => $language->get_name(),
 		], $all_languages);
 		
+		if ($exhibit) {
+			$all_initial_connected_exhibits = array_map(fn($id) => $this->exhibit_repository->get($id), $exhibit->get_connected_exhibit_ids());
+			$all_initial_connected_exhibits = array_map(static fn(Exhibit $exhibit): array => [
+				'id' => $exhibit->get_id(),
+				'name' => $exhibit->get_name(),
+			], $all_initial_connected_exhibits);
+		} else {
+			$all_initial_connected_exhibits = [];
+		}
+
+
 		$selectable_values = [
 			'categories_with_rubrics' => $all_categories_with_rubrics,
 			'location' => $all_locations,
@@ -377,6 +388,7 @@ class ExhibitController extends Controller
 			'kind_of_acquisition' => $all_kinds_of_acquisition,
 			'currency' => $all_currencies,
 			'language' => $all_languages,
+			'connected_exhibits' => $all_initial_connected_exhibits
 		];
 		if (isset($all_initial_places)) {
 			$selectable_values['initial_places'] = $all_initial_places;

@@ -45,7 +45,7 @@ items.push({
 const images: IImageFormConstructorArgs[] = props.init_props.images.map((_props: IImageInitPageProps): IImageFormConstructorArgs => {
 	return {
 		id: _props.id,
-		description: { 
+		description: {
 			val: _props.description,
 			errs: [],
 		},
