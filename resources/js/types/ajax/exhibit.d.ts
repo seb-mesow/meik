@@ -1,6 +1,6 @@
 import { IExhibitTileProps } from "../page_props/exhibit_overview";
 
-namespace Query {
+namespace TilesQuery {
 	export interface IQueryParams {
 		rubric_id?: string,
 		page_number?: number,
