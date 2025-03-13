@@ -38,7 +38,7 @@ async function load_exhibits(): Promise<void> {
 }
 
 async function ajax_get_paginated(): Promise<void> {
-	const query_params: ExhibitAJAX.Query.IQueryParams = {
+	const query_params: ExhibitAJAX.TilesQuery.IQueryParams = {
 		page_number: page_number,
 		count_per_page: props.main_props.count_per_page,
 	};
@@ -51,7 +51,7 @@ async function ajax_get_paginated(): Promise<void> {
 		params: query_params,
 	};
 	return axios.request(request_config).then(
-		(response: AxiosResponse<ExhibitAJAX.Query.I200ResponseData>) => {
+		(response: AxiosResponse<ExhibitAJAX.TilesQuery.I200ResponseData>) => {
 			exhibits.value.push(...response.data);
 			page_number++;
 			more_exhibits_exist = response.data.length >= props.main_props.count_per_page;
