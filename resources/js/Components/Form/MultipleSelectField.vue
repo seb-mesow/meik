@@ -31,7 +31,7 @@ const props = defineProps<{
 			:optionLabel="optionLabel ?? form.optionLabel"
 			fluid
 			@keydown.tab="form.on_tab_keydown($event)"
-			:pt="{ dropdown: { tabindex: -1 } }"
+			:pt="form.pt"
 		>
 			<template #option="{ option }">
 				<slot name="option" v-bind="option"></slot>

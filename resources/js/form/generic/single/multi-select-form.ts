@@ -1,6 +1,6 @@
 import { Ref, shallowRef } from "vue";
 import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
-import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
+import { AutoCompleteCompleteEvent, AutoCompletePassThroughOptions } from "primevue/autocomplete";
 import { IOptionFinder, NumberOptionFinder, StringOptionFinder } from "@/util/option-finder";
 
 export interface UIMultiSelectForm<O> extends UISingleValueForm2<O[]|null> {
@@ -9,7 +9,8 @@ export interface UIMultiSelectForm<O> extends UISingleValueForm2<O[]|null> {
 	on_before_show(): Promise<void>;
 	on_hide(): Promise<void>;
 	on_tab_keydown(event: KeyboardEvent): Promise<void>;
-	optionLabel: string|undefined;
+	readonly optionLabel: string|undefined;
+	readonly pt: AutoCompletePassThroughOptions;
 }
 
 export interface IMultipleSelectOption<I extends string|number> {
@@ -42,6 +43,7 @@ type _QueryCounterpartGetter<I extends string|number, O extends IMultipleSelectO
 export abstract class MultiSelectForm<I extends string|number, O extends IMultipleSelectOption<I>, R extends boolean = false> extends SingleValueForm2<O[], O[]|null, R> implements IMultiSelectForm<I, O, R>, UIMultiSelectForm<O> {
 	public readonly shown_suggestions: Ref<Readonly<O[]>> = shallowRef([]);
 	public readonly optionLabel: string|undefined;
+	public readonly pt: AutoCompletePassThroughOptions;
 	
 	private is_overlay_shown: boolean = false;
 	// protected selectable_options: O[];
@@ -79,6 +81,19 @@ export abstract class MultiSelectForm<I extends string|number, O extends IMultip
 		
 		this.option_finder = option_finder;
 		this.optionLabel = args.optionLabel;
+		
+		this.pt = {
+			//@ts-expect-error
+			input: () => {
+				return {
+					onkeydown: (event: KeyboardEvent) => {
+						if (event.key === 'Tab' || event.key === 'tab') {
+							this.on_input_tab_keydown(event);
+						}
+					}
+				};
+			},
+		}
 	}
 	
 	protected create_value_from_ui_value(ui_value: O[]|null): O[]|null {
@@ -102,8 +117,9 @@ export abstract class MultiSelectForm<I extends string|number, O extends IMultip
 	public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
 		// useless spread operator required, because of
 		// https://github.com/primefaces/primevue/issues/5601
-		console.log("on_complete");
 		this.shown_suggestions.value = [...(await this.get_shown_suggestions(event.query))];
+		console.log('MultipleSelectForm::on_complete(): ui_value_in_editing ==');
+		console.log(this.ui_value_in_editing);
 	}
 	
 	public async on_before_show(): Promise<void> {
@@ -127,6 +143,17 @@ export abstract class MultiSelectForm<I extends string|number, O extends IMultip
 				value_in_editing.push(first);
 			}
 			return this.set_value_in_editing(value_in_editing);
+		}
+	}
+	
+	/**
+	 * löscht die Eingabe, wenn autocompleted wird
+	 */
+	private async on_input_tab_keydown(event: KeyboardEvent): Promise<void> {
+		if (this.is_overlay_shown && this.shown_suggestions.value.length === 1) {
+			event.preventDefault();
+			//@ts-expect-error
+			event.target.value = '';
 		}
 	}
 	

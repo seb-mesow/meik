@@ -209,7 +209,7 @@ class ExhibitSeeder extends Seeder
 		);
 		$this->create_exhibit(
 			inventory_number: 'T-12345', 
-			name: 'Tiumphator CRN1',
+			name: 'Triumphator CRN1',
 			manufacturer: 'Triumphator Leipzig (Mölkau) DDR',
 			manufacture_date: '1962',
 			rubric_id: 'sonstiges',
