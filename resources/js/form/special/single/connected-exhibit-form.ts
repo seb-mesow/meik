@@ -19,11 +19,21 @@ export class ConnectedExhibitFrom<R extends boolean = false> extends NumberMulti
 			search_in: 'name',
 			optionLabel: 'name',
 		};
+		//@ts-expect-error TypeScript-Bug: search_in hat angeblich "nur" den Typ string.
 		super(_args, id, parent);
 	}
 	
 	protected async get_shown_suggestions(criteria: string): Promise<Readonly<IConnectedExhibit>[]> {
-		return this.ajax_query(criteria);
+		if (criteria.length < 4) {
+			return [];
+		}
+		
+		const found = await this.ajax_query(criteria);
+		const value_in_editing = this.get_value_in_editing();
+		if (Array.isArray(value_in_editing)) {
+			return found.filter((found_exhibit: IConnectedExhibit): boolean => !value_in_editing.some((exhibit_in_editing: IConnectedExhibit): boolean => exhibit_in_editing.id === found_exhibit.id));
+		}
+		return [];
 	}
 	
 	private async ajax_query(criteria: string): Promise<Readonly<IConnectedExhibit>[]> {
