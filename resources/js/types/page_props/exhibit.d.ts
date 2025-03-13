@@ -1,4 +1,4 @@
-import { ICurrency, IExhibit, IKindOfAcquisition, IKindOfProperty, ILanguage, IPreservationState } from "@/form/special/multiple/exhibit-form";
+import { IConnectedExhibit, ICurrency, IKindOfAcquisition, IKindOfProperty, ILanguage, IPreservationState } from "@/form/special/multiple/exhibit-form";
 import { IFreeTextsPageProps } from "./freetexts"
 import { IPlace } from "@/form/single/special/place-form";
 import { ICategoryWithRubrics } from "@/form/special/single/rubric-form";
@@ -13,7 +13,7 @@ export interface ISelectableValuesProps {
 	kind_of_acquisition: IKindOfAcquisition[],
 	currency: ICurrency[],
 	language: ILanguage[],
-	connected_exhibits: IExhibit[]
+	initial_connected_exhibits: IConnectedExhibit[],
 }
 
 export interface IExhibitProps {
@@ -27,7 +27,7 @@ export interface IExhibitProps {
 	location_id: string,
 	place_id: string,
 	// TODO connected_exhibits
-	connected_exhibit_ids: string[],
+	connected_exhibit_ids: int[],
 	// Bestandsdaten
 	preservation_state_id: string,
 	current_value: number,

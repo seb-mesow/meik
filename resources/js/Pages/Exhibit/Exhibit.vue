@@ -5,7 +5,6 @@ import Button from 'primevue/button';
 import FreeTextFields from '@/Components/Exhibit/FreeTextFields.vue';
 import Breadcrumb from 'primevue/breadcrumb';
 import { IExhibitProps, ISelectableValuesProps } from '@/types/page_props/exhibit';
-import Form from '@/Components/Form/Form.vue';
 import ExportButton from '@/Components/Control/ExportButton.vue';
 import {
 	ExhibitForm,
@@ -21,13 +20,12 @@ import InputNumberField from '@/Components/Form/InputNumberField.vue';
 import InputTextField2 from '@/Components/Form/InputTextField2.vue';
 import Fieldset from 'primevue/fieldset';
 import SelectButton from 'primevue/selectbutton';
-import { PartialDate } from '@/util/partial-date';
 import DateField from '@/Components/Form/DateField.vue';
-import * as DateUtil from '@/util/date';
 import OriginalPriceField from '@/Components/Form/OriginalPriceField.vue';
 import { ref } from 'vue';
-import { AutoComplete, AutoCompleteCompleteEvent } from 'primevue';
+import { AutoCompleteCompleteEvent } from 'primevue';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import MultipleSelectField from '@/Components/Form/MultipleSelectField.vue';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
@@ -44,7 +42,7 @@ const props = defineProps<{
 }>();
 
 const suggested_exhibits = ref([]);
-const connected_exhibits = ref(props.connected_exhibits);
+// const connected_exhibits = ref(props.connected_exhibits);
 
 console.log('props.selectable_values ==');
 console.log(props.selectable_values);
@@ -119,7 +117,7 @@ if (props.exhibit_props) {
 		rubric: props.rubric,
 		location_id: props.exhibit_props.location_id,
 		place_id: props.exhibit_props.place_id,
-		// TODO connected_exhibits
+		connected_exhibit_ids: props.exhibit_props.connected_exhibit_ids, // TODO connected_exhibits
 		
 		// Bestandsdaten
 		preservation_state_id: props.exhibit_props.preservation_state_id,
@@ -164,7 +162,7 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 		(response: AxiosResponse) => {
 			suggested_exhibits.value = response.data
 
-			props.connected_exhibits?.
+			// props.connected_exhibits?.
 
 			console.log(suggested_exhibits.value)
 		}
@@ -276,6 +274,8 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 					:form_currency="exhibit_form.original_price.currency"
 					:grid_col="1" :grid_row="3"
 				/>
+				
+				<MultipleSelectField :form="exhibit_form.connected_exhibits" label="Verknüpfte Exponate" :grid_col="1" :grid_col_span="3" :grid_row="4"/>
 			</div>
 			
 			<!-- Buchinformationen -->
@@ -296,21 +296,9 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 				
 				<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" :grid_col="3" :grid_row="3"/>
 				
+				<MultipleSelectField :form="exhibit_form.connected_exhibits" label="Verknüpfte Exponate" :grid_col="1" :grid_col_span="3" :grid_row="4"/>
 			</div>
 		</Fieldset>
-
-		<p>
-			<label for="multiple-ac-1">Verknüpfte Exponate</label>
-		</p>
-		<AutoComplete
-			@complete="search_exhibits"
-			v-model="exhibit_form.connected_exhibit_ids"
-			inputId="multiple-ac-1"
-			multiple fluid dropdown
-			forceSelection
-			:suggestions="suggested_exhibits"
-			optionLabel="name"
-		/>
 
 		<Button
 			:disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"

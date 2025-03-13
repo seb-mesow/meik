@@ -347,7 +347,7 @@ class Exhibit implements IntIdentifiable, Revisionable
 		$this->device_info = null;
 	}
 	
-	public function get_place_id(): string{
+	public function get_place_id(): string {
 		return $this->place_id;
 	}
 	
@@ -373,7 +373,10 @@ class Exhibit implements IntIdentifiable, Revisionable
 	/**
 	 * @param int[] $connected_exhibit_ids
 	 */
-	public function set_connected_exhibit_ids(array $connected_exhibit_ids): void{
+	public function set_connected_exhibit_ids(array $connected_exhibit_ids): void {
+		if (count(array_unique($connected_exhibit_ids)) !== count($connected_exhibit_ids)) {
+			throw new RuntimeException('The array of IDs of connected exhibits must not contain duplicates.');
+		}
 		$this->connected_exhibit_ids = $connected_exhibit_ids;
 	}
 	

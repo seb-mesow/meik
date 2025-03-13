@@ -113,6 +113,10 @@ use Inertia\Response as InertiaResponse;
  *     id: string,
  *     name: string,
  * }
+ * @phpstan-type IConnectedExhibit array{
+ *     id: string,
+ *     name: string,
+ * }
  * 
  * @phpstan-type SelectableValues array{
  *     categories_with_rubrics: ICategoryWithRubrics[],
@@ -123,6 +127,7 @@ use Inertia\Response as InertiaResponse;
  *     kind_of_acquisition: IKindOfAcquisition[],
  *     currency: ICurrency[],
  *     language: ILanguage[],
+ *     initial_connected_exhibits: IConnectedExhibit[],
  * }
  */
 class ExhibitController extends Controller
@@ -239,7 +244,6 @@ class ExhibitController extends Controller
 			'short_description' => $exhibit->get_short_description(),
 			'location_id' => $place->get_location_id(),
 			'place_id' => $place->get_id(),
-			// TODO connected_exhibits
 			'connected_exhibit_ids' => $exhibit->get_connected_exhibit_ids(),
 			// Bestandsdaten
 			'preservation_state_id' => $exhibit->get_preservation_state()->get_id(),
@@ -370,15 +374,12 @@ class ExhibitController extends Controller
 		], $all_languages);
 		
 		if ($exhibit) {
-			$all_initial_connected_exhibits = array_map(fn($id) => $this->exhibit_repository->get($id), $exhibit->get_connected_exhibit_ids());
+			$all_initial_connected_exhibits = array_map(fn($id): Exhibit => $this->exhibit_repository->get($id), $exhibit->get_connected_exhibit_ids());
 			$all_initial_connected_exhibits = array_map(static fn(Exhibit $exhibit): array => [
 				'id' => $exhibit->get_id(),
 				'name' => $exhibit->get_name(),
 			], $all_initial_connected_exhibits);
-		} else {
-			$all_initial_connected_exhibits = [];
 		}
-
 
 		$selectable_values = [
 			'categories_with_rubrics' => $all_categories_with_rubrics,
@@ -392,6 +393,9 @@ class ExhibitController extends Controller
 		];
 		if (isset($all_initial_places)) {
 			$selectable_values['initial_places'] = $all_initial_places;
+		}
+		if (isset($all_initial_connected_exhibits)) {
+			$selectable_values['initial_connected_exhibits'] = $all_initial_connected_exhibits;
 		}
 		return $selectable_values;
 	}

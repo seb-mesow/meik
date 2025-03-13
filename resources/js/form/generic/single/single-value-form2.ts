@@ -95,8 +95,8 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		this.value = args.val;
 		this.value_in_editing = this.value;
 		
-		console.log(`${this.html_id}: init: this.value_in_editing ==`);
-		console.log(this.value_in_editing);
+		// console.log(`${this.html_id}: init: this.value_in_editing ==`);
+		// console.log(this.value_in_editing);
 		
 		//@ts-expect-error
 		this.is_required = ref(args.required);
