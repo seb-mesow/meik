@@ -264,63 +264,31 @@ class ExhibitAJAXController extends Controller
 		return $this->word_service->get_data_sheet($exhibit);
 	}
 
-	public function search_exhibits(Request $request)
+	public function connected_exhibits_query(Request $request)
 	{
-		$query = $request->query('query');
-		$queryParts = explode(' ', $query);
-		$excluded_ids = $request->query('excluded');
-		$selectors = [];
-		foreach ($queryParts as $queryPart) {
-			if(!$queryPart) {
-				continue;
-			}
-			$selector = [
-				'$or' => [
-					[
-						'manufacturer' => [
-							'$regex' => '(?i)' . $queryPart // Regex für manufacturer
-						]
-					],
-					[
-						'name' => [
-							'$regex' => '(?i)' . $queryPart // Regex für name
-						]
-					],
-					[
-						'inventory_number' => [
-							'$eq' => $queryPart // Exakte Übereinstimmung für inventory_number
-						]
-					]
-				]
-			];
-
-			$selectorParts[] = $selector;
-		}
-		// Das ist derzeitig etwas unnötig da wir nur 1 exhibit mitgeben
-		foreach ($excluded_ids as $excluded_exhibit) {
-			$excluded = [
-				'$and' => [
-					[
-						'_id' => [
-							'$not' => [
-								'$eq' => 'exhibit:' . $excluded_exhibit
-							]
-						]
-					]
-				]
-			];
-			$selectorParts[] = $excluded;
-		}
-
+		$criteria = $request->query('criteria');
+		assert(is_string($criteria));
+		$criteria = trim($criteria);
+		
+		// Ersetze allen Zwischen-Whitespace durch eine Regex für mehrere Whitespace-Zeichen.
+		$criteria = mb_ereg_replace('\s+', '\\s+', $criteria);
+		
+		// Exhibits, welche bereits in der Form enthalten sind, werden erst im Frontend weggefiltert.
+		// Dafür ist die DB-Abfrage einfacher und schneller.
+		
 		$selectors = [
-			'$and' => $selectorParts
+			'name' => [
+				'$regex' => '(?i)' . $criteria,
+			]
 		];
-
-		$exhibits = $this->exhibit_repository->query_by_selectors($selectors);
+		
+		$exhibits = $this->exhibit_repository->query($selectors);
+		
 		$exhibits_json = array_map(static fn(Exhibit $exhibit): array => [
 			'id' => $exhibit->get_id(),
 			'name' => $exhibit->get_name(),
 		], $exhibits);
+		
 		return $exhibits_json;
 	}
 }

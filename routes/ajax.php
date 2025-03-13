@@ -46,6 +46,9 @@ Route::prefix('ajax')->group(static function () {
 	Route::get('/exhibits/tiles', [ExhibitAJAXController::class, 'tiles_query'])
 		->name('ajax.exhibit.tiles.query');
 	
+	Route::get('/find/exhibit', [ExhibitAJAXController::class, 'connected_exhibits_query'])
+		->name('ajax.exhibit.connected.query');
+	
 	Route::post('/exhibit', [ExhibitAJAXController::class, 'create'])
 		->name('ajax.exhibit.create');
 	
@@ -108,7 +111,4 @@ Route::prefix('ajax')->group(static function () {
 
 	Route::delete('/rubric/{rubric_id}', [RubricAJAXController::class, 'delete'])
 		->name('ajax.rubric.delete');
-
-	Route::get('/find/exhibit', [ExhibitAJAXController::class, 'search_exhibits'])
-		->name('ajax.exhibit.search');
 });
