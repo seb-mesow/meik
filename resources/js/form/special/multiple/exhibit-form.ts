@@ -667,8 +667,8 @@ export class ExhibitForm implements IExhibitForm {
 			kind_of_property_id: this.kind_of_property.get_value().id,
 			place_id: this.place.get_value().id,
 			rubric_id: this.rubric.get_value().id,
-			// TODO
-			conntected_exhibit_ids: [],
+			//@ts-expect-error (TS-Bug)
+			conntected_exhibit_ids: this.connected_exhibits.get_value().map((exhibit: IConnectedExhibit) => exhibit.id),
 		};
 		if (this.type.get_value().id === 'device') {
 			request_data.device_info = {
