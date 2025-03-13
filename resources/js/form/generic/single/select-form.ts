@@ -53,7 +53,7 @@ export class SelectForm<O extends ISelectOption, R extends boolean = false> exte
 		let initial_value: O|undefined = undefined;
 		if (args.val_id !== undefined) {
 			if (args.selectable_options === undefined || args.selectable_options?.length < 0) {
-				throw new Error(`Assertation failed: SelectForm::constrcutor(): ${id}: val_id is provided, but there are no selectable_options .`);
+				throw new Error(`Assertation failed: SelectForm::constructor(): ${id}: val_id is provided, but there are no selectable_options .`);
 			} else {
 				// until the super() call we are only allowed to use static methods :-/
 				initial_value = SelectForm._find_one_suggestion(SelectForm.full_match_filter, SelectForm.id_counterpart, args.val_id, args.selectable_options);

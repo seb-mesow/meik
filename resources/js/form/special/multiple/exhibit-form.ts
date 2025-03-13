@@ -14,6 +14,7 @@ import { IMultipleValueForm, MultipleValueForm } from "../../generic/multiple/mu
 import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "../single/rubric-form";
 import { ILocation, LocationForm } from "../single/location-form";
 import { IPlace, IPlaceForm, PlaceForm } from "../single/place-form";
+import { IMultiSelectForm, MultiSelectForm, NumberMultipleSelectForm, UIMultiSelectForm } from "@/form/generic/single/multi-select-form";
 
 export interface IExhibitForm {
 	readonly id: number|undefined;
@@ -25,7 +26,7 @@ export interface IExhibitForm {
 	readonly rubric: Readonly<UIGroupSelectForm<IRubric, ICategory>>;
 	readonly location: Readonly<UISelectForm<ILocation>>;
 	readonly place: Readonly<UISelectForm<IPlace>>;
-	// TODO connected_exhibits
+	readonly connected_exhibits: Readonly<UIMultiSelectForm<IConnectedExhibit>>;
 	
 	// Bestandsdaten
 	readonly preservation_state: Readonly<UISelectForm<IPreservationState>>;
@@ -97,6 +98,10 @@ export type ILanguage = Readonly<{
 	id: string,
 	name: string,
 }>;
+export type IConnectedExhibit = Readonly<{
+	id: number,
+	name: string,
+}>;
 
 export type ISelectableValues = Readonly<{
 	categories_with_rubrics: ICategoryWithRubrics[],
@@ -108,6 +113,7 @@ export type ISelectableValues = Readonly<{
 	exhibit_type: IExhibitType[],
 	currency: ICurrency[],
 	language: ILanguage[],
+	initial_connected_exhibits?: IConnectedExhibit[],
 }>;
 
 export interface IExhibitFormConstructorArgs {
@@ -121,7 +127,7 @@ export interface IExhibitFormConstructorArgs {
 		rubric: IRubric,
 		location_id: string,
 		place_id: string,
-		// TODO connected_exhibits
+		connected_exhibit_ids: number[],
 		
 		// Bestandsdaten
 		preservation_state_id: string,
@@ -183,7 +189,7 @@ export class ExhibitForm implements IExhibitForm {
 	public readonly rubric: ISingleValueForm2<IRubric, true> & UIGroupSelectForm<IRubric, ICategory>
 	public readonly location: ISingleValueForm2<ILocation, true> & UISelectForm<ILocation>;
 	public readonly place: IPlaceForm<true> & UISelectForm<IPlace>;
-	// TODO connected_exhibits
+	public readonly connected_exhibits: IMultiSelectForm<number, IConnectedExhibit, false> & UIMultiSelectForm<IConnectedExhibit>;
 
 	// Bestandsdaten
 	public readonly preservation_state: Readonly<ISingleValueForm2<IPreservationState, true> & UISelectForm<IPreservationState>>;
@@ -311,7 +317,13 @@ export class ExhibitForm implements IExhibitForm {
 			selectable_options: args.aux.selectable_values.initial_places,
 		}, 'place', this.common_fields);
 		
-		// TODO connected_exhibits
+		this.connected_exhibits = new NumberMultipleSelectForm<IConnectedExhibit, false>({
+			val_ids: args.data?.connected_exhibit_ids,
+			required: false,
+			selectable_options: args.aux.selectable_values.initial_connected_exhibits,
+			search_in: 'name',
+			optionLabel: 'name',
+		}, 'connected_exhibits', this.common_fields);
 		
 		// Bestandsdaten
 		this.preservation_state = new SelectForm<IPreservationState, true>({

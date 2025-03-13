@@ -23,6 +23,7 @@ use Database\Seeders\Traits\SeederTrait;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use PHPOnCouch\CouchClient;
+use RuntimeException;
 
 class ExhibitSeeder extends Seeder
 {
@@ -326,7 +327,7 @@ class ExhibitSeeder extends Seeder
 			place_id: $place_id ?? fake()->randomElement($this->all_place_ids),
 			rubric_id: $rubric_id ?? fake()->randomElement($this->all_rubric_ids),
 			// rubric_id: $this->special_rubric_id,
-			connected_exhibit_ids: $connected_exhibit_ids ?? [],
+			connected_exhibit_ids: $connected_exhibit_ids ?? $this->determinate_random_exhibit_ids(),
 			free_texts: $free_texts ?? [],
 		);
 		
@@ -374,5 +375,28 @@ class ExhibitSeeder extends Seeder
 			return $str;
 		}
 		return $str . '-' . $time->format('d');
+	}
+	
+	/**
+	 * @return int[]
+	 */
+	private function determinate_random_exhibit_ids(): array {
+		$exhibits = $this->get_exhibits();
+		if (count($exhibits) < 1) {
+			return [];
+		}
+		$ids = [];
+		$count = fake()->numberBetween(0, 5);
+		for ($i = 0; $i < $count; $i++) {
+			$exhibit = $exhibits[array_rand($exhibits)];
+			$id = $exhibit->get_id();
+			if (!in_array($id, $ids, true)) {
+				$ids[] = $id;
+			}
+		}
+		if (count(array_unique($ids)) !== count($ids)) {
+			throw new RuntimeException('connected_exhibit_ids has duplicates');
+		};
+		return $ids;
 	}
 }
