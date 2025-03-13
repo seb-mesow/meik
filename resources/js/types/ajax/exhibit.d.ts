@@ -1,3 +1,4 @@
+import { IConnectedExhibit } from "@/form/special/single/connected-exhibit-form";
 import { IExhibitTileProps } from "../page_props/exhibit_overview";
 
 namespace TilesQuery {
@@ -8,6 +9,15 @@ namespace TilesQuery {
 	};
 	export type IRequestDate = never;
 	export type I200ResponseData = IExhibitTileProps[]; // vielleicht ist irgendwann mal total_count nötig
+	export type I422ResponseData = never; // undefined interface
+}
+
+namespace ConnectedExhibitsQuery {
+	export interface IQueryParams {
+		criteria: string,
+	};
+	export type IRequestDate = never;
+	export type I200ResponseData = IConnectedExhibit[];
 	export type I422ResponseData = never; // undefined interface
 }
 

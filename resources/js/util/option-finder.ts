@@ -14,9 +14,9 @@ export interface IOptionFinder<I extends string|number, O extends IOption<string
 }
 
 abstract class AbstractOptionFinder<I extends string|number, O extends IOption<string|number>> {
-	private determinate_scanned_value_from_id: DeterminateScannedValueFunc<O>;
-	private determinate_scanned_value_from_name: DeterminateScannedValueFunc<O>;
-	private selectable_options: O[];
+	private readonly determinate_scanned_value_from_id: DeterminateScannedValueFunc<O>;
+	private readonly determinate_scanned_value_from_name: DeterminateScannedValueFunc<O>;
+	private readonly selectable_options: O[];
 	
 	public constructor(determinate_searched_value_from_id: DeterminateScannedValueFunc<O>, determinate_searched_value_from_name: DeterminateScannedValueFunc<O>, selectable_options: O[]|undefined) {
 		this.determinate_scanned_value_from_id = determinate_searched_value_from_id;

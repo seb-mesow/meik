@@ -15,6 +15,7 @@ import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "../single/
 import { ILocation, LocationForm } from "../single/location-form";
 import { IPlace, IPlaceForm, PlaceForm } from "../single/place-form";
 import { IMultiSelectForm, MultiSelectForm, NumberMultipleSelectForm, UIMultiSelectForm } from "@/form/generic/single/multi-select-form";
+import { ConnectedExhibitFrom, IConnectedExhibit } from "../single/connected-exhibit-form";
 
 export interface IExhibitForm {
 	readonly id: number|undefined;
@@ -96,10 +97,6 @@ export type ICurrency = Readonly<{
 }>;
 export type ILanguage = Readonly<{
 	id: string,
-	name: string,
-}>;
-export type IConnectedExhibit = Readonly<{
-	id: number,
 	name: string,
 }>;
 
@@ -317,12 +314,10 @@ export class ExhibitForm implements IExhibitForm {
 			selectable_options: args.aux.selectable_values.initial_places,
 		}, 'place', this.common_fields);
 		
-		this.connected_exhibits = new NumberMultipleSelectForm<IConnectedExhibit, false>({
+		this.connected_exhibits = new ConnectedExhibitFrom<false>({
 			val_ids: args.data?.connected_exhibit_ids,
 			required: false,
 			selectable_options: args.aux.selectable_values.initial_connected_exhibits,
-			search_in: 'name',
-			optionLabel: 'name',
 		}, 'connected_exhibits', this.common_fields);
 		
 		// Bestandsdaten

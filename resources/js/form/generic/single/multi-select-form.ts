@@ -22,7 +22,8 @@ export interface IMultipleSelectOption<I extends string|number> {
  * @param O internal value of options and primary return value of `get_value()`
  * @param R whether `get_value()` only returns `O` or `O|null`; default `false`
  */
-export interface IMultiSelectForm<I extends string|number, O extends IMultipleSelectOption<I>, R extends boolean = false> extends ISingleValueForm2<O[], R> {};
+export interface IMultiSelectForm<I extends string|number, O extends IMultipleSelectOption<I>, R extends boolean = false> extends ISingleValueForm2<O[], R> {
+};
 
 export interface IMultiSelectFormConstructorArgs<I extends string|number, O extends IMultipleSelectOption<I>, R extends boolean = false> extends Omit<ISingleValueForm2ConstructorArgs<O[], R>, 'val'> {
 	val_ids: I[]|undefined,
@@ -78,12 +79,6 @@ export abstract class MultiSelectForm<I extends string|number, O extends IMultip
 		
 		this.option_finder = option_finder;
 		this.optionLabel = args.optionLabel;
-		// this.selectable_options = args.selectable_options ?? [];
-		// if (args.search_in === 'name') {
-		// 	this._search_counterpart = this.name_counterpart;
-		// } else {
-		// 	this._search_counterpart = this.id_counterpart;
-		// }
 	}
 	
 	protected create_value_from_ui_value(ui_value: O[]|null): O[]|null {
@@ -107,6 +102,7 @@ export abstract class MultiSelectForm<I extends string|number, O extends IMultip
 	public async on_complete(event: AutoCompleteCompleteEvent): Promise<void> {
 		// useless spread operator required, because of
 		// https://github.com/primefaces/primevue/issues/5601
+		console.log("on_complete");
 		this.shown_suggestions.value = [...(await this.get_shown_suggestions(event.query))];
 	}
 	
@@ -135,7 +131,7 @@ export abstract class MultiSelectForm<I extends string|number, O extends IMultip
 	}
 	
 	// Das für Ajax call verwenden
-	private get_shown_suggestions(criteria: string): Promise<Readonly<O[]>> {
+	protected get_shown_suggestions(criteria: string): Promise<Readonly<O[]>> {
 		return new Promise((resolve) => resolve(this.option_finder.find_all(criteria, 'name', MultiSelectForm.partial_match_filter)));
 	}
 	
@@ -160,26 +156,6 @@ export abstract class MultiSelectForm<I extends string|number, O extends IMultip
 	};
 }
 
-class NumberMultipleSelectOptionHelper<O extends IMultipleSelectOption<number>> {
-	protected id_counterpart(option: O): string {
-		return option.id.toString();
-	};
-	
-	protected name_counterpart(option: O): string {
-		return option.name;
-	}; 
-}
-
-class StringMultipleSelectOptionHelper<O extends IMultipleSelectOption<string>> {
-	protected id_counterpart(option: O): string {
-		return option.id.toString();
-	};
-	
-	protected name_counterpart(option: O): string {
-		return option.name;
-	}; 
-}
-
 export class StringMultipleSelectForm<O extends IMultipleSelectOption<string>, R extends boolean = false> extends MultiSelectForm<string, O, R> {
 	public constructor(args: IMultiSelectFormConstructorArgs<string, O, R>, id: string|number, parent: ISingleValueForm2Parent<O[]>) {
 		super(args, id, parent, new StringOptionFinder(args.selectable_options));
@@ -191,5 +167,3 @@ export class NumberMultipleSelectForm<O extends IMultipleSelectOption<number>, R
 		super(args, id, parent, new NumberOptionFinder(args.selectable_options));
 	}
 }
-
-
