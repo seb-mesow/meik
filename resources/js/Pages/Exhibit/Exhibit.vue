@@ -185,7 +185,7 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 			</Breadcrumb>
 		</template>
 
-		<div class="gap-x-3" :class="{ 'flex': does_exist, 'basis-2/3': does_exist }">
+		<div class="gap-x-3" :class="{ 'flex': does_exist, 'basis-2/3': does_exist, 'items-center': does_exist }">
 			<div class="grid grid-cols-3 gap-x-3" :class="{ 'basis-2/3': does_exist }">
 				<!-- Kerndaten -->
 				<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" :grid_col="1" :grid_col_span="2" :grid_row="1"/>
@@ -208,15 +208,17 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 				<SelectField :form="exhibit_form.place" label="Platz" :grid_col="3" :grid_row="3"/>
 			</div>
 			
-			<div v-if="exhibit_form.id !== undefined" class="basis-1/3">
-				<!-- Button oben rechts -->
+			<div v-if="does_exist" class="basis-1/3 flex flex-col gap-y-3 justify-evenly items-center">
 				<ExportButton/>
 				
 				<a :href="route('exhibit.images.details', { exhibit_id: exhibit_form.id })">
 					<img v-if="props.exhibit_props?.title_image"
-						class="m-auto max-h-[15rem]"
+						class="max-h-[15rem]"
 						:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })"
 					>
+					<div v-else class="">
+						<Button label="Bilder hinzufügen"/>
+					</div>
 				</a>
 			</div>
 		</div>
