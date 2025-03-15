@@ -7,6 +7,7 @@ use App\Models\ImageOrder;
 use App\Repository\Traits\IntIdRepositoryTrait;
 use App\Util\StringIdGenerator;
 use PHPOnCouch\CouchClient;
+use PHPOnCouch\Exceptions\CouchNotFoundException;
 use stdClass;
 
 /**
@@ -29,7 +30,16 @@ final class ImageOrderRepository
 		$this->client = $client;
 		$this->string_id_generator = $string_id_generator;
 	}
-
+	
+	public function find(int $id): ?ImageOrder
+	{
+		try {
+			return $this->get($id);
+		} catch (CouchNotFoundException $e) {
+			return null;
+		}
+	}
+	
 	public function get(int $exhibit_id): ImageOrder {
 		$doc_id = $this->determinate_doc_id_from_model_id($exhibit_id);
 		$image_order_doc = $this->client->getDoc($doc_id);

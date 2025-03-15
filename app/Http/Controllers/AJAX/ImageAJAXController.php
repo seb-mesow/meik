@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AJAX;
 
 use App\Http\Controllers\Controller;
 use App\Models\Image;
+use App\Models\ImageOrder;
 use App\Repository\ImageOrderRepository;
 use App\Repository\ImageRepository;
 use App\Service\ImageService;
@@ -29,16 +30,21 @@ class ImageAJAXController extends Controller
 			description: $description,
 			is_public: $is_public,
 		);
-
 		$this->image_repository->insert($image);
+
 		$image_id = $image->get_id();
-		$image_order = $this->image_order_repository->get($exhibit_id);
-		
 		$file = $request->file('image');
 		$this->image_service->set_file_and_thumbnail($image_id, $file->getContent(), $file->getClientMimeType());
 		
-		$image_order->insert_image_id($image_id, $index);
-		$this->image_order_repository->update($image_order);
+		$image_order = $this->image_order_repository->find($exhibit_id);
+		if ($image_order === null) {
+			$image_order = new ImageOrder(id: $exhibit_id);
+			$image_order->insert_image_id($image_id, $index);
+			$this->image_order_repository->insert($image_order);
+		} else {
+			$image_order->insert_image_id($image_id, $index);
+			$this->image_order_repository->update($image_order);
+		}
 		$ids_order = $image_order->get_image_ids();
 		
 		return response()->json([
