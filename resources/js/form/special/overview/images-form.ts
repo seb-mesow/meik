@@ -62,6 +62,12 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 			parent: this,
 			ui_id: this.next_ui_id++,
 		}));
+		if (this.children.length < 1) {
+			this.children = [new ImageForm({
+				parent: this,
+				ui_id: this.next_ui_id++,
+			})];
+		}
 		this.children_in_editing = shallowRef([...this.children]); // copy of array useful
 		
 		this.ui_has_changes = ref(false);
@@ -130,14 +136,22 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 	
 	public delete_form(form: IImageForm): void {
 		const prev_cnt = this.children_in_editing.value.length;
-		this.set_children_in_editing(this.children_in_editing.value.filter((_form: IImageForm): boolean => _form.ui_id !== form.ui_id));
-		if (this.children_in_editing.value.length !== prev_cnt - 1) {
-			new Error("Assertation failed: count of forms remains equal, despite deleting form");
-		}
 		this.children = this.children.filter((_form: IImageForm): boolean => _form.ui_id !== form.ui_id);
 		if (this.children.length !== prev_cnt - 1) {
 			new Error("Assertation failed: count of forms remains equal, despite deleting form");
 		}
+		
+		let children_in_editing = this.children_in_editing.value.filter((_form: IImageForm): boolean => _form.ui_id !== form.ui_id)
+		if (children_in_editing.length !== prev_cnt - 1) {
+			new Error("Assertation failed: count of forms remains equal, despite deleting form");
+		}
+		if (children_in_editing.length < 1) {
+			children_in_editing = [new ImageForm({
+				parent: this,
+				ui_id: this.next_ui_id++,
+			})];
+		}
+		this.set_children_in_editing(children_in_editing);
 		console.log(`form ${form.ui_id} deleted`)
 	}
 	
