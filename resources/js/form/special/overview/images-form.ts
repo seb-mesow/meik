@@ -22,6 +22,14 @@ export interface IImagesFormConstructorArgs {
 			id: string,
 			description: string,
 			is_public: boolean,
+			image: {
+				height: number,
+				width: number,
+			},
+			thumbnail: {
+				height: number, 
+				width: number,
+			}
 		}[];
 	},
 }
@@ -41,11 +49,7 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 	public constructor(args: IImagesFormConstructorArgs) {
 		this.exhibit_id = args.data.exhibit_id;
 		this.children = args.data.images.map((_args): ImageForm => new ImageForm({
-			data: {
-				id: _args.id,
-				description: _args.description,
-				is_public: _args.is_public,
-			},
+			data: _args,
 			parent: this,
 			ui_id: this.next_ui_id++,
 		}));
