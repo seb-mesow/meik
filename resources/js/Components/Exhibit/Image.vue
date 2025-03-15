@@ -99,10 +99,6 @@ function on_is_public_button_mouseleave(event: MouseEvent): void {
 			:loading="form.is_delete_button_loading.value"
 			/>
 		</div>
-		<div>
-			<p>{{ form.description.ui_value_in_editing }}</p>
-			<p>{{ form.has_changes }}</p>
-		</div>
 	</div>
 </template>
 

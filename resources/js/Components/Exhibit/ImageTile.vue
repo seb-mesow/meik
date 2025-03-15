@@ -17,20 +17,18 @@ onMounted(() => {
 		@dragstart="form.on_tile_dragstart"
 		@dragend="form.on_tile_dragend"
 	>
-		<div class="border border-black">
-			<p>{{ form.ui_id }}</p>
-			<i class="m-auto ms-[-.5rem] pi pi-bars"/>
+		<div>
+			<i class="m-auto ms-[-.25rem] pi pi-bars"/>
 		</div>
 		
-		<div class="md:h-24 h-11 aspect-[4/3] border border-black">
+		<div class="md:h-24 h-11 aspect-[4/3]">
 			<img v-if="form.file_url.value"
 				:src="form.file_url.value"
 				class="h-full w-full object-contain"
 			>
 		</div>
 		
-		<div class="border border-black">
-			<p>{{ form.id }}</p>
+		<div>
 			<p>{{ form.description.ui_value_in_editing }}</p>
 		</div>
 	</div>

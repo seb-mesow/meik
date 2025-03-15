@@ -16,16 +16,16 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 		<NavBar />
 		
 		<!-- Page Content -->
-		<div class="grow-1 border border-red-500 overflow-hidden">
+		<div class="grow-1 overflow-hidden">
 		<!-- <div class="grow-1"> -->
 			
 			<!-- Page Heading -->
-			<header class="bg-white shadow dark:bg-gray-800 items-center w-full flex flex-no-wrap overflow-auto justify-between border border-yellow-500">
+			<header class="bg-white shadow dark:bg-gray-800 items-center w-full flex flex-no-wrap overflow-auto justify-between">
 				<slot name="header"/>
 				<DarkModeToggle/>
 			</header>
 			
-			<main class="overflow-auto lg:p-4 p-2 border-yellow-800 border-2">
+			<main class="overflow-auto lg:p-4 p-2">
 				<slot />
 			</main>
 			

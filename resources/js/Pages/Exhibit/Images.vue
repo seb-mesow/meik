@@ -59,7 +59,7 @@ const form: UIImagesForm = new ImagesForm({
 <template>
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb class="!overflow-x-visible border-white border-1" :home="home" :model="items">
+			<Breadcrumb class="!overflow-x-visible" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -70,7 +70,7 @@ const form: UIImagesForm = new ImagesForm({
 		</template>
 		
 		<div class="w-[100%] lg:flex lg:flex-wrap gap-3">
-			<div class="lg:flex-2 lg:min-w-1xl min-w-xs border-green-500 border-2">
+			<div class="lg:flex-2 lg:min-w-1xl min-w-xs">
 				<Carousel class=""
 					:value="form.children_in_editing.value"
 					>
@@ -79,7 +79,7 @@ const form: UIImagesForm = new ImagesForm({
 					</template>
 				</Carousel>
 			</div>
-			<ImageOrder class="lg:flex-1 lg:min-w-xs min-w-xs lg:mt-0 mt-3 border-white border-2" :form="form" />
+			<ImageOrder class="lg:flex-1 lg:min-w-xs min-w-xs lg:mt-0 mt-3" :form="form" />
 		</div>
 	</AuthenticatedLayout>
 </template>
