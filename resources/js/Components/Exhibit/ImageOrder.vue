@@ -21,8 +21,8 @@ onMounted(() => {
 		</div>
 		<Button @click="form.click_add()" label="Hinzufügen" />
 		<div class="flex justify-between">
-			<Button @click="form.click_image_order_save()" label="Speichern" />
-			<Button @click="form.click_image_order_rollback()" label="Zurücksetzen" />
+			<Button @click="form.click_image_order_save()" :disabled="!form.ui_has_changes.value" label="Speichern" />
+			<Button @click="form.click_image_order_rollback()" :disabled="!form.ui_has_changes.value" label="Zurücksetzen" />
 		</div>
 	</div>
 </template>
