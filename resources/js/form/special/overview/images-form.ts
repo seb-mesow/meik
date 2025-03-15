@@ -1,10 +1,11 @@
 import { IImageIDsOrder } from "@/types/ajax/image";
 import { UIImageForm, IImageFormParent, ImageForm, IImageForm } from "../multiple/image-form";
-import { shallowRef, ShallowRef } from "vue";
+import { ref, Ref, shallowRef, ShallowRef } from "vue";
 import { update_order_from_partial_order } from "@/util/update-order";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import * as ImageAJAX from '@/types/ajax/image';
 import { route } from "ziggy-js";
+import { Mutex, MutexInterface } from "async-mutex";
 
 export interface UIImagesForm {
 	readonly children_in_editing: ShallowRef<Readonly<UIImageForm[]>>;
@@ -13,6 +14,9 @@ export interface UIImagesForm {
 	click_add(): void;
 	click_image_order_save(): void;
 	click_image_order_rollback(): void;
+	readonly ui_has_changes: Readonly<Ref<boolean>>;
+	readonly is_save_button_enabled: Readonly<Ref<boolean>>;
+	readonly is_save_button_loading: Readonly<Ref<boolean>>;
 }
 
 export interface IImagesFormConstructorArgs {
@@ -37,6 +41,9 @@ export interface IImagesFormConstructorArgs {
 export class ImagesForm implements UIImagesForm, IImageFormParent {
 	public readonly exhibit_id: number;
 	public children_in_editing: ShallowRef<(IImageForm & UIImageForm)[]>;
+	public readonly ui_has_changes: Ref<boolean>;
+	public readonly is_save_button_enabled: Ref<boolean>;
+	public readonly is_save_button_loading: Ref<boolean>;
 	
 	private next_ui_id: number = 0;
 	
@@ -46,6 +53,8 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 	private current_tile_order: IImageForm[] = [];
 	private children: (IImageForm & UIImageForm)[];
 	
+	private last_has_changes_state: boolean|undefined = false;
+	
 	public constructor(args: IImagesFormConstructorArgs) {
 		this.exhibit_id = args.data.exhibit_id;
 		this.children = args.data.images.map((_args): ImageForm => new ImageForm({
@@ -54,13 +63,56 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 			ui_id: this.next_ui_id++,
 		}));
 		this.children_in_editing = shallowRef([...this.children]); // copy of array useful
+		
+		this.ui_has_changes = ref(false);
+		this.is_save_button_enabled = ref(false);
+		this.is_save_button_loading = ref(false);
 	}
-
+	
+	private _has_changes(): boolean {
+		if (this.children.length !== this.children_in_editing.value.length) {
+			return true;
+		}
+		for (let i = 0; i < this.children.length; i++) {
+			const existing_child = this.children[i];
+			const child_in_editing = this.children_in_editing.value[i];
+			if (existing_child.id !== child_in_editing.id) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private set_children_in_editing(new_children: (IImageForm & UIImageForm)[]): void {
+		this.refresh(() => {
+			this.children_in_editing.value = [ ...new_children ];
+		});
+	}
+	
+	private has_changes(): boolean {
+		// kein Mutex nötig, solange this._has_changes nicht asynchron ist
+		if (this.last_has_changes_state === undefined) {
+			this.last_has_changes_state = this._has_changes();
+		}
+		this.ui_has_changes.value = this.last_has_changes_state;
+		return this.last_has_changes_state;
+	}
+	
+	private refresh(inner: () => void): void {
+		this.last_has_changes_state = undefined;
+		
+		inner();
+		
+		this.last_has_changes_state = undefined;
+		// do NOT wait / fire and forget
+		this.has_changes();
+	}
+	
 	public click_add(): void {
-		this.children_in_editing.value = [ ...this.children_in_editing.value, new ImageForm({
+		this.set_children_in_editing([ ...this.children_in_editing.value, new ImageForm({
 			parent: this,
 			ui_id: this.next_ui_id++,
-		})];
+		})]);
 	}
 	
 	public get_index_for_persisting(form: IImageForm): number {
@@ -78,7 +130,7 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 	
 	public delete_form(form: IImageForm): void {
 		const prev_cnt = this.children_in_editing.value.length;
-		this.children_in_editing.value = this.children_in_editing.value.filter((_form: IImageForm): boolean => _form.ui_id !== form.ui_id);
+		this.set_children_in_editing(this.children_in_editing.value.filter((_form: IImageForm): boolean => _form.ui_id !== form.ui_id));
 		if (this.children_in_editing.value.length !== prev_cnt - 1) {
 			new Error("Assertation failed: count of forms remains equal, despite deleting form");
 		}
@@ -104,8 +156,8 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 	public update_order_by_partial_order(new_ids_order: IImageIDsOrder): void {
 		console.log(`new_ids_order == ${new_ids_order.join(', ')}`);
 		this.log_order('old_order', this.children_in_editing.value);
-		this.children_in_editing.value = update_order_from_partial_order(this.children_in_editing.value, new_ids_order);
-		this.log_order('new__order', this.children_in_editing.value);
+		this.set_children_in_editing(update_order_from_partial_order(this.children_in_editing.value, new_ids_order));
+		this.log_order('new_order', this.children_in_editing.value);
 	}
 	
 	private log_order(var_name: string, image_order: { ui_id: number, id?: string}[]): void {
@@ -122,7 +174,7 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 	public set_currently_dragged_tile(image: IImageForm): void {
 		this.currently_dragged_tile = image;
 		this.currently_not_dragged_tiles = this.children_in_editing.value.filter((child) => child !== image);
-		this.current_tile_order = [ ...this.children_in_editing.value]; // so eine Kopie sein, daher spread
+		this.current_tile_order = [ ...this.children_in_editing.value]; // soll eine Kopie sein; daher spread
 	}
 	
 	public on_tile_container_dragover(event: DragEvent): void {
@@ -149,8 +201,9 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 		this.current_tile_order.forEach(tile => {
 			str += ' ' + tile.ui_id;
 		});
-		this.children_in_editing.value = this.current_tile_order as (IImageForm & UIImageForm)[];
+		this.set_children_in_editing(this.current_tile_order as (IImageForm & UIImageForm)[]);
 		console.log(str);
+		
 	}
 	
 	private determinate_closest_draggable_tile_below(drag_over_event: MouseEvent): IImageForm|null {
@@ -171,17 +224,33 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 		return closest_tile_below;
 	}
 	
-	public click_image_order_save(): void {
-		this.ajax_move();
+	public async click_image_order_save(): Promise<void> {
+		this.commit();
+		
+		this.is_save_button_loading.value = true;
+		await this.ajax_move();
+		this.is_save_button_loading.value = false;
 	}
 	
 	public click_image_order_rollback(): void {
-		throw new Error("Method not implemented.");
+		this.rollback();
+	}
+	
+	private commit(): void {
+		this.children = [...this.children_in_editing.value];
+		this.last_has_changes_state = false;
+		this.ui_has_changes.value = false;
+	}
+	
+	private rollback(): void {
+		this.set_children_in_editing(this.children);
+		this.last_has_changes_state = false;
+		this.ui_has_changes.value = false;
 	}
 	
 	private async ajax_move(): Promise<void> {
 		const cur_ids_order: string[] = [];
-		for (const image of this.children_in_editing.value) {
+		for (const image of this.children) {
 			if (image.id !== undefined) {
 				cur_ids_order.push(image.id);
 			}
@@ -193,8 +262,6 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 			data: cur_ids_order,
 		};
 		
-		return axios.request(request_config).then((response: AxiosResponse) => {
-			this.children = this.children_in_editing.value;
-		});
+		return axios.request(request_config);
 	}
 }
