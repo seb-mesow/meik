@@ -389,7 +389,6 @@ class ExhibitController extends Controller
 			'kind_of_acquisition' => $all_kinds_of_acquisition,
 			'currency' => $all_currencies,
 			'language' => $all_languages,
-			'connected_exhibits' => $all_initial_connected_exhibits
 		];
 		if (isset($all_initial_places)) {
 			$selectable_values['initial_places'] = $all_initial_places;

@@ -1,13 +1,7 @@
-
-<template>
-    <div class="card flex justify-center">
-        <ExportButton label="Exportiere QR-Code ..." @click="save" :model="items" />
-    </div>
-</template>
-
 <script setup>
 import { useToast } from "primevue/usetoast";
-import ExportButton from 'primevue/splitbutton';
+import SplitButton from 'primevue/splitbutton';
+
 const toast = useToast();
 
 const items = [
@@ -42,8 +36,8 @@ const items = [
 const save = () => {
     toast.add({ severity: 'success', summary: 'Success', detail: 'Data Saved', life: 3000 });
 };
-
-
 </script>
 
-
+<template>
+	<SplitButton label="Erstelle QR-Code" @click="save" :model="items" />
+</template>
