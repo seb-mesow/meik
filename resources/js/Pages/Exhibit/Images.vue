@@ -45,13 +45,7 @@ items.push({
 const form: UIImagesForm = new ImagesForm({
 	data: {
 		exhibit_id: props.init_props.exhibit_id,
-		images: props.init_props.images.map((_prop) => {
-			return {
-				id: _prop.id,
-				description: _prop.description,
-				is_public: _prop.is_public,
-			};
-		}),
+		images: props.init_props.images,
 	},
 });
 // const children = form.children
@@ -76,7 +70,7 @@ const form: UIImagesForm = new ImagesForm({
 		</template>
 		
 		<div class="w-[100%] lg:flex lg:flex-wrap gap-3">
-			<div class="lg:flex-2 lg:min-w-2xl min-w-xs border-green-500 border-2">
+			<div class="lg:flex-2 lg:min-w-1xl min-w-xs border-green-500 border-2">
 				<Carousel class=""
 					:value="form.children_in_editing.value"
 					>

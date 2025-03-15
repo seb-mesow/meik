@@ -18,6 +18,14 @@ use Inertia\Response as InertiaResponse;
  *     id: string,
  *     description: string,
  *     is_public: bool,
+ *     image: array{
+ *         height: int,
+ *         width: int
+ *     },
+ *     thumbnail: array{
+ *         height: int,
+ *         width: int
+ *     }
  * }
  */
 class ImagesController extends Controller
@@ -62,6 +70,14 @@ class ImagesController extends Controller
 			'id' => $image->get_id(),
 			'description' => $image->get_description(),
 			'is_public' => $image->get_is_public(),
+			'image' => [
+				'height' => $image->get_image_height(),
+				'width' => $image->get_image_width(),
+			],
+			'thumbnail' => [
+				'height' => $image->get_thumbnail_height(),
+				'width' => $image->get_thumbnail_width(),
+			]
 		], $images);
 	}
 

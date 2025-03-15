@@ -11,7 +11,12 @@ export interface UIImageForm {
 	readonly ui_id: number;
 	readonly description: Readonly<UISingleValueForm2<string>>;
 	readonly is_public: Readonly<UISingleValueForm2<boolean>>;
-	readonly file_url: Readonly<Ref<string>>;
+	readonly file_url: Readonly<Ref<string|undefined>>;
+	readonly height: Readonly<Ref<number|undefined>>;
+	readonly width: Readonly<Ref<number|undefined>>;
+	readonly thumbnail_url: Readonly<Ref<string|undefined>>;
+	readonly thumbnail_height: Readonly<Ref<number|undefined>>;
+	readonly thumbnail_width: Readonly<Ref<number|undefined>>;
 	on_dragover(e: DragEvent): void;
 	on_drop(e: DragEvent): void;
 	click_save(): void;
@@ -47,6 +52,14 @@ export interface IImageFormConstructorArgs {
 		id: string,
 		description: string,
 		is_public: boolean,
+		image: {
+			height: number,
+			width: number,
+		},
+		thumbnail: {
+			height: number,
+			width: number,
+		}
 	},
 	parent: IImageFormParent,
 	ui_id: number,
@@ -60,7 +73,14 @@ export class ImageForm implements UIImageForm, IImageForm {
 	public readonly is_save_button_loading: Ref<boolean> = ref(false);
 	public readonly has_changes: Ref<boolean>;
 	public readonly is_delete_button_loading: Ref<boolean> = ref(false);
-	public readonly file_url: Ref<string>;
+	
+	public readonly file_url: Ref<string|undefined>;
+	public readonly height: Ref<number|undefined>;
+	public readonly width: Ref<number|undefined>;
+	public readonly thumbnail_url: Ref<string|undefined>;
+	public readonly thumbnail_height: Ref<number|undefined>;
+	public readonly thumbnail_width: Ref<number|undefined>;
+	
 	public tile: HTMLElement = null as any;
 	
 	private readonly parent: IImageFormParent;
@@ -92,7 +112,14 @@ export class ImageForm implements UIImageForm, IImageForm {
 		this.parent = args.parent;
 		this.ui_id = args.ui_id;
 		console.log(`construct: this.ui_id == ${this.ui_id}`);
+		
 		this.file_url = ref(this.determinate_external_file_url());
+		this.height = ref(args.data?.image.height);
+		this.width = ref(args.data?.image.width);
+		this.thumbnail_url = ref(this.determinate_external_thumbnail_url());
+		this.thumbnail_height = ref(args.data?.thumbnail.height);
+		this.thumbnail_width = ref(args.data?.thumbnail.width);
+		
 		this.has_changes = ref(false);
 		
 		// this.dragover_event_listener = (e: DragEvent) => { this.on_dragover(e); };
@@ -139,7 +166,9 @@ export class ImageForm implements UIImageForm, IImageForm {
 					this.file = file;
 					this.new_file = true;
 					this.has_changes.value = true;
-					URL.revokeObjectURL(this.file_url.value);
+					if (this.file_url.value !== undefined) {
+						URL.revokeObjectURL(this.file_url.value);
+					}
 					this.file_url.value = URL.createObjectURL(this.file);
 					return;
 				}
@@ -147,11 +176,18 @@ export class ImageForm implements UIImageForm, IImageForm {
 		}
 	}
 	
-	private determinate_external_file_url(): string {
+	private determinate_external_file_url(): string|undefined {
 		if (this.id) {
 			return route('ajax.image.get_image', { image_id: this.id });
 		}
-		return '';
+		return undefined;
+	}
+	
+	private determinate_external_thumbnail_url(): string|undefined {
+		if (this.id) {
+			return route('ajax.image.get_thumbnail', { image_id: this.id });
+		}
+		return undefined;
 	}
 	
 	public on_mounted(): void {
