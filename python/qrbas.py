@@ -1,15 +1,17 @@
-import qrcode
-import sys
+import os
 import tempfile
+import sys
+import qrcode
 
-data = sys.argv[0]
-
-img = qrcode.make(data, version=1, error_correction=qrcode.ERROR_CORRECT_Q, box_size=1, border=0)
-
-temp_file = tempfile.NamedTemporaryFile('w', encoding="cp1252", delete=False)
+temp_dir = os.path.join(tempfile.gettempdir(), 'meik', 'qr_code', 'basic_script')
+os.makedirs(temp_dir, exist_ok=True)
+temp_file = tempfile.NamedTemporaryFile(mode='w', encoding="cp1252", dir=temp_dir, delete=False)
 
 row_number = 1
 all_lines = []
+
+data = sys.argv[0]
+img = qrcode.make(data, version=1, error_correction=qrcode.ERROR_CORRECT_Q, box_size=1, border=0)
 
 for i in range(21):
 	row = []
@@ -44,7 +46,5 @@ for line in program_lines:
 	row_number += 1
 
 temp_file.write("\n".join(all_lines))
-
 temp_file.close()
-
 print(temp_file.name)
