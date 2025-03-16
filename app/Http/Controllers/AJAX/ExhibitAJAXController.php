@@ -265,9 +265,14 @@ class ExhibitAJAXController extends Controller
 	public function get_qr_code_basic_script(int $exhibit_id): BinaryFileResponse
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
-		$file_path = $this->basic_script_service->create_qr_code_basic_script($exhibit);
-		// throw new RuntimeException('not fully implemented yet');
-		return response()->download($file_path)->deleteFileAfterSend();
+		$ret = $this->basic_script_service->create_qr_code_basic_script($exhibit);
+		return response()->download(
+			file: $ret['tmp_file_path'],
+			name: $ret['user_file_name'],
+			headers: [
+				'Content-Type' => $ret['content_type'] . '; charset=' . $ret['charset'],
+			],
+		)->deleteFileAfterSend();
 	}
 	
 	public function get_data_sheet(int $exhibit_id)

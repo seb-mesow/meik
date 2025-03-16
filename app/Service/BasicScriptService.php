@@ -10,9 +10,14 @@ final class BasicScriptService {
 	
 	/**
 	 * @param \App\Models\Exhibit $exhibit
-	 * @return string file path of the 
+	 * @return array{
+	 *     tmp_file_path: string,
+	 *     user_file_name: string,
+	 *     content_type: string,
+	 *     charset: string,
+	 * }
 	 */
-	public function create_qr_code_basic_script(Exhibit $exhibit): string {
+	public function create_qr_code_basic_script(Exhibit $exhibit): array {
 		$result_code = 255;
 		
 		$cwd = '/var/python';
@@ -38,6 +43,18 @@ final class BasicScriptService {
 		if ($result_code !== 0 || !is_string($stdout) || $stdout === '' || $stderr !== '') {
 			throw new RuntimeException('Python script qrbas.py failed.');
 		}
-		return trim($stdout);
+		
+		$user_file_name = trim($exhibit->get_name());
+		$user_file_name = mb_ereg_replace('\s+', '_', $user_file_name);
+		$user_file_name = mb_ereg_replace('[/\\\\]', '', $user_file_name);
+		$user_file_name = 'QR-Code_' . $user_file_name . '.bas';
+		$tmp_file_path = trim($stdout);
+		
+		return [
+			'tmp_file_path' => $tmp_file_path,
+			'user_file_name' => $user_file_name,
+			'content_type' => 'text/x-basic',
+			'charset' => 'windows-1252',
+		];
 	}
 }
