@@ -10,12 +10,15 @@ services:
     profiles: [dev, prod, prod-ssr]
     build:
       context: app
+      additional_contexts:
+        python: ../python
       args:
         NORMAL_UID_GID: ${NORMAL_UID_GID}
     volumes:
       - sock:/run/php/fpm/sock
       - ../:/var/www
       - ../log/app:/var/log
+      - ../python:/var/python/src
     restart: on-failure:2
   
   node:
