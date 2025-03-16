@@ -18,14 +18,11 @@ use App\Models\Parts\FreeText;
 use App\Models\Parts\Price;
 use App\Repository\ExhibitRepository;
 use App\Service\ExhibitService;
-use App\Service\BasicScriptService;
+use App\Service\QrCodeService;
 use App\Service\WordService;
 use App\Util\DateTimeUtil;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ExhibitAJAXController extends Controller
@@ -33,7 +30,7 @@ class ExhibitAJAXController extends Controller
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly ExhibitService $exhibit_service,
-		private readonly BasicScriptService $basic_script_service,
+		private readonly QrCodeService $qr_code_service,
 		private readonly WordService $word_service,
 		private readonly DateTimeUtil $date_time_util,
 	) {}
@@ -250,22 +247,26 @@ class ExhibitAJAXController extends Controller
 		return response()->json( $exhibits_json);
 	}
 	
-	public function get_qr_code(string $exhibit_id)
+	public function get_qr_code(int $exhibit_id)
 	{
-		$text = $exhibit_id;
-		$qrCode = new QrCode($text);
-
-		// Create a new writer instance
-		$writer = new PngWriter();
-		$result = $writer->write($qrCode);
-
-		return response($result->getString(), 200)->header('Content-Type', 'image/png');
+		$exhibit = $this->exhibit_repository->get($exhibit_id);
+		$ret =  $this->qr_code_service->create_qr_code($exhibit);
+		
+		return response()->download(
+			file: $ret['tmp_file_path'],
+			name: $ret['user_file_name'],
+			headers: [
+				'Content-Type' => $ret['content_type'],
+			],
+		)->deleteFileAfterSend();
+		// return response($result->getString(), 200)->header('Content-Type', 'image/png');
 	}
 	
 	public function get_qr_code_basic_script(int $exhibit_id): BinaryFileResponse
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
-		$ret = $this->basic_script_service->create_qr_code_basic_script($exhibit);
+		$ret = $this->qr_code_service->create_qr_code_basic_script($exhibit);
+		
 		return response()->download(
 			file: $ret['tmp_file_path'],
 			name: $ret['user_file_name'],
