@@ -208,8 +208,8 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 				<SelectField :form="exhibit_form.place" label="Platz" :grid_col="3" :grid_row="3"/>
 			</div>
 			
-			<div v-if="does_exist" class="basis-1/3 flex flex-col gap-y-3 justify-evenly items-center">
-				<ExportButton/>
+			<div v-if="exhibit_form.id !== undefined" class="basis-1/3 flex flex-col gap-y-3 justify-evenly items-center">
+				<ExportButton :exhibit_id="exhibit_form.id"/>
 				
 				<a :href="route('exhibit.images.details', { exhibit_id: exhibit_form.id })">
 					<img v-if="props.exhibit_props?.title_image"
