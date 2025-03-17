@@ -14,7 +14,6 @@ const form = props.form;
 
 <template>
 	<div>
-		<p>DEBUG: {{ form.id }}</p>
 		<div class="flex justify-between">
 			<InputField label="Überschrift" :form="form.heading"/>
 			<ToggleButton v-model="form.is_public.val" onLabel='öffentlich' offLabel="intern" class="w-28"/>

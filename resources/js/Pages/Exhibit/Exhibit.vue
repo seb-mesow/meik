@@ -147,28 +147,6 @@ const exhibit_form: IExhibitForm = new ExhibitForm(form_constructor_args);
 const does_exist: boolean = exhibit_form.id !== undefined;
 const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\nMONAT JJJJ\nJJJJ';
 
-async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> {
-	const query = event.query
-	const request_config: AxiosRequestConfig = {
-		method: "get",
-		url: route(`ajax.exhibit.search`),
-		// Hier könnten auch weitere exhibit id eingebracht werden. 
-		params: {
-			'excluded': [props.exhibit_props?.id],
-			'query': query
-		}
-	};
-	return axios.request(request_config).then(
-		(response: AxiosResponse) => {
-			suggested_exhibits.value = response.data
-
-			// props.connected_exhibits?.
-
-			console.log(suggested_exhibits.value)
-		}
-	);
-}
-
 </script>
 
 <template>
@@ -223,7 +201,7 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 			</div>
 		</div>
 		
-		<div class="flex flex-wrap gap-x-3 items-start">
+		<div class="flex flex-wrap gap-3 pb-3 items-start">
 			<!-- Bestandsdaten -->
 			<Fieldset legend="Bestandsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1">
 				<div class="grid grid-cols-2 gap-x-3">
@@ -250,7 +228,7 @@ async function search_exhibits(event: AutoCompleteCompleteEvent): Promise<void> 
 		</div>
 		
 		
-		<Fieldset legend="Geräteinformationen">
+		<Fieldset class="gap-3" legend="Geräteinformationen">
 			<template #legend>
 				<SelectButton
 					:modelValue="exhibit_form.type.ui_value_in_editing"
