@@ -15,7 +15,6 @@ use App\Models\Parts\BookInfo;
 use App\Models\Parts\DeviceInfo;
 use App\Models\Parts\Price;
 use App\Models\Place;
-use App\Models\Rubric;
 use App\Repository\ExhibitRepository;
 use App\Repository\PlaceRepository;
 use App\Repository\RubricRepository;

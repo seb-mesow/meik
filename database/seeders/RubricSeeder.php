@@ -7,24 +7,28 @@ namespace Database\Seeders;
 use App\Models\Enum\Category;
 use App\Models\Rubric;
 use App\Repository\RubricRepository;
+use Database\Seeders\Traits\SeederTrait;
 use Illuminate\Database\Seeder;
+use PHPOnCouch\CouchClient;
 
 class RubricSeeder extends Seeder
 {
+	use SeederTrait;
+	
 	public function __construct(
+		CouchClient $client,
 		private readonly RubricRepository $rubric_repository
-	) {}
+	) {
+		$this->client = $client;
+	}
 
 	/**
 	 * Seed the application's database.
 	 */
 	public function run(): void
 	{
-		$all_rubrics = $this->rubric_repository->get_all();
-		foreach ($all_rubrics as $rubric) {
-			$this->rubric_repository->remove($rubric);
-		}
-
+		$this->remove_all_documents_by_model_type_id(RubricRepository::MODEL_TYPE_ID);
+		
 		$this->create_rubric(new Rubric(
 			name: 'PC',
 			category: Category::HARDWARE
