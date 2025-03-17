@@ -7,23 +7,32 @@ use App\Models\Location;
 use App\Models\Place;
 use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
+use Database\Seeders\Traits\SeederTrait;
 use Illuminate\Database\Seeder;
+use PHPOnCouch\CouchClient;
 
 class PlaceSeeder extends Seeder
 {
+	use SeederTrait;
+	
 	private const int COUNT = 100;
 	
 	private array $places = [];
 	
 	public function __construct(
+		CouchClient $client,
 		private readonly PlaceRepository $place_repository,
 		private readonly LocationRepository $location_repository,
-	) {}
+	) {
+		$this->client = $client;
+	}
 	
 	/**
 	 * Run the database seeds.
 	 */
 	public function run(): void {
+		$this->remove_all_documents_by_model_type_id(PlaceRepository::MODEL_TYPE_ID);
+		
 		$raum_628_id = $this->find_location("Raum 628")->get_id();
 		
 		$this->create_place(new Place(
