@@ -58,6 +58,13 @@ class UserSeeder extends Seeder
 			surname: "Schmidt",
 		);
 		$this->create_user(
+			username: 'gruppe1',
+			password: '_gRuPpe1=234',
+			is_admin: true,
+			forename: "Gruppe 1",
+			surname: "MEIK",
+		);
+		$this->create_user(
 			username: 'm'.'u'.'e'.'l'.'l'.'e'.'r',
 			password: '_'.'m'.'U'.'e'.'L'.'l'.'E'.'r'.'='.'1'.'2'.'3',
 			is_admin: true,
