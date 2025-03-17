@@ -8,6 +8,11 @@ import PrimaryButton from '@/Components/Control/PrimaryButton.vue';
 import TextInput from '@/Components/Form/old/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import Form from '@/Components/Form/Form.vue';
+import InputTextField2 from '@/Components/Form/InputTextField2.vue';
+import { ILoginForm, LoginForm } from '@/form/special/multiple/login-form';
+import { Button, Toast, useToast } from 'primevue';
+import CheckBoxField from '@/Components/Form/CheckBoxField.vue';
+import InputErrors from '@/Components/Form/Wrapper/InputErrors.vue';
 
 defineProps<{
 	canResetPassword?: boolean;
@@ -19,17 +24,57 @@ const form = useForm({
 	password: '',
 	remember: false,
 });
+
+const toast = useToast();
+const login_form: ILoginForm = new LoginForm({
+	aux: {
+		toast_service: toast,
+	}
+});
+
 </script>
 
 <template>
+	<Toast/>
 	<GuestLayout>
 		<Head title="Log in" />
+		
 		<div v-if="status" class="mb-4 text-sm font-medium text-green-600">
 			{{ status }}
 		</div>
-		<Form id="login" method="post" :action="route('login')" :form="form" @onFinish="form.reset('password')">
+		
+		<InputErrors :errs="login_form.ui_errs.value" class="mb-3" />
+		
+		<div class="grid grid-cols-1 gap-x-3">
+			<InputTextField2
+				:form="login_form.username" label="Benutzername"
+				:grid_col="1" :grid_row="1"
+			/>
+			
+			<InputTextField2
+				:form="login_form.password" type="password" label="Passwort"
+				:grid_col="1" :grid_row="2"
+				classLabel="mt-3"
+			/>
+			
+			<CheckBoxField :form="login_form.remember" label="automatisch einloggen"
+				:grid_col="1" :grid_row="3"
+				classErrors="mt-3"
+			/>
+		</div>
+		
+		<Button
+			:disabled="!login_form.is_login_button_enabled.value || login_form.is_login_button_loading.value"
+			:loading="login_form.is_login_button_loading.value"
+			type='button'
+			label="Login"
+			@click="login_form.click_login()"
+			class="mt-3"
+		/>
+		
+		<!-- Form id="login" method="post" :action="route('login')" :form="form" @onFinish="form.reset('password')">
 			<div>
-				<InputLabel for="username" value="Username" />
+				<InputLabel for="username" value="Benutzername" />
 				<TextInput
 					id="username"
 					type="text"
@@ -77,6 +122,6 @@ const form = useForm({
 					Log in
 				</PrimaryButton>
 			</div>
-		</Form>
+		</Form -->
 	</GuestLayout>
 </template>
