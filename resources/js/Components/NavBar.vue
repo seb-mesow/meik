@@ -11,10 +11,10 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 		<nav>
 			<div class="navbar">
 				<img class="logo" :src="isc_logo_url">
-				<div>
+				<div class="flex flex-col gap-4">
 					<a :href="route('exhibit.overview')">
-						<div class="link">
-							<div class="icon-box">
+						<div class="link flex items-center justify-center rounded-sm hover:bg-[#249cda]">
+							<div class="">
 								<span class="icon material-symbols-outlined">
 									archive
 								</span>
@@ -24,10 +24,10 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 							</div>
 						</div>
 					</a>
-					
+
 					<a :href="route('location.overview')">
-						<div class="link">
-							<div class="icon-box">
+						<div class="link flex items-center justify-center hover:bg-[#249cda]">
+							<div class=" flex items-center justify-center">
 								<span class="icon material-symbols-outlined">
 									location_on
 								</span>
@@ -37,10 +37,10 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 							</div>
 						</div>
 					</a>
-					
+
 					<a :href="route('user.overview')">
-						<div class="link">
-							<div class="icon-box">
+						<div class="link flex items-center justify-center hover:bg-[#249cda]">
+							<div class="">
 								<span class="icon material-symbols-outlined">
 									person
 								</span>
@@ -64,55 +64,65 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 	flex-shrink: 0;
 	flex-basis: 8rem;
 }
+
 .navbar {
 	width: 8rem;
 	height: 100vh;
 	position: fixed;
 	top: 0;
 	left: 0;
-	background-color: #003366; /* Dunkelblau */
+	background-color: #003366;
+	/* Dunkelblau */
 	display: flex;
 	justify-content: space-between;
 	flex-direction: column;
 	align-items: center;
 }
+
 .logo {
 	padding: 0.25rem;
 }
+
 .link {
 	width: 7.5rem;
 	height: 3rem;
-	display: flow-root;
 	color: rgb(255, 255, 255);
 }
-.icon-box {
+
+/* . {
 	display: inline flow-root;
 	vertical-align: middle;
 	width: 33%;
 	text-align: center;
-}
+} */
 .label-box {
 	display: inline flow-root;
 	width: 67%;
 	text-align: center;
 }
+
 @media screen and (max-width: 64rem) {
 	.navbar-underlay {
 		flex-basis: 3rem;
 	}
+
 	.navbar {
 		width: 3rem;
 		justify-content: space-around;
 	}
+
 	.logo {
 		display: none;
 	}
+
 	.link {
 		width: 3.5rem;
 	}
-	.icon-box {
+
+	. {
 		width: 100%;
-	}	
+	}
+
 	.label-box {
 		display: none;
 	}

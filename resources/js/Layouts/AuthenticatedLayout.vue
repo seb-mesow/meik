@@ -12,12 +12,12 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 <template>
 	<!-- Hier keine Popups, Toasts, DynamicDialog usw. einfügen! -->
 	<!-- Stattdessen diese nur in solchen Seiten einfügen, wo sie auch benötigt werden -->
-	<div class="w-full flex flex-no-wrap">
+	<div class="w-full flex h-screen flex-no-wrap">
 		
 		<NavBar />
 		
 		<!-- Page Content -->
-		<div class="grow-1 overflow-hidden">
+		<div class="grow-1 h-full flex flex-col">
 		<!-- <div class="grow-1"> -->
 			
 			<!-- Page Heading -->
@@ -29,7 +29,7 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 				</div>
 			</header>
 			
-			<main class="overflow-auto lg:p-4 p-2">
+			<main class="overflow-auto flex flex-col bg-gray-100 dark:bg-gray-600 h-full w-full lg:p-4 p-2">
 				<slot />
 			</main>
 			

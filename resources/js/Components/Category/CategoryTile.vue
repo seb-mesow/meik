@@ -18,11 +18,10 @@ const props = defineProps<{
 
 <style lang="css" scoped>
 .category-tile {
-	width: 300px !important;
-	height: 100px;
-	border-radius: 20px;
-	padding: 20px;
-	margin: 10px;
+	width: 35rem;
+	height: auto;
+	border-radius: 1rem;
+	padding: 1rem;
 	color: black;
 	background-color: #808080;
 }
