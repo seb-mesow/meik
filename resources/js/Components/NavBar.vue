@@ -51,7 +51,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
 						</div>
 					</a>
 				</div>
-				<DarkModeToggle/>
+				
 				<img class="logo" :src="fv_logo_url">
 			</div>
 		</nav>
