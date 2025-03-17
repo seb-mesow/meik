@@ -1,6 +1,8 @@
 #!/usr/bin/env -S bash -euo pipefail -O extglob
 set -x;
 
+export BUILDKIT_PROGRESS=plain
+
 function task_start_msg() {
 	echo -e "\n${1} ...\n";
 }
