@@ -14,13 +14,13 @@ const items = [
 		label: 'Erstelle BASIC-Skript für QR-Code',
 		url: route('ajax.exhibit.get_qr_code_basic_script', { exhibit_id: props.exhibit_id }),
 	},
-	{
-		label: 'Erstelle Barcode',
-		command: () => {
-			toast.add({ severity: 'success', summary: 'Exportiere Barcode', detail: 'export Barcode', life:3000 });
-			// url:;
-		}
-	},
+	// {
+	// 	label: 'Erstelle Barcode',
+	// 	command: () => {
+	// 		toast.add({ severity: 'success', summary: 'Exportiere Barcode', detail: 'export Barcode', life:3000 });
+	// 		// url:;
+	// 	}
+	// },
 ];
 
 const save = () => {
