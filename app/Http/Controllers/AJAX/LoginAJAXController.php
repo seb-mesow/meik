@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Web\Auth;
+namespace App\Http\Controllers\AJAX;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
@@ -9,21 +9,27 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Inertia\Response;
+use Throwable;
 
-class LoginController extends Controller
+class LoginAJAXController extends Controller
 {
 	/**
-	 * Display the login view.
+	 * Handle an incoming authentication request.
 	 */
-	public function login_form(): Response
+	public function login(LoginRequest $request): JsonResponse
 	{
-		return Inertia::render('Auth/Login', [
-			'canResetPassword' => Route::has('password.request'),
-			'status' => session('status'),
-		]);
+		try {
+			$request->authenticate();
+			
+			// erneuert u.a. den CSRF-Token
+			$request->session()->regenerate();
+		} catch (Throwable $e) {
+			return response(status: 422)->json();
+		}
+		
+		// !!! Ändere auch in web.php für die Route 'root' !!!
+		// return redirect()->route('category.overview');
+		return response()->json();
 	}
 
 	/**
