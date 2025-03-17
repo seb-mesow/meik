@@ -1,14 +1,14 @@
 # Notizen zur Implementierung der Authentifizierung
 
 - [Notizen zur Implementierung der Authentifizierung](#notizen-zur-implementierung-der-authentifizierung)
-  - [Aufbau](#aufbau)
-  - [Ablauf Login](#ablauf-login)
-  - [Ablauf Authentifizierung einer Request, wenn ordentlich eingeloggt](#ablauf-authentifizierung-einer-request-wenn-ordentlich-eingeloggt)
-  - [Ablauf Authentifizierung einer Request nur über Remember-Token](#ablauf-authentifizierung-einer-request-nur-über-remember-token)
-  - [Ausloggen](#ausloggen)
-  - [Remember-Token](#remember-token)
-  - [Session](#session)
-  - [CSRF-Token](#csrf-token)
+	- [Aufbau](#aufbau)
+	- [Ablauf Login](#ablauf-login)
+	- [Ablauf Authentifizierung einer Request, wenn ordentlich eingeloggt](#ablauf-authentifizierung-einer-request-wenn-ordentlich-eingeloggt)
+	- [Ablauf Authentifizierung einer Request nur über Remember-Token](#ablauf-authentifizierung-einer-request-nur-über-remember-token)
+	- [Ausloggen](#ausloggen)
+	- [Remember-Token](#remember-token)
+	- [Session](#session)
+	- [CSRF-Token](#csrf-token)
 
 Kurzlebige Daten, insbesondere Sitzungsdaten, werden in der MariaDB gespeichert.
 siehe `config/session.php`
@@ -137,6 +137,8 @@ Damit kann der Cookie `meik_session` nicht mehr zur Identifikation für irgendei
 
 ## CSRF-Token
 Der aktuelle CSRF-Token eines Users ist in der Session-Payload unter dem Schlüssel `_token` gespeichert.
+
+Mit Inertia und Axios wird der CSRF-Token im Wert des Cookies `XSRF-Token`, aber symmetrisch verschlüsselt mit dem APP_KEY, angegeben.
 
 Der CSRF-Token kann auf drei Arten vom Browser angegeben werden:
 1. Bei einer POST-Request als Teil der Formulardaten im Feld `_token`.
