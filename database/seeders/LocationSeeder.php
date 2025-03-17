@@ -5,20 +5,29 @@ namespace Database\Seeders;
 
 use App\Models\Location;
 use App\Repository\LocationRepository;
+use Database\Seeders\Traits\SeederTrait;
 use Illuminate\Database\Seeder;
+use PHPOnCouch\CouchClient;
 
 class LocationSeeder extends Seeder
 {
+	use SeederTrait;
+	
 	private const int COUNT = 100;
 	
 	public function __construct(
-		private readonly LocationRepository $location_repository
-	) {}
+		CouchClient $client,
+		private readonly LocationRepository $location_repository,
+	) {
+		$this->client = $client;
+	}
 	
 	/**
 	 * Run the database seeds.
 	 */
 	public function run(): void {
+		$this->remove_all_documents_by_model_type_id(LocationRepository::MODEL_TYPE_ID);
+		
 		$this->create_location(new Location(
 			name: "Keller 085",
 			is_public: true,
