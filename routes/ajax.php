@@ -1,8 +1,8 @@
 <?php
-
 declare(strict_types=1);
 
 use App\Http\Controllers\AJAX\ImageAJAXController;
+use App\Http\Controllers\AJAX\LoginAJAXController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AJAX\UserAJAXController;
 use App\Http\Controllers\AJAX\LocationAJAXController;
@@ -11,6 +11,14 @@ use App\Http\Controllers\AJAX\ExhibitAJAXController;
 use App\Http\Controllers\AJAX\RubricAJAXController;
 
 Route::prefix('ajax')->group(static function () {
+	Route::post('/user/login', [LoginAJAXController::class, 'login'])
+		->name('ajax.user.login');
+});
+
+Route::prefix('ajax')->middleware('auth')->group(static function () {
+	Route::post('/user/logout', [LoginAJAXController::class, 'logout'])
+		->name('ajax.user.logout');
+	
 	# --- Benutzerverwaltung ---
 	Route::patch('/user/{username}/set_admin', [UserAJAXController::class, 'set_admin'])
 		->name('ajax.user.set_admin');
