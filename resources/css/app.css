@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.p-dark, .p-dark *));
 
 :root {
-	--meik-is-internal-bg-color-light: var(--color-gray-200);
+	--meik-is-internal-bg-color-light: var(--color-gray-900);
 	--meik-is-internal-bg-color-light-hover: var(--color-gray-300);
 	--meik-is-internal-bg-color-dark: var(--color-gray-400);
 	--meik-is-internal-bg-color-dark-hover: var(--color-gray-300);
@@ -12,3 +12,22 @@
 	--meik-is-public-bg-color-dark: var(--color-amber-400);
 	--meik-is-public-bg-color-dark-hover: var(--color-amber-300);
 }
+
+
+.p-button {
+	background-color: #6F6C6C !important; /* Deine neue Farbe */
+	border-color: #EB674D !important;
+	color: white !important;
+	box-shadow: 0 0 20px rgba(255, 255, 255, 0.10);
+  	transition: box-shadow 0.3s ease-in-out;
+  }
+  
+  .p-button:hover {
+	background-color: #249CDA !important;
+	border-color: #2bd4e0 !important;
+	color:rgb(255, 255, 255) !important;
+	box-shadow: 0 0 20px rgba(255, 255, 255);
+  }
+  
+
+
