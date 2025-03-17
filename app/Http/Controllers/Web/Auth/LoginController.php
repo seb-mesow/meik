@@ -32,6 +32,7 @@ class LoginController extends Controller
 	{
 		$request->authenticate();
 		
+		// erneuert u.a. den CSRF-Token
 		$request->session()->regenerate();
 		
 		// !!! Ändere auch in web.php für die Route 'root' !!!

@@ -7,6 +7,7 @@ import InputLabel from '@/Components/Form/old/InputLabel.vue';
 import PrimaryButton from '@/Components/Control/PrimaryButton.vue';
 import TextInput from '@/Components/Form/old/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import Form from '@/Components/Form/Form.vue';
 
 defineProps<{
 	canResetPassword?: boolean;
@@ -18,14 +19,6 @@ const form = useForm({
 	password: '',
 	remember: false,
 });
-
-const submit = () => {
-	form.post(route('login'), {
-		onFinish: () => {
-			form.reset('password');
-		},
-	});
-};
 </script>
 
 <template>
@@ -34,7 +27,7 @@ const submit = () => {
 		<div v-if="status" class="mb-4 text-sm font-medium text-green-600">
 			{{ status }}
 		</div>
-		<form @submit.prevent="submit">
+		<Form id="login" method="post" :action="route('login')" :form="form" @onFinish="form.reset('password')">
 			<div>
 				<InputLabel for="username" value="Username" />
 				<TextInput
@@ -84,6 +77,6 @@ const submit = () => {
 					Log in
 				</PrimaryButton>
 			</div>
-		</form>
+		</Form>
 	</GuestLayout>
 </template>

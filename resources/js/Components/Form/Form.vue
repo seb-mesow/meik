@@ -1,21 +1,29 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-
-defineProps<{
+const props = defineProps<{
+	form: any,
 	method: string;
 	action: string;
 }>();
+const emit = defineEmits<{
+	finish: [],
+}>()
 
-// let token: string|null|undefined = null;
-// onMounted(() => {
-	// token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-	// });
-const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+const submit = () => {
+	/**
+	 * Dies sendet eine AJAX-Request mittels Axios.
+	 * Und Axios sendet den CSRF-Token im Header X-XSRF-TOKEN mit.
+	 * (sowie zusätzlich nochmal als Anfrage-Cookie XSRF-TOKEN, was von Laravel aber nicht ausgewertet wird.)
+	 */
+	props.form.post(props.action, {
+		onFinish: () => {
+			emit('finish');
+		},
+	});
+};
 </script>
 
 <template>
-	<form :method :action>
-		<input type="hidden" name="_token" :value="token"/>
+	<form :method :action @submit.prevent="submit">
 		<slot/>
 	</form>
 </template>

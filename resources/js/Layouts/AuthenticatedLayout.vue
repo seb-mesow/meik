@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import NavBar from '@/Components/NavBar.vue';
 import DarkModeToggle from '@/Components/DarkModeToggle.vue';
+import LogoutButton from '@/Components/Control/LogoutButton.vue';
 
 const props = defineProps<{
 	disable_overflow?: boolean
@@ -22,7 +23,10 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 			<!-- Page Heading -->
 			<header class="bg-white shadow dark:bg-gray-800 items-center w-full flex flex-no-wrap overflow-auto justify-between">
 				<slot name="header"/>
-				<DarkModeToggle/>
+				<div>
+					<DarkModeToggle class="inline-block me-3"/>
+					<LogoutButton class="inline-block"/>
+				</div>
 			</header>
 			
 			<main class="overflow-auto lg:p-4 p-2">

@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import Form from '@/Components/Form/Form.vue';
+import LogoutButton from '@/Components/Control/LogoutButton.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import Button from 'primevue/button';
-import { route } from 'ziggy-js';
 </script>
 
 <template>
@@ -22,14 +20,10 @@ import { route } from 'ziggy-js';
 				<div
 					class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
 				>
-					<Form id="logout" method="post" :action="route('logout')">
-						<Button type="submit">
-							Logout
-						</Button>
-					</Form>
 					<div class="p-6 text-gray-900 dark:text-gray-100">
 						You're logged in!
 					</div>
+					<LogoutButton/>
 				</div>
 			</div>
 		</div>
