@@ -5,5 +5,7 @@ defineProps<{
 </script>
 
 <template>
-	<p v-for="error in errs" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+	<div v-if="errs.length > 0">
+		<p v-for="error in errs" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+	</div>
 </template>
