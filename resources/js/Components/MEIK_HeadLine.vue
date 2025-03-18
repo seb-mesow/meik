@@ -3,11 +3,11 @@ import welcome_url from '../../images/meikWelcome.png';
 </script>
 
 <template>
-	<div class="center-container">
-		<div class="card card-headline">
-			<img :src="welcome_url" alt="Headline" class="card-image" />
-		</div>
-	</div>
+	<!-- <div class="center-container"> -->
+		<!-- <div class="card card-headline"> -->
+			
+		<!-- </div> -->
+	<!-- </div> -->
 </template>
 
 <style lang="css" scoped>
