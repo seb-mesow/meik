@@ -57,7 +57,7 @@ const imageAltTwo = 'Beschreibung des zweiten Bildes'; // Alternativer Text für
 }
 /* Spezifische Anpassungen für Bild 2 */
 .image-container-two {
-	background-color: #e0e0e0; /* Beispiel: individueller Hintergrund */
+	/*background-color: #ffffff; /* Beispiel: individueller Hintergrund */
 	position: relative;
 	height: 132%;
 	right: -310%;

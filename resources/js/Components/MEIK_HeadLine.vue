@@ -17,8 +17,9 @@ import welcome_url from '../../images/meikWelcome.png';
 	flex-direction: column; /* Vertikale Anordnung von Card und Header */
 	justify-content: center; /* Vertikal zentrieren */
 	align-items: center; /* Horizontal zentrieren */
-	height: 10vh; /* Gesamte Bildschirmhöhe */
-	background-color: #003366; /* Hintergrundfarbe */
+	height: 7rem; /* Gesamte Bildschirmhöhe */
+	width: auto;
+	
 	text-align: center;
 }
 

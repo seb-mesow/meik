@@ -11,23 +11,61 @@
 	--meik-is-public-bg-color-light-hover: var(--color-amber-500);
 	--meik-is-public-bg-color-dark: var(--color-amber-400);
 	--meik-is-public-bg-color-dark-hover: var(--color-amber-300);
+
+	/* Standardfarben für PrimeVue Buttons */
+	--button-primary-background: #eff6ff; /* blue-50 */
+	--button-primary-hover-background: #2563eb; /* blue-600 */
+
+	/* Farben für den Dark Mode */
+	--button-primary-background-dark: #60a5fa; /* blue-400 */
+	--button-primary-hover-background-dark: #93c5fd; /* blue-300 */
+
+	/* Farben für Danger-Buttons (z.B. Löschen) */
+	--button-danger-background: #ef4444; /* red-500 */
+	--button-danger-hover-background: #dc2626; /* red-600 */
+
+	/* Farben für Danger-Buttons im Dark Mode */
+	--button-danger-background-dark: #f87171; /* red-400 */
+	--button-danger-hover-background-dark: #fca5a5; /* red-300 */
+
 }
 
-
+  
+/* Standard-Button */
 .p-button {
-	background-color: #6F6C6C !important; /* Deine neue Farbe */
-	border-color: #EB674D !important;
-	color: white !important;
-	box-shadow: 0 0 20px rgba(255, 255, 255, 0.10);
-  	transition: box-shadow 0.3s ease-in-out;
+	background-color: var(--button-primary-background);
+	color: white;
+	transition: background-color 0.3s ease-in-out;
   }
   
   .p-button:hover {
-	background-color: #249CDA !important;
-	border-color: #2bd4e0 !important;
-	color:rgb(255, 255, 255) !important;
-	box-shadow: 0 0 20px rgba(255, 255, 255);
+	background-color: var(--button-primary-hover-background);
   }
   
-
-
+  /* Dark Mode für Standard-Button */
+  .dark .p-button {
+	background-color: var(--button-primary-background-dark);
+  }
+  
+  .dark .p-button:hover {
+	background-color: var(--button-primary-hover-background-dark);
+  }
+  
+  /* Danger-Button */
+  .p-button-danger {
+	background-color: var(--button-danger-background);
+  }
+  
+  .p-button-danger:hover {
+	background-color: var(--button-danger-hover-background);
+  }
+  
+  /* Dark Mode für Danger-Button */
+  .dark .p-button-danger {
+	background-color: var(--button-danger-background-dark);
+  }
+  
+  .dark .p-button-danger:hover {
+	background-color: var(--button-danger-hover-background-dark);
+  }
+  
