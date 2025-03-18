@@ -13,7 +13,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 				<img class="logo" :src="isc_logo_url">
 				<div class="flex flex-col gap-4">
 					<a :href="route('exhibit.overview')">
-						<div class="link flex items-center justify-center rounded-sm hover:bg-[#249cda]">
+						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
 							<div class="">
 								<span class="icon material-symbols-outlined">
 									archive
@@ -26,7 +26,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 					</a>
 
 					<a :href="route('location.overview')">
-						<div class="link flex items-center justify-center hover:bg-[#249cda]">
+						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
 							<div class=" flex items-center justify-center">
 								<span class="icon material-symbols-outlined">
 									location_on
@@ -39,7 +39,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 					</a>
 
 					<a :href="route('user.overview')">
-						<div class="link flex items-center justify-center hover:bg-[#249cda]">
+						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
 							<div class="">
 								<span class="icon material-symbols-outlined">
 									person
@@ -119,7 +119,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 		width: 3.5rem;
 	}
 
-	. {
+	.{
 		width: 100%;
 	}
 

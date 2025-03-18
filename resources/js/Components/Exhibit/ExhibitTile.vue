@@ -13,7 +13,7 @@ const exhibit_manufacture_date: PartialDate|null = props.exhibit.manufacture_dat
 
 <template>
 	<a :href="route('exhibit.details', props.exhibit.id)">
-		<div class="exhibit-tile bg-gray-100 dark:bg-gray-500 flex justify-start items-center shadow-md shadow-gray-400 hover:bg-[#249cda]/12">
+		<div class="exhibit-tile bg-gray-100 dark:bg-gray-500 flex justify-start items-center shadow-md shadow-gray-400 hover:bg-meik-primary/12">
 			<div class="flex w-[10rem] h-[6rem] justify-center">
 				<img class="object-contain" v-if="props.exhibit.title_image"
 					:src="route('ajax.image.get_thumbnail', { image_id: props.exhibit.title_image.id })"

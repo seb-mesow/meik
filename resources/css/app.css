@@ -107,3 +107,7 @@ body {
 	background-color: var(--button-danger-hover-background-dark);
   }
   
+@theme {
+	--color-meik-background: #000;
+	--color-meik-primary: #249cda;
+  }
