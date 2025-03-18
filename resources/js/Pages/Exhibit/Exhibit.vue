@@ -105,10 +105,10 @@ if (props.exhibit_props) {
 	// 	...props.exhibit_props.acquisition_info,
 	// 	...{ date: DateUtil.parse_iso_date(props.exhibit_props.acquisition_info.date) }
 	// };
-	
+
 	form_constructor_args.data = {
 		id: props.exhibit_props.id,
-	
+
 		// Kerndaten
 		inventory_number: props.exhibit_props.inventory_number,
 		name: props.exhibit_props.name,
@@ -118,23 +118,23 @@ if (props.exhibit_props) {
 		location_id: props.exhibit_props.location_id,
 		place_id: props.exhibit_props.place_id,
 		connected_exhibit_ids: props.exhibit_props.connected_exhibit_ids, // TODO connected_exhibits
-		
+
 		// Bestandsdaten
 		preservation_state_id: props.exhibit_props.preservation_state_id,
 		current_value: props.exhibit_props.current_value,
 		kind_of_property_id: props.exhibit_props.kind_of_property_id,
-		
+
 		// Zugangsdaten
 		acquisition_info: props.exhibit_props.acquisition_info,
-		
+
 		// Geräte- und Buchinformationen
 		manufacturer: props.exhibit_props.manufacturer,
 		manufacture_date: props.exhibit_props.manufacture_date,
 		original_price: props.exhibit_props.original_price,
-		
+
 		// Geräteinformationen
 		device_info: props.exhibit_props.device_info,
-		
+
 		// Buchinformationen
 		book_info: props.exhibit_props.book_info,
 	}
@@ -163,134 +163,143 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			</Breadcrumb>
 		</template>
 
-		<div class="gap-x-3" :class="{ 'flex': does_exist, 'basis-2/3': does_exist, 'items-center': does_exist }">
-			<div class="grid grid-cols-3 gap-x-3" :class="{ 'basis-2/3': does_exist }">
-				<!-- Kerndaten -->
-				<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" :grid_col="1" :grid_col_span="2" :grid_row="1"/>
-					
-				<InputTextField2 :form="exhibit_form.inventory_number" label="Inventarnummer" :grid_col="3" :grid_row="1"/>
-				
-				<InputTextField2 :form="exhibit_form.short_description" label="Kurzbeschreibung" :grid_col="1" :grid_col_span="3" :grid_row="2"/>
-				
-				<GroupSelectField :form="exhibit_form.rubric" label="Rubrik" :grid_col="1" :grid_row="3">
-					<template #optiongroup="category">
-						<span class="font-bold">{{ category.name }}</span>
-					</template>
-					<template #option="rubric">
-						<span class="ps-4">{{ rubric.name }}</span>
-					</template>
-				</GroupSelectField>
-				
-				<SelectField :form="exhibit_form.location" label="Standort" :grid_col="2" :grid_row="3"/>
-				
-				<SelectField :form="exhibit_form.place" label="Platz" :grid_col="3" :grid_row="3"/>
-			</div>
-			
-			<div v-if="exhibit_form.id !== undefined" class="basis-1/3 flex flex-col gap-y-3 justify-evenly items-center">
-				<ExportButton :exhibit_id="exhibit_form.id"/>
-				
-				<a :href="route('exhibit.images.details', { exhibit_id: exhibit_form.id })">
-					<img v-if="props.exhibit_props?.title_image"
-						class="max-h-[15rem]"
-						:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })"
-					>
-					<div v-else class="">
-						<Button label="Bilder hinzufügen"/>
-					</div>
-				</a>
-			</div>
-		</div>
-		
-		<div class="flex flex-wrap gap-3 pb-3 items-start">
-			<!-- Bestandsdaten -->
-			<Fieldset legend="Bestandsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1">
-				<div class="grid grid-cols-2 gap-x-3">
-					<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" :grid_col="1" :grid_row="1"/>
-					
-					<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" :grid_col="1" :grid_row="2"/>
-					
-					<InputNumberField :form="exhibit_form.current_value" price label="Zeitwert" currency="EUR" :grid_col="2" :grid_row="2"/>
-				</div>
-			</Fieldset>
-			
-			<!-- Zugangsdaten -->
-			<Fieldset legend="Zugangsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1">
-				<div class="grid grid-cols-2 gap-x-3">
-					<DateField :form="exhibit_form.acquisition_info.date" label="Datum" :grid_col="1" :grid_row="1"/>
-					
-					<InputTextField2 :form="exhibit_form.acquisition_info.source" label="Herkunft" :grid_col="1" :grid_col_span="2" :grid_row="2"/>
-					
-					<SelectField :form="exhibit_form.acquisition_info.kind" label="Zugangsart" :grid_col="1" :grid_row="3"/>
-					
-					<InputNumberField :form="exhibit_form.acquisition_info.purchasing_price" price label="Kaufpreis" currency="EUR" :grid_col="2" :grid_row="3"/>
-				</div>
-			</Fieldset>
-		</div>
-		
-		
-		<Fieldset class="gap-3" legend="Geräteinformationen">
-			<template #legend>
-				<SelectButton
-					:modelValue="exhibit_form.type.ui_value_in_editing"
-					@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_ui_value_in_editing(v)"
-					:options="exhibit_types"
-					optionLabel="name"
-					:allowEmpty="false"
-				/>
-			</template>
-			
-			<!-- Geräteinformationen -->
-			<div v-show="exhibit_form.show_device_info.value" class="grid grid-cols-3 gap-x-3">
-				<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" :grid_col="1" :grid_col_span="3" :grid_row="1"/>
-				
-				<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip" label="Baujahr" :grid_col="1" :grid_row="2"/>
-				
-				<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date" :tooltip="partial_date_tooltip" label="gebaut von" :grid_col="2" :grid_row="2"/>
-				
-				<InputTextField2 :form="exhibit_form.device_info.manufactured_to_date" :tooltip="partial_date_tooltip" label="gebaut bis" :grid_col="3" :grid_row="2"/>
-				
-				<OriginalPriceField
-					:form_amount="exhibit_form.original_price.amount"
-					:form_currency="exhibit_form.original_price.currency"
-					:grid_col="1" :grid_row="3"
-				/>
-				
-				<MultipleSelectField :form="exhibit_form.connected_exhibits" label="Verknüpfte Exponate" :grid_col="1" :grid_col_span="3" :grid_row="4"/>
-			</div>
-			
-			<!-- Buchinformationen -->
-			<div v-show="exhibit_form.show_book_info.value" class="grid grid-cols-3 gap-x-3">
-				<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" :grid_col="1" :grid_col_span="3" :grid_row="1"/>
-				
-				<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip" label="Erscheinungsjahr" :grid_col="1" :grid_row="2"/>
-				
-				<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" :grid_col="2" :grid_col_span="2" :grid_row="2"/>
-				
-				<OriginalPriceField
-					:form_amount="exhibit_form.original_price.amount"
-					:form_currency="exhibit_form.original_price.currency"
-					:grid_col="1" :grid_row="3"
-				/>
-				
-				<SelectField :form="exhibit_form.book_info.language" label="Sprache" :grid_col="2" :grid_row="3"/>
-				
-				<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" :grid_col="3" :grid_row="3"/>
-				
-				<MultipleSelectField :form="exhibit_form.connected_exhibits" label="Verknüpfte Exponate" :grid_col="1" :grid_col_span="3" :grid_row="4"/>
-			</div>
-		</Fieldset>
+		<div class="bg-white p-4 rounded-2xl">
+			<div class="gap-x-3" :class="{ 'flex': does_exist, 'basis-2/3': does_exist, 'items-center': does_exist }">
+				<div class="bg-gray-50 border-[2px] border-gray-300 p-4 rounded-md">
+					<div class="grid grid-cols-3 gap-x-3" :class="{ 'basis-2/3': does_exist }">
+						<!-- Kerndaten -->
+						<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" :grid_col="1" :grid_col_span="2"
+							:grid_row="1" />
 
-		<Button
-			:disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
-			:loading="exhibit_form.is_save_button_loading.value"
-			type='button'
-			:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'"
-			@click="exhibit_form.click_save()"
-		/>
-		
-		<FreeTextFields v-if="props.exhibit_props"
-			:init_props="props.exhibit_props.free_texts" :exhibit_id="props.exhibit_props.id"
-		/>
-		
+						<InputTextField2 :form="exhibit_form.inventory_number" label="Inventarnummer" :grid_col="3"
+							:grid_row="1" />
+
+						<InputTextField2 :form="exhibit_form.short_description" label="Kurzbeschreibung" :grid_col="1"
+							:grid_col_span="3" :grid_row="2" />
+
+						<GroupSelectField :form="exhibit_form.rubric" label="Rubrik" :grid_col="1" :grid_row="3">
+							<template #optiongroup="category">
+								<span class="font-bold">{{ category.name }}</span>
+							</template>
+							<template #option="rubric">
+								<span class="ps-4">{{ rubric.name }}</span>
+							</template>
+						</GroupSelectField>
+
+						<SelectField :form="exhibit_form.location" label="Standort" :grid_col="2" :grid_row="3" />
+
+						<SelectField :form="exhibit_form.place" label="Platz" :grid_col="3" :grid_row="3" />
+					</div>
+				</div>
+				<div v-if="exhibit_form.id !== undefined"
+					class="basis-1/3 flex flex-col gap-y-3 justify-evenly items-center">
+					<ExportButton :exhibit_id="exhibit_form.id" />
+
+					<a :href="route('exhibit.images.details', { exhibit_id: exhibit_form.id })">
+						<img v-if="props.exhibit_props?.title_image" class="max-h-[15rem]"
+							:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })">
+						<div v-else class="">
+							<Button label="Bilder hinzufügen" />
+						</div>
+					</a>
+				</div>
+			</div>
+
+			<div class="flex flex-wrap gap-3 pb-3 items-start">
+				<!-- Bestandsdaten -->
+				<Fieldset legend="Bestandsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1"
+					:style="{ backgroundColor: 'var(--color-gray-50)', borderWidth: '2px', borderColor: 'var(--color-gray-300)' }">
+					<div class="grid grid-cols-2 gap-x-3">
+						<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" :grid_col="1"
+							:grid_row="1" />
+
+						<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" :grid_col="1"
+							:grid_row="2" />
+
+						<InputNumberField :form="exhibit_form.current_value" price label="Zeitwert" currency="EUR"
+							:grid_col="2" :grid_row="2" />
+					</div>
+				</Fieldset>
+
+				<!-- Zugangsdaten -->
+				<Fieldset legend="Zugangsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1"
+					:style="{ backgroundColor: 'var(--color-gray-50)', borderWidth: '2px', borderColor: 'var(--color-gray-300)' }">
+					<div class="grid grid-cols-2 gap-x-3">
+						<DateField :form="exhibit_form.acquisition_info.date" label="Datum" :grid_col="1"
+							:grid_row="1" />
+
+						<InputTextField2 :form="exhibit_form.acquisition_info.source" label="Herkunft" :grid_col="1"
+							:grid_col_span="2" :grid_row="2" />
+
+						<SelectField :form="exhibit_form.acquisition_info.kind" label="Zugangsart" :grid_col="1"
+							:grid_row="3" />
+
+						<InputNumberField :form="exhibit_form.acquisition_info.purchasing_price" price label="Kaufpreis"
+							currency="EUR" :grid_col="2" :grid_row="3" />
+					</div>
+				</Fieldset>
+			</div>
+
+
+			<Fieldset class="gap-3" legend="Geräteinformationen"
+				:style="{ backgroundColor: 'var(--color-gray-50)', borderWidth: '2px', borderColor: 'var(--color-gray-300)' }">
+				<template #legend>
+					<SelectButton :modelValue="exhibit_form.type.ui_value_in_editing"
+						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_ui_value_in_editing(v)"
+						:options="exhibit_types" optionLabel="name" :allowEmpty="false" />
+				</template>
+
+				<!-- Geräteinformationen -->
+				<div v-show="exhibit_form.show_device_info.value" class="grid grid-cols-3 gap-x-3">
+					<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" :grid_col="1"
+						:grid_col_span="3" :grid_row="1" />
+
+					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip"
+						label="Baujahr" :grid_col="1" :grid_row="2" />
+
+					<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date"
+						:tooltip="partial_date_tooltip" label="gebaut von" :grid_col="2" :grid_row="2" />
+
+					<InputTextField2 :form="exhibit_form.device_info.manufactured_to_date"
+						:tooltip="partial_date_tooltip" label="gebaut bis" :grid_col="3" :grid_row="2" />
+
+					<OriginalPriceField :form_amount="exhibit_form.original_price.amount"
+						:form_currency="exhibit_form.original_price.currency" :grid_col="1" :grid_row="3" />
+
+					<MultipleSelectField :form="exhibit_form.connected_exhibits" label="Verknüpfte Exponate"
+						:grid_col="1" :grid_col_span="3" :grid_row="4" />
+				</div>
+
+				<!-- Buchinformationen -->
+				<div v-show="exhibit_form.show_book_info.value" class="grid grid-cols-3 gap-x-3">
+					<InputTextField2 :form="exhibit_form.manufacturer" label="Verlag" :grid_col="1" :grid_col_span="3"
+						:grid_row="1" />
+
+					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip"
+						label="Erscheinungsjahr" :grid_col="1" :grid_row="2" />
+
+					<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" :grid_col="2"
+						:grid_col_span="2" :grid_row="2" />
+
+					<OriginalPriceField :form_amount="exhibit_form.original_price.amount"
+						:form_currency="exhibit_form.original_price.currency" :grid_col="1" :grid_row="3" />
+
+					<SelectField :form="exhibit_form.book_info.language" label="Sprache" :grid_col="2" :grid_row="3" />
+
+					<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" :grid_col="3" :grid_row="3" />
+
+					<MultipleSelectField :form="exhibit_form.connected_exhibits" label="Verknüpfte Exponate"
+						:grid_col="1" :grid_col_span="3" :grid_row="4" />
+				</div>
+			</Fieldset>
+
+			<Button :disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
+				:loading="exhibit_form.is_save_button_loading.value" type='button'
+				:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'" @click="exhibit_form.click_save()" />
+
+			<FreeTextFields v-if="props.exhibit_props" :init_props="props.exhibit_props.free_texts"
+				:exhibit_id="props.exhibit_props.id" />
+		</div>
 	</AuthenticatedLayout>
+	<div class="bg-gray-50 hidden"></div>
 </template>
