@@ -3,7 +3,7 @@ import { route } from 'ziggy-js';
 import isc_logo_url from '../../images/Logo_isc_300x122.jpg';
 import fv_logo_url from '../../images/FV_ISC.jpg';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
-import DarkModeToggle from './DarkModeToggle.vue';
+
 </script>
 
 <template>
