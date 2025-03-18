@@ -21,7 +21,7 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 		<!-- <div class="grow-1"> -->
 			
 			<!-- Page Heading -->
-			<header class="bg-white shadow dark:bg-gray-800 items-center w-full flex flex-no-wrap overflow-auto justify-between">
+			<header class="bg-white shadow dark:bg-gray-800 items-center w-full flex flex-no-wrap justify-between">
 				<slot name="header"/>
 				<div>
 					<DarkModeToggle class="inline-block me-3"/>

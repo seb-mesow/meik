@@ -123,11 +123,14 @@ const ajax_delete = (): Promise<void> => {
 
 <template>
 	<div class="h-fit">
-		<Button @click="create_dialog">Edit</Button>
-		<Button @click="delete_rubric($event)">Delete</Button>
+
 		<a :href="route('rubric.details', { rubric_id: rubric_id })">
-			<div class="rubric-tile">
+			<div class="rubric-tile flex justify-between">
 				<p>{{ rubric_name }}</p>
+				<div class="flex flex-col gap-3">
+					<Button @click="create_dialog">Edit</Button>
+					<Button @click="delete_rubric($event)">Delete</Button>
+				</div>
 			</div>
 		</a>
 	</div>
@@ -135,11 +138,10 @@ const ajax_delete = (): Promise<void> => {
 
 <style lang="css" scoped>
 .rubric-tile {
-	width: 300px !important;
-	height: 100px;
-	border-radius: 20px;
-	padding: 20px;
-	margin: 10px;
+	width: 30em;
+	height: auto;
+	border-radius: 1rem;
+	padding: 1rem;
 	color: black;
 	background-color: #808080;
 }

@@ -21,7 +21,7 @@ const items:{ label: string, url?: string }[] = [];
 	<Head title="Kategorien" />
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb :home="home" :model="items">
+			<Breadcrumb class="!bg-white dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -30,7 +30,7 @@ const items:{ label: string, url?: string }[] = [];
 				</template>
 			</Breadcrumb>
 		</template>
-		<div class="bg-white rounded-xl h-full w-full p-4">
+		<div  class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full">
 			<div class="flex flex-wrap gap-3">
 				<!-- <div class="border-black border-solid border-2 w-[20%] min-w-[20rem]" v-for="category in categorys"> -->
 				<CategoryTile v-for="category in props.categories" :category="category" />

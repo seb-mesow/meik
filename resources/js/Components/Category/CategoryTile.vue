@@ -18,7 +18,7 @@ const props = defineProps<{
 
 <style lang="css" scoped>
 .category-tile {
-	width: 35rem;
+	width: 30em;
 	height: auto;
 	border-radius: 1rem;
 	padding: 1rem;

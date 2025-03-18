@@ -153,7 +153,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 	<Toast />
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb :home="home" :model="items">
+			<Breadcrumb  class="dark:!bg-gray-800 bg-white" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -163,11 +163,11 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			</Breadcrumb>
 		</template>
 
-		<div class="bg-white p-4 rounded-2xl">
-			<div class="gap-x-3"
-			:class="{ 'flex': does_exist, 'basis-2/3': does_exist, 'items-center': does_exist }">
-			<div class="bg-gray-50 border-[2px] border-gray-300 p-4 rounded-md">
-			<div class="grid grid-cols-3 gap-x-3" :class="{ 'basis-2/3': does_exist }">
+		<div class="bg-white dark:bg-gray-500 p-4 rounded-2xl h-full overflow-auto">
+			<div class="gap-x-3" :class="{ 'flex': does_exist, 'basis-2/3': does_exist, 'items-center': does_exist }">
+				<div
+					class="bg-gray-50 border-[2px] border-gray-300 dark:border-gray-800 dark:bg-gray-600 p-4 rounded-md">
+					<div class="grid grid-cols-3 gap-x-3" :class="{ 'basis-2/3': does_exist }">
 						<!-- Kerndaten -->
 						<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" :grid_col="1" :grid_col_span="2"
 							:grid_row="1" />
@@ -191,26 +191,25 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 
 						<SelectField :form="exhibit_form.place" label="Platz" :grid_col="3" :grid_row="3" />
 					</div>
-					</div>
+				</div>
 
-					<div v-if="exhibit_form.id !== undefined"
-						class="basis-1/3 flex flex-col gap-y-3 justify-evenly items-center">
-						<ExportButton :exhibit_id="exhibit_form.id" />
+				<div v-if="exhibit_form.id !== undefined"
+					class="basis-1/3 flex flex-col gap-y-3 justify-evenly items-center">
+					<ExportButton :exhibit_id="exhibit_form.id" />
 
-						<a :href="route('exhibit.images.details', { exhibit_id: exhibit_form.id })">
-							<img v-if="props.exhibit_props?.title_image" class="max-h-[15rem]"
-								:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })">
-							<div v-else class="">
-								<Button label="Bilder hinzufügen" />
-							</div>
-						</a>
-					</div>
+					<a :href="route('exhibit.images.details', { exhibit_id: exhibit_form.id })">
+						<img v-if="props.exhibit_props?.title_image" class="max-h-[15rem]"
+							:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })">
+						<div v-else class="">
+							<Button label="Bilder hinzufügen" />
+						</div>
+					</a>
+				</div>
 
 			</div>
 			<div class="flex flex-wrap gap-3 pb-3 items-start">
 				<!-- Bestandsdaten -->
-				<Fieldset legend="Bestandsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1"
-					:style="{ backgroundColor: 'var(--color-gray-50)', borderWidth: '2px', borderColor: 'var(--color-gray-300)' }">
+				<Fieldset legend="Bestandsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-50 dark:!bg-gray-600 !border-gray-300 dark:!border-gray-800 !border-2" >
 					<div class="grid grid-cols-2 gap-x-3">
 						<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" :grid_col="1"
 							:grid_row="1" />
@@ -224,8 +223,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				</Fieldset>
 
 				<!-- Zugangsdaten -->
-				<Fieldset legend="Zugangsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1"
-					:style="{ backgroundColor: 'var(--color-gray-50)', borderWidth: '2px', borderColor: 'var(--color-gray-300)' }">
+				<Fieldset legend="Zugangsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-50 dark:!bg-gray-600 !border-gray-300 dark:!border-gray-800 !border-2">
 					<div class="grid grid-cols-2 gap-x-3">
 						<DateField :form="exhibit_form.acquisition_info.date" label="Datum" :grid_col="1"
 							:grid_row="1" />
@@ -243,8 +241,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			</div>
 
 
-			<Fieldset class="gap-3" legend="Geräteinformationen"
-				:style="{ backgroundColor: 'var(--color-gray-50)', borderWidth: '2px', borderColor: 'var(--color-gray-300)' }">
+			<Fieldset class="gap-3 !bg-gray-50 dark:!bg-gray-600 !border-gray-300 dark:!border-gray-800 !border-2" legend="Geräteinformationen">
 				<template #legend>
 					<SelectButton :modelValue="exhibit_form.type.ui_value_in_editing"
 						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_ui_value_in_editing(v)"
@@ -294,11 +291,12 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						:grid_col="1" :grid_col_span="3" :grid_row="4" />
 				</div>
 			</Fieldset>
-
-			<Button :disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
-				:loading="exhibit_form.is_save_button_loading.value" type='button'
-				:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'" @click="exhibit_form.click_save()" />
-
+			<div class="flex w-full justify-end py-4">
+				<Button
+					:disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
+					:loading="exhibit_form.is_save_button_loading.value" type='button'
+					:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'" @click="exhibit_form.click_save()" />
+			</div>
 			<FreeTextFields v-if="props.exhibit_props" :init_props="props.exhibit_props.free_texts"
 				:exhibit_id="props.exhibit_props.id" />
 		</div>
