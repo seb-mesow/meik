@@ -1,18 +1,12 @@
 <script setup lang="ts">
-import { route } from 'ziggy-js';
-import Checkbox from '@/Components/Form/old/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/Form/old/InputError.vue';
-import InputLabel from '@/Components/Form/old/InputLabel.vue';
-import PrimaryButton from '@/Components/Control/PrimaryButton.vue';
-import TextInput from '@/Components/Form/old/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import Form from '@/Components/Form/Form.vue';
+import { Head, useForm } from '@inertiajs/vue3';
 import InputTextField2 from '@/Components/Form/InputTextField2.vue';
 import { ILoginForm, LoginForm } from '@/form/special/multiple/login-form';
 import { Button, Toast, useToast } from 'primevue';
 import CheckBoxField from '@/Components/Form/CheckBoxField.vue';
 import InputErrors from '@/Components/Form/Wrapper/InputErrors.vue';
+import welcome_url from '../../../images/meikWelcome.png';
 
 defineProps<{
 	canResetPassword?: boolean;
@@ -38,6 +32,12 @@ const login_form: ILoginForm = new LoginForm({
 	<Toast/>
 	<GuestLayout>
 		<Head title="Log in" />
+		
+		<div class="w-100 max-w-full p-4 rounded-xl bg-white dark:bg-gray-400">
+		
+		<img :src="welcome_url" alt="Headline"
+			class="mx-auto xl:max-h-none lg:max-h-45 md:max-h-35 sm:max-h-30 max-h-25 object-contain border-2 lg:border-yellow-500 md:border-orange-500 sm:border-red-500 border-blue-500"
+		/>
 		
 		<div v-if="status" class="mb-4 text-sm font-medium text-green-600">
 			{{ status }}
@@ -123,5 +123,6 @@ const login_form: ILoginForm = new LoginForm({
 				</PrimaryButton>
 			</div>
 		</Form -->
+		</div>
 	</GuestLayout>
 </template>
