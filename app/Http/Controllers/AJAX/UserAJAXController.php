@@ -21,7 +21,7 @@ class UserAJAXController extends Controller
 			return response(null, 404);
 		}
 		$is_admin = $request->input('is_admin');
-		$user = $user->with_is_admin($is_admin);
+		$user->set_is_admin($is_admin);
 		$this->repository->update($user);
 		return response(null, 204);
 	}
