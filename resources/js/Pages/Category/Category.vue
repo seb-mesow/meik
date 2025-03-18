@@ -51,7 +51,7 @@ const items = [
 	<AuthenticatedLayout :disable_overflow="true">
 		
 		<template #header>
-			<Breadcrumb :home="home" :model="items">
+			<Breadcrumb class="!bg-white dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>

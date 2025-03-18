@@ -152,7 +152,7 @@ onBeforeUnmount(() => {
 	</div>
 	
 	<!-- Wrapper für den Scroll-Bereich -->
-	<div class="flex flex-wrap" @scroll="handleScroll($event)">
+	<div class="flex flex-wrap gap-3" @scroll="handleScroll($event)">
 		<RubricTile v-for="rubric in rubrics" :key="rubric.id"
 			:rubric="rubric"
 			@delete_tile="delete_tile"

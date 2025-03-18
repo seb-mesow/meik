@@ -28,15 +28,20 @@ const form: IFreeTextsForm = reactive(new FreeTextsForm({
 </script>
 
 <template>
-	<!-- Die Reaktivität von form erstreckt sich auch auf seine Properties (deep reactive) -->
-	<div v-for="free_text_form in form.children" :key="free_text_form.ui_id">
-		<div class="bg-gray-50 border-[2px] border-gray-300 p-4 rounded-md">
-			<hr class="my-3">
-			<FreeTextField :form="free_text_form" />
+
+	<div class="gap-2 pt-4 flex flex-col">
+		<!-- Die Reaktivität von form erstreckt sich auch auf seine Properties (deep reactive) -->
+		<div v-for="free_text_form in form.children" :key="free_text_form.ui_id">
+			<div class="!bg-gray-50 dark:!bg-gray-600 !border-gray-300 dark:!border-gray-800 !border-2 p-4 rounded-md">
+				<!-- <hr class="my-3"> -->
+				<FreeTextField :form="free_text_form" />
+			</div>
+			<!-- <hr class="my-3"> -->
 		</div>
-		<hr class="my-3">
 	</div>
-	<Button @click="form.append_form()" label="Abschnitt hinzufügen" />
+	<div class="flex w-full justify-end py-4">
+		<Button @click="form.append_form()" label="Abschnitt hinzufügen" />
+	</div>
 </template>
 
 <style lang="css" scoped></style>
