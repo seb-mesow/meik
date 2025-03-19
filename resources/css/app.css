@@ -2,7 +2,21 @@
 
 @custom-variant dark (&:where(.p-dark, .p-dark *));
 
-:root {
+@theme {
+	--color-gray-50: oklch(0.985 0 0);
+	--color-gray-100: oklch(0.97 0 0);
+	--color-gray-150: oklch(0.946 0 0); /* zusätzlich */
+	--color-gray-200: oklch(0.922 0 0);
+	--color-gray-300: oklch(0.87 0 0);
+	--color-gray-400: oklch(0.708 0 0);
+	--color-gray-500: oklch(0.556 0 0);
+	--color-gray-600: oklch(0.439 0 0);
+	--color-gray-700: oklch(0.371 0 0);
+	--color-gray-800: oklch(0.269 0 0);
+	--color-gray-850: oklch(0.237 0 0); /* zusätzlich */
+	--color-gray-900: oklch(0.205 0 0);
+	--color-gray-950: oklch(0.145 0 0);
+
 	--meik-is-internal-bg-color-light: var(--color-gray-900);
 	--meik-is-internal-bg-color-light-hover: var(--color-gray-300);
 	--meik-is-internal-bg-color-dark: var(--color-gray-400);
@@ -30,7 +44,32 @@
 
 }
 
-  
+body {
+	color: black;
+	--p-fieldset-color: black;
+	
+	color: var(--p-surface-0);
+	--p-inputtext-color: var(--p-surface-0);
+	--p-fieldset-color: var(--p-surface-0);
+	--p-chip-color: var(--p-surface-0);
+	--p-autocomplete-dropdown-color: var(--p-surface-0);
+}
+
+.p-dark body {
+	--p-surface-0: var(--color-gray-150);
+	
+	--p-fieldset-background: var(--color-gray-900);
+	--p-inputtext-background: var(--color-gray-800);
+	--p-autocomplete-background: var(--p-inputtext-background);
+	
+	--p-autocomplete-dropdown-background: var(--color-gray-950);
+	--p-autocomplete-dropdown-hover-background: var(--p-autocomplete-dropdown-background);
+	--p-autocomplete-dropdown-active-background: var(--p-autocomplete-dropdown-background);
+	--p-autocomplete-dropdown-hover-border-color: var(--color-blue-500);
+	
+	--p-chip-background: var(--color-gray-950);
+}
+
 /* Standard-Button */
 .p-button {
 	background-color: var(--button-primary-background);
