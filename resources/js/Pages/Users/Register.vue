@@ -56,41 +56,44 @@ const form: UINewUserForm = new NewUserForm({
 			</Breadcrumb>
 		</template>
 		
-		<div class="mx-auto w-100">
+		<div class="mx-auto h-dvh w-90 max-w-dvh content-center">
 			
-			<div class="grid grid-cols-1 gap-x-3">
-				<InputTextField2 :form="form.forename" label="Vorname" :grid_col="1" :grid_row="1"/>
+			<div class="p-3 rounded-xl bg-gray-200 dark:bg-gray-800 border-1 border-gray-300 dark:border-gray-600 mt-3">
 			
-				<InputTextField2 :form="form.surname" label="Nachname" :grid_col="1" :grid_row="2"/>
+				<div class="grid grid-cols-1 gap-x-3">
+					<InputTextField2 :form="form.forename" label="Vorname" :grid_col="1" :grid_row="1"/>
 				
-				<SimpleSelectField :form="form.role" label="Rolle" :grid_col="1" :grid_row="3"/>
+					<InputTextField2 :form="form.surname" label="Nachname" :grid_col="1" :grid_row="2"/>
+					
+					<SimpleSelectField :form="form.role" label="Rolle" :grid_col="1" :grid_row="3" class_label="mt-5"/>
+					
+					<InputTextField2 :form="form.username" label="Benutzername" :grid_col="1" :grid_row="4" class_label="mt-5"/>
+					
+					<InputTextField2 :form="form.password" label="Passwort" type="password" :grid_col="1" :grid_row="5"/>
+					
+					<InputTextField2 :form="form.password_again" label="Passwort wiederholen" type="password" :grid_col="1" :grid_row="6"/>
+				</div>
+			
+				<div class="mt-4 flex items-center justify-end">
+					<!-- <Link
+						:href="route('login')"
+						class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+					>
+						Already registered?
+					</Link> -->
+					
+					<!-- :loading="form.is_save_button_loading.value" -->
+					
+					<Button
+						:disabled="!form.is_save_button_enabled.value"
+						@click="form.click_save()"
+						label="Anlegen"
+						severity="primary"
+						class="ms-4"
+					/>
+				</div>
 				
-				<InputTextField2 :form="form.username" label="Benutzername" :grid_col="1" :grid_row="4"/>
-				
-				<InputTextField2 :form="form.password" label="Passwort" type="password" :grid_col="1" :grid_row="5"/>
-				
-				<InputTextField2 :form="form.password_again" label="Passwort wiederholen" type="password" :grid_col="1" :grid_row="6"/>
 			</div>
-		
-			<div class="mt-4 flex items-center justify-end">
-				<!-- <Link
-					:href="route('login')"
-					class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-				>
-					Already registered?
-				</Link> -->
-				
-				<!-- :loading="form.is_save_button_loading.value" -->
-				
-				<Button
-					:disabled="!form.is_save_button_enabled.value"
-					@click="form.click_save()"
-					label="Anlegen"
-					severity="primary"
-					class="ms-4"
-				/>
-			</div>
-			
 		</div>
 		
 	</AuthenticatedLayout>
