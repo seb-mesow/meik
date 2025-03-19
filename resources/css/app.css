@@ -26,9 +26,17 @@
 	--meik-is-public-bg-color-dark: var(--color-amber-400);
 	--meik-is-public-bg-color-dark-hover: var(--color-amber-300);
 
+
+
+
+
 	/* Standardfarben für PrimeVue Buttons */
-	--button-primary-background: #eff6ff; /* blue-50 */
+	--button-primary-background: #1376f9; /* blue-50 */
 	--button-primary-hover-background: #2563eb; /* blue-600 */
+	--primary-color: #6366f1; /* Standard Primärfarbe (Blau) */
+	--primary-color-text: #ffffff; /* Standard Textfarbe für den Button */
+	--primary-color-hover: #4f46e5; /* Hover-Farbe */
+
 
 	/* Farben für den Dark Mode */
 	--button-primary-background-dark: #60a5fa; /* blue-400 */
@@ -37,6 +45,7 @@
 	/* Farben für Danger-Buttons (z.B. Löschen) */
 	--button-danger-background: #ef4444; /* red-500 */
 	--button-danger-hover-background: #dc2626; /* red-600 */
+
 
 	/* Farben für Danger-Buttons im Dark Mode */
 	--button-danger-background-dark: #f87171; /* red-400 */
@@ -73,7 +82,18 @@ body {
 }
 
 /* Standard-Button */
-.p-button {
+
+.p-button.p-button-primary {
+	background-color: var(--primary-color) !important;
+	color: var(--primary-color-text) !important;
+	border-color: var(--primary-color) !important;
+  }
+  
+  .p-button.p-button-primary:hover {
+	background-color: var(--primary-color-hover) !important;
+  }
+  
+  .p-button {
 	background-color: var(--button-primary-background);
 	color: white;
 	transition: background-color 0.3s ease-in-out;
@@ -108,4 +128,9 @@ body {
   
   .dark .p-button-danger:hover {
 	background-color: var(--button-danger-hover-background-dark);
+  }
+  .p-button.p-button-info {
+	background-color: var(--info-button-bg) !important;
+	color: var(--info-button-text-color) !important;
+	border-color: var(--info-button-border) !important;
   }

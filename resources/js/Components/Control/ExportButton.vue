@@ -32,7 +32,7 @@ const save = () => {
 </script>
 
 <template>
-	<SplitButton label="Erstelle QR-Code" @click="save" :model="items" />
+	<SplitButton label="Erstelle QR-Code" @click="save" :model="items" severity="info" raised />
 	<div class="card flex justify-center flex-wrap gap-4">
     
     </div>
