@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
-
 namespace App\Models\Traits;
+use JMS\Serializer\Annotation\Expose;
 
 use RuntimeException;
 
 trait IntIdentifiableTrait
 {
+	#[Expose]
 	private ?int $id;
 	
 	public function get_nullable_id(): ?int {

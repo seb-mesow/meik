@@ -36,7 +36,6 @@ class Exhibit implements IntIdentifiable, Revisionable
 	 * 
 	 * @Accessor(getter="get_inventor_number")
 	 */
-	#[Expose]
 	private string $inventory_number;
 	
 	/**
