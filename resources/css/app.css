@@ -90,7 +90,7 @@ body {
 	background-color: var(--primary-color) !important;
 	color: var(--primary-color-text) !important;
 	font-weight: 100 !important;
-	outline: 1px solid white !important;
+	outline: 1px solid #EDEDED!important;
 	border-color: var(--primary-color) !important;
   }
   
@@ -102,7 +102,7 @@ body {
 	background-color: var(--button-primary-background);
 	color: #b30202;
 	font-weight: normal !important;
-	outline: 1px solid white !important;
+	outline: 1px solid #EDEDED !important;
 	transition: background-color 0.3s ease-in-out;
   }
   
