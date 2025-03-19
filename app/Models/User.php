@@ -7,8 +7,8 @@ use App\Models\Interfaces\Revisionable;
 use App\Models\Interfaces\StringIdentifiable;
 use App\Models\Traits\RevisionableTrait;
 use App\Models\Traits\StringIdentifiableTrait;
+use Hash;
 use Illuminate\Contracts\Auth\Authenticatable;
-use RuntimeException;
 use SensitiveParameter;
 
 class User implements Authenticatable, StringIdentifiable, Revisionable
@@ -24,28 +24,33 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 	private string $forename;
 	private string $surname;
 	private UserRole $role;
-		
+	
 	/**
-	 * ist optional: nur wenn der User sich beim letzten Einloggen mit "Remember Me" angemeldet hat, ist er gesetzt 
+	 * ist optional: Nur wenn der User sich beim letzten Einloggen mit "Remember Me" angemeldet hat, ist er gesetzt.
 	 */
 	private ?string $remember_token = null;
 	
 	public function __construct(
 		string $username,
-		#[SensitiveParameter] string $password_hash,
-		UserRole $role,
 		string $forename,
 		string $surname,
-		?string $original_username = null,
+		UserRole $role,
+		#[SensitiveParameter] ?string $password = null,
+		#[SensitiveParameter] ?string $password_hash = null,
+		?string $id = null,
 		?string $rev = null
 	) {
 		$this->username = $username;
-		$this->password_hash = $password_hash;
 		$this->forename = $forename;
 		$this->surname = $surname;
 		$this->role = $role;
 		
-		$this->id = $original_username;
+		if (!is_string($password_hash)) {
+			$password_hash = Hash::make($password);
+		}
+		$this->password_hash = $password_hash;
+		
+		$this->id = $id;
 		$this->rev = $rev;
 	}
 	
