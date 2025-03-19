@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
+use RuntimeException;
 
 /**
  * @phpstan-type APIExhibit array{
@@ -81,11 +82,20 @@ use JMS\Serializer\SerializerBuilder;
  *        }
  *    }
  * }
+ * 
+ * @phpstan-type AllItem array{
+ *    id: int,
+ *    name: string,
+ *    short_description: string,
+ *    location: string
+ * }
  */
 class ExhibitAPIController extends Controller
 {
 	private Serializer $serializer;
-
+	
+	private const int GET_ALL_EXHIBITS_PAGINATED_COUNT_PER_PAGE_DEFAULT = 15;
+	
 	public function __construct(
 		private readonly ExhibitRepository $exhibit_repository,
 		private readonly PlaceRepository $place_repository,
@@ -96,8 +106,6 @@ class ExhibitAPIController extends Controller
 		$this->serializer = SerializerBuilder::create()->build();
 	}
 	
-	// TODO document API
-	// TODO define response objects
 	public function get_exhibits_paginated(Request $request): JsonResponse
 	{
 		$page_number = $request->query('page_number');
@@ -110,14 +118,23 @@ class ExhibitAPIController extends Controller
 		$count_per_page = $count_per_page === '' ? null : $count_per_page;
 		$count_per_page = is_numeric($count_per_page) ? (int) $count_per_page : null;
 		
-		assert(($page_number === null) === ($count_per_page === null));
+		if (is_int($page_number) && ($page_number < 0)) {
+			return throw new RuntimeException('Query parameter page_number must be greater or equal to 0.');
+		}
+		if (is_int($count_per_page) && ($count_per_page < 1)) {
+			return throw new RuntimeException('Query parameter count_per_page must be greater than 0.');
+		}
 		
+		$page_number ??= 0;
+		$count_per_page ??= self::GET_ALL_EXHIBITS_PAGINATED_COUNT_PER_PAGE_DEFAULT;
+		
+		// TODO only deliver public exhibits
 		$exhibits = $this->exhibit_repository->query(
 			page_number: $page_number,
 			count_per_page: $count_per_page,
 		);
-		
-		return response()->json(json_decode($this->serializer->serialize($exhibits, 'json', (new SerializationContext))));
+		$all_items = $this->create_all_items_from_exhibits($exhibits);
+		return response()->json($all_items);
 	}
 
 	public function get_exhibit_by_id(int $id): JsonResponse
@@ -160,8 +177,8 @@ class ExhibitAPIController extends Controller
 		];
 
 		$exhibits = $this->exhibit_repository->query_by_selectors($selectors);
-		$search_item = $this->create_search_items_from_exhibits($exhibits);
-		return response()->json($search_item);
+		$search_items = $this->create_search_items_from_exhibits($exhibits);
+		return response()->json($search_items);
 	}
 
 	public function find_exhibits_by_filter(Request $request): JsonResponse
@@ -339,5 +356,32 @@ class ExhibitAPIController extends Controller
 			];
 		}
 		return $search_item;
+	}
+	
+	/**
+	 * @param Exhibit[] $exhibits
+	 * @return AllItem[]
+	 */
+	private function create_all_items_from_exhibits(array $exhibits): array {
+		$_this = $this;
+		return array_map(static function(Exhibit $exhibit) use ($_this): array {
+			return $_this->create_all_item_from_exhibit($exhibit);
+		}, $exhibits);
+	}
+	
+	/**
+	 * @param Exhibit $exhibit
+	 * @return AllItem[]
+	 */
+	private function create_all_item_from_exhibit(Exhibit $exhibit): array {
+		$place = $this->place_repository->get($exhibit->get_place_id());
+		$location = $this->location_repository->get($place->get_location_id());
+		
+		return [
+			'id' => $exhibit->get_id(),
+			'name' => $exhibit->get_name(),
+			'short_description' => $exhibit->get_short_description(),
+			'location' => $location->get_name(),
+		];
 	}
 }
