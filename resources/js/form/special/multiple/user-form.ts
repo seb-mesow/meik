@@ -183,7 +183,7 @@ export class UserForm implements IUserForm, UIUserForm {
 		
 		this.confirm_service.require({
 			target: event.currentTarget,
-			message: "Sind Sie sicher das Sie den Standort löschen wollen? Untergeordnete Plätze werden auch gelöscht.",
+			message: "Sind Sie sicher, dass Sie den Benutzer löschen wollen?",
 			icon: 'pi pi-exclamation-triangle',
 			rejectProps: {
 				label: 'Abbrechen',

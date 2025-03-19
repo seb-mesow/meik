@@ -70,7 +70,7 @@ function child_form(data: any, index: number): UIUserForm {
 			paginator
 			:totalRecords="form.total_count.value"
 			:rows="form.count_per_page"
-			:rowsPerPageOptions="[10, 20, 50]"
+			:rowsPerPageOptions="[8, 20, 50]"
 			@page="form.on_page($event)"
 			lazy
 			v-model:editingRows="form.children_in_editing.value"

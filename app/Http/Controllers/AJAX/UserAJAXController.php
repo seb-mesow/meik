@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\AJAX;
 
 use App\Http\Controllers\Controller;
+use App\Models\Enum\UserRole;
 use App\Models\User;
 use App\Repository\CouchDBUserProvider;
 use App\Service\UserService;
@@ -51,19 +52,28 @@ class UserAJAXController extends Controller
 			forename: $forename,
 			surname: $surname,
 			password: $password,
+			role: UserRole::from($role_id),
 		);
 		$this->user_repository->insert($user);
 		return response()->json($user->get_id());
 	}
 
-	public function update(Request $request, string $location_id): void {
-		$name = (string) $request->input('name');
-		$is_public = (bool) $request->input('is_public');
+	public function update(Request $request, string $user_id): void {
+		$username = $request->input('username');
+		$forename = $request->input('forename');
+		$surname = $request->input('surname');
+		$role_id = $request->input('role_id');
 		
-		$location = $this->user_repository->get($location_id);
-		$location->set_name($name);
-		$location->set_is_public($is_public);
-		$this->user_repository->update($location);
+		$username = trim($username);
+		$forename = trim($forename);
+		$surname = trim($surname);
+		
+		$user = $this->user_repository->get($user_id);
+		$user->set_username($username);
+		$user->set_forename($forename);
+		$user->set_surname($surname);
+		$user->set_role(UserRole::from($role_id));
+		$this->user_repository->update($user);
 	}
 
 	public function delete(string $location_id): void {
