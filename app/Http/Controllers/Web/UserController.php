@@ -8,7 +8,7 @@ use App\Models\Enum\UserRole;
 use App\Service\UserService;
 use Inertia\Inertia;
 use Request;
-use Inertia\Response;
+use Inertia\Response as InertiaResponse;
 
 final class UserController extends Controller
 {
@@ -18,7 +18,7 @@ final class UserController extends Controller
 		private readonly UserService $user_service,
 	) {}
 	
-	public function overview(Request $request): Response
+	public function overview(Request $request): InertiaResponse
 	{
 		$result = $this->user_service->query(0, self::INITIAL_COUNT_PER_PAGE);
 		
@@ -43,5 +43,12 @@ final class UserController extends Controller
 		return [
 			'role' => $all_roles,
 		];
+	}
+	
+	public function new(Request $request): InertiaResponse
+	{
+		return Inertia::render('Users/Register', [
+			'selectable_values' => $this->determinate_selectable_values(),
+		]);
 	}
 }

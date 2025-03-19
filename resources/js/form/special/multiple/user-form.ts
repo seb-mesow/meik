@@ -46,11 +46,14 @@ export interface IUserFormConstructorArgs {
 		surname: string,
 		role_id: string,
 	},
+	
 	parent: IUserFormParent,
+	
 	// Auswahlwerte
 	selectable_values: {
 		role: IUserRole[],
 	},
+	
 	// Hilfsobjekte
 	aux: {
 		toast_service: ToastServiceMethods,
