@@ -291,15 +291,26 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						:grid_col="1" :grid_col_span="3" :grid_row="4" />
 				</div>
 			</Fieldset>
+			
 			<div class="flex w-full justify-end py-4">
 				<Button
 					:disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
 					:loading="exhibit_form.is_save_button_loading.value" type='button'
-					:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'" @click="exhibit_form.click_save()" severity="primary" raised />
+					:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'"
+					@click="exhibit_form.click_save()"
+					severity="primary"
+					raised
+				/>
 			</div>
-			<FreeTextFields v-if="props.exhibit_props" :init_props="props.exhibit_props.free_texts"
-				:exhibit_id="props.exhibit_props.id" />
+			
+			<FreeTextFields v-if="props.exhibit_props"
+				:init_props="props.exhibit_props.free_texts"
+				:exhibit_id="props.exhibit_props.id"
+			/>
+		
 		</div>
+		
 	</AuthenticatedLayout>
-	<div class="bg-gray-50 hidden"></div>
+	
+	<!-- <div class="bg-gray-50 hidden"></div> -->
 </template>

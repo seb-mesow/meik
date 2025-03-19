@@ -11,9 +11,9 @@ defineProps<{
 	grid_col: number,
 	grid_col_span?: number,
 	grid_row: number,
-	classLabel?: string,
-	classErrors?: string,
-	classText?: string,
+	class_label?: string,
+	class_errors?: string,
+	class_text?: string,
 }>();
 </script>
 
@@ -21,7 +21,7 @@ defineProps<{
 	<BaseInputField
 		:form="form" :label="label"
 		:grid_col="grid_col" :grid_col_span="grid_col_span" :grid_row="grid_row"
-		:classLabel="classLabel" :classErrors="classErrors" :classSlot="classText"
+		:class_label="class_label" :class_errors="class_errors" :class_slot="class_text"
 	>
 		<InputText :form="form" :type="type" />
 	</BaseInputField>

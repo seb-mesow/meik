@@ -33,7 +33,7 @@ const login_form: ILoginForm = new LoginForm({
 	<GuestLayout>
 		<Head title="Log in" />
 		
-		<div class="mx-auto h-dvh w-100 max-w-dvh p-3 flex flex-col justify-center">
+		<div class="mx-auto h-dvh w-90 max-w-dvh flex flex-col justify-center">
 			
 			<div class="grow max-h-60 w-full mx-auto p-3 rounded-xl bg-white dark:bg-gray-950 text-black dark:text-gray-200 content-center">
 				<p class="text-center text-5xl font-bold">MEIK</p>
@@ -69,7 +69,7 @@ const login_form: ILoginForm = new LoginForm({
 					<InputTextField2
 						:form="login_form.password" type="password" label="Passwort"
 						:grid_col="1" :grid_row="2"
-						classLabel="mt-3"
+						class_label="mt-3"
 					/>
 					
 					<CheckBoxField :form="login_form.remember" label="automatisch einloggen"
