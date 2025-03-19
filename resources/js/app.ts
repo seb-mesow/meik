@@ -16,6 +16,7 @@ import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
 import DialogService from 'primevue/dialogservice';
 import Tooltip from 'primevue/tooltip';
+import { MeikPreset } from './preset';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -41,7 +42,7 @@ createInertiaApp({
 		// PrimeVue
 		app.use(PrimeVue, {
 			theme: {
-				preset: Lara, // oder Material
+				preset: MeikPreset, // oder Material
 				options: {
 					darkModeSelector: '.p-dark'
 				}
