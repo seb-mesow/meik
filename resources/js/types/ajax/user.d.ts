@@ -9,7 +9,6 @@ export namespace Query {
 			username: string,
 			forename: string,
 			surname: string,
-			password: string,
 			role_id: string,
 		}[],
 		total_count: number, // Größe der Ergebnismenge unter Berücksichtigung der Suchkriterien

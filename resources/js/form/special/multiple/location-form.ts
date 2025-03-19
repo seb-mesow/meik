@@ -144,7 +144,7 @@ export class LocationForm implements ILocationForm, UILocationForm {
 		
 		this.confirm_service.require({
 			target: event.currentTarget,
-			message: "Sind Sie sicher das Sie den Standort löschen wollen? Untergeordnete Plätze werden auch gelöscht.",
+			message: "Sind Sie sicher, dass Sie den Standort löschen wollen? Untergeordnete Plätze werden auch gelöscht.",
 			icon: 'pi pi-exclamation-triangle',
 			rejectProps: {
 				label: 'Abbrechen',

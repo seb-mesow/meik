@@ -12,7 +12,7 @@ use Inertia\Response;
 
 final class UserController extends Controller
 {
-	private const int INITIAL_COUNT_PER_PAGE = 10;
+	private const int INITIAL_COUNT_PER_PAGE = 8;
 	
 	public function __construct(
 		private readonly UserService $user_service,

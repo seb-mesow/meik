@@ -67,6 +67,16 @@ final class CouchDBUserProvider implements UserProvider {
 		$this->client->deleteDoc($doc);
 	}
 	
+	public function get(string $id): User {
+		// Das Caching bei Places und Locations erspart ca. 750 ms .
+		$_this = $this;
+		return $this->cached(__FUNCTION__, $id, static function(string $_id) use ($_this): User {
+			$doc_id = $_this->determinate_doc_id_from_model_id($_id);
+			$user_doc = $_this->client->getDoc($doc_id);
+			return $_this->create_user_from_doc($user_doc);
+		}, $id);
+	}
+	
 	/**
 	 * @return User[]
 	 */
