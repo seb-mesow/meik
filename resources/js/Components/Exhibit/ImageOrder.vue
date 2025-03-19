@@ -19,10 +19,10 @@ onMounted(() => {
 		>
 			<ImageTile v-for="image in form.children_in_editing.value" :key="image.ui_id" :form="image" />
 		</div>
-		<Button @click="form.click_add()" label="Hinzufügen" />
+		<Button severity="primary" @click="form.click_add()" label="Hinzufügen" />
 		<div class="flex justify-between">
-			<Button @click="form.click_image_order_save()" :disabled="!form.ui_has_changes.value" label="Speichern" />
-			<Button @click="form.click_image_order_rollback()" :disabled="!form.ui_has_changes.value" label="Zurücksetzen" />
+			<Button severity="primary" @click="form.click_image_order_save()" :disabled="!form.ui_has_changes.value" label="Speichern" />
+			<Button severity="primary" @click="form.click_image_order_rollback()" :disabled="!form.ui_has_changes.value" label="Zurücksetzen" />
 		</div>
 	</div>
 </template>

@@ -20,7 +20,7 @@ const form = props.form;
 		</div>
 		<RichTextEditor v-model="form.html" class="mt-3"/>
 		<div class="flex justify-end gap-2 mt-3">
-			<Button @click="form.click_save()" label="Speichern" :loading="form.is_save_button_loading" severity="info" raised/>
+			<Button @click="form.click_save()" label="Speichern" :loading="form.is_save_button_loading" severity="primary" raised/>
 			<Button @click="form.click_delete()" label="Löschen" :loading="form.is_delete_button_loading" severity="danger"/>
 		</div>
 	</div>

@@ -42,6 +42,8 @@ const form: IFreeTextsForm = reactive(new FreeTextsForm({
 	<div class="flex w-full justify-end py-4">
 		<Button @click="form.append_form()" label="Abschnitt hinzufügen" />
 	</div>
+	<hr class="my-3">
+	<Button severity="primary" @click="form.append_form()" label="Abschnitt hinzufügen"/>
 </template>
 
 <style lang="css" scoped></style>

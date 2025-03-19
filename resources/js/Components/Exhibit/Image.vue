@@ -92,7 +92,7 @@ function on_is_public_button_mouseleave(event: MouseEvent): void {
 		</div>
 		<div class="buttons">
 			<Button @click="form.click_save()" label="Speichern"
-			:loading="form.is_save_button_loading.value"
+			:loading="form.is_save_button_loading.value" severity="primary"
 			:disabled="!(form.has_changes.value)"
 			/>
 			<Button @click="form.click_delete()" label="Löschen" severity="danger"
