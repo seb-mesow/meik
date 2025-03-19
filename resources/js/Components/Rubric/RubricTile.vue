@@ -122,22 +122,19 @@ const ajax_delete = (): Promise<void> => {
 </script>
 
 <template>
-	<div class="h-fit">
-
-		<a :href="route('rubric.details', { rubric_id: rubric_id })">
-			<div class="tile rubric-tile shadow-md shadow-gray-400 flex justify-between items-center">
-				<span class="text-2xl">{{ rubric_name }}</span>
-				<div class="flex flex-col gap-3">
-					<Button severity="primary" raised class="!p-1" @click.prevent="create_dialog">
-						<span class="material-symbols-outlined">edit</span>
-					</Button>
-					<Button raised class="!p-1" severity="danger" @click.prevent="delete_rubric($event)">
-						<span class="material-symbols-outlined">delete</span>
-					</Button>
-				</div>
+	<a :href="route('rubric.details', { rubric_id: rubric_id })">
+		<div class="tile rubric-tile shadow-md shadow-gray-400 flex justify-between items-center">
+			<span class="text-2xl">{{ rubric_name }}</span>
+			<div class="flex flex-col gap-3">
+				<Button severity="primary" raised class="!p-1" @click.prevent="create_dialog">
+					<span class="material-symbols-outlined">edit</span>
+				</Button>
+				<Button raised class="!p-1" severity="danger" @click.prevent="delete_rubric($event)">
+					<span class="material-symbols-outlined">delete</span>
+				</Button>
 			</div>
-		</a>
-	</div>
+		</div>
+	</a>
 </template>
 
 <style lang="css" scoped>
