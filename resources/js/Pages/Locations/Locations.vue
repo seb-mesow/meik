@@ -48,12 +48,12 @@ function child_form(data: any, index: number): UILocationForm {
 </script>
 
 <template>
-	<Toast/>
-	<ConfirmPopup/>
-	
+	<Toast />
+	<ConfirmPopup />
+
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb class="!bg-white dark:!bg-gray-800"  :home="home" :model="items">
+			<Breadcrumb class="!bg-white dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -62,82 +62,71 @@ function child_form(data: any, index: number): UILocationForm {
 				</template>
 			</Breadcrumb>
 		</template>
-		
+
 		<div class="fixed bottom-4 right-4">
-			<Button severity="primary" raised :disabled="!form.create_button_enabled" icon="pi pi-plus" @click="form.prepend_form()" />
+			<Button severity="primary" raised :disabled="!form.create_button_enabled" icon="pi pi-plus"
+				@click="form.prepend_form()" />
 		</div>
-		
-		<DataTable
-			:value="form.children.value"
-			paginator
-			:totalRecords="form.total_count.value"
-			:rows="form.count_per_page"
-			:rowsPerPageOptions="[10, 20, 50]"
-			@page="form.on_page($event)"
-			lazy
-			v-model:editingRows="form.children_in_editing.value"
-			editMode="row"
-			@row-edit-init="form.on_row_edit_init($event)"
-			@row-edit-save="form.on_row_edit_save($event)"
-			@row-edit-cancel="form.on_row_edit_cancel($event)"
-		>
-			<Column field="name" header="Name" style="width: 25%">
-				<template #body="{ data, index }">
-					<span v-if="child_form(data, index).id.value !== undefined"><a
-						class="text-blue-600 dark:text-blue-500 hover:underline"
-						:href="child_form(data, index).get_place_overview_url_path()"
-					>{{ child_form(data, index).name.ui_value_in_editing }}</a></span>
-				</template>
-				<template #editor="{ data, index }">
-					<div>
-						<p v-for="error in child_form(data, index).name.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
-					</div>
-					<!-- @vue-expect-error -->
-					<InputText
-						type=text
-						:id="child_form(data, index).name.html_id"
-						:name="child_form(data, index).name.html_id"
-						:modelValue="child_form(data, index).name.ui_value_in_editing.value"
-						@update:modelValue="(v: string) => child_form(data, index).name.on_change_ui_value_in_editing(v)"
-						@blur="child_form(data, index).name.on_blur($event)"
-						:invalid="child_form(data, index).name.ui_is_invalid.value"
-						fluid
-					/>
-				</template>
-			</Column>
-			<Column field="is_public" header="öffentlich" style="width: 25%">
-				<template #body="{ data, index }">
-					<i v-if="child_form(data, index).is_public.ui_value_in_editing.value" class="pi pi-check" />
-				</template>
-				<template #editor="{ data, index }">
-					<div>
-						<p v-for="error in child_form(data, index).is_public.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
-					</div>
-					<div class="py-(--p-inputtext-padding-y) px-(--p-inputtext-padding-x) text-[1rem] border border-transparent" >
-						<Checkbox
-							:id="child_form(data, index).is_public.html_id"
-							:name="child_form(data, index).is_public.html_id"
-							:modelValue="child_form(data, index).is_public.ui_value_in_editing.value"
-							@update:modelValue="(v: boolean) => child_form(data, index).is_public.on_change_ui_value_in_editing(v)"
-							@blur="child_form(data, index).is_public.on_blur($event)"
-							:invalid="child_form(data, index).is_public.ui_is_invalid.value"
-							binary
-						/>
-					</div>
-				</template>
-			</Column>
-			<Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
-			<Column style="width: 10%; min-width: 8rem">
-				<template #body="{ data, index }">
-					<Button
-						:disabled="!child_form(data, index).delete_button_enabled"
-						class="border-none" icon="pi pi-trash" outlined rounded severity="danger" raised
-						@click="child_form(data, index).request_delete($event)"
-					/>
-				</template>
-			</Column>
-			<template #empty>keine Standorte vorhanden</template>
-		</DataTable>
-		
+		<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">
+			<div class="flex h-full w-full">
+				<DataTable class="!w-full" :value="form.children.value" paginator :totalRecords="form.total_count.value"
+					:rows="form.count_per_page" :rowsPerPageOptions="[10, 20, 50]" @page="form.on_page($event)" lazy
+					v-model:editingRows="form.children_in_editing.value" editMode="row"
+					@row-edit-init="form.on_row_edit_init($event)" @row-edit-save="form.on_row_edit_save($event)"
+					@row-edit-cancel="form.on_row_edit_cancel($event)">
+					<Column field="name" header="Name" style="width: 25%">
+						<template #body="{ data, index }">
+							<span v-if="child_form(data, index).id.value !== undefined"><a
+									class="text-blue-600 dark:text-blue-500 hover:underline"
+									:href="child_form(data, index).get_place_overview_url_path()">{{ child_form(data,
+										index).name.ui_value_in_editing }}</a></span>
+						</template>
+						<template #editor="{ data, index }">
+							<div>
+								<p v-for="error in child_form(data, index).name.ui_errs.value"
+									class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+							</div>
+							<!-- @vue-expect-error -->
+							<InputText type=text :id="child_form(data, index).name.html_id"
+								:name="child_form(data, index).name.html_id"
+								:modelValue="child_form(data, index).name.ui_value_in_editing.value"
+								@update:modelValue="(v: string) => child_form(data, index).name.on_change_ui_value_in_editing(v)"
+								@blur="child_form(data, index).name.on_blur($event)"
+								:invalid="child_form(data, index).name.ui_is_invalid.value" fluid />
+						</template>
+					</Column>
+					<Column field="is_public" header="öffentlich" style="width: 25%">
+						<template #body="{ data, index }">
+							<i v-if="child_form(data, index).is_public.ui_value_in_editing.value" class="pi pi-check" />
+						</template>
+						<template #editor="{ data, index }">
+							<div>
+								<p v-for="error in child_form(data, index).is_public.ui_errs.value"
+									class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+							</div>
+							<div
+								class="py-(--p-inputtext-padding-y) px-(--p-inputtext-padding-x) text-[1rem] border border-transparent">
+								<Checkbox :id="child_form(data, index).is_public.html_id"
+									:name="child_form(data, index).is_public.html_id"
+									:modelValue="child_form(data, index).is_public.ui_value_in_editing.value"
+									@update:modelValue="(v: boolean) => child_form(data, index).is_public.on_change_ui_value_in_editing(v)"
+									@blur="child_form(data, index).is_public.on_blur($event)"
+									:invalid="child_form(data, index).is_public.ui_is_invalid.value" binary />
+							</div>
+						</template>
+					</Column>
+					<Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
+					<Column style="width: 10%; min-width: 8rem">
+						<template #body="{ data, index }">
+							<Button :disabled="!child_form(data, index).delete_button_enabled" class="border-none"
+								icon="pi pi-trash" outlined rounded severity="danger" raised
+								@click="child_form(data, index).request_delete($event)" />
+						</template>
+					</Column>
+					<template #empty>keine Standorte vorhanden</template>
+				</DataTable>
+			</div>
+		</div>
+
 	</AuthenticatedLayout>
 </template>
