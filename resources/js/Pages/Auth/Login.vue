@@ -37,12 +37,19 @@ const login_form: ILoginForm = new LoginForm({
 			
 			<div class="grow max-h-60 w-full mx-auto p-3 rounded-xl bg-white dark:bg-gray-950 text-black dark:text-gray-200 content-center">
 				<p class="text-center text-5xl font-bold">MEIK</p>
-				<p class="text-center text-2xl mt-3">
-					Muesum zur
+				<!--<p class="text-center text-2xl mt-3 text-format">
+					<span>Muesum</span> <span>zur</span>zur
 					Entwicklung der
 					Informations- und
 					Kommunikationstechnik
+				</p>-->
+				<p class="text-center text-2xl mt-3 text-format">
+					<span><span class="highlight">M</span>useum zur </span>
+					<span><span class="highlight">E</span>ntwicklung der </span> 
+					<span><span class="highlight">I</span>nformations- und </span>
+					<span><span class="highlight">K</span>ommuniktionstechnik</span>.
 				</p>
+
 			</div>
 			
 			<!-- <div class="2xl:block hidden"><span>>2xl</span></div>

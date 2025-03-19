@@ -88,6 +88,22 @@ body {
 
 /* ----- Klassen für PrimeVue-Komponenten -------------------------------- */
 
+/* Schriftformatierung für Loginseite */
+p.text-format span::first-letter {
+	text-transform: uppercase !important;
+	font-weight: bold !important;
+	/*color: #163366 !important;/**/
+  }
+  
+  .highlight {
+	font-weight: 1000;
+	font-size: 1.5em;
+	color: #163366; /* Farbe nach Wunsch */
+	outline: 2px #ffffff;
+  }
+  
+
+
 /* Standard-Button */
 .p-button.p-button-primary {
 	background-color: var(--primary-color) !important;
