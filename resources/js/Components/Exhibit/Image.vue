@@ -21,6 +21,7 @@ const props = defineProps<{
 
 function on_is_public_button_mouseenter(event: MouseEvent): void {
 	if (props.form.is_public.ui_value_in_editing.value) {
+		return;
 		if (DarkMode.is_dark.value) {
 			// @ts-expect-error
 			event.target.style['background-color'] = 'var(--meik-is-public-bg-color-dark-hover)';
@@ -70,24 +71,16 @@ function on_is_public_button_mouseleave(event: MouseEvent): void {
 				<InputText :form="form.description" />
 			</div>
 			<ToggleButton
-				class="w-28"
+				class="w-28 !text-black"
+				:class="{
+					'!bg-meik-is-public-bg-color-light dark:!bg-meik-is-public-bg-color- hover:!bg-meik-is-public-bg-color-light-hover hover:dark:!bg-meik-is-public-bg-color-dark-hover': form.is_public.ui_value_in_editing.value,
+					'!bg-meik-is-internal-bg-color-light dark:!bg-meik-is-internal-bg-color-dark hover:!bg-meik-is-internal-bg-color-light-hover hover:dark:!bg-meik-is-internal-bg-color-dark-hover': !form.is_public.ui_value_in_editing.value
+				}"
 				style="grid-area: 3 / 2 / 3 / 2;"
 				onLabel='öffentlich'
 				offLabel='intern'
 				:modelValue="form.is_public.ui_value_in_editing.value"
 				@update:modelValue="(v: boolean) => form.is_public.on_change_ui_value_in_editing(v)"
-				:dt="{ colorScheme: {
-					light: {
-						background: 'var(--meik-is-internal-bg-color-light)', hoverBackground: 'var(--meik-is-internal-bg-color-light-hover)', color: 'black', hoverColor: 'black',
-						checkedBackground: 'var(--meik-is-public-bg-color-light)', checkedColor: 'black'
-					},
-					dark: {
-						background: 'var(--meik-is-internal-bg-color-dark)', hoverBackground: 'var(--meik-is-internal-bg-color-dark-hover)', color: 'black', hoverColor: 'black', 
-						checkedBackground: 'var(--meik-is-public-bg-color-dark)', checkedColor: 'black',
-					}
-				}}"
-				@mouseenter="on_is_public_button_mouseenter"
-				@mouseleave="on_is_public_button_mouseleave"
 			/>
 		</div>
 		<div class="buttons">

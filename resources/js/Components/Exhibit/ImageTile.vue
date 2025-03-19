@@ -11,7 +11,7 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="image-tile md:h-30 h-15 md:p-3 p-2 my-3 flex items-center gap-x-3 cursor-grab"
+	<div class="image-tile text-default-text-color-light dark:text-default-text-color-dark bg-gray-100 dark:bg-gray-500 shadow-md shadow-gray-400 hover:bg-meik-primary/12 md:h-30 h-15 md:p-3 p-2 my-3 flex items-center gap-x-3 cursor-grab"
 		:id="'image-tile-' + form.ui_id"
 		draggable="true"
 		@dragstart="form.on_tile_dragstart"
@@ -37,8 +37,6 @@ onMounted(() => {
 <style lang="css" scoped>
 .image-tile {
 	border-radius: 1rem;
-	color: black;
-	background-color: #808080;
 	display: flex;
 }
 .image-tile-dragging {
