@@ -125,7 +125,7 @@ const ajax_delete = (): Promise<void> => {
 	<div class="h-fit">
 
 		<a :href="route('rubric.details', { rubric_id: rubric_id })">
-			<div class="rubric-tile bg-gray-100 dark:bg-gray-500 flex justify-between items-center shadow-md shadow-gray-400 hover:bg-meik-primary/12">
+			<div class="tile rubric-tile shadow-md shadow-gray-400 flex justify-between items-center">
 				<span class="text-2xl">{{ rubric_name }}</span>
 				<div class="flex flex-col gap-3">
 					<Button severity="primary" raised class="!p-1" @click.prevent="create_dialog">
@@ -146,6 +146,5 @@ const ajax_delete = (): Promise<void> => {
 	height: 8.5rem;
 	border-radius: 1rem;
 	padding: 1rem;
-	color: black;
 }
 </style>
