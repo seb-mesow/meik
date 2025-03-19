@@ -148,8 +148,7 @@ onBeforeUnmount(() => {
 
 <template>
 	<div class="fixed bottom-8 right-8">
-		<Button severity="primary" class="!bg-meik-primary" raised as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })"
-			icon="pi pi-plus" />
+		<Button severity="primary" @click="create_dialog" icon="pi pi-plus" />
 	</div>
 
 	<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">

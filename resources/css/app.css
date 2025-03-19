@@ -33,9 +33,9 @@
 	/* Standardfarben für PrimeVue Buttons */
 	--button-primary-background: #1376f9; /* blue-50 */
 	--button-primary-hover-background: #2563eb; /* blue-600 */
-	--primary-color: #6366f1; /* Standard Primärfarbe (Blau) */
+	--primary-color: #003366; /* Standard Primärfarbe (Blau) */
 	--primary-color-text: #ffffff; /* Standard Textfarbe für den Button */
-	--primary-color-hover: #4f46e5; /* Hover-Farbe */
+	--primary-color-hover: #249cda; /* Hover-Farbe */
 
 
 	/* Farben für den Dark Mode */

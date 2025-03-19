@@ -2,6 +2,7 @@
 import LogoutButton from '@/Components/Control/LogoutButton.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
 </script>
 
 <template>
@@ -21,8 +22,7 @@ import { Head } from '@inertiajs/vue3';
 					class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
 				>
 					<Form id="logout" method="post" :action="route('logout')">
-						<Button severity="primary" type="submit">
-							Logout
+						<Button severity="primary" type="submit">Logout
 						</Button>
 					</Form>
 					<div class="p-6 text-gray-900 dark:text-gray-100">
