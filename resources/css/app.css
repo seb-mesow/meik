@@ -45,8 +45,7 @@
 }
 
 body {
-	color: black;
-	--p-fieldset-color: black;
+	--p-surface-0: black;
 	
 	color: var(--p-surface-0);
 	--p-inputtext-color: var(--p-surface-0);
