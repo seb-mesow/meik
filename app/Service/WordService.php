@@ -8,8 +8,11 @@ use App\Models\Exhibit;
 use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
 use DOMDocument;
+use Error;
 use HTMLtoOpenXML\Parser;
 use PhpOffice\PhpWord\Element\TextRun;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\TemplateProcessor;
 
@@ -36,27 +39,39 @@ final class WordService
 		$templateProcessor->setValue('Herstellungsjahr', $exhibit->get_name());
 		$templateProcessor->setValue('Standort', $location->get_name());
 		$templateProcessor->setValue('Platz', $place->get_name());
-		$templateProcessor->setValue('Anschaffungsdatum', $exhibit->get_aquiry_date() ?? '-');
+		$templateProcessor->setValue('Anschaffungsdatum', $exhibit->get_acquisition_info()->get_date() ?? '-');
 		$templateProcessor->setValue('Aktueller Wert', $exhibit->get_current_value() . ' €');
-		$templateProcessor->setValue('Ursprungswert', ($exhibit->get_original_price()?->get_amount() . ' ' . $exhibit->get_original_price()?->get_currency()?->get_code()) ?? '-');
+		$templateProcessor->setValue('Ursprungswert', ($exhibit->get_original_price()?->get_amount() . ' ' . $exhibit->get_original_price()?->get_currency()?->get_id()) ?? '-');
 
 		$replacers = [];
 
-		foreach ($exhibit->get_free_texts() as $free_text) {
-			$replacers[] = [
-				'Titel' => $free_text->get_heading(),
-				'Beschreibung' =>
-				strip_tags($free_text->get_html())
-			];
-		};
-
-		$templateProcessor->cloneBlock('block_Freitexte', 0, true, false, $replacers);
-
-
-		// Speichere das verarbeitete Dokument
 		$templateProcessor->saveAs($processedPath);
 
+		// $word = new PhpWord();
+		$word = IOFactory::load($processedPath);
+		$writer = IOFactory::createWriter($word, 'Word2007');
+		$sections = $word->getSections();
+		$section = $sections[0];
+		Html::addHtml($section, "<br/>");
+		foreach ($exhibit->get_free_texts() as $free_text) {
+			// $replacers[] = [
+			// 	'Titel' => $free_text->get_heading(),
+			// 	'Beschreibung' =>
+			// 	strip_tags($free_text->get_html())
+			// ]
+			Html::addHtml($section, '<strong>'.$free_text->get_heading().'</strong>');
+			Html::addHtml($section, $free_text->get_html());
+			Html::addHtml($section, "<br/>");
+			$writer->save($processedPath, 'Word2007');
+		};
+
+		// $templateProcessor->cloneBlock('block_Freitexte', 0, true, false, $replacers);
+
+		// Speichere das verarbeitete Dokument
+
+
+
 		// Schicke das verarbeitete Dokument als Response
-		return response()->download($processedPath)->deleteFileAfterSend(true);
+		return response()->download($processedPath, $exhibit->get_name())->deleteFileAfterSend(true);
 	}
 }
