@@ -30,7 +30,7 @@ const items:{ label: string, url?: string }[] = [];
 				</template>
 			</Breadcrumb>
 		</template>
-		<div  class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full">
+		<div  class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">
 			<div class="flex flex-wrap gap-3">
 				<!-- <div class="border-black border-solid border-2 w-[20%] min-w-[20rem]" v-for="category in categorys"> -->
 				<CategoryTile v-for="category in props.categories" :category="category" />

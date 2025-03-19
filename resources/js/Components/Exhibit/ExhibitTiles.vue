@@ -83,13 +83,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full">
+	<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">
 		<div class="flex h-full">
 			<div class="overflow-y-auto flex flex-wrap flex-grow content-start gap-4" @scroll="handleScroll($event)">
 				<ExhibitTile v-for="exhibit in exhibits" :key="exhibit.id" :exhibit="exhibit" />
 			</div>
 			<div class="fixed bottom-8 right-8">
-				<Button severity="info" raised as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })"
+				<Button class="!bg-meik-primary" raised as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })"
 					icon="pi pi-plus" />
 			</div>
 		</div>
