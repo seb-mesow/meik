@@ -25,7 +25,7 @@ final class UserController extends Controller
 				'username' => $user->get_username(),
 				'forename' => $user->get_forename(),
 				'surname' => $user->get_surname(),
-				'is_admin' => $user->is_admin(),
+				'is_admin' => $user->get_role(),
 			];
 		}, $users);
 		

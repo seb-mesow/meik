@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App;
+use App\Models\Enum\UserRole;
 use App\Models\User;
 use App\Repository\Traits\StringIdRepositoryTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -23,7 +24,7 @@ use stdClass;
  *     password_hash: string,
  *     forename: string,
  *     surname: string,
- *     is_admin: bool,
+ *     role: string,
  *     remember_token: string
  * }
  */
@@ -190,7 +191,7 @@ final class CouchDBUserProvider implements UserProvider {
 			password_hash: $doc->password_hash,
 			forename: $doc->forename,
 			surname: $doc->surname,
-			is_admin: $doc->is_admin,
+			role: UserRole::from($doc->role),
 			original_username: $original_name,
 			rev: $doc->_rev,
 		);
@@ -207,7 +208,7 @@ final class CouchDBUserProvider implements UserProvider {
 		$user_doc->password_hash = $user->get_password_hash();
 		$user_doc->forename = $user->get_forename();
 		$user_doc->surname = $user->get_surname();
-		$user_doc->is_admin = $user->is_admin();
+		$user_doc->role = $user->get_role()->get_id();
 		$user_doc->remember_token = $user->getRememberToken();
 		
 		return $user_doc;
