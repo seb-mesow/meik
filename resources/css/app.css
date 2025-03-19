@@ -36,12 +36,13 @@
 	--primary-color: #003366; /* Standard Primärfarbe (Blau) */
 	--primary-color-text: #ffffff; /* Standard Textfarbe für den Button */
 	--primary-color-hover: #249cda; /* Hover-Farbe */
+	--primary-border: 1px solid #ffffff;
 	
-
 
 	/* Farben für den Dark Mode */
 	--button-primary-background-dark: #60a5fa; /* blue-400 */
 	--button-primary-hover-background-dark: #93c5fd; /* blue-300 */
+	
 
 	/* Farben für Danger-Buttons (z.B. Löschen) */
 	--button-danger-background: #ef4444; /* red-500 */
@@ -90,18 +91,19 @@ body {
 	background-color: var(--primary-color) !important;
 	color: var(--primary-color-text) !important;
 	font-weight: 100 !important;
-	border: 2px solid white !important; /* Weißer Rand mit 2px Dicke */
+	border: var(--primary-border) !important; /* Weißer Rand !wird hier ignoriert!*/
 	border-color: var(--primary-color) !important;
   }
   
   .p-button.p-button-primary:hover {
-	background-color: var(--primary-color-hover) !important;
+	border: var(--primary-border) !important; /* Weißer Rand */
   }
   
   .p-button {
 	background-color: var(--button-primary-background);
-	color: #ffffff;
+	color: #b30202;
 	font-weight: normal !important;
+	border: var(--primary-border) !important; /* Weißer Rand */
 	transition: background-color 0.3s ease-in-out;
   }
   
