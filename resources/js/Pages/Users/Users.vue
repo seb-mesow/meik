@@ -2,21 +2,17 @@
 import { route } from 'ziggy-js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import Checkbox from 'primevue/checkbox';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import Breadcrumb from 'primevue/breadcrumb';
-import { ILocationsInitPageProps } from '@/types/page_props/location';
-import { UILocationsForm, LocationsForm } from '@/form/special/overview/locations-form';
-import { UILocationForm } from '@/form/special/multiple/location-form';
 import { IUsersInitPageProps } from '@/types/page_props/users';
 import { UIUsersForm, UsersForm } from '@/form/special/overview/users-form';
-import { UIUserForm, UserForm } from '@/form/special/multiple/user-form';
+import { UIUserForm } from '@/form/special/multiple/user-form';
+import { Select } from 'primevue';
 
 const props = defineProps<IUsersInitPageProps>()
 
@@ -84,63 +80,48 @@ function child_form(data: any, index: number): UIUserForm {
 			@row-edit-cancel="form.on_row_edit_cancel($event)"
 		>
 			
-			<Column field="username" header="Benutzername" style="width: 25%">
+			<Column field="username" header="Benutzername" style="width: 20%">
 				<template #body="{ data, index }">
 					<span>{{ child_form(data, index).username.ui_value_in_editing }}</span>
 				</template>
-				<template #editor="{ data, index }">
-					<div>
-						<p v-for="error in child_form(data, index).name.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
-					</div>
-					<!-- @vue-expect-error -->
-					<InputText
-						type=text
-						:id="child_form(data, index).name.html_id"
-						:name="child_form(data, index).name.html_id"
-						:modelValue="child_form(data, index).name.ui_value_in_editing.value"
-						@update:modelValue="(v: string) => child_form(data, index).name.on_change_ui_value_in_editing(v)"
-						@blur="child_form(data, index).name.on_blur($event)"
-						:invalid="child_form(data, index).name.ui_is_invalid.value"
-						fluid
-					/>
-				</template>
 			</Column>
 			
-			<Column field="forename" header="Vorname" style="width: 25%" >
+			<Column field="forename" header="Vorname" style="width: 20%">
 				<template #body="{ data, index }">
 					<span>{{ child_form(data, index).forename.ui_value_in_editing }}</span>
 				</template>
 			</Column>
 			
-			<Column field="surname" header="Nachname" style="width: 25%" >
+			<Column field="surname" header="Nachname" style="width: 20%">
 				<template #body="{ data, index }">
 					<span>{{ child_form(data, index).surname.ui_value_in_editing }}</span>
 				</template>
 			</Column>
 			
-			<!-- <Column field="surname" header="Nachname" style="width: 25%" />
+			<Column field="role" header="Rolle" style="width: 15%">
 				<template #body="{ data, index }">
-					<i v-if="child_form(data, index).is_public.ui_value_in_editing.value" class="pi pi-check" />
+					<span>{{ child_form(data, index).role.ui_value_in_editing.value?.name }}</span>
 				</template>
 				<template #editor="{ data, index }">
 					<div>
-						<p v-for="error in child_form(data, index).is_public.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+						<p v-for="error in child_form(data, index).role.ui_errs.value" class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
 					</div>
-					<div class="py-(--p-inputtext-padding-y) px-(--p-inputtext-padding-x) text-[1rem] border border-transparent" >
-						<Checkbox
-							:id="child_form(data, index).is_public.html_id"
-							:name="child_form(data, index).is_public.html_id"
-							:modelValue="child_form(data, index).is_public.ui_value_in_editing.value"
-							@update:modelValue="(v: boolean) => child_form(data, index).is_public.on_change_ui_value_in_editing(v)"
-							@blur="child_form(data, index).is_public.on_blur($event)"
-							:invalid="child_form(data, index).is_public.ui_is_invalid.value"
-							binary
-						/>
-					</div>
+					<!-- @vue-expect-error -->
+					<Select
+						:id="child_form(data, index).role.html_id"
+						:name="child_form(data, index).role.html_id"
+						:modelValue="child_form(data, index).role.ui_value_in_editing.value"
+						@update:modelValue="(v: boolean) => child_form(data, index).role.on_change_ui_value_in_editing(v)"
+						:options="child_form(data, index).role.options.value"
+						optionLabel="name"
+						@blur="child_form(data, index).role.on_blur($event)"
+						:invalid="child_form(data, index).role.ui_is_invalid.value"
+						placeholder="auswählen"
+					/>
 				</template>
-			</Column> -->
+			</Column>
 			
-			<Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
+			<Column :rowEditor="true" style="width: 15%; min-width: 8rem" bodyStyle="text-align:center" />
 			
 			<Column style="width: 10%; min-width: 8rem">
 				<template #body="{ data, index }">
