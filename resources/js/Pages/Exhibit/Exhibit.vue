@@ -201,7 +201,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						<img v-if="props.exhibit_props?.title_image" class="max-h-[15rem]"
 							:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })">
 						<div v-else class="">
-							<Button label="Bilder hinzufügen" />
+							<Button severity="primary" label="Bilder hinzufügen" />
 						</div>
 					</a>
 				</div>

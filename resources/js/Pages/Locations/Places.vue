@@ -74,7 +74,7 @@ function child_form(data: any, index: number): UIPlaceForm {
 		</template>
 		
 		<div class="fixed bottom-4 right-4">
-			<Button severity="info" :disabled="!form.create_button_enabled.value" icon="pi pi-plus" @click="form.prepend_new_form()" />
+			<Button severity="primary" :disabled="!form.create_button_enabled.value" icon="pi pi-plus" @click="form.prepend_new_form()" />
 		</div>
 		
 		<DataTable
