@@ -49,6 +49,7 @@ const props = defineProps<{
 				<InputText :form="form.description" />
 			</div>
 			<ToggleButton
+				raised
 				class="w-28 !text-black"
 				:class="{
 					'!bg-meik-is-public-bg-color-light dark:!bg-meik-is-public-bg-color- hover:!bg-meik-is-public-bg-color-light-hover hover:dark:!bg-meik-is-public-bg-color-dark-hover': form.is_public.ui_value_in_editing.value,
