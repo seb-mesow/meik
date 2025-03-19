@@ -72,15 +72,26 @@ class UserSeeder extends Seeder
 			forename: "U"."w"."e"."-"."J"."e"."n"."s",
 			surname: "M"."ü"."l"."l"."e"."r",
 		);
+		
+		for ($i = 0; $i < 100; $i++) {
+			$this->create_user();
+		}
 	}
 	
-	private function create_user(string $username,	string $password, UserRole $role, string $forename,	string $surname): void {
+	private function create_user(
+		?string $username = null,
+		?string $password = null,
+		?UserRole $role = null,
+		?string $forename = null,
+		?string $surname = null,
+	): void {
+		$username ??= fake()->userName();
 		$user = new User(
 			username: $username,
-			password_hash: $this->hasher->make($password),
-			role: $role,
-			forename: $forename,
-			surname: $surname,
+			password_hash: $this->hasher->make($password ?? $username),
+			role: $role ?? fake()->randomElement(UserRole::cases()),
+			forename: $forename ?? fake()->firstName(),
+			surname: $surname ?? fake()->lastName(),
 		);
 		$this->user_provider->insert($user);
 	}
