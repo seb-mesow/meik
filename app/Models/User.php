@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace App\Models;
+use App\Models\Enum\UserRole;
 use App\Models\Interfaces\Revisionable;
 use App\Models\Interfaces\StringIdentifiable;
 use App\Models\Traits\RevisionableTrait;
@@ -22,8 +23,8 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 	private string $password_hash;
 	private string $forename;
 	private string $surname;
-	private bool $is_admin = false;
-	
+	private UserRole $role;
+		
 	/**
 	 * ist optional: nur wenn der User sich beim letzten Einloggen mit "Remember Me" angemeldet hat, ist er gesetzt 
 	 */
@@ -32,7 +33,7 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 	public function __construct(
 		string $username,
 		#[SensitiveParameter] string $password_hash,
-		bool $is_admin,
+		UserRole $role,
 		string $forename,
 		string $surname,
 		?string $original_username = null,
@@ -42,7 +43,7 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 		$this->password_hash = $password_hash;
 		$this->forename = $forename;
 		$this->surname = $surname;
-		$this->is_admin = $is_admin;
+		$this->role = $role;
 		
 		$this->id = $original_username;
 		$this->rev = $rev;
@@ -133,11 +134,11 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 		$this->surname = $surname;
 	}
 	
-	public function is_admin(): bool {
-		return $this->is_admin;
+	public function get_role(): UserRole {
+		return $this->role;
 	}
 	
-	public function set_is_admin(bool $is_admin): void {
-		$this->is_admin = $is_admin;
+	public function set_role(UserRole $role): void {
+		$this->role = $role;
 	}
 }
