@@ -164,7 +164,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 		</template>
 
 		<div class="bg-white dark:bg-gray-500 p-4 rounded-2xl h-full overflow-auto">
-			<div class="gap-x-3" :class="{ 'flex': does_exist, 'basis-2/3': does_exist, 'items-center': does_exist }">
+			<div class="gap-x-3 pb-4" :class="{ 'flex': does_exist, 'basis-2/3': does_exist, 'items-center': does_exist }">
 				<div
 					class="bg-gray-50 border-[2px] border-gray-300 dark:border-gray-800 dark:bg-gray-600 p-4 rounded-md">
 					<div class="grid grid-cols-3 gap-x-3" :class="{ 'basis-2/3': does_exist }">
