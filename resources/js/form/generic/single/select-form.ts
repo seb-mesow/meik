@@ -1,4 +1,4 @@
-import { Ref, shallowRef, Static } from "vue";
+import { Ref, shallowRef } from "vue";
 import { ISingleValueForm2, ISingleValueForm2ConstructorArgs, ISingleValueForm2Parent, SingleValueForm2, UISingleValueForm2 } from "./single-value-form2";
 import { AutoCompleteCompleteEvent } from "primevue/autocomplete";
 

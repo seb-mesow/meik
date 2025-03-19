@@ -10,8 +10,13 @@ type SearchInValue = 'id'|'name';
 export interface IOptionFinder<I extends string|number, O extends IOption<string|number>> {
 	find_all(criteria: string, search_in: SearchInValue, filter: FilterFunc): O[];
 	find_all_by_many(criterias: (string|I)[], search_in: SearchInValue, filter: FilterFunc, ): O[];
-	find_first(criteria: string, search_in: SearchInValue, filter: FilterFunc): O|undefined;
+	find_first(criteria: string|I, search_in: SearchInValue, filter: FilterFunc): O|undefined;
+	
 }
+
+type _FilterFunc = (option_str: string, criteria: string) => boolean;
+export const PARTIAL_MATCH: _FilterFunc = (option_str, criteria) => option_str.includes(criteria);
+export const FULL_MATCH: _FilterFunc = (option_str, criteria) => option_str === criteria;
 
 abstract class AbstractOptionFinder<I extends string|number, O extends IOption<string|number>> {
 	private readonly determinate_scanned_value_from_id: DeterminateScannedValueFunc<O>;
@@ -46,8 +51,8 @@ abstract class AbstractOptionFinder<I extends string|number, O extends IOption<s
 		});
 	}
 	
-	public find_first(criteria: string, search_in: SearchInValue, filter: FilterFunc): O|undefined {
-		criteria = criteria.trim().toLowerCase();
+	public find_first(criteria: string|I, search_in: SearchInValue, filter: FilterFunc): O|undefined {
+		criteria = criteria.toString().trim().toLowerCase();
 		const determinate_scanned_value = this.get_determinate_scanned_value(search_in);
 		return this.selectable_options.find((option) => filter(determinate_scanned_value(option), criteria));
 	}

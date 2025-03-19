@@ -62,7 +62,7 @@ export abstract class MultiSelectForm<I extends string|number, O extends IMultip
 		let initial_values: O[] = [];
 		if (args.val_ids !== undefined) {
 			if (args.selectable_options === undefined || args.selectable_options?.length < 0) {
-				throw new Error(`Assertation failed: MultiSelectForm::constructor(): ${id.toString()}: val_id is provided, but there are no selectable_options .`);
+				throw new Error(`Assertation failed: MultiSelectForm::constructor(): ${id.toString()}: val_ids is provided, but there are no selectable_options.`);
 			} else {
 				console.log(`MultipleSelectForm::constructor(): option_finder.find_all_by_many`);
 				// until the super() call we are only allowed to use static methods :-/

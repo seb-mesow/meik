@@ -8,6 +8,7 @@ import { IMultipleValueForm, MultipleValueForm } from "@/form/generic/multiple/m
 import { ref, Ref } from "vue";
 import { StringForm } from "@/form/generic/single/string-form";
 import { SelectForm, UISelectForm } from "@/form/generic/single/select-form";
+import { ISimpleSelectForm, SimpleSelectForm, StringSimpleSelectForm, UISimpleSelectForm } from "@/form/generic/single/simple-select-form";
 
 export interface UIUserForm {
 	request_delete(event: any): void;
@@ -15,7 +16,7 @@ export interface UIUserForm {
 	readonly username: Readonly<UISingleValueForm2<string>>;
 	readonly forename: Readonly<UISingleValueForm2<string>>;
 	readonly surname: Readonly<UISingleValueForm2<string>>;
-	readonly role: Readonly<UISelectForm<IUserRole>>;
+	readonly role: Readonly<UISimpleSelectForm<IUserRole>>;
 	readonly delete_button_enabled: boolean;
 };
 
@@ -62,7 +63,7 @@ export class UserForm implements IUserForm, UIUserForm {
 	public readonly username: ISingleValueForm2<string, true> & UISingleValueForm2<string>;
 	public readonly forename: ISingleValueForm2<string, true> & UISingleValueForm2<string>;
 	public readonly surname: ISingleValueForm2<string, true> & UISingleValueForm2<string>;
-	public readonly role: ISingleValueForm2<IUserRole, true> & UISelectForm<IUserRole>;
+	public readonly role: ISimpleSelectForm<string, IUserRole, true> & UISimpleSelectForm<IUserRole>;
 	public delete_button_enabled: boolean;
 	
 	private readonly parent: IUserFormParent;
@@ -93,11 +94,9 @@ export class UserForm implements IUserForm, UIUserForm {
 			required: true,
 		}, 'surname', this.fields);
 		
-		this.role = new SelectForm<IUserRole, true>({
+		this.role = new StringSimpleSelectForm<IUserRole, true>({
 			val_id: args.data?.role_id,
 			selectable_options: args.selectable_values.role,
-			search_in: 'name',
-			optionLabel: 'name',
 			required: true,
 			validate: async (value_in_editing) => {
 				if (value_in_editing == undefined) {
