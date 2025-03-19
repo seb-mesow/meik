@@ -61,10 +61,6 @@ function child_form(data: any, index: number): UIUserForm {
 			</Breadcrumb>
 		</template>
 		
-		<div class="fixed bottom-4 right-4">
-			<Button severity="info" :disabled="!form.create_button_enabled" icon="pi pi-plus" @click="form.prepend_form()" />
-		</div>
-		
 		<DataTable
 			:value="form.children.value"
 			paginator
@@ -136,6 +132,16 @@ function child_form(data: any, index: number): UIUserForm {
 			<template #empty>Keine Benutzer vorhanden</template>
 			
 		</DataTable>
+		
+		<div class="fixed bottom-4 right-4">
+			<Button
+				as="a"
+				:href="route('user.new')"
+				:disabled="!form.create_button_enabled"
+				severity="info"
+				icon="pi pi-plus"
+			/>
+		</div>
 		
 	</AuthenticatedLayout>
 </template>

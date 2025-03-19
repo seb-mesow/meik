@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 use App\Http\Controllers\Web\ImagesController;
@@ -28,7 +27,12 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
 	# --- Users ---
-	Route::get('/users', [UserController::class, 'overview'])->name('user.overview');
+	Route::get('/users', [UserController::class, 'overview'])
+		->name('user.overview');
+	
+	Route::get('/user/new', [UserController::class, 'new'])
+		->name('user.new');
+	
 	Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 	Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

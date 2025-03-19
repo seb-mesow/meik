@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
 			surname: "M"."ü"."l"."l"."e"."r",
 		);
 		
-		for ($i = 0; $i < 100; $i++) {
+		for ($i = 0; $i < 0; $i++) {
 			$this->create_user();
 		}
 	}

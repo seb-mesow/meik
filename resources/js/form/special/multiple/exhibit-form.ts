@@ -608,7 +608,7 @@ export class ExhibitForm implements IExhibitForm {
 				// TODO Breadcrumbb anpassen
 			},
 			() => {
-				this.failed_toast('Exponat konnte nicht gespeichert werden');
+				this.failed_toast('Das Exponat konnte leider nicht gespeichert werden.');
 			}
 		);
 	}
@@ -631,7 +631,7 @@ export class ExhibitForm implements IExhibitForm {
 				window.location.replace(route('exhibit.details', { exhibit_id: response.data }));
 			},
 			() => {
-				this.failed_toast('neues Exponat konnte nicht gespeichert');
+				this.failed_toast('Das Exponat konnte leider nicht gespeichert werden.');
 			}
 		);
 	}
