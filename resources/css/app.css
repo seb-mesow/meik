@@ -17,14 +17,14 @@
 	--color-gray-900: oklch(0.205 0 0);
 	--color-gray-950: oklch(0.145 0 0);
 
-	--meik-is-internal-bg-color-light: var(--color-gray-900);
-	--meik-is-internal-bg-color-light-hover: var(--color-gray-300);
-	--meik-is-internal-bg-color-dark: var(--color-gray-400);
-	--meik-is-internal-bg-color-dark-hover: var(--color-gray-300);
-	--meik-is-public-bg-color-light: var(--color-amber-400);
-	--meik-is-public-bg-color-light-hover: var(--color-amber-500);
-	--meik-is-public-bg-color-dark: var(--color-amber-400);
-	--meik-is-public-bg-color-dark-hover: var(--color-amber-300);
+	--color-meik-is-internal-bg-color-light: var(--color-gray-300);
+	--color-meik-is-internal-bg-color-light-hover: var(--color-gray-400);
+	--color-meik-is-internal-bg-color-dark: var(--color-gray-400);
+	--color-meik-is-internal-bg-color-dark-hover: var(--color-gray-300);
+	--color-meik-is-public-bg-color-light: var(--color-amber-400);
+	--color-meik-is-public-bg-color-light-hover: var(--color-amber-500);
+	--color-meik-is-public-bg-color-dark: var(--color-amber-400);
+	--color-meik-is-public-bg-color-dark-hover: var(--color-amber-300);
 
 
 
@@ -54,6 +54,8 @@
 	--color-meik-background: #003366;
 	--color-meik-primary: #249cda;
 
+	--color-default-text-color-light: var(black);
+	--color-default-text-color-dark: var(--color-gray-150);
 }
 
 body {

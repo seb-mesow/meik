@@ -59,7 +59,7 @@ const form: UIImagesForm = new ImagesForm({
 <template>
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb  class="!overflow-x-visible" :home="home" :model="items">
+			<Breadcrumb :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -68,18 +68,17 @@ const form: UIImagesForm = new ImagesForm({
 				</template>
 			</Breadcrumb>
 		</template>
-		
-		<div class="w-[100%] lg:flex lg:flex-wrap gap-3">
-			<div class="lg:flex-2 lg:min-w-1xl min-w-xs">
-				<Carousel class=""
-					:value="form.children_in_editing.value"
-					>
-					<template #item="{ data }">
-						<Image :form="data"/>
-					</template>
-				</Carousel>
+		<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">
+			<div class="w-[100%] lg:flex lg:flex-wrap gap-3">
+				<div class="lg:flex-2 lg:min-w-1xl min-w-xs">
+					<Carousel class="" :value="form.children_in_editing.value">
+						<template #item="{ data }">
+							<Image :form="data" />
+						</template>
+					</Carousel>
+				</div>
+				<ImageOrder class="lg:flex-1 lg:min-w-xs min-w-xs lg:mt-0 mt-3" :form="form" />
 			</div>
-			<ImageOrder class="lg:flex-1 lg:min-w-xs min-w-xs lg:mt-0 mt-3" :form="form" />
 		</div>
 	</AuthenticatedLayout>
 </template>
@@ -88,6 +87,7 @@ const form: UIImagesForm = new ImagesForm({
 	display: flex;
 	flex-wrap: wrap;
 }
+
 ._image {
 	flex: 14rem;
 	object-fit: inherit;
