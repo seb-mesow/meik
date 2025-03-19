@@ -19,28 +19,6 @@ const props = defineProps<{
 //
 // EventListener immer besser über den @-Shortcut setzen als über .addEventListener()
 
-function on_is_public_button_mouseenter(event: MouseEvent): void {
-	if (props.form.is_public.ui_value_in_editing.value) {
-		return;
-		if (DarkMode.is_dark.value) {
-			// @ts-expect-error
-			event.target.style['background-color'] = 'var(--meik-is-public-bg-color-dark-hover)';
-		} else {
-			// @ts-expect-error
-			event.target.style['background-color'] = 'var(--meik-is-public-bg-color-light-hover)';
-		}
-	}
-}
-function on_is_public_button_mouseleave(event: MouseEvent): void {
-	if (DarkMode.is_dark.value) {
-		// @ts-expect-error
-		event.target.style['background-color'] = null;
-	} else {
-		// @ts-expect-error
-		event.target.style['background-color'] = null;
-	}
-}
-
 </script>
 
 <template>
