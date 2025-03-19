@@ -110,7 +110,11 @@ export class NewUserForm implements UINewUserForm {
 			val: undefined,
 			required: true,
 			on_change: async (form) => {
-				console.log(`NewUserForm: password: is_valid() == ${await form.is_valid()}`)
+				// Wenn du wissen willst was Rekursion ist, dann schaue bei this.password_again.on_change() .
+				if (form.get_value_in_editing() !== this.password_again.get_value_in_editing()) {
+					return this.password_again.add_error('mismatch', 'Die Passwörter stimmen nicht überein.');
+				}
+				return this.password_again.remove_error('mismatch');
 			}
 		}, 'password', this.fields);
 		
@@ -118,7 +122,11 @@ export class NewUserForm implements UINewUserForm {
 			val: undefined,
 			required: true,
 			on_change: async (form) => {
-				console.log(`NewUserForm: password_again: is_valid() == ${await form.is_valid()}`)
+				// Wenn du wissen willst was Rekursion ist, dann schaue bei this.password.on_change() .
+				if (form.get_value_in_editing() !== this.password.get_value_in_editing()) {
+					return this.password_again.add_error('mismatch', 'Die Passwörter stimmen nicht überein.');
+				}
+				return this.password_again.remove_error('mismatch');
 			}
 		}, 'password_again', this.fields);
 		

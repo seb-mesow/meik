@@ -16,15 +16,32 @@ export interface UISingleValueForm2<U = string|undefined> {
  * @param R whether `get_value()` only returns `T` or `T|null`; default `false`
  */
 export interface ISingleValueForm2<T, R extends boolean = false> {
-	is_valid(): Promise<boolean>;
 	commit(): void;
 	rollback(): void;
+	
 	get_value(): R extends true ? T : T|null;
+	
 	get_value_in_editing(): T|null|undefined;
 	set_value_in_editing(new_value_in_editing: T|null): void;
-	set_validate(validate: (value_in_editing: T|null|undefined) => Promise<string[]>): void;
-	set_is_required(required: boolean): void;
+	
 	consider(): void;
+	set_is_required(required: boolean): void;
+	set_validate(validate: (value_in_editing: T|null|undefined) => Promise<string[]>): void;
+	
+	/**
+	 * @param preserve Default: `true`
+	 */
+	add_error(key: string, message: string, preserve?: boolean): void;
+	/**
+	 * @param only_preserved Default: `true`
+	 */
+	remove_error(key: string, only_preserved?: boolean): void;
+	/**
+	 * @param only_preserved Default: `true`
+	 */
+	clear_errors(only_preserved?: boolean): void;
+	
+	is_valid(): Promise<boolean>;
 }
 
 export interface ISingleValueForm2Parent<T> {
@@ -32,12 +49,10 @@ export interface ISingleValueForm2Parent<T> {
 	on_child_change(child_form: ISingleValueForm2<T>): void;
 }
 
-export interface ValidationError {
+interface Error {
+	key: string;
 	message: string;
-}
-
-export interface MultipleValidationErrors {
-	errors: ValidationError[];
+	preserve: boolean;
 }
 
 /**
@@ -47,7 +62,7 @@ export interface MultipleValidationErrors {
 export interface ISingleValueForm2ConstructorArgs<T, R extends boolean = false> {
 	required: R; // There is currently NO WAY to tell TypeScrípt to optionally require a property.
 	val: R extends true ? T|undefined : (T|null|undefined);
-	errs?: string[];
+	// errs?: string[];
 	on_change?: (form: ISingleValueForm2<T>) => void;
 	validate?: (value_in_editing: T|null|undefined) => Promise<string[]>;
 };
@@ -88,7 +103,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	private was_considered: boolean = false;
 	private last_validation_state: boolean|undefined = undefined;
 	private is_valid_mutex: MutexInterface = new Mutex();
-	private errs: string[];
+	private errs: Error[];
 	
 	public constructor(args: ISingleValueForm2ConstructorArgs<T, R>, id: string|number, parent: ISingleValueForm2Parent<T>) {
 		this.html_id = typeof id === 'number' ? id.toString() : id;
@@ -100,8 +115,8 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		
 		//@ts-expect-error
 		this.is_required = ref(args.required);
-		this.errs = args.errs ?? [];
-		this.ui_errs = ref(this.errs);
+		this.errs = [];
+		this.ui_errs = ref(this.create_ui_errs());
 		
 		//@ts-expect-error
 		this.ui_value_in_editing = ref(this.create_ui_value_from_value(this.value));
@@ -184,13 +199,13 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 				// console.log(this.value_in_editing);
 				
 				if (this.is_required.value && (this.value_in_editing === null || (!this.was_considered && this.value_in_editing === undefined))) {
-					this.errs.push('Pflichtfeld');
+					this.errs.push({ key: 'required', message: 'Pflichtfeld', preserve: false});
 				} else if (!(!this.was_considered && this.value_in_editing === undefined && !this.is_required.value)) {
 					try {
 						console.log(`Form ${this.html_id}: start validating ...`)
 						const further_errs: string[] = await this._validate(this.value_in_editing);
 						console.log(`Form ${this.html_id}: ended validating ...`)
-						this.errs.push(...further_errs);
+						this.errs = this.errs.concat(further_errs.map((str: string): Error => { return { key: '__NOT_PRESERVE__', message: str, preserve: false }; }));
 					} catch (e) {
 						this.handle_exceptions(e);
 						// throw errors have priority over returned errors
@@ -200,7 +215,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 				const is_valid = this.errs.length < 1;
 				if (this.was_considered) {
 					this.ui_is_invalid.value = !is_valid;
-					this.ui_errs.value = this.errs;
+					this.ui_errs.value = this.create_ui_errs();
 				} else {
 					this.ui_is_invalid.value = false;
 					this.ui_errs.value = [];
@@ -281,15 +296,35 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		}
 	}
 	
-	private refresh(inner: () => void): void {
+	private refresh(inner: () => void, only_if_errs_changed: boolean = false): void {
+		const errs_backup = [...this.errs];
+		
 		console.log(`Form ${this.html_id} refreshing`);
-		this.errs = [];
+		// only clear not preseved errors
+		this.errs = this.errs.filter((err: Error): boolean => err.preserve);
 		
 		inner();
 		
+		if (only_if_errs_changed) {
+			if (this.errs.length === errs_backup.length) {
+				let difference = false;
+				for (let i = 0; i < errs_backup.length; i++) {
+					const e1 = this.errs[i];
+					const e2 = errs_backup[i];
+					if (e1.key !== e1.key || e1.message !== e2.message || e1.preserve !== e2.preserve) {
+						difference = true;
+						break;
+					}
+				}
+				if (!difference) {
+					return;
+				}
+			}
+		}
+		
 		this.last_validation_state = undefined;
 		// do NOT wait / fire and forget
-		this.is_valid();
+		this.is_valid(); // would regenerate not preserved errors
 		this._on_change(this);
 		this.parent.on_child_change(this);
 	}
@@ -304,5 +339,50 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		} else if ('message' in err && typeof err.message === 'string') {
 			this.errs.push(err.message);
 		}
+	}
+	
+	private create_ui_errs(): string[] {
+		return this.errs.map((err: Error): string => err.message);
+	}
+	
+	public add_error(key: string, message: string, preserve: boolean = true): void {
+		const index = this.errs.findIndex((err: Error): boolean => err.key === key);
+		if (index >= 0) {
+			this.errs[index].message = message;
+			return;
+		}
+		
+		this.refresh(() => {
+			// Not preserved errors enter by this function will count into the validation result.
+			this.errs.push({
+				key: key,
+				message: message,
+				preserve: preserve,
+			});
+		}, true);
+	}
+	
+	public remove_error(key: string, only_preserved: boolean = true): void {
+		this.refresh(() => {
+			this.errs = this.errs.filter((err: Error): boolean => {
+				if (err.key === key) {
+					if (only_preserved) {
+						return !err.preserve;
+					}
+					return false;
+				}
+				return true;
+			});
+		}, true);
+	}
+	
+	public clear_errors(only_preserved: boolean = true): void {
+		this.refresh(() => {
+			if (only_preserved) {
+				this.errs = this.errs.filter((err: Error): boolean => !err.preserve);
+			} else {
+				this.errs = [];
+			}
+		}, true);
 	}
 }
