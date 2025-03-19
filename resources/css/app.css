@@ -2,6 +2,7 @@
 
 @custom-variant dark (&:where(.p-dark, .p-dark *));
 
+/* ----- Farbdefinitionen -------------------------------- */
 @theme {
 	--color-gray-50: oklch(0.985 0 0);
 	--color-gray-100: oklch(0.97 0 0);
@@ -59,6 +60,7 @@
 	--color-default-text-color-dark: var(--color-gray-150);
 }
 
+/* ----- Global -------------------------------- */
 body {
 	--p-surface-0: black;
 	
@@ -84,6 +86,8 @@ body {
 	--p-chip-background: var(--color-gray-950);
 }
 
+/* ----- Klassen für PrimeVue-Komponenten -------------------------------- */
+
 /* Standard-Button */
 .p-button.p-button-primary {
 	background-color: var(--primary-color) !important;
@@ -91,74 +95,73 @@ body {
 	font-weight: 100 !important;
 	outline: 1px solid #EDEDED !important;
 	border-color: var(--primary-color) !important;
-  }
-  
-  .p-button.p-button-primary:hover {
+}
+
+.p-button.p-button-primary:hover {
 	background-color: var(--primary-color-hover) !important; /* Weißer Rand */
-  }
-  
-  .p-button {
+}
+
+.p-button {
 	background-color: var(--button-primary-background);
 	color: #b30202;
 	font-weight: normal !important;
 	outline: 1px solid #EDEDED !important;
 	transition: background-color 0.3s ease-in-out;
-  }
-  
-  .p-button:hover {
+}
+
+.p-button:hover {
 	background-color: var(--button-primary-hover-background);
 	border-color: var(--primary-color-hover) !important;
-  }
-  
-  /* Dark Mode für Standard-Button */
-  .dark .p-button {
+}
+
+/* Dark Mode für Standard-Button */
+.dark .p-button {
 	background-color: var(--button-primary-background-dark);
-  }
-  
-  .dark .p-button:hover {
+}
+
+.dark .p-button:hover {
 	background-color: var(--button-primary-hover-background-dark);
-  }
+}
   
-  /* Danger-Button */
-  .p-button-danger {
+/* Danger-Button */
+.p-button-danger {
 	background-color: var(--button-danger-background);
-  }
-  
-  .p-button-danger:hover {
+}
+
+.p-button-danger:hover {
 	background-color: var(--button-danger-hover-background);
-  }
-  
-  /* Dark Mode für Danger-Button */
-  .dark .p-button-danger {
+}
+
+/* Dark Mode für Danger-Button */
+.dark .p-button-danger {
 	background-color: var(--button-danger-background-dark);
-  }
+}
   
-  .dark .p-button-danger:hover {
+.dark .p-button-danger:hover {
 	background-color: var(--button-danger-hover-background-dark);
-  }
-  .p-button.p-button-info {
+}
+.p-button.p-button-info {
 	background-color: var(--info-button-bg) !important;
 	color: var(--info-button-text-color) !important;
 	border-color: var(--info-button-border) !important;
-  }
+}
 
-  .logout-button {
+.logout-button {
 	background-color: #4F4F4F !important; /* Rotes Design */
 	color: white !important;
 	border: 1px solid #cc0000 !important; /* Optional: Roter Rand */
 	font-weight: bold !important;
 	border-radius: 1px;
 	transition: 0.3s ease-in-out;
-  }
-  
-  .logout-button:hover {
+}
+
+.logout-button:hover {
 	background-color: #76564d !important; /* Dunkleres Rot beim Hover */
 	border-color: #EDEDED !important;
 	border: 1px solid #EB674D !important;
-  }
-  
-  }
+}
 
+/* ----- Klassen für Custom-Komponenten -------------------------------- */
 .tile-container {
 	display: flex;
 	flex-wrap: wrap;
