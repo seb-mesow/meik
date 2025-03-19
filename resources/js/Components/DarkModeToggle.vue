@@ -8,7 +8,8 @@ onBeforeMount(() => {
 })
 </script>
 <template>
-	<Button 
+	<Button
+		severity="primary" raised
 		@click="DarkMode.toggle()"
 		class="pl-4 pr-4 py-2 px-2 shadow-md"
 	>

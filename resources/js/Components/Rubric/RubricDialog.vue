@@ -36,5 +36,6 @@ const form: IRubricForm = new RubricForm({
 		:loading="form.is_save_button_loading.value"
 		label="Speichern"
 		class="mt-3"
+		severity="primary" raised
 	/>
 </template>

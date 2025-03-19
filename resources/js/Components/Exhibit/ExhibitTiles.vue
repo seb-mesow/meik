@@ -89,7 +89,7 @@ onBeforeUnmount(() => {
 				<ExhibitTile v-for="exhibit in exhibits" :key="exhibit.id" :exhibit="exhibit" />
 			</div>
 			<div class="fixed bottom-8 right-8">
-				<Button class="!bg-meik-primary" raised as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })"
+				<Button severity="primary" raised as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })"
 					icon="pi pi-plus" />
 			</div>
 		</div>

@@ -64,7 +64,7 @@ function child_form(data: any, index: number): UILocationForm {
 		</template>
 		
 		<div class="fixed bottom-4 right-4">
-			<Button severity="primary" :disabled="!form.create_button_enabled" icon="pi pi-plus" @click="form.prepend_form()" />
+			<Button severity="primary" raised :disabled="!form.create_button_enabled" icon="pi pi-plus" @click="form.prepend_form()" />
 		</div>
 		
 		<DataTable
@@ -131,7 +131,7 @@ function child_form(data: any, index: number): UILocationForm {
 				<template #body="{ data, index }">
 					<Button
 						:disabled="!child_form(data, index).delete_button_enabled"
-						class="border-none" icon="pi pi-trash" outlined rounded severity="danger"
+						class="border-none" icon="pi pi-trash" outlined rounded severity="danger" raised
 						@click="child_form(data, index).request_delete($event)"
 					/>
 				</template>

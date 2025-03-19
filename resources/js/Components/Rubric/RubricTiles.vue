@@ -148,7 +148,7 @@ onBeforeUnmount(() => {
 
 <template>
 	<div class="fixed bottom-8 right-8">
-		<Button severity="primary" @click="create_dialog" icon="pi pi-plus" />
+		<Button severity="primary" raised @click="create_dialog" icon="pi pi-plus" />
 	</div>
 
 	<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">

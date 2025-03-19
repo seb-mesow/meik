@@ -62,11 +62,11 @@ const props = defineProps<{
 			/>
 		</div>
 		<div class="buttons">
-			<Button @click="form.click_save()" label="Speichern"
-			:loading="form.is_save_button_loading.value" severity="primary"
+			<Button severity="primary" raised @click="form.click_save()" label="Speichern"
+			:loading="form.is_save_button_loading.value"
 			:disabled="!(form.has_changes.value)"
 			/>
-			<Button @click="form.click_delete()" label="Löschen" severity="danger"
+			<Button @click="form.click_delete()" label="Löschen" severity="danger" raised
 			:loading="form.is_delete_button_loading.value"
 			/>
 		</div>

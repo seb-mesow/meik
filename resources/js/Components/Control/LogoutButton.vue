@@ -9,7 +9,7 @@ const form = useForm({});
 
 <template>
 	<Form id="logout" method="post" :action="route('logout')" :form="form">
-		<Button type="submit">
+		<Button severity="danger" raised type="submit"> <!--Todo: andere Farbe für Logout-->
 			<i class="pi pi-sign-out"/>
 		</Button>
 	</Form>

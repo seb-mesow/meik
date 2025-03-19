@@ -79,6 +79,7 @@ const login_form: ILoginForm = new LoginForm({
 				</div>
 				
 				<Button
+					severity="primary" raised
 					:disabled="!login_form.is_login_button_enabled.value || login_form.is_login_button_loading.value"
 					:loading="login_form.is_login_button_loading.value"
 					type='button'
