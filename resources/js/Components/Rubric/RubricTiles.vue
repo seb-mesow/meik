@@ -147,16 +147,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="fixed bottom-8 right-8">
-		<Button severity="primary" raised @click="create_dialog" icon="pi pi-plus" />
+	<!-- Hier keine Card oder andere (sichtbare) Umrandung drum! -->
+	<!-- Irgendwas mit overflow ist hier nicht nötig. -->
+	<div class="flex flex-wrap gap-3" @scroll="handleScroll($event)">
+		<RubricTile v-for="rubric in rubrics" :key="rubric.id" :rubric="rubric" @delete_tile="delete_tile" />
 	</div>
-
-	<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">
-		<div class="flex h-full">
-			<!-- Wrapper für den Scroll-Bereich -->
-			<div class="flex flex-wrap gap-3" @scroll="handleScroll($event)">
-				<RubricTile v-for="rubric in rubrics" :key="rubric.id" :rubric="rubric" @delete_tile="delete_tile" />
-			</div>
-		</div>
+	
+	<div class="fixed bottom-4 right-4">
+		<Button severity="primary" raised @click="create_dialog" icon="pi pi-plus" />
 	</div>
 </template>
