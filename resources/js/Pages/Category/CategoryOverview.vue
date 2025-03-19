@@ -20,6 +20,7 @@ const items:{ label: string, url?: string }[] = [];
 <template>
 	<Head title="Kategorien" />
 	<AuthenticatedLayout>
+		
 		<template #header>
 			<Breadcrumb class="!bg-white dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
@@ -30,12 +31,10 @@ const items:{ label: string, url?: string }[] = [];
 				</template>
 			</Breadcrumb>
 		</template>
-		<div  class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">
-			<div class="flex flex-wrap gap-3">
-				<!-- <div class="border-black border-solid border-2 w-[20%] min-w-[20rem]" v-for="category in categorys"> -->
-				<CategoryTile v-for="category in props.categories" :category="category" />
-				<!-- </div> -->
-			</div>
+		
+		<div class="tile-container">
+			<CategoryTile v-for="category in props.categories" :category="category" />
 		</div>
+		
 	</AuthenticatedLayout>
 </template>

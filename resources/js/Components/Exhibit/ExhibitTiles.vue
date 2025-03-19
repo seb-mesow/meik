@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
 <template>
 	<!-- Hier keine Card oder andere (sichtbare) Umrandung drum! -->
 	<!-- Irgendwas mit overflow ist hier nicht nötig. -->
-	<div class="flex flex-wrap flex-grow content-start gap-4" @scroll="handleScroll($event)">
+	<div class="tile-container" @scroll="handleScroll($event)">
 		<ExhibitTile v-for="exhibit in exhibits" :key="exhibit.id" :exhibit="exhibit" />
 	</div>
 	

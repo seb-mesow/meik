@@ -159,6 +159,12 @@ body {
   
   }
 
+.tile-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: calc(var(--spacing) * 4);
+}
+
 .tile {
 	background-color: var(--color-gray-100);
 	/* https://developer.mozilla.org/de/docs/Web/CSS/Nesting_selector */
