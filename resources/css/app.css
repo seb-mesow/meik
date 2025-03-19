@@ -90,7 +90,7 @@ body {
 	background-color: var(--primary-color) !important;
 	color: var(--primary-color-text) !important;
 	font-weight: 100 !important;
-	outline: 1px solid #EDEDED!important;
+	outline: 1px solid #EDEDED !important;
 	border-color: var(--primary-color) !important;
   }
   
@@ -142,3 +142,19 @@ body {
 	color: var(--info-button-text-color) !important;
 	border-color: var(--info-button-border) !important;
   }
+
+  .logout-button {
+	background-color: #4F4F4F !important; /* Rotes Design */
+	color: white !important;
+	border: 1px solid #cc0000 !important; /* Optional: Roter Rand */
+	font-weight: bold !important;
+	border-radius: 1px;
+	transition: 0.3s ease-in-out;
+  }
+  
+  .logout-button:hover {
+	background-color: #76564d !important; /* Dunkleres Rot beim Hover */
+	border-color: #EDEDED !important;
+	border: 1px solid #EB674D !important;
+  }
+  
