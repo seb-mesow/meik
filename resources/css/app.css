@@ -67,6 +67,9 @@ body {
 	--p-autocomplete-dropdown-hover-border-color: var(--color-blue-500);
 	
 	--p-chip-background: var(--color-gray-950);
+
+	--color-meik-background: #003366;
+	--color-meik-primary: #249cda;
 }
 
 /* Standard-Button */
@@ -105,9 +108,4 @@ body {
   
   .dark .p-button-danger:hover {
 	background-color: var(--button-danger-hover-background-dark);
-  }
-  
-@theme {
-	--color-meik-background: #003366;
-	--color-meik-primary: #249cda;
   }
