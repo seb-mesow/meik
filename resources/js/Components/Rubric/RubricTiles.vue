@@ -30,11 +30,11 @@ function create_dialog() {
 		preset = preset ?? {};
 		preset.category_id = props.category_id;
 	};
-	const form_args: Omit<IRubricFormConstructorArgs,'dialog_ref'|'selectable_categories'> = {
+	const form_args: Omit<IRubricFormConstructorArgs, 'dialog_ref' | 'selectable_categories'> = {
 		preset: preset,
 		on_rubric_created: (tile: IRubricTileProps): void => append_tile(tile),
 	};
-	
+
 	dialog.open(RubricDialog, {
 		props: {
 			header: 'Rubrik anlegen',
@@ -147,16 +147,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="fixed bottom-4 right-4">
-		<Button @click="create_dialog">Neu</Button>
+	<div class="fixed bottom-8 right-8">
+		<Button class="!bg-meik-primary" raised as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })"
+			icon="pi pi-plus" />
 	</div>
-	
-	<!-- Wrapper für den Scroll-Bereich -->
-	<div class="flex flex-wrap gap-3" @scroll="handleScroll($event)">
-		<RubricTile v-for="rubric in rubrics" :key="rubric.id"
-			:rubric="rubric"
-			@delete_tile="delete_tile"
-		/>
+
+	<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">
+		<div class="flex h-full">
+			<!-- Wrapper für den Scroll-Bereich -->
+			<div class="flex flex-wrap gap-3" @scroll="handleScroll($event)">
+				<RubricTile v-for="rubric in rubrics" :key="rubric.id" :rubric="rubric" @delete_tile="delete_tile" />
+			</div>
+		</div>
 	</div>
-	
 </template>

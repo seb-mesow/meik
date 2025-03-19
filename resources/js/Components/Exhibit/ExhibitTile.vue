@@ -33,7 +33,7 @@ const exhibit_manufacture_date: PartialDate|null = props.exhibit.manufacture_dat
 <style lang="css" scoped>
 .exhibit-tile {
 	width: 30rem;
-	height: auto;
+	height: 8.5rem;
 	border-radius: 1rem;
 	padding: 1rem;
 }

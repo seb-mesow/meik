@@ -10,8 +10,8 @@ const props = defineProps<{
 
 <template>
 	<a :href="route('category.details', { category_id: props.category.id })">
-		<div class="category-tile">
-			<p>{{ props.category.name }}</p>
+		<div class="category-tile bg-gray-100 dark:bg-gray-500 flex justify-start items-center shadow-md shadow-gray-400 hover:bg-meik-primary/12">
+			<span class="text-2xl">{{ props.category.name }}</span>
 		</div>
 	</a>
 </template>
@@ -19,10 +19,9 @@ const props = defineProps<{
 <style lang="css" scoped>
 .category-tile {
 	width: 30em;
-	height: auto;
+	height: 8.5rem;
 	border-radius: 1rem;
 	padding: 1rem;
 	color: black;
-	background-color: #808080;
 }
 </style>
