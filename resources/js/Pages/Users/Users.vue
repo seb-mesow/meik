@@ -114,7 +114,7 @@ function child_form(data: any, index: number): UIUserForm {
 			
 			<Column field="surname" header="Nachname" style="width: 25%" >
 				<template #body="{ data, index }">
-					<span>{{ child_form(data, index).forename.ui_value_in_editing }}</span>
+					<span>{{ child_form(data, index).surname.ui_value_in_editing }}</span>
 				</template>
 			</Column>
 			
