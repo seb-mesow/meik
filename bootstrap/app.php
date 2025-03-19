@@ -72,6 +72,15 @@ return Application::configure(basePath: dirname(__DIR__))
 			}
 			return response()->view('errors.404', [], 404); // hiding instead of forbidden: not found
 		});
+		
+		$exceptions->render(static function(RuntimeException $e, Request $request) {
+			$path = $request->getRequestUri();
+			if (str_starts_with($path, '/ajax') || str_starts_with($path, '/api')) {
+				return response()->json(status: 400, data: $e->getMessage());
+			}
+			return response()->view('errors.400', [$e->getMessage()], 400);
+		});
+		
 		$exceptions->render(static function(CouchNotFoundException $e, Request $request) {
 			$path = $request->getRequestUri();
 			if (str_starts_with($path, '/ajax') || str_starts_with($path, '/api')) {
