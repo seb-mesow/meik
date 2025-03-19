@@ -31,5 +31,5 @@ async function exec_ajax() {
 </script>
 
 <template>
-	<Button :loading="is_loading" severity="primary" @click="exec_ajax"/>
+	<Button :loading="is_loading" severity="primary" raised @click="exec_ajax"/>
 </template>

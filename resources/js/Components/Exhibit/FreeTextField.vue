@@ -16,12 +16,12 @@ const form = props.form;
 	<div>
 		<div class="flex justify-between">
 			<InputField label="Überschrift" :form="form.heading"/>
-			<ToggleButton v-model="form.is_public.val" onLabel='öffentlich' offLabel="intern" class="w-28"/>
+			<ToggleButton severity="primary" raised v-model="form.is_public.val" onLabel='öffentlich' offLabel="intern" class="w-28"/>
 		</div>
 		<RichTextEditor v-model="form.html" class="mt-3"/>
 		<div class="flex justify-end gap-2 mt-3">
 			<Button @click="form.click_save()" label="Speichern" :loading="form.is_save_button_loading" severity="primary" raised/>
-			<Button @click="form.click_delete()" label="Löschen" :loading="form.is_delete_button_loading" severity="danger"/>
+			<Button @click="form.click_delete()" label="Löschen" :loading="form.is_delete_button_loading" severity="danger" raised/>
 		</div>
 	</div>
 </template>

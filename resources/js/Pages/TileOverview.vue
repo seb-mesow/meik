@@ -16,7 +16,7 @@
             {{ card.description }}
           </p>
           <button
-            class="mt-4 px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
+          severity="primary" raised class="mt-4 px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
           >
             Mehr erfahren
           </button>

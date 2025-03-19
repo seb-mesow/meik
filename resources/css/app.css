@@ -88,6 +88,7 @@ body {
 .p-button.p-button-primary {
 	background-color: var(--primary-color) !important;
 	color: var(--primary-color-text) !important;
+	font-weight: 100 !important;
 	border-color: var(--primary-color) !important;
   }
   
@@ -97,7 +98,8 @@ body {
   
   .p-button {
 	background-color: var(--button-primary-background);
-	color: white;
+	color: rgb(11, 240, 3);
+	font-weight: normal !important;
 	transition: background-color 0.3s ease-in-out;
   }
   

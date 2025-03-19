@@ -201,7 +201,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						<img v-if="props.exhibit_props?.title_image" class="max-h-[15rem]"
 							:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })">
 						<div v-else class="">
-							<Button severity="primary" label="Bilder hinzufügen" />
+							<Button severity="primary" raised label="Bilder hinzufügen" />
 						</div>
 					</a>
 				</div>
@@ -245,7 +245,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				<template #legend>
 					<SelectButton :modelValue="exhibit_form.type.ui_value_in_editing"
 						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_ui_value_in_editing(v)"
-						:options="exhibit_types" optionLabel="name" :allowEmpty="false" />
+						:options="exhibit_types" optionLabel="name" :allowEmpty="false" severity="primary" raised/>
 				</template>
 
 				<!-- Geräteinformationen -->
@@ -295,7 +295,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				<Button
 					:disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
 					:loading="exhibit_form.is_save_button_loading.value" type='button'
-					:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'" @click="exhibit_form.click_save()" />
+					:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'" @click="exhibit_form.click_save()" severity="primary" raised />
 			</div>
 			<FreeTextFields v-if="props.exhibit_props" :init_props="props.exhibit_props.free_texts"
 				:exhibit_id="props.exhibit_props.id" />
