@@ -69,21 +69,21 @@ body {
 	--p-fieldset-color: var(--p-surface-0);
 	--p-chip-color: var(--p-surface-0);
 	--p-autocomplete-dropdown-color: var(--p-surface-0);
-}
-
-.p-dark body {
-	--p-surface-0: var(--color-gray-150);
 	
-	--p-fieldset-background: var(--color-gray-900);
-	--p-inputtext-background: var(--color-gray-800);
-	--p-autocomplete-background: var(--p-inputtext-background);
-	
-	--p-autocomplete-dropdown-background: var(--color-gray-950);
-	--p-autocomplete-dropdown-hover-background: var(--p-autocomplete-dropdown-background);
-	--p-autocomplete-dropdown-active-background: var(--p-autocomplete-dropdown-background);
-	--p-autocomplete-dropdown-hover-border-color: var(--color-blue-500);
-	
-	--p-chip-background: var(--color-gray-950);
+	.p-dark & {
+		--p-surface-0: var(--color-gray-150);
+		
+		--p-fieldset-background: var(--color-gray-900);
+		--p-inputtext-background: var(--color-gray-800);
+		--p-autocomplete-background: var(--p-inputtext-background);
+		
+		--p-autocomplete-dropdown-background: var(--color-gray-950);
+		--p-autocomplete-dropdown-hover-background: var(--p-autocomplete-dropdown-background);
+		--p-autocomplete-dropdown-active-background: var(--p-autocomplete-dropdown-background);
+		--p-autocomplete-dropdown-hover-border-color: var(--color-blue-500);
+		
+		--p-chip-background: var(--color-gray-950);
+	}
 }
 
 /* ----- Klassen für PrimeVue-Komponenten -------------------------------- */
