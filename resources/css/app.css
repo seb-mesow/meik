@@ -26,7 +26,10 @@
 	--color-meik-is-public-bg-dark: var(--color-amber-400);
 	--color-meik-is-public-bg-dark-hover: var(--color-amber-300);
 	
-	--color-meik-tile bg-meik-primary/12
+	--color-meik-tile-bg-light: var(--color-gray-100);
+	--color-meik-tile-bg-light-hover: var(--color-blue-100);
+	--color-meik-tile-bg-dark: var(--color-gray-600);
+	--color-meik-tile-bg-dark-hover: var(--color-slate-600);
 	
 	/* Standardfarben für PrimeVue Buttons */
 	--button-primary-background: #1376f9; /* blue-50 */
@@ -82,7 +85,6 @@ body {
 }
 
 /* Standard-Button */
-
 .p-button.p-button-primary {
 	background-color: var(--primary-color) !important;
 	color: var(--primary-color-text) !important;
@@ -155,3 +157,18 @@ body {
 	border: 1px solid #EB674D !important;
   }
   
+  }
+
+.tile {
+	background-color: var(--color-gray-100);
+	/* https://developer.mozilla.org/de/docs/Web/CSS/Nesting_selector */
+	&:hover {
+		background-color: var(--color-blue-100);
+	}
+	.p-dark & {
+		background-color: var(--color-gray-600);
+		&:hover {
+			background-color: var(--color-slate-600);
+		}
+	}
+}

@@ -10,7 +10,7 @@ const props = defineProps<{
 
 <template>
 	<a :href="route('category.details', { category_id: props.category.id })">
-		<div class="category-tile bg-gray-100 dark:bg-gray-500 flex justify-start items-center shadow-md shadow-gray-400 hover:bg-meik-primary/12">
+		<div class="tile category-tile shadow-md shadow-gray-400 flex justify-start items-center">
 			<span class="text-2xl">{{ props.category.name }}</span>
 		</div>
 	</a>
@@ -22,6 +22,5 @@ const props = defineProps<{
 	height: 8.5rem;
 	border-radius: 1rem;
 	padding: 1rem;
-	color: black;
 }
 </style>
