@@ -36,6 +36,7 @@
 	--primary-color: #003366; /* Standard Primärfarbe (Blau) */
 	--primary-color-text: #ffffff; /* Standard Textfarbe für den Button */
 	--primary-color-hover: #249cda; /* Hover-Farbe */
+	
 
 
 	/* Farben für den Dark Mode */
@@ -89,6 +90,7 @@ body {
 	background-color: var(--primary-color) !important;
 	color: var(--primary-color-text) !important;
 	font-weight: 100 !important;
+	border: 2px solid white !important; /* Weißer Rand mit 2px Dicke */
 	border-color: var(--primary-color) !important;
   }
   
@@ -98,7 +100,7 @@ body {
   
   .p-button {
 	background-color: var(--button-primary-background);
-	color: rgb(11, 240, 3);
+	color: #ffffff;
 	font-weight: normal !important;
 	transition: background-color 0.3s ease-in-out;
   }
