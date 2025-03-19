@@ -9,28 +9,11 @@ import Button from 'primevue/button';
 import ToggleSwitch from 'primevue/toggleswitch';
 import AJAXConfirmationPopup from '@/Components/AJAXConfirmationPopup.vue';
 import Breadcrumb from 'primevue/breadcrumb';
-
-// versch. Interface für typsicheres Programmieren
-interface PropUser {
-	username: string,
-	forename: string,
-	surname: string,
-	is_admin: boolean,
-}
-
-interface User {
-	username: string;
-	forename: string;
-	surname: string;
-	is_admin: {
-		in_ui: boolean,
-		actual: boolean,
-	}
-}
+import { IUsersInitPageProps } from '@/types/page_props/users';
 
 // Argumente an die Seite (siehe Controller)
 const props = defineProps<{
-	users: PropUser[];
+	init_props: IUsersInitPageProps[];
 }>();
 
 const home = {

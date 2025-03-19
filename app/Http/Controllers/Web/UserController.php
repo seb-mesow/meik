@@ -4,33 +4,44 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Repository\CouchDBUserProvider;
+use App\Models\Enum\UserRole;
+use App\Service\UserService;
 use Inertia\Inertia;
 use Request;
 use Inertia\Response;
 
 final class UserController extends Controller
 {
+	private const int INITIAL_COUNT_PER_PAGE = 10;
+	
 	public function __construct(
-		private readonly CouchDBUserProvider $repository,
+		private readonly UserService $user_service,
 	) {}
 	
 	public function overview(Request $request): Response
 	{
-		$users = $this->repository->get_all();
+		$result = $this->user_service->query(0, self::INITIAL_COUNT_PER_PAGE);
 		
-		$user_arr = array_map(static function(User $user): array {
+		return Inertia::render('Users/Users', [
+			'users' => $result['users'],
+			'total_count' => $result['total_count'],
+			'count_per_page' => self::INITIAL_COUNT_PER_PAGE,
+			'selectable_values' => $this->determinate_selectable_values(),
+		]);
+	}
+	
+	private function determinate_selectable_values(): array {
+		$_this = $this;
+		$all_roles = UserRole::cases();
+		$all_roles = array_map(static function (UserRole $role) use ($_this): array {
 			return [
-				'username' => $user->get_username(),
-				'forename' => $user->get_forename(),
-				'surname' => $user->get_surname(),
-				'is_admin' => $user->get_role(),
+				'id' => $role->get_id(),
+				'name' => $role->get_name(),
 			];
-		}, $users);
+		}, $all_roles);
 		
-		return Inertia::render('Users/UserOverview', [
-            'users' => $user_arr,
-        ]);
+		return [
+			'role' => $all_roles,
+		];
 	}
 }

@@ -23,6 +23,8 @@ return new class extends Migration
 		function (doc) {
 			if (doc._id.startsWith('$id_prefix')) {
 				emit(null, null);
+				// no value specified
+				// retrieve by seperate lookup or include_docs parameter
 			}
 		}
 		END;

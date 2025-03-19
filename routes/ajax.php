@@ -20,9 +20,21 @@ Route::prefix('ajax')->middleware('auth')->group(static function () {
 		->name('ajax.user.logout');
 	
 	# --- Benutzerverwaltung ---
-	Route::patch('/user/{username}/set_admin', [UserAJAXController::class, 'set_admin'])
-		->name('ajax.user.set_admin');
+	Route::get('/users', [UserAJAXController::class, 'query'])
+		->name('ajax.user.query');
 
+	Route::post('/user', [UserAJAXController::class, 'create'])
+		->name('ajax.user.create');
+	
+	Route::put('/user/{user_id}', [UserAJAXController::class, 'update'])
+		->name('ajax.user.update');
+	
+	Route::put('/user/{user_id}/set_password', [UserAJAXController::class, 'set_password'])
+		->name('ajax.user.set_password');
+	
+	Route::delete('/user/{user_id}', [UserAJAXController::class, 'delete'])
+		->name('ajax.user.delete');
+	
 	# --- Locations / Standorte ---
 	Route::get('/locations', [LocationAJAXController::class, 'query'])
 		->name('ajax.location.query');
