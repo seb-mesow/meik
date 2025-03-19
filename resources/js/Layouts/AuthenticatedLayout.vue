@@ -12,13 +12,13 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 <template>
 	<!-- Hier keine Popups, Toasts, DynamicDialog usw. einfügen! -->
 	<!-- Stattdessen diese nur in solchen Seiten einfügen, wo sie auch benötigt werden -->
-	<div class="w-full flex h-screen flex-no-wrap">
+	
+	<div class="flex flex-no-wrap">
 		
 		<NavBar />
 		
 		<!-- Page Content -->
-		<div class="grow-1 h-full flex flex-col overflow-hidden">
-		<!-- <div class="grow-1"> -->
+		<div class="grow-1 overflow-hidden">
 			
 			<!-- Page Heading -->
 			<header class="bg-white shadow dark:bg-gray-800 items-center w-full flex flex-no-wrap justify-between px-4">
@@ -29,13 +29,14 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 				</div>
 			</header>
 			
-			<main class="overflow-auto flex flex-col bg-gray-100 dark:bg-gray-600 h-full w-full lg:p-4 p-2">
+			<!-- Hier keine Cards, overflow-, height- oder width-Zeug rein! -->
+			<main class="lg:p-4 p-2">
 				<slot />
 			</main>
-			
 		</div>
 	</div>
 </template>
+
 <style lang="css">
 .p-breadcrumb {
 	background: var(--p-breadcrumb-background);
