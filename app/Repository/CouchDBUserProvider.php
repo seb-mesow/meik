@@ -15,7 +15,6 @@ use Random\Randomizer;
 use Illuminate\Contracts\Hashing\Hasher;
 use stdClass;
 
-
 /**
  * @phpstan-type UserDoc object{
  *     _id: string,
@@ -212,14 +211,13 @@ final class CouchDBUserProvider implements UserProvider {
 	 */
 	private function create_user_from_doc(object $doc): User
 	{
-		$original_name = $this->determinate_model_id_from_doc($doc);
 		return new User(
 			username: $doc->username,
 			password_hash: $doc->password_hash,
 			forename: $doc->forename,
 			surname: $doc->surname,
 			role: UserRole::from($doc->role),
-			original_username: $original_name,
+			id: $this->determinate_model_id_from_doc($doc),
 			rev: $doc->_rev,
 		);
 	}

@@ -88,7 +88,7 @@ class UserSeeder extends Seeder
 		$username ??= fake()->userName();
 		$user = new User(
 			username: $username,
-			password_hash: $this->hasher->make($password ?? $username),
+			password: $password ?? $username,
 			role: $role ?? fake()->randomElement(UserRole::cases()),
 			forename: $forename ?? fake()->firstName(),
 			surname: $surname ?? fake()->lastName(),
