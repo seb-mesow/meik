@@ -52,8 +52,8 @@ const props = defineProps<{
 				raised
 				class="w-28 !text-black"
 				:class="{
-					'!bg-meik-is-public-bg-color-light dark:!bg-meik-is-public-bg-color- hover:!bg-meik-is-public-bg-color-light-hover hover:dark:!bg-meik-is-public-bg-color-dark-hover': form.is_public.ui_value_in_editing.value,
-					'!bg-meik-is-internal-bg-color-light dark:!bg-meik-is-internal-bg-color-dark hover:!bg-meik-is-internal-bg-color-light-hover hover:dark:!bg-meik-is-internal-bg-color-dark-hover': !form.is_public.ui_value_in_editing.value
+					'!bg-meik-is-public-bg-light dark:!bg-meik-is-public-bg- hover:!bg-meik-is-public-bg-light-hover hover:dark:!bg-meik-is-public-bg-dark-hover': form.is_public.ui_value_in_editing.value,
+					'!bg-meik-is-internal-bg-light dark:!bg-meik-is-internal-bg-dark hover:!bg-meik-is-internal-bg-light-hover hover:dark:!bg-meik-is-internal-bg-dark-hover': !form.is_public.ui_value_in_editing.value
 				}"
 				style="grid-area: 3 / 2 / 3 / 2;"
 				onLabel='öffentlich'
