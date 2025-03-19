@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Models\Location;
-use App\Repository\LocationRepository;
 use App\Service\LocationService;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
