@@ -10,7 +10,7 @@ onBeforeMount(() => {
 <template>
 	<Button 
 		@click="DarkMode.toggle()"
-		class="pl-4 pr-4 py-2 px-2 shadow-md postion: relative"
+		class="pl-4 pr-4 py-2 px-2 shadow-md"
 	>
 		<i class="pi" :class="{
 			'pi-sun': !DarkMode.is_dark.value,

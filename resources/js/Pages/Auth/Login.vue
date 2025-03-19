@@ -35,7 +35,7 @@ const login_form: ILoginForm = new LoginForm({
 		
 		<div class="mx-auto h-dvh w-100 max-w-dvh p-3 flex flex-col justify-center">
 			
-			<div class="grow max-h-60 w-full mx-auto p-3 rounded-xl bg-white content-center">
+			<div class="grow max-h-60 w-full mx-auto p-3 rounded-xl bg-white dark:bg-gray-950 text-black dark:text-gray-200 content-center">
 				<p class="text-center text-5xl font-bold">MEIK</p>
 				<p class="text-center text-2xl mt-3">
 					Muesum zur
