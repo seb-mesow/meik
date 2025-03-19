@@ -2,11 +2,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Toast from 'primevue/toast';
 import Breadcrumb from 'primevue/breadcrumb';
-import InputError from '@/Components/Form/old/InputError.vue';
-import InputLabel from '@/Components/Form/old/InputLabel.vue';
 import Button from 'primevue/button';
 import InputTextField2 from '@/Components/Form/InputTextField2.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ISelectableValuesProps } from '@/types/page_props/users';
 import { route } from 'ziggy-js';
 import { NewUserForm, UINewUserForm } from '@/form/special/multiple/user-new-form';
@@ -70,9 +67,9 @@ const form: UINewUserForm = new NewUserForm({
 				
 				<InputTextField2 :form="form.username" label="Benutzername" :grid_col="1" :grid_row="4"/>
 				
-				<InputTextField2 :form="form.password" label="Passwort" :grid_col="1" :grid_row="5"/>
+				<InputTextField2 :form="form.password" label="Passwort" type="password" :grid_col="1" :grid_row="5"/>
 				
-				<InputTextField2 :form="form.password_again" label="Passwort wiederholen" :grid_col="1" :grid_row="6"/>
+				<InputTextField2 :form="form.password_again" label="Passwort wiederholen" type="password" :grid_col="1" :grid_row="6"/>
 			</div>
 		
 			<div class="mt-4 flex items-center justify-end">
