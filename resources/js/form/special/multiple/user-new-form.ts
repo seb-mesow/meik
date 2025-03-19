@@ -178,8 +178,8 @@ export class NewUserForm implements UINewUserForm {
 		return axios.request(request_config).then(
 			(response: AxiosResponse<UserAJAX.Create.I200ResponseData>) => {
 				// if (response.status >= 300 && response.status < 400) {
-				// window.location.replace(route('user.overview'));
-				this.success_toast('Benutzer gespeichert');
+				window.location.replace(route('user.overview'));
+				// this.success_toast('Benutzer gespeichert');
 			},
 			() => {
 				this.failed_toast('Der Benutzer konnte leider nicht gespeichert werden.');
