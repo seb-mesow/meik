@@ -149,7 +149,7 @@ onBeforeUnmount(() => {
 <template>
 	<!-- Hier keine Card oder andere (sichtbare) Umrandung drum! -->
 	<!-- Irgendwas mit overflow ist hier nicht nötig. -->
-	<div class="flex flex-wrap gap-3" @scroll="handleScroll($event)">
+	<div class="tile-container" @scroll="handleScroll($event)">
 		<RubricTile v-for="rubric in rubrics" :key="rubric.id" :rubric="rubric" @delete_tile="delete_tile" />
 	</div>
 	
