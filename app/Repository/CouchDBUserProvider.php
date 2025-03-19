@@ -83,6 +83,33 @@ final class CouchDBUserProvider implements UserProvider {
 		}, $res->docs);
 	}
 	
+	/**
+	 * @return array{
+	 *     users: User[],
+	 *     total_count: int
+	 * }
+	 */
+	public function query(?int $page_number = null, ?int $count_per_page = null): array {
+		$client = $this->client;
+		if ($page_number !== null && $count_per_page !== null) {
+			$client = $client
+				->limit($count_per_page)
+				->skip($page_number * $count_per_page);
+		}
+		
+		$response = $client
+			->reduce(false)
+			->include_docs(true)
+			->getView(self::MODEL_TYPE_ID, 'all');
+		
+		$users = $this->create_users_from_view_response($response);
+		
+		return [
+			'users' => $users,
+			'total_count' => $response->total_rows, // nur eine Request nötig, da zur Zeit keine Suchkriterien angebar
+		];
+	}
+	
 	public function find_by_username(string $username): ?User {
 		$res = $this->client
 			->key($username)
@@ -224,12 +251,22 @@ final class CouchDBUserProvider implements UserProvider {
 		$stub_main_model_doc = new stdClass();
 		if (is_null($user->get_nullable_id())) {
 			// Die ID ist immer der erste Username, den der User je hatte.
-			$user->set_id($user->get_username());
+			$user->set_id($user->get_username()); // <<<<<
 		}
 		$stub_main_model_doc->_id = $this->determinate_doc_id_from_model($user);
 		if ($rev = $user->get_nullable_rev()) {
 			$stub_main_model_doc->_rev = $rev;
 		}
 		return $stub_main_model_doc;
+	}
+	
+	/**
+	 * @return User[]
+	 */
+	private function create_users_from_view_response(stdClass $response): array {
+		$_this = $this;
+		return array_map(static function(stdClass $row) use ($_this): User {
+			return $_this->create_user_from_doc($row->doc);
+		}, $response->rows);
 	}
 }
