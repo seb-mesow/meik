@@ -56,7 +56,7 @@
 	--color-meik-background: #003366;
 	--color-meik-primary: #249cda;
 
-	--color-default-text-color-light: var(black);
+	--color-default-text-color-light: black;
 	--color-default-text-color-dark: var(--color-gray-150);
 }
 
