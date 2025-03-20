@@ -10,7 +10,9 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 	<div class="navbar-underlay">
 		<nav>
 			<div class="navbar">
-				<img class="logo" :src="isc_logo_url">
+				<a :href="route('category.overview')">
+					<img class="logo" :src="isc_logo_url">
+				</a>
 				<div class="flex flex-col gap-4">
 					<a :href="route('exhibit.overview')">
 						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
@@ -51,7 +53,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 						</div>
 					</a>
 				</div>
-				
+
 				<img class="logo" :src="fv_logo_url">
 			</div>
 		</nav>
@@ -119,7 +121,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 		width: 3.5rem;
 	}
 
-	.{
+	. {
 		width: 100%;
 	}
 
