@@ -119,10 +119,6 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 		width: 3.5rem;
 	}
 
-	.{
-		width: 100%;
-	}
-
 	.label-box {
 		display: none;
 	}
