@@ -74,6 +74,7 @@ function child_form(data: any, index: number): UIPlaceForm {
 			</Breadcrumb>
 		</template>
 		
+		<div class="bg-gray-200 dark:bg-gray-700 p-[1px]">
 		<DataTable
 			:value="form.children.value"
 			paginator
@@ -87,6 +88,7 @@ function child_form(data: any, index: number): UIPlaceForm {
 			@row-edit-init="form.on_row_edit_init($event)"
 			@row-edit-save="form.on_row_edit_save($event)"
 			@row-edit-cancel="form.on_row_edit_cancel($event)"
+			striped-rows
 		>
 			
 			<Column field="name" header="Name" style="width: 25%">
@@ -108,10 +110,8 @@ function child_form(data: any, index: number): UIPlaceForm {
 					/>
 				</template>
 			</Column>
-			
-			<Column v-if="permissions.place.update" :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
-			
-			<Column v-if="permissions.place.delete" style="width: 10%; min-width: 8rem">
+			<Column v-if="permissions.place.update" :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:end" />
+			<Column v-if="permissions.place.delete" style="width: 1%">
 				<template #body="{ data, index }">
 					<Button
 						:disabled="!child_form(data, index).delete_button_enabled"
@@ -124,7 +124,8 @@ function child_form(data: any, index: number): UIPlaceForm {
 			<template #empty>Dieser Standort hat keine Plätze.</template>
 			
 		</DataTable>
-		
+		</div>
+
 		<div v-if="permissions.place.create" class="fixed bottom-4 right-4">
 			<Button
 				@click="form.prepend_new_form()"

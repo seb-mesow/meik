@@ -90,6 +90,11 @@ body {
 		--p-autocomplete-dropdown-hover-border-color: var(--color-blue-500);
 		
 		--p-chip-background: var(--color-gray-950);
+
+		/* --p-datatable-row-background: var(--color-gray-800);
+		--p-paginator-background: var(--color-gray-800) */
+		--p-datatable-border-color: var(--color-gray-600) !important;
+		--p-datatable-header-border-width: 1rem !important;
 	}
 }
 
@@ -170,6 +175,10 @@ p.text-format span::first-letter {
 	background-color: var(--info-button-bg) !important;
 	color: var(--info-button-text-color) !important;
 	border-color: var(--info-button-border) !important;
+}
+
+.dark .p-row-even {
+	background-color: #f83600 !important;
 }
 
 .logout-button {
