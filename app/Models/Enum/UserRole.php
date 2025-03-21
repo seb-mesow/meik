@@ -20,4 +20,16 @@ enum UserRole: string
 			self::ADMIN => 'Admin',
 		};
 	}
+	
+	private function get_rank_number(): int {
+		return match($this) {
+			self::READER => 0,
+			self::EDITOR => 1,
+			self::ADMIN => 99,
+		};
+	}
+	
+	public function is_at_least(UserRole $cmp_role): bool {
+		return $this->get_rank_number() >= $cmp_role->get_rank_number();
+	}
 }
