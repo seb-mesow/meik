@@ -333,11 +333,11 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		if ('errors' in err && Array.isArray(err.errors)) {
 			for (const _err of err.errors) {
 				if ('message' in _err && typeof _err.message === 'string') {
-					this.errs.push(_err.message);
+					this.errs.push({ key: _err.message, message: _err.message, preserve: false});
 				}
 			}
 		} else if ('message' in err && typeof err.message === 'string') {
-			this.errs.push(err.message);
+			this.errs.push({ key: err.message, message: err.message, preserve: false});
 		}
 	}
 	
