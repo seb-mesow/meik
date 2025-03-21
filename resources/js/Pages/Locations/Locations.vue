@@ -14,6 +14,7 @@ import Breadcrumb from 'primevue/breadcrumb';
 import { ILocationsInitPageProps } from '@/types/page_props/location';
 import { UILocationsForm, LocationsForm } from '@/form/special/overview/locations-form';
 import { UILocationForm } from '@/form/special/multiple/location-form';
+import { permissions } from '@/util/permissions';
 
 const props = defineProps<{
 	init_props: ILocationsInitPageProps
@@ -63,10 +64,6 @@ function child_form(data: any, index: number): UILocationForm {
 			</Breadcrumb>
 		</template>
 		
-		<div class="fixed bottom-4 right-4">
-			<Button severity="primary" raised :disabled="!form.create_button_enabled" icon="pi pi-plus" @click="form.prepend_form()" />
-		</div>
-		
 		<DataTable
 			:value="form.children.value"
 			paginator
@@ -81,6 +78,7 @@ function child_form(data: any, index: number): UILocationForm {
 			@row-edit-save="form.on_row_edit_save($event)"
 			@row-edit-cancel="form.on_row_edit_cancel($event)"
 		>
+			
 			<Column field="name" header="Name" style="width: 25%">
 				<template #body="{ data, index }">
 					<span v-if="child_form(data, index).id.value !== undefined"><a
@@ -105,6 +103,7 @@ function child_form(data: any, index: number): UILocationForm {
 					/>
 				</template>
 			</Column>
+			
 			<Column field="is_public" header="öffentlich" style="width: 25%">
 				<template #body="{ data, index }">
 					<i v-if="child_form(data, index).is_public.ui_value_in_editing.value" class="pi pi-check" />
@@ -126,8 +125,10 @@ function child_form(data: any, index: number): UILocationForm {
 					</div>
 				</template>
 			</Column>
-			<Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
-			<Column style="width: 10%; min-width: 8rem">
+			
+			<Column v-if="permissions.location.update" :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
+			
+			<Column v-if="permissions.location.delete" style="width: 10%; min-width: 8rem">
 				<template #body="{ data, index }">
 					<Button
 						:disabled="!child_form(data, index).delete_button_enabled"
@@ -136,8 +137,13 @@ function child_form(data: any, index: number): UILocationForm {
 					/>
 				</template>
 			</Column>
+			
 			<template #empty>keine Standorte vorhanden</template>
 		</DataTable>
+		
+		<div v-if="permissions.location.create" class="fixed bottom-4 right-4">
+			<Button severity="primary" raised :disabled="!form.create_button_enabled" icon="pi pi-plus" @click="form.prepend_form()" />
+		</div>
 		
 	</AuthenticatedLayout>
 </template>
