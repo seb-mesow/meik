@@ -146,4 +146,8 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 	public function set_role(UserRole $role): void {
 		$this->role = $role;
 	}
+	
+	public function is_at_least(UserRole $cmp_role): bool {
+		return $this->role->is_at_least($cmp_role);
+	}
 }
