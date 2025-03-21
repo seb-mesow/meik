@@ -23,6 +23,6 @@ defineProps<{
 		:grid_col="grid_col" :grid_col_span="grid_col_span" :grid_row="grid_row"
 		:class_label="class_label" :class_errors="class_errors" :class_slot="class_text"
 	>
-		<InputText :form="form" :type="type" />
+		<InputText :form="form" :type="type" :tooltip="tooltip" />
 	</BaseInputField>
 </template>

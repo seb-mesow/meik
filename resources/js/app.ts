@@ -11,7 +11,6 @@ import { Ziggy } from './ziggy/ziggy';
 
 // Prime Vue
 import PrimeVue from 'primevue/config';
-import Lara from '@primevue/themes/lara';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
 import DialogService from 'primevue/dialogservice';
