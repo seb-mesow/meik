@@ -13,6 +13,7 @@ import { IUsersInitPageProps } from '@/types/page_props/users';
 import { UIUsersForm, UsersForm } from '@/form/special/overview/users-form';
 import { UIUserForm } from '@/form/special/multiple/user-form';
 import { Select } from 'primevue';
+import { permissions } from  '@/util/permissions';
 
 const props = defineProps<IUsersInitPageProps>()
 
@@ -117,9 +118,9 @@ function child_form(data: any, index: number): UIUserForm {
 				</template>
 			</Column>
 			
-			<Column :rowEditor="true" style="width: 15%; min-width: 8rem" bodyStyle="text-align:center" />
+			<Column :v-if="permissions.user.update" :rowEditor="true" style="width: 15%; min-width: 8rem" bodyStyle="text-align:center" />
 			
-			<Column style="width: 10%; min-width: 8rem">
+			<Column v-if="permissions.user.delete" style="width: 10%; min-width: 8rem">
 				<template #body="{ data, index }">
 					<Button
 						:disabled="!child_form(data, index).delete_button_enabled"
@@ -133,7 +134,7 @@ function child_form(data: any, index: number): UIUserForm {
 			
 		</DataTable>
 		
-		<div class="fixed bottom-4 right-4">
+		<div v-if="permissions.user.create" class="fixed bottom-4 right-4">
 			<Button
 				as="a"
 				:href="route('user.new')"

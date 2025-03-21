@@ -3,7 +3,11 @@ import { route } from 'ziggy-js';
 import isc_logo_url from '../../images/Logo_isc_300x122.jpg';
 import fv_logo_url from '../../images/FV_ISC.jpg';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import { permissions } from '@/util/permissions';
 
+const user_permissions = permissions.value.user;
+
+const can_access_user_administration: boolean = user_permissions.create || user_permissions.update || user_permissions.delete;
 </script>
 
 <template>
@@ -38,7 +42,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 						</div>
 					</a>
 
-					<a :href="route('user.overview')">
+					<a v-if="can_access_user_administration" :href="route('user.overview')">
 						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
 							<div class="">
 								<span class="icon material-symbols-outlined">

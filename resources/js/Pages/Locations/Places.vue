@@ -13,6 +13,7 @@ import Breadcrumb from 'primevue/breadcrumb';
 import { IPlaceInitPageProps, IPlacesInitPageProps } from '@/types/page_props/place';
 import { UIPlacesForm, PlacesForm } from '@/form/special/overview/places-form';
 import { UIPlaceForm } from '@/form/special/multiple/place-form';
+import { permissions } from '@/util/permissions';
 
 const props = defineProps<{
 	location_name: string,
@@ -73,10 +74,6 @@ function child_form(data: any, index: number): UIPlaceForm {
 			</Breadcrumb>
 		</template>
 		
-		<div class="fixed bottom-4 right-4">
-			<Button severity="primary" raised :disabled="!form.create_button_enabled.value" icon="pi pi-plus" @click="form.prepend_new_form()" />
-		</div>
-		
 		<DataTable
 			:value="form.children.value"
 			paginator
@@ -91,6 +88,7 @@ function child_form(data: any, index: number): UIPlaceForm {
 			@row-edit-save="form.on_row_edit_save($event)"
 			@row-edit-cancel="form.on_row_edit_cancel($event)"
 		>
+			
 			<Column field="name" header="Name" style="width: 25%">
 				<template #body="{ data, index }">
 					<span>{{ child_form(data, index).name.ui_value_in_editing }}</span>
@@ -110,8 +108,10 @@ function child_form(data: any, index: number): UIPlaceForm {
 					/>
 				</template>
 			</Column>
-			<Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
-			<Column style="width: 10%; min-width: 8rem">
+			
+			<Column v-if="permissions.place.update" :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center" />
+			
+			<Column v-if="permissions.place.delete" style="width: 10%; min-width: 8rem">
 				<template #body="{ data, index }">
 					<Button
 						:disabled="!child_form(data, index).delete_button_enabled"
@@ -120,8 +120,20 @@ function child_form(data: any, index: number): UIPlaceForm {
 					/>
 				</template>
 			</Column>
+			
 			<template #empty>Dieser Standort hat keine Plätze.</template>
+			
 		</DataTable>
+		
+		<div v-if="permissions.place.create" class="fixed bottom-4 right-4">
+			<Button
+				@click="form.prepend_new_form()"
+				:disabled="!form.create_button_enabled.value"
+				severity="primary"
+				raised
+				icon="pi pi-plus"
+			/>
+		</div>
 		
 	</AuthenticatedLayout>
 </template>
