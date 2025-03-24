@@ -111,8 +111,8 @@ function child_form(data: any, index: number): UILocationForm {
 						</div>
 					</template>
 				</Column>
-				<Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:end;" />
-				<Column style="width: 1%">
+				<Column v-if="permissions.location.update" :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:end;" />
+				<Column v-if="permissions.location.delete" style="width: 1%">
 					<template #body="{ data, index }">
 						<Button :disabled="!child_form(data, index).delete_button_enabled" class="border-none"
 							icon="pi pi-trash" outlined rounded severity="danger" raised
