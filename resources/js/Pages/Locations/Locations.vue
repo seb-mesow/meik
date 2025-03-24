@@ -123,7 +123,7 @@ function child_form(data: any, index: number): UILocationForm {
 			</DataTable>
 		</div>
 		
-		<div class="fixed bottom-4 right-4">
+		<div v-if="permissions.location.create" class="fixed bottom-4 right-4">
 			<Button
 				@click="form.prepend_form()"
 				:disabled="!form.create_button_enabled"
