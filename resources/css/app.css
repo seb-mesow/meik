@@ -60,6 +60,14 @@
 	--color-default-text-color-dark: var(--color-gray-150);
 }
 
+:root {
+	--meik-navbar-width: 8rem;
+	
+	@media screen and (max-width: 64rem) {
+		--meik-navbar-width: 3rem;
+	}
+}
+
 /* ----- Global -------------------------------- */
 body {
 	--p-surface-0: black;
