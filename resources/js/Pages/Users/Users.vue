@@ -128,7 +128,7 @@ function child_form(data: any, index: number): UIUserForm {
 			</DataTable>
 		</div>
 		
-		<div class="fixed bottom-4 right-4">
+		<div v-if="permissions.user.create" class="fixed bottom-4 right-4">
 			<Button
 				as="a"
 				:href="route('user.new')"
