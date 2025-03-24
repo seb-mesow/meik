@@ -153,7 +153,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 	<Toast />
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb  class="dark:!bg-gray-800 bg-white" :home="home" :model="items">
+			<Breadcrumb class="dark:!bg-gray-800 bg-white" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -303,6 +303,8 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 					raised
 				/>
 			</div>
+			
+			<hr class="my-3">
 			
 			<FreeTextFields v-if="props.exhibit_props"
 				:init_props="props.exhibit_props.free_texts"

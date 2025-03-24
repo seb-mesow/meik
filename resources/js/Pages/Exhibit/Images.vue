@@ -59,7 +59,7 @@ const form: UIImagesForm = new ImagesForm({
 <template>
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb :home="home" :model="items">
+			<Breadcrumb class="dark:!bg-gray-800 bg-white" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
