@@ -52,7 +52,7 @@ function child_form(data: any, index: number): UIUserForm {
 
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb :home="home" :model="items">
+			<Breadcrumb class="!bg-white dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -61,12 +61,20 @@ function child_form(data: any, index: number): UIUserForm {
 				</template>
 			</Breadcrumb>
 		</template>
+		
 		<div class="bg-gray-200 dark:bg-gray-700 p-[1px]">
-			<DataTable striped-rows :value="form.children.value" paginator :totalRecords="form.total_count.value"
-				:rows="form.count_per_page" :rowsPerPageOptions="[8, 20, 50]" @page="form.on_page($event)" lazy
+			<DataTable
+				:value="form.children.value"
+				:totalRecords="form.total_count.value"
+				:rows="form.count_per_page"
+				:rowsPerPageOptions="[10, 20, 50]"
+				@page="form.on_page($event)" lazy
 				v-model:editingRows="form.children_in_editing.value" editMode="row"
 				@row-edit-init="form.on_row_edit_init($event)" @row-edit-save="form.on_row_edit_save($event)"
-				@row-edit-cancel="form.on_row_edit_cancel($event)">
+				@row-edit-cancel="form.on_row_edit_cancel($event)"
+				paginator
+				striped-rows
+			>
 
 				<Column field="username" header="Benutzername" style="width: 20%">
 					<template #body="{ data, index }">

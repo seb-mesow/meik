@@ -64,7 +64,7 @@ function child_form(data: any, index: number): UIPlaceForm {
 	
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb class="!bg-white dark:!bg-gray-800"  :home="home" :model="items">
+			<Breadcrumb class="!bg-white dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -110,7 +110,9 @@ function child_form(data: any, index: number): UIPlaceForm {
 					/>
 				</template>
 			</Column>
+			
 			<Column v-if="permissions.place.update" :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:end" />
+			
 			<Column v-if="permissions.place.delete" style="width: 1%">
 				<template #body="{ data, index }">
 					<Button

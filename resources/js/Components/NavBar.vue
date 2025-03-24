@@ -14,8 +14,8 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 	<div class="navbar-underlay">
 		<nav>
 			<div class="navbar">
-				<a :href="route('category.overview')">
-					<img class="logo" :src="isc_logo_url">
+				<a class="logo" :href="route('category.overview')">
+					<img :src="isc_logo_url">
 				</a>
 				<div class="flex flex-col gap-4">
 					<a :href="route('exhibit.overview')">
@@ -68,11 +68,11 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 .navbar-underlay {
 	flex-grow: 0;
 	flex-shrink: 0;
-	flex-basis: 8rem;
+	flex-basis: var(--meik-navbar-width);
 }
 
 .navbar {
-	width: 8rem;
+	width: var(--meik-navbar-width);
 	height: 100vh;
 	position: fixed;
 	top: 0;
@@ -108,12 +108,7 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 }
 
 @media screen and (max-width: 64rem) {
-	.navbar-underlay {
-		flex-basis: 3rem;
-	}
-
 	.navbar {
-		width: 3rem;
 		justify-content: space-around;
 	}
 
@@ -123,10 +118,6 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 
 	.link {
 		width: 3.5rem;
-	}
-
-	. {
-		width: 100%;
 	}
 
 	.label-box {
