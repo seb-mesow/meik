@@ -16,7 +16,18 @@ const form = props.form;
 	<div>
 		<div class="flex justify-between">
 			<InputField label="Überschrift" :form="form.heading"/>
-			<ToggleButton severity="primary" raised v-model="form.is_public.val" onLabel='öffentlich' offLabel="intern" class="w-28"/>
+			<ToggleButton
+				v-model="form.is_public.val"
+				onLabel='öffentlich'
+				offLabel="intern"
+				severity="primary"
+				raised
+				class="w-28 !text-black"
+				:class="{
+					'!bg-meik-is-public-bg-light dark:!bg-meik-is-public-bg- hover:!bg-meik-is-public-bg-light-hover hover:dark:!bg-meik-is-public-bg-dark-hover': form.is_public.val,
+					'!bg-meik-is-internal-bg-light dark:!bg-meik-is-internal-bg-dark hover:!bg-meik-is-internal-bg-light-hover hover:dark:!bg-meik-is-internal-bg-dark-hover': !form.is_public.val
+				}"
+			/>
 		</div>
 		<RichTextEditor v-model="form.html" class="mt-3"/>
 		<div class="flex justify-end gap-2 mt-3">
