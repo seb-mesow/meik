@@ -13,18 +13,18 @@ const exhibit_manufacture_date: PartialDate|null = props.exhibit.manufacture_dat
 
 <template>
 	<a :href="route('exhibit.details', props.exhibit.id)">
-		<div class="tile exhibit-tile shadow-md shadow-gray-400 flex justify-start items-center">
-			<div class="flex w-[10rem] h-[6rem] justify-center">
+		<div class="tile exhibit-tile shadow-md shadow-gray-400 items-center flex">
+			<div class="w-[10rem] h-[6rem] flex justify-center">
 				<img class="object-contain" v-if="props.exhibit.title_image"
 					:src="route('ajax.image.get_thumbnail', { image_id: props.exhibit.title_image.id })"
 					loading="lazy"
 				>
 			</div>
-			<div class="flex flex-col pl-4">
-				<p class="truncate" style="font-size: larger;">{{ props.exhibit.name + " (" + props.exhibit.inventory_number + ")" }}</p>
-				<p class="truncate"> {{ "Baujahr: " + ( exhibit_manufacture_date ? exhibit_manufacture_date.format_pretty() : '' ) }}</p>
-				<p class="truncate"> {{ "Hersteller: " + props.exhibit.manufacturer }}</p>
-				<p class="truncate"> {{ "Standort: " + props.exhibit.location_name + " - " + props.exhibit.place_name }}</p>
+			<div class="w-[19rem] pl-[1rem]">
+				<p class="truncate w-[18rem]" style="font-size: larger;">{{ props.exhibit.name + " (" + props.exhibit.inventory_number + ")" }}</p>
+				<p class="truncate w-[18rem]"> {{ "Baujahr: " + ( exhibit_manufacture_date ? exhibit_manufacture_date.format_pretty() : '' ) }}</p>
+				<p class="truncate w-[18rem]"> {{ "Hersteller: " + props.exhibit.manufacturer }}</p>
+				<p class="truncate w-[18rem]"> {{ "Standort: " + props.exhibit.location_name + " - " + props.exhibit.place_name }}</p>
 			</div>
 		</div>
 	</a>

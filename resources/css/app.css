@@ -201,7 +201,7 @@ p.text-format span::first-letter {
 		background-color: var(--color-blue-100);
 	}
 	.p-dark & {
-		background-color: var(--color-gray-600);
+		background-color: var(--color-gray-700);
 		&:hover {
 			background-color: var(--color-slate-600);
 		}
