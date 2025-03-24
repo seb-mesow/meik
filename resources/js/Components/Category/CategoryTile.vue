@@ -10,7 +10,7 @@ const props = defineProps<{
 
 <template>
 	<a :href="route('category.details', { category_id: props.category.id })">
-		<div class="tile category-tile shadow-md shadow-gray-400 flex justify-start items-center">
+		<div class="tile category-tile shadow-md dark:shadow-sm shadow-gray-400 flex justify-start items-center">
 			<span class="text-2xl">{{ props.category.name }}</span>
 		</div>
 	</a>
