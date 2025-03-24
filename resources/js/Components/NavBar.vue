@@ -18,9 +18,22 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 					<img :src="isc_logo_url">
 				</a>
 				<div class="flex flex-col gap-4">
+					<a :href="route('category.overview')">
+						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
+							<div class="flex items-center justify-center">
+								<span class="icon material-symbols-outlined">
+									category
+								</span>
+							</div>
+							<div class="label-box">
+								<span class="label">Kategorien</span>
+							</div>
+						</div>
+					</a>
+
 					<a :href="route('exhibit.overview')">
 						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
-							<div class="">
+							<div class="flex items-center justify-center">
 								<span class="icon material-symbols-outlined">
 									archive
 								</span>
@@ -46,7 +59,7 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 
 					<a v-if="can_access_user_administration" :href="route('user.overview')">
 						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
-							<div class="">
+							<div class="flex items-center justify-center">
 								<span class="icon material-symbols-outlined">
 									person
 								</span>

@@ -85,16 +85,14 @@ onBeforeUnmount(() => {
 <template>
 	<!-- Hier keine Card oder andere (sichtbare) Umrandung drum! -->
 	<!-- Irgendwas mit overflow ist hier nicht nötig. -->
-	<div class="tile-container" @scroll="handleScroll($event)">
-		<ExhibitTile v-for="exhibit in exhibits" :key="exhibit.id" :exhibit="exhibit" />
+	<div class="flex flex-col">
+		<span class="pb-4 pl-4 text-3xl">Exponate</span>
+		<div class="tile-container" @scroll="handleScroll($event)">
+			<ExhibitTile v-for="exhibit in exhibits" :key="exhibit.id" :exhibit="exhibit" />
+		</div>
 	</div>
-	
 	<div class="fixed bottom-4 right-4">
-		<Button
-			as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })"
-			severity="primary"
-			raised
-			icon="pi pi-plus"
-		/>
+		<Button as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })" severity="primary" raised
+			icon="pi pi-plus" />
 	</div>
 </template>
