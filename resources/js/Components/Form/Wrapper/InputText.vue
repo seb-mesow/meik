@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import InputText from 'primevue/inputtext';
 import { UISingleValueForm2 } from '@/form/generic/single/single-value-form2';
+import Tooltip from 'primevue/tooltip';
 
 defineProps<{
 	form: UISingleValueForm2<string|undefined>,

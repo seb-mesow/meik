@@ -14,7 +14,7 @@ import { IMultipleValueForm, MultipleValueForm } from "../../generic/multiple/mu
 import { ICategory, ICategoryWithRubrics, IRubric, RubricForm } from "../single/rubric-form";
 import { ILocation, LocationForm } from "../single/location-form";
 import { IPlace, IPlaceForm, PlaceForm } from "../single/place-form";
-import { IMultiSelectForm, MultiSelectForm, NumberMultipleSelectForm, UIMultiSelectForm } from "@/form/generic/single/multi-select-form";
+import { IMultiSelectForm, UIMultiSelectForm } from "@/form/generic/single/multi-select-form";
 import { ConnectedExhibitFrom, IConnectedExhibit } from "../single/connected-exhibit-form";
 
 export interface IExhibitForm {
