@@ -70,6 +70,13 @@ body {
 	--p-chip-color: var(--p-surface-0);
 	--p-autocomplete-dropdown-color: var(--p-surface-0);
 	
+	/* fix Tooltip */
+	--p-tooltip-background: var(--color-gray-200);
+	--p-tooltip-color: black; /* --p-surface-0 geht leider nicht */
+	--p-tooltip-padding: .5rem;
+	--p-tooltip-border-radius: .5rem;
+	--p-tooltip-gutter: .5rem;
+	
 	.p-dark & {
 		--p-surface-0: var(--color-gray-150);
 		
