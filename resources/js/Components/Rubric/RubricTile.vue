@@ -123,7 +123,7 @@ const ajax_delete = (): Promise<void> => {
 
 <template>
 	<a :href="route('rubric.details', { rubric_id: rubric_id })">
-		<div class="tile rubric-tile shadow-md shadow-gray-400 flex justify-between items-center">
+		<div class="tile rubric-tile shadow-md dark:shadow-sm shadow-gray-400 flex justify-between items-center">
 			<span class="text-2xl">{{ rubric_name }}</span>
 			<div class="flex flex-col gap-3">
 				<Button severity="primary" raised class="!p-1" @click.prevent="create_dialog">
