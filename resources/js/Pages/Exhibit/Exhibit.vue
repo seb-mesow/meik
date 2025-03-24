@@ -167,7 +167,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			<div class="gap-x-3 pb-4" :class="{ 'flex': does_exist, 'basis-2/3': does_exist, 'items-center': does_exist }">
 				
 				<!-- Kerndaten -->
-				<div class="bg-gray-50 border-[2px] border-gray-300 dark:border-gray-800 dark:bg-gray-600 p-4 rounded-md">
+				<div class="bg-gray-100 dark:bg-gray-900 border-[2px] border-gray-300 dark:border-gray-800 p-4 rounded-md">
 					<div class="grid grid-cols-3 gap-x-3" :class="{ 'basis-2/3': does_exist }">
 						<InputTextField2 :form="exhibit_form.name" label="Bezeichnung" :grid_col="1" :grid_col_span="2"
 							:grid_row="1" />
@@ -210,7 +210,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			</div>
 			<div class="flex flex-wrap gap-3 pb-3 items-start">
 				<!-- Bestandsdaten -->
-				<Fieldset legend="Bestandsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-50 dark:!bg-gray-600 !border-gray-300 dark:!border-gray-800 !border-2" >
+				<Fieldset legend="Bestandsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-100 dark:!bg-gray-900 !border-gray-300 dark:!border-gray-800 !border-2" >
 					<div class="grid grid-cols-2 gap-x-3">
 						<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" :grid_col="1"
 							:grid_row="1" />
@@ -224,7 +224,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				</Fieldset>
 
 				<!-- Zugangsdaten -->
-				<Fieldset legend="Zugangsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-50 dark:!bg-gray-600 !border-gray-300 dark:!border-gray-800 !border-2">
+				<Fieldset legend="Zugangsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-100 dark:!bg-gray-900 !border-gray-300 dark:!border-gray-800 !border-2">
 					<div class="grid grid-cols-2 gap-x-3">
 						<DateField :form="exhibit_form.acquisition_info.date" label="Datum" :grid_col="1"
 							:grid_row="1" />
@@ -242,7 +242,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			</div>
 
 
-			<Fieldset class="gap-3 !bg-gray-50 dark:!bg-gray-600 !border-gray-300 dark:!border-gray-800 !border-2" legend="Geräteinformationen">
+			<Fieldset class="gap-3 !bg-gray-100 dark:!bg-gray-900 !border-gray-300 dark:!border-gray-800 !border-2" legend="Geräteinformationen">
 				<template #legend>
 					<SelectButton :modelValue="exhibit_form.type.ui_value_in_editing"
 						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_ui_value_in_editing(v)"
