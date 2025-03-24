@@ -14,13 +14,14 @@ const home = {
 	icon: 'pi pi-home',
 	url: route('category.overview'),
 };
-const items:{ label: string, url?: string }[] = [];
+const items: { label: string, url?: string }[] = [];
 </script>
 
 <template>
+
 	<Head title="Kategorien" />
 	<AuthenticatedLayout>
-		
+
 		<template #header>
 			<Breadcrumb class="!bg-white dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
@@ -31,10 +32,11 @@ const items:{ label: string, url?: string }[] = [];
 				</template>
 			</Breadcrumb>
 		</template>
-		
-		<div class="tile-container">
-			<CategoryTile v-for="category in props.categories" :category="category" />
+		<div class="flex flex-col">
+			<span class="pb-4 pl-4 text-3xl">Kategorien</span>
+			<div class="tile-container">
+				<CategoryTile v-for="category in props.categories" :category="category" />
+			</div>
 		</div>
-		
 	</AuthenticatedLayout>
 </template>
