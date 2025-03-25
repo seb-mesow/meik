@@ -17,6 +17,7 @@ export interface UIImagesForm {
 	readonly ui_has_changes: Readonly<Ref<boolean>>;
 	readonly is_save_button_enabled: Readonly<Ref<boolean>>;
 	readonly is_save_button_loading: Readonly<Ref<boolean>>;
+	readonly shown_page: Readonly<Ref<number>>;
 }
 
 export interface IImagesFormConstructorArgs {
@@ -44,6 +45,7 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 	public readonly ui_has_changes: Ref<boolean>;
 	public readonly is_save_button_enabled: Ref<boolean>;
 	public readonly is_save_button_loading: Ref<boolean>;
+	public readonly shown_page: Ref<number>;
 	
 	private next_ui_id: number = 0;
 	
@@ -73,6 +75,7 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 		this.ui_has_changes = ref(false);
 		this.is_save_button_enabled = ref(false);
 		this.is_save_button_loading = ref(false);
+		this.shown_page = ref(0);
 	}
 	
 	private _has_changes(): boolean {
@@ -93,6 +96,7 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 		this.refresh(() => {
 			this.children_in_editing.value = [ ...new_children ];
 		});
+		this.shown_page.value = Math.min(this.shown_page.value, this.children_in_editing.value.length - 1);
 	}
 	
 	private has_changes(): boolean {
@@ -119,6 +123,8 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 			parent: this,
 			ui_id: this.next_ui_id++,
 		})]);
+		
+		this.shown_page.value = this.children_in_editing.value.length - 1;
 	}
 	
 	public get_index_for_persisting(form: IImageForm): number {
