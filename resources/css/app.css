@@ -107,27 +107,25 @@ body {
 p.text-format span::first-letter {
 	font-weight: bold !important;
 	/*color: #163366 !important;/**/
-  }
-  
-  .highlight {
+}
+
+.highlight {
 	font-weight: 1000;
 	color: #163366; /* Farbe nach Wunsch */
-	outline: 2px #ffffff;
-  }
-  
+}
+
 /* Dark Mode */
 @media (prefers-color-scheme: dark) {
 	.highlight {
-	  color: #ffcc00; /* Farbe für Dark Mode */
+		color: #ffcc00; /* Farbe für Dark Mode */
 	}
-  }
+}
 
 /* Standard-Button */
 .p-button.p-button-primary {
 	background-color: var(--primary-color) !important;
 	color: var(--primary-color-text) !important;
 	font-weight: 100 !important;
-	outline: 1px solid #EDEDED !important;
 	border-color: var(--primary-color) !important;
 }
 
@@ -139,7 +137,6 @@ p.text-format span::first-letter {
 	background-color: var(--button-primary-background);
 	color: #b30202;
 	font-weight: normal !important;
-	outline: 1px solid #EDEDED !important;
 	transition: background-color 0.3s ease-in-out;
 }
 
@@ -187,7 +184,6 @@ p.text-format span::first-letter {
 .logout-button {
 	background-color: #4F4F4F !important; /* Rotes Design */
 	color: white !important;
-	border: 1px solid #cc0000 !important; /* Optional: Roter Rand */
 	font-weight: bold !important;
 	border-radius: 1px;
 	transition: 0.3s ease-in-out;
