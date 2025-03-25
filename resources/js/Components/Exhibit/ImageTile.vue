@@ -16,6 +16,7 @@ onMounted(() => {
 		draggable="true"
 		@dragstart="form.on_tile_dragstart"
 		@dragend="form.on_tile_dragend"
+		@click="form.on_tile_click"
 	>
 		<div>
 			<i class="m-auto ms-[-.25rem] pi pi-bars"/>

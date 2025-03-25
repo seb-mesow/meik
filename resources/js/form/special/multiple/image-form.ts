@@ -28,6 +28,7 @@ export interface UIImageForm {
 	on_mounted(): void;
 	on_tile_dragstart(event: DragEvent): void;
 	on_tile_dragend(event: DragEvent): void;
+	on_tile_click(event: PointerEvent): void;
 }
 
 export interface IImageForm {
@@ -45,6 +46,7 @@ export interface IImageFormParent {
 	update_order_by_partial_order(new_ids_order: ImageAJAX.IImageIDsOrder ): void;
 	set_currently_dragged_tile(image: IImageForm): void;
 	on_tile_drag_end(tile: IImageForm, event: DragEvent): void;
+	set_shown_image(tile: IImageForm): void;
 }
 
 export interface IImageFormConstructorArgs {
@@ -202,6 +204,10 @@ export class ImageForm implements UIImageForm, IImageForm {
 	public on_tile_dragend(event: DragEvent): void {
 		this.tile.classList.remove('image-tile-dragging');
 		this.parent.on_tile_drag_end(this, event);
+	}
+	
+	public on_tile_click(event: PointerEvent): void {
+		this.parent.set_shown_image(this);
 	}
 	
 	public async click_save(): Promise<void> {

@@ -99,6 +99,13 @@ export class ImagesForm implements UIImagesForm, IImageFormParent {
 		this.shown_page.value = Math.min(this.shown_page.value, this.children_in_editing.value.length - 1);
 	}
 	
+	public set_shown_image(image: (IImageForm & UIImageForm)): void {
+		const found_index = this.children_in_editing.value.findIndex((child) => child === image);
+		if (found_index >= 0 && found_index < this.children_in_editing.value.length) {
+			this.shown_page.value = found_index;
+		}
+	}
+	
 	private has_changes(): boolean {
 		// kein Mutex nötig, solange this._has_changes nicht asynchron ist
 		if (this.last_has_changes_state === undefined) {
