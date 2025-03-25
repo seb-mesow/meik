@@ -24,7 +24,12 @@ onMounted(() => {
 		
 		<div class="mt-3 flex justify-between">
 			<Button
-				severity="primary" raised @click="form.click_image_order_save()" :disabled="!form.ui_has_changes.value" label="Speichern" />
+				@click="form.click_image_order_save()"
+				:disabled="!form.ui_has_changes.value"
+				label="Reihenfolge speichern"
+				severity="primary"
+				raised
+			/>
 			
 			<Button
 				@click="form.click_image_order_rollback()"

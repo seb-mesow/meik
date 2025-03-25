@@ -63,24 +63,25 @@ const form: UIImagesForm = new ImagesForm({
 			</Breadcrumb>
 		</template>
 		
-		<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">
-			<div class="w-[100%] lg:flex lg:flex-wrap gap-3">
-				
-				<div class="lg:flex-2 lg:min-w-1xl min-w-xs">
-					<Carousel 
-						:value="form.children_in_editing.value"
-						:page="form.shown_page.value"
-						class="" 
-					>
-						<template #item="{ data }">
-							<Image :form="data" />
-						</template>
-					</Carousel>
-				</div>
-				
-				<ImageOrder class="lg:flex-1 lg:min-w-xs min-w-xs lg:mt-0 mt-3" :form="form" />
+		<!-- Hier kommt keine äußere Card hin und kein Overflow! -->
+		<div class="flex flex-wrap justify-center gap-3">
 			
+			<div class="flex-2 bg-gray-100 dark:bg-gray-900 border-[2px] border-gray-300 dark:border-gray-800 p-4 rounded-md">
+				<Carousel
+					:value="form.children_in_editing.value"
+					:page="form.shown_page.value"
+				>
+					<template #item="{ data }">
+						<Image :form="data" />
+					</template>
+				</Carousel>
 			</div>
+			
+			<div class="flex-1 sm:min-w-sm bg-gray-100 dark:bg-gray-900 border-[2px] border-gray-300 dark:border-gray-800 p-4 rounded-md">
+				<span class="text-2xl">Reihenfolge</span>
+				<ImageOrder :form="form" />
+			</div>
+			
 		</div>
 		
 	</AuthenticatedLayout>
