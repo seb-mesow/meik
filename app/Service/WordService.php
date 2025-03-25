@@ -46,7 +46,7 @@ final class WordService
 		$templateProcessor->setValue('Zustand', $exhibit->get_preservation_state()->get_name());
 		$templateProcessor->setValue('Anschaffungsdatum', $exhibit->get_acquisition_info()->get_date());
 		$templateProcessor->setValue('Ursprung', $exhibit->get_acquisition_info()->get_source());
-		$templateProcessor->setValue('Anschaffungsart', $exhibit->get_acquisition_info()->get_kind());
+		$templateProcessor->setValue('Anschaffungsart', $exhibit->get_acquisition_info()->get_kind()->get_name());
 		$templateProcessor->setValue('Kaufpreis', $exhibit->get_acquisition_info()->get_purchasing_price());
 
 		$templateProcessor->saveAs($processedPath);
