@@ -23,8 +23,6 @@ import SelectButton from 'primevue/selectbutton';
 import DateField from '@/Components/Form/DateField.vue';
 import OriginalPriceField from '@/Components/Form/OriginalPriceField.vue';
 import { ref } from 'vue';
-import { AutoCompleteCompleteEvent } from 'primevue';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import MultipleSelectField from '@/Components/Form/MultipleSelectField.vue';
 
 // Argumente an die Seite (siehe Controller)
@@ -201,8 +199,12 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 					<ExportButton :exhibit_id="exhibit_form.id" />
 
 					<a :href="route('exhibit.images.details', { exhibit_id: exhibit_form.id })">
-						<img v-if="props.exhibit_props?.title_image" class="max-h-[15rem]"
-							:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })">
+						<img v-if="props.exhibit_props?.title_image"
+							class="max-h-[15rem] object-contain"
+							:src="route('ajax.image.get_image', { image_id: props.exhibit_props?.title_image?.id })"
+							:height="props.exhibit_props?.title_image?.image_height"
+							:width="props.exhibit_props?.title_image?.image_width"
+						/>
 						<div v-else class="">
 							<Button severity="primary" raised label="Bilder hinzufügen" />
 						</div>
