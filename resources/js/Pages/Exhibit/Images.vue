@@ -48,14 +48,8 @@ const form: UIImagesForm = new ImagesForm({
 		images: props.init_props.images,
 	},
 });
-// const children = form.children
-// watch(children, (children) => {
-// 	const new_order: string = children.reduce((acc, cur) => {
-// 		return acc + ", " + cur.ui_id;
-// 	}, '');
-// 	console.log(`watch: new_order == ${new_order}`);
-// });
 </script>
+
 <template>
 	<AuthenticatedLayout>
 		<template #header>
@@ -68,20 +62,30 @@ const form: UIImagesForm = new ImagesForm({
 				</template>
 			</Breadcrumb>
 		</template>
+		
 		<div class="bg-white dark:bg-gray-800 p-4 rounded-xl h-full w-full overflow-auto">
 			<div class="w-[100%] lg:flex lg:flex-wrap gap-3">
+				
 				<div class="lg:flex-2 lg:min-w-1xl min-w-xs">
-					<Carousel class="" :value="form.children_in_editing.value">
+					<Carousel 
+						:value="form.children_in_editing.value"
+						:page="form.shown_page.value"
+						class="" 
+					>
 						<template #item="{ data }">
 							<Image :form="data" />
 						</template>
 					</Carousel>
 				</div>
+				
 				<ImageOrder class="lg:flex-1 lg:min-w-xs min-w-xs lg:mt-0 mt-3" :form="form" />
+			
 			</div>
 		</div>
+		
 	</AuthenticatedLayout>
 </template>
+
 <style lang="css" scoped>
 ._images {
 	display: flex;
