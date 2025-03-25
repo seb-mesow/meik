@@ -39,12 +39,10 @@
 	--primary-color-text: #ffffff; /* Standard Textfarbe für den Button */
 	--primary-color-hover: #4670A9; /* Hover-Farbe */
 	
-
 	/* Farben für den Dark Mode */
 	--button-primary-background-dark: #60a5fa; /* blue-400 */
 	--button-primary-hover-background-dark: #93c5fd; /* blue-300 */
 	
-
 	/* Farben für Danger-Buttons (z.B. Löschen) */
 	--button-danger-background: #ef4444; /* red-500 */
 	--button-danger-hover-background: #dc2626; /* red-600 */
@@ -137,7 +135,6 @@ p.text-format span::first-letter {
 	background-color: var(--button-primary-background);
 	color: #b30202;
 	font-weight: normal !important;
-	transition: background-color 0.3s ease-in-out;
 }
 
 .p-button:hover {
@@ -185,14 +182,12 @@ p.text-format span::first-letter {
 	background-color: #4F4F4F !important; /* Rotes Design */
 	color: white !important;
 	font-weight: bold !important;
-	border-radius: 1px;
-	transition: 0.3s ease-in-out;
+	border-width: 0 !important;
 }
 
-.logout-button:hover {
+.logout-button:not(:disabled):hover {
 	background-color: #76564d !important; /* Dunkleres Rot beim Hover */
-	border-color: #EDEDED !important;
-	border: 1px solid #EB674D !important;
+	border-width: 0 !important;
 }
 
 /* ----- Klassen für Custom-Komponenten -------------------------------- */
