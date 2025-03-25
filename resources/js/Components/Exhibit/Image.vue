@@ -22,7 +22,8 @@ const props = defineProps<{
 </script>
 
 <template>
-	<div class="page">
+	<div>
+		
 		<div class="w-full aspect-[16/9]">
 			<img v-if="form.file_url.value"
 				class="h-full w-full object-contain"
@@ -43,6 +44,8 @@ const props = defineProps<{
 				</div>
 			</div>
 		</div>
+		
+		<div class="ps-1 pb-1 pe-1">
 		<div class="pt-3 flex gap-x-3">
 			<div class="flex-grow">
 				<label :for="form.description.html_id">Beschreibung</label>
@@ -52,7 +55,7 @@ const props = defineProps<{
 				raised
 				class="w-28 !text-black"
 				:class="{
-					'!bg-meik-is-public-bg-light dark:!bg-meik-is-public-bg- hover:!bg-meik-is-public-bg-light-hover hover:dark:!bg-meik-is-public-bg-dark-hover': form.is_public.ui_value_in_editing.value,
+					'!bg-meik-is-public-bg-light dark:!bg-meik-is-public-bg-dark hover:!bg-meik-is-public-bg-light-hover hover:dark:!bg-meik-is-public-bg-dark-hover': form.is_public.ui_value_in_editing.value,
 					'!bg-meik-is-internal-bg-light dark:!bg-meik-is-internal-bg-dark hover:!bg-meik-is-internal-bg-light-hover hover:dark:!bg-meik-is-internal-bg-dark-hover': !form.is_public.ui_value_in_editing.value
 				}"
 				style="grid-area: 3 / 2 / 3 / 2;"
@@ -62,29 +65,33 @@ const props = defineProps<{
 				@update:modelValue="(v: boolean) => form.is_public.on_change_ui_value_in_editing(v)"
 			/>
 		</div>
+		
 		<div class="buttons">
-			<Button severity="primary" raised @click="form.click_save()" label="Speichern"
-			:loading="form.is_save_button_loading.value"
-			:disabled="!(form.has_changes.value)"
+			<Button
+				@click="form.click_save()"
+				:disabled="!(form.has_changes.value)"
+				:loading="form.is_save_button_loading.value"
+				severity="primary"
+				label="Speichern"
+				raised
 			/>
-			<Button @click="form.click_delete()" label="Löschen" severity="danger" raised
-			:loading="form.is_delete_button_loading.value"
+			<Button
+				@click="form.click_delete()"
+				:loading="form.is_delete_button_loading.value"
+				label="Löschen"
+				severity="danger"
+				raised
 			/>
 		</div>
+		</div>
+		
 	</div>
 </template>
 
 <style lang="css" scoped>
 .drop-zone {
-	/* margin-left: auto; */
-	/* margin-right: auto; */
-	/* width: 32rem; */
-	/* height: 18rem; */
 	border: 0.2rem dashed;
 	border-color: rgb(0, 0, 0);
-	/* display: flex; */
-	/* justify-content: center; */
-	/* align-items: center; */
 }
 .p-dark .drop-zone {
 	border-color: white;
@@ -95,12 +102,6 @@ const props = defineProps<{
 .drop-zone-icon {
 	font-size: 300%;
 	margin-bottom: 1rem;
-}
-.page {
-	/* overflow: hidden; */
-	/* height: 2rem; */
-	/* width: 20rem;  */
-	/* background-color: lightcoral; */
 }
 .description-field {
 	flex: 1;

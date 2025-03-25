@@ -28,7 +28,7 @@ export interface UIImageForm {
 	on_mounted(): void;
 	on_tile_dragstart(event: DragEvent): void;
 	on_tile_dragend(event: DragEvent): void;
-	on_tile_click(event: PointerEvent): void;
+	on_tile_click(event: MouseEvent): void;
 }
 
 export interface IImageForm {
@@ -206,7 +206,7 @@ export class ImageForm implements UIImageForm, IImageForm {
 		this.parent.on_tile_drag_end(this, event);
 	}
 	
-	public on_tile_click(event: PointerEvent): void {
+	public on_tile_click(event: MouseEvent): void {
 		this.parent.set_shown_image(this);
 	}
 	
