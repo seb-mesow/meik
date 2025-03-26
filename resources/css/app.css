@@ -18,6 +18,42 @@
 	--color-gray-900: oklch(0.205 0 0);
 	--color-gray-950: oklch(0.145 0 0);
 
+	--color-red-50: oklch(0.971 0.013 17.38);
+	--color-red-100: oklch(0.936 0.032 17.717);
+	--color-red-200: oklch(0.885 0.062 18.334);
+	--color-red-300: oklch(0.808 0.114 19.571);
+	--color-red-400: oklch(0.704 0.191 22.216);
+	--color-red-450: color-mix(in oklab, var(--color-red-400), var(--color-red-500)); /* zusätzlich */
+	--color-red-500: oklch(0.637 0.237 25.331);
+	--color-red-550: color-mix(in oklab, var(--color-red-500), var(--color-red-600)); /* zusätzlich */
+	--color-red-600: oklch(0.577 0.245 27.325);
+	--color-red-650: color-mix(in oklab, var(--color-red-600), var(--color-red-700)); /* zusätzlich */
+	--color-red-700: oklch(0.505 0.213 27.518);
+	--color-red-750: color-mix(in oklab, var(--color-red-700), var(--color-red-800)); /* zusätzlich */
+	--color-red-800: oklch(0.444 0.177 26.899);
+	--color-red-850: color-mix(in oklab, var(--color-red-800), var(--color-red-900)); /* zusätzlich */
+	--color-red-900: oklch(0.396 0.141 25.723);
+	--color-red-950: oklch(0.258 0.092 26.042);
+	
+	--color-meik-blue-50:  color-mix(in srgb, white 94.444%, var(--color-blue-900));
+	--color-meik-blue-100: color-mix(in srgb, white 88.889%, var(--color-blue-900));
+	--color-meik-blue-150: color-mix(in srgb, white 83.333%, var(--color-blue-900));
+	--color-meik-blue-200: color-mix(in srgb, white 77.778%, var(--color-blue-900));
+	--color-meik-blue-250: color-mix(in srgb, white 72.222%, var(--color-blue-900));
+	--color-meik-blue-300: color-mix(in srgb, white 66.667%, var(--color-blue-900));
+	--color-meik-blue-350: color-mix(in srgb, white 61.111%, var(--color-blue-900));
+	--color-meik-blue-400: color-mix(in srgb, white 55.556%, var(--color-blue-900));
+	--color-meik-blue-450: color-mix(in srgb, white 50.000%, var(--color-blue-900));
+	--color-meik-blue-500: color-mix(in srgb, white 44.444%, var(--color-blue-900));
+	--color-meik-blue-550: color-mix(in srgb, white 38.889%, var(--color-blue-900));
+	--color-meik-blue-600: color-mix(in srgb, white 33.333%, var(--color-blue-900));
+	--color-meik-blue-650: color-mix(in srgb, white 27.778%, var(--color-blue-900));
+	--color-meik-blue-700: color-mix(in srgb, white 22.222%, var(--color-blue-900));
+	--color-meik-blue-750: color-mix(in srgb, white 16.667%, var(--color-blue-900));
+	--color-meik-blue-800: color-mix(in srgb, white 11.111%, var(--color-blue-900));
+	--color-meik-blue-850: color-mix(in srgb, white  5.555%, var(--color-blue-900));
+	--color-meik-blue-900: rgb(22, 51, 102);
+	
 	--color-meik-is-internal-bg-light: var(--color-gray-300);
 	--color-meik-is-internal-bg-light-hover: var(--color-gray-400);
 	--color-meik-is-internal-bg-dark: var(--color-gray-400);
@@ -32,24 +68,21 @@
 	--color-meik-tile-bg-dark: var(--color-gray-600);
 	--color-meik-tile-bg-dark-hover: var(--color-slate-600);
 	
-	/* Standardfarben für PrimeVue Buttons */
-	--button-primary-background: #1376f9; /* blue-50 */
-	--button-primary-hover-background: #2563eb; /* blue-600 */
 	--primary-color: #163366; /* Standard Primärfarbe (Blau) */
 	--primary-color-text: #ffffff; /* Standard Textfarbe für den Button */
 	--primary-color-hover: #4670A9; /* Hover-Farbe */
 	
-	/* Farben für den Dark Mode */
-	--button-primary-background-dark: #60a5fa; /* blue-400 */
-	--button-primary-hover-background-dark: #93c5fd; /* blue-300 */
+	/* Standardfarben für Standard-Buttons */
+	--button-primary-background: var(--color-meik-blue-900);
+	--button-primary-background-hover: var(--color-meik-blue-800);
+	--button-primary-background-dark: var(--color-meik-blue-850);
+	--button-primary-background-hover-dark: var(--color-meik-blue-900);
 	
 	/* Farben für Danger-Buttons (z.B. Löschen) */
-	--button-danger-background: #ef4444; /* red-500 */
-	--button-danger-hover-background: #dc2626; /* red-600 */
-
-	/* Farben für Danger-Buttons im Dark Mode */
-	--button-danger-background-dark: #f87171; /* red-400 */
-	--button-danger-hover-background-dark: #fca5a5; /* red-300 */
+	--button-danger-background: var(--color-red-600);
+	--button-danger-background-hover: var(--color-red-500);
+	--button-danger-background-dark: var(--color-red-550);
+	--button-danger-background-hover-dark: var(--color-red-650);
 
 	--color-meik-background: #003366;
 	--color-meik-primary: #249cda;
@@ -117,75 +150,72 @@ p.text-format span::first-letter {
 	color: var(--color-blue-500);
 }
 
-/* Standard-Button */
-.p-button.p-button-primary {
-	background-color: var(--primary-color) !important;
-	color: var(--primary-color-text) !important;
-	font-weight: 100 !important;
-	border-color: var(--primary-color) !important;
+body {
+	.p-button {
+		border-width: 0;
+		color: white;
+	}
+	.p-button:not(:disabled):hover {
+		border-width: 0;
+		color: white;
+	}
 }
 
-.p-button.p-button-primary:hover {
-	background-color: var(--primary-color-hover) !important; /* Weißer Rand */
+body {
+	.p-button-primary {
+		background-color: var(--button-primary-background);
+	}
+	.p-button-primary:not(:disabled):hover {
+		background-color: var(--button-primary-background-hover);
+	}
+	/* Dark Mode für Standard-Button */
+	.p-dark & .p-button-primary {
+		background-color: var(--button-primary-background-dark)
+	}
+	.p-dark & .p-button-primary:not(:disabled):hover {
+		background-color: var(--button-primary-background-hover-dark);
+	}
 }
 
-.p-button {
-	background-color: var(--button-primary-background);
-	color: #b30202;
-	font-weight: normal !important;
-}
-
-.p-button:hover {
-	background-color: var(--button-primary-hover-background);
-	border-color: var(--primary-color-hover) !important;
-}
-
-/* Dark Mode für Standard-Button */
-.dark .p-button {
-	background-color: var(--button-primary-background-dark);
-}
-
-.dark .p-button:hover {
-	background-color: var(--button-primary-hover-background-dark);
-}
-  
 /* Danger-Button */
-.p-button-danger {
-	background-color: var(--button-danger-background);
+body {
+	.p-button-danger {
+		background-color: var(--button-danger-background);
+	}
+	.p-button-danger:not(:disabled):hover {
+		background-color: var(--button-danger-background-hover);
+	}
+	/* Dark Mode für Danger-Button */
+	.p-dark & .p-button-danger {
+		background-color: var(--button-danger-background-dark);
+	}
+	.p-dark & .p-button-danger:not(:disabled):hover {
+		background-color: var(--button-danger-background-hover-dark);
+	}
 }
 
-.p-button-danger:hover {
-	background-color: var(--button-danger-hover-background);
-}
-
-/* Dark Mode für Danger-Button */
-.dark .p-button-danger {
-	background-color: var(--button-danger-background-dark);
-}
-  
-.dark .p-button-danger:hover {
-	background-color: var(--button-danger-hover-background-dark);
-}
 .p-button.p-button-info {
 	background-color: var(--info-button-bg) !important;
 	color: var(--info-button-text-color) !important;
 	border-color: var(--info-button-border) !important;
 }
 
-.dark .p-row-even {
+.p-dark .p-row-even {
 	background-color: #f83600 !important;
 }
 
-.logout-button {
-	background-color: #4F4F4F !important; /* Rotes Design */
-	color: white !important;
-	font-weight: bold !important;
-	border-width: 0 !important;
-}
-
-.logout-button:not(:disabled):hover {
-	background-color: #76564d !important; /* Dunkleres Rot beim Hover */
-	border-width: 0 !important;
+body {
+	.logout-button {
+		background-color: #4F4F4F; /* Rotes Design */
+		color: white ;
+		font-weight: bold;
+		border-width: 0;
+	}
+	
+	.logout-button:not(:disabled):hover {
+		background-color: #76564d; /* Dunkleres Rot beim Hover */
+		border-width: 0;
+	}
 }
 
 /* ----- Klassen für Custom-Komponenten -------------------------------- */
