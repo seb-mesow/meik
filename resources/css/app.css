@@ -9,6 +9,7 @@
 	--color-gray-150: oklch(0.946 0 0); /* zusätzlich */
 	--color-gray-200: oklch(0.922 0 0);
 	--color-gray-300: oklch(0.87 0 0);
+	--color-gray-350: oklch(0.789 0 0); /* zusätzlich */
 	--color-gray-400: oklch(0.708 0 0);
 	--color-gray-500: oklch(0.556 0 0);
 	--color-gray-600: oklch(0.439 0 0);
@@ -17,7 +18,23 @@
 	--color-gray-850: oklch(0.237 0 0); /* zusätzlich */
 	--color-gray-900: oklch(0.205 0 0);
 	--color-gray-950: oklch(0.145 0 0);
-
+	
+	--color-amber-50: oklch(0.987 0.022 95.277);
+	--color-amber-100: oklch(0.962 0.059 95.617);
+	--color-amber-200: oklch(0.924 0.12 95.746);
+	--color-amber-250: color-mix(in oklab, var(--color-amber-200), var(--color-amber-300)); /* zusätzlich */
+	--color-amber-300: oklch(0.879 0.169 91.605);
+	--color-amber-350: color-mix(in oklab, var(--color-amber-300), var(--color-amber-400)); /* zusätzlich */
+	--color-amber-400: oklch(0.828 0.189 84.429);
+	--color-amber-450: color-mix(in oklab, var(--color-amber-400), var(--color-amber-500)); /* zusätzlich */
+	--color-amber-500: oklch(0.769 0.188 70.08);
+	--color-amber-550: color-mix(in oklab, var(--color-amber-500), var(--color-amber-600)); /* zusätzlich */
+	--color-amber-600: oklch(0.666 0.179 58.318);
+	--color-amber-700: oklch(0.555 0.163 48.998);
+	--color-amber-800: oklch(0.473 0.137 46.201);
+	--color-amber-900: oklch(0.414 0.112 45.904);
+	--color-amber-950: oklch(0.279 0.077 45.635);
+	
 	--color-red-50: oklch(0.971 0.013 17.38);
 	--color-red-100: oklch(0.936 0.032 17.717);
 	--color-red-200: oklch(0.885 0.062 18.334);
@@ -54,14 +71,19 @@
 	--color-meik-blue-850: color-mix(in srgb, white  5.555%, var(--color-blue-900));
 	--color-meik-blue-900: rgb(22, 51, 102);
 	
-	--color-meik-is-internal-bg-light: var(--color-gray-300);
-	--color-meik-is-internal-bg-light-hover: var(--color-gray-400);
-	--color-meik-is-internal-bg-dark: var(--color-gray-400);
-	--color-meik-is-internal-bg-dark-hover: var(--color-gray-300);
-	--color-meik-is-public-bg-light: var(--color-amber-400);
-	--color-meik-is-public-bg-light-hover: var(--color-amber-500);
-	--color-meik-is-public-bg-dark: var(--color-amber-400);
-	--color-meik-is-public-bg-dark-hover: var(--color-amber-300);
+	--color-meik-is-internal-bg-light-text: black;
+	--color-meik-is-internal-bg-light: var(--color-gray-350);
+	--color-meik-is-internal-bg-light-hover: var(--color-gray-300);
+	--color-meik-is-internal-bg-dark-text: black;
+	--color-meik-is-internal-bg-dark: var(--color-gray-350);
+	--color-meik-is-internal-bg-dark-hover: var(--color-gray-400);
+	
+	--color-meik-is-public-bg-light-text: var(--color-amber-950);
+	--color-meik-is-public-bg-light: var(--color-amber-350);
+	--color-meik-is-public-bg-light-hover: var(--color-amber-250);
+	--color-meik-is-public-bg-dark-text: var(--color-amber-950);
+	--color-meik-is-public-bg-dark: var(--color-amber-300);
+	--color-meik-is-public-bg-dark-hover: var(--color-amber-400);
 	
 	--color-meik-tile-bg-light: var(--color-gray-100);
 	--color-meik-tile-bg-light-hover: var(--color-blue-100);
@@ -219,6 +241,18 @@ body {
 	}
 }
 
+/* Tabellen */
+body {
+	.p-datatable-row-editor-init {
+		background-color: var(--button-primary-background) !important;
+		color: white !important;
+	}
+	.p-datatable-row-editor-init:not(:disabled):hover {
+		background-color: var(--button-primary-background-hover) !important;
+		color: white !important;
+	}
+} 
+
 /* ----- Klassen für Custom-Komponenten -------------------------------- */
 .tile-container {
 	display: flex;
@@ -236,6 +270,50 @@ body {
 		background-color: var(--color-gray-700);
 		&:hover {
 			background-color: var(--color-slate-600);
+		}
+	}
+}
+
+/* Toggle-Buttonm für public intern */
+body {
+	.p-togglebutton.is_public-button {
+		border-width: 0;
+		font-weight: bold;
+		
+		&:not(.p-togglebutton-checked) {
+			background-color: var(--color-meik-is-internal-bg-light);
+			color: var(--color-meik-is-internal-bg-light-text);
+		}
+		&:not(.p-togglebutton-checked):not(:disabled):hover {
+			background-color: var(--color-meik-is-internal-bg-light-hover);
+			color: var(--color-meik-is-internal-bg-light-text);
+		}
+		&.p-togglebutton-checked {
+			background-color: var(--color-meik-is-public-bg-light);
+			color: var(--color-meik-is-public-bg-light-text);
+		}
+		&.p-togglebutton-checked:not(:disabled):hover {
+			background-color: var(--color-meik-is-public-bg-light-hover);
+			color: var(--color-meik-is-public-bg-light-text);
+		}
+	}
+	
+	.p-dark & .p-togglebutton.is_public-button {
+		&:not(.p-togglebutton-checked) {
+			background-color: var(--color-meik-is-internal-bg-dark);
+			color: var(--color-meik-is-internal-bg-dark-text);
+		}
+		&:not(.p-togglebutton-checked):not(:disabled):hover {
+			background-color: var(--color-meik-is-internal-bg-dark-hover);
+			color: var(--color-meik-is-internal-bg-dark-text);
+		}
+		&.p-togglebutton-checked {
+			background-color: var(--color-meik-is-public-bg-dark);
+			color: var(--color-meik-is-public-bg-dark-text);
+		}
+		&.p-togglebutton-checked:not(:disabled):hover {
+			background-color: var(--color-meik-is-public-bg-dark-hover);
+			color: var(--color-meik-is-public-bg-dark-text);
 		}
 	}
 }

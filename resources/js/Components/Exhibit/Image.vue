@@ -53,10 +53,10 @@ const props = defineProps<{
 			</div>
 			<ToggleButton
 				raised
-				class="w-28 !text-black"
+				class="w-28 is_public-button"
 				:class="{
-					'!bg-meik-is-public-bg-light dark:!bg-meik-is-public-bg-dark hover:!bg-meik-is-public-bg-light-hover hover:dark:!bg-meik-is-public-bg-dark-hover': form.is_public.ui_value_in_editing.value,
-					'!bg-meik-is-internal-bg-light dark:!bg-meik-is-internal-bg-dark hover:!bg-meik-is-internal-bg-light-hover hover:dark:!bg-meik-is-internal-bg-dark-hover': !form.is_public.ui_value_in_editing.value
+					'is_public-button--public': form.is_public.ui_value_in_editing.value,
+					'is_public-button--internal': !form.is_public.ui_value_in_editing.value
 				}"
 				style="grid-area: 3 / 2 / 3 / 2;"
 				onLabel='öffentlich'
