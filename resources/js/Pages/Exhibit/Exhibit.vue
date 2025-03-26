@@ -304,10 +304,13 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				</div>
 			</Fieldset>
 			
-			<div class="w-[14.1rem] text-right my-4">
+			<div class="text-right my-4" :class="{
+				'w-[14.1rem]': does_exist,
+				'w-[7.3rem]': !does_exist,
+			}">
 				<Button
 					:disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
-					:loading="exhibit_form.is_save_button_loading.value" type='button'
+					:loading="exhibit_form.is_save_button_loading.value"
 					:label="does_exist ? 'Stammdaten speichern' : 'Anlegen'"
 					@click="exhibit_form.click_save()"
 					severity="primary"
