@@ -98,7 +98,7 @@ function child_form(data: any, index: number): UILocationForm {
 					<template #body="{ data, index }">
 						<!-- <i v-if="child_form(data, index).is_public.ui_value_in_editing.value" class="pi pi-check" /> -->
 						<div v-if="child_form(data, index).is_public.ui_value_in_editing.value"
-							class="w-22 p-2 rounded-md font-bold text-meik-is-public-text-light dark:text-meik-is-public-text-dark bg-meik-is-public-bg-light dark:bg-meik-is-public-bg-dark"
+							class="w-22 p-2 rounded-md text-center text-meik-is-public-text-light dark:text-meik-is-public-text-dark bg-meik-is-public-bg-light dark:bg-meik-is-public-bg-dark"
 						>öffentlich</div>
 						<div v-else
 							class="w-22 text-center"
