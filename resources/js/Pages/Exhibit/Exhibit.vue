@@ -228,8 +228,8 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 					</div>
 				</Fieldset>
 
-				<!-- Zugangsdaten -->
-				<Fieldset legend="Zugangsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-100 dark:!bg-gray-900 !border-gray-300 dark:!border-gray-800 !border-2">
+				<!-- Zulaufsdaten -->
+				<Fieldset legend="Zulaufsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-100 dark:!bg-gray-900 !border-gray-300 dark:!border-gray-800 !border-2">
 					<div class="grid grid-cols-2 gap-x-3">
 						<DateField :form="exhibit_form.acquisition_info.date" label="Datum" :grid_col="1"
 							:grid_row="1" />
@@ -237,7 +237,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						<InputTextField2 :form="exhibit_form.acquisition_info.source" label="Herkunft" :grid_col="1"
 							:grid_col_span="2" :grid_row="2" />
 
-						<SelectField :form="exhibit_form.acquisition_info.kind" label="Zugangsart" :grid_col="1"
+						<SelectField :form="exhibit_form.acquisition_info.kind" label="Zulaufsart" :grid_col="1"
 							:grid_row="3" />
 
 						<InputNumberField :form="exhibit_form.acquisition_info.purchasing_price" price label="Kaufpreis"
