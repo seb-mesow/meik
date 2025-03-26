@@ -46,7 +46,7 @@ const form: UINewUserForm = new NewUserForm({
 	
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb :home="home" :model="items">
+			<Breadcrumb class="!bg-gray-100 dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>

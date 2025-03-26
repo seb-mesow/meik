@@ -53,7 +53,7 @@ const form: UIImagesForm = new ImagesForm({
 <template>
 	<AuthenticatedLayout>
 		<template #header>
-			<Breadcrumb class="dark:!bg-gray-800 bg-white" :home="home" :model="items">
+			<Breadcrumb class="!bg-gray-100 dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
 					<a class="cursor-pointer text-2xl" :href="item.url">
 						<span v-if="item.icon" :class="item.icon"></span>
@@ -77,7 +77,7 @@ const form: UIImagesForm = new ImagesForm({
 				</Carousel>
 			</div>
 			
-			<div class="flex-1 sm:min-w-sm bg-gray-100 dark:bg-gray-900 border-[2px] border-gray-300 dark:border-gray-800 p-4 rounded-md">
+			<div class="flex-1 sm:min-w-sm bg-gray-50 dark:bg-gray-900 border-[2px] border-gray-300 dark:border-gray-800 p-4 rounded-md">
 				<span class="text-2xl">Reihenfolge</span>
 				<ImageOrder :form="form" />
 			</div>
