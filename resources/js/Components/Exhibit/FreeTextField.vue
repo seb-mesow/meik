@@ -34,7 +34,14 @@ const form = props.form;
 			<div class="w-[8.1rem] text-right">
 				<Button @click="form.click_save()" label="Speichern" :loading="form.is_save_button_loading" severity="primary" raised/>
 			</div>
-			<Button @click="form.click_delete()" label="Löschen" :loading="form.is_delete_button_loading" severity="danger" raised/>
+			<Button
+				@click="form.click_delete()"
+				:loading="form.is_delete_button_loading"
+				icon="pi pi-trash"
+				severity="danger"
+				rounded
+				class="delete-button--icon"
+			/>
 		</div>
 	</div>
 </template>

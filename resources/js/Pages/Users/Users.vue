@@ -117,9 +117,14 @@ function child_form(data: any, index: number): UIUserForm {
 
 				<Column v-if="permissions.user.delete" style="width: 1%">
 					<template #body="{ data, index }">
-						<Button :disabled="!child_form(data, index).delete_button_enabled" class="border-none"
-							icon="pi pi-trash" outlined rounded severity="danger"
-							@click="child_form(data, index).request_delete($event)" />
+						<Button
+							@click="child_form(data, index).request_delete($event)"
+							:disabled="!child_form(data, index).delete_button_enabled"
+							icon="pi pi-trash"
+							severity="danger"
+							rounded
+							class="delete-button--icon"
+						/>
 					</template>
 				</Column>
 

@@ -117,8 +117,11 @@ function child_form(data: any, index: number): UIPlaceForm {
 				<template #body="{ data, index }">
 					<Button
 						:disabled="!child_form(data, index).delete_button_enabled"
-						class="border-none" icon="pi pi-trash" outlined rounded severity="danger" raised
 						@click="child_form(data, index).request_delete($event)"
+						icon="pi pi-trash"
+						severity="danger"
+						rounded
+						class="delete-button--icon"
 					/>
 				</template>
 			</Column>
