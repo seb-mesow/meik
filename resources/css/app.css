@@ -71,17 +71,17 @@
 	--color-meik-blue-850: color-mix(in srgb, white  5.555%, var(--color-blue-900));
 	--color-meik-blue-900: rgb(22, 51, 102);
 	
-	--color-meik-is-internal-bg-light-text: black;
+	--color-meik-is-internal-text-light: black;
 	--color-meik-is-internal-bg-light: var(--color-gray-350);
 	--color-meik-is-internal-bg-light-hover: var(--color-gray-300);
-	--color-meik-is-internal-bg-dark-text: black;
+	--color-meik-is-internal-text-dark: black;
 	--color-meik-is-internal-bg-dark: var(--color-gray-350);
 	--color-meik-is-internal-bg-dark-hover: var(--color-gray-400);
 	
-	--color-meik-is-public-bg-light-text: var(--color-amber-950);
+	--color-meik-is-public-text-light: var(--color-amber-950);
 	--color-meik-is-public-bg-light: var(--color-amber-350);
 	--color-meik-is-public-bg-light-hover: var(--color-amber-250);
-	--color-meik-is-public-bg-dark-text: var(--color-amber-950);
+	--color-meik-is-public-text-dark: var(--color-amber-950);
 	--color-meik-is-public-bg-dark: var(--color-amber-300);
 	--color-meik-is-public-bg-dark-hover: var(--color-amber-400);
 	
@@ -282,38 +282,54 @@ body {
 		
 		&:not(.p-togglebutton-checked) {
 			background-color: var(--color-meik-is-internal-bg-light);
-			color: var(--color-meik-is-internal-bg-light-text);
+			color: var(--color-meik-is-internal-text-light);
 		}
 		&:not(.p-togglebutton-checked):not(:disabled):hover {
 			background-color: var(--color-meik-is-internal-bg-light-hover);
-			color: var(--color-meik-is-internal-bg-light-text);
+			color: var(--color-meik-is-internal-text-light);
+		}
+		&:not(.p-togglebutton-checked):disabled:hover {
+			background-color: var(--color-meik-is-internal-bg-light-hover);
+			color: var(--color-meik-is-internal-text-light);
 		}
 		&.p-togglebutton-checked {
 			background-color: var(--color-meik-is-public-bg-light);
-			color: var(--color-meik-is-public-bg-light-text);
+			color: var(--color-meik-is-public-text-light);
 		}
 		&.p-togglebutton-checked:not(:disabled):hover {
 			background-color: var(--color-meik-is-public-bg-light-hover);
-			color: var(--color-meik-is-public-bg-light-text);
+			color: var(--color-meik-is-public-text-light);
+		}
+		&.p-togglebutton-checked:disabled:hover {
+			background-color: var(--color-meik-is-public-bg-light-hover);
+			color: var(--color-meik-is-public-text-light);
 		}
 	}
 	
 	.p-dark & .p-togglebutton.is_public-button {
 		&:not(.p-togglebutton-checked) {
 			background-color: var(--color-meik-is-internal-bg-dark);
-			color: var(--color-meik-is-internal-bg-dark-text);
+			color: var(--color-meik-is-internal-text-dark);
 		}
 		&:not(.p-togglebutton-checked):not(:disabled):hover {
 			background-color: var(--color-meik-is-internal-bg-dark-hover);
-			color: var(--color-meik-is-internal-bg-dark-text);
+			color: var(--color-meik-is-internal-text-dark);
+		}
+		&:not(.p-togglebutton-checked):disabled:hover {
+			background-color: var(--color-meik-is-internal-bg-dark-hover);
+			color: var(--color-meik-is-internal-text-dark);
 		}
 		&.p-togglebutton-checked {
 			background-color: var(--color-meik-is-public-bg-dark);
-			color: var(--color-meik-is-public-bg-dark-text);
+			color: var(--color-meik-is-public-text-dark);
 		}
 		&.p-togglebutton-checked:not(:disabled):hover {
 			background-color: var(--color-meik-is-public-bg-dark-hover);
-			color: var(--color-meik-is-public-bg-dark-text);
+			color: var(--color-meik-is-public-text-dark);
+		}
+		&.p-togglebutton-checked:disabled:hover {
+			background-color: var(--color-meik-is-public-bg-dark-hover);
+			color: var(--color-meik-is-public-text-dark);
 		}
 	}
 }
