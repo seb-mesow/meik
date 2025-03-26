@@ -6,16 +6,17 @@
 @theme {
 	--color-gray-50: oklch(0.985 0 0);
 	--color-gray-100: oklch(0.97 0 0);
-	--color-gray-150: oklch(0.946 0 0); /* zusätzlich */
+	--color-gray-150: color-mix(in oklab, var(--color-gray-100), var(--color-gray-200)); /* zusätzlich */
 	--color-gray-200: oklch(0.922 0 0);
+	--color-gray-250: color-mix(in oklab, var(--color-gray-200), var(--color-gray-300)); /* zusätzlich */
 	--color-gray-300: oklch(0.87 0 0);
-	--color-gray-350: oklch(0.789 0 0); /* zusätzlich */
+	--color-gray-350: color-mix(in oklab, var(--color-gray-300), var(--color-gray-400)); /* zusätzlich */
 	--color-gray-400: oklch(0.708 0 0);
 	--color-gray-500: oklch(0.556 0 0);
 	--color-gray-600: oklch(0.439 0 0);
 	--color-gray-700: oklch(0.371 0 0);
 	--color-gray-800: oklch(0.269 0 0);
-	--color-gray-850: oklch(0.237 0 0); /* zusätzlich */
+	--color-gray-850: color-mix(in oklab, var(--color-gray-800), var(--color-gray-900)); /* zusätzlich */
 	--color-gray-900: oklch(0.205 0 0);
 	--color-gray-950: oklch(0.145 0 0);
 	
@@ -135,6 +136,7 @@ body {
 	--p-fieldset-color: var(--p-surface-0);
 	--p-chip-color: var(--p-surface-0);
 	--p-autocomplete-dropdown-color: var(--p-surface-0);
+	--p-chip-background: var(--color-gray-300);
 	
 	/* fix Tooltip */
 	--p-tooltip-background: var(--color-gray-200);
