@@ -13,6 +13,9 @@ all_lines = []
 data = sys.argv[0]
 img = qrcode.make(data, version=1, error_correction=qrcode.ERROR_CORRECT_Q, box_size=1, border=0)
 
+all_lines.append(f"{row_number} REM Dies ist GW-BASIC.")
+row_number += 1
+
 for i in range(21):
 	row = []
 	for j in range(21):
