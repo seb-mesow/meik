@@ -66,7 +66,7 @@ const form: UIImagesForm = new ImagesForm({
 		<!-- Hier kommt keine äußere Card hin und kein Overflow! -->
 		<div class="flex flex-wrap justify-center gap-3">
 			
-			<div class="flex-2 bg-gray-100 dark:bg-gray-900 border-[2px] border-gray-300 dark:border-gray-800 p-4 rounded-md">
+			<div class="flex-2 md:min-w-xl min-w-sm bg-gray-100 dark:bg-gray-900 border-[2px] border-gray-300 dark:border-gray-800 p-4 rounded-md">
 				<Carousel
 					:value="form.children_in_editing.value"
 					:page="form.shown_page.value"
