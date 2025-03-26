@@ -126,12 +126,20 @@ const ajax_delete = (): Promise<void> => {
 		<div class="tile rubric-tile shadow-md dark:shadow-sm shadow-gray-400 flex justify-between items-center">
 			<span class="text-2xl">{{ rubric_name }}</span>
 			<div class="flex flex-col gap-3">
-				<Button severity="primary" raised class="!p-1" @click.prevent="create_dialog">
-					<span class="material-symbols-outlined">edit</span>
-				</Button>
-				<Button raised class="!p-1" severity="danger" @click.prevent="delete_rubric($event)">
-					<span class="material-symbols-outlined">delete</span>
-				</Button>
+				<Button
+					@click.prevent="create_dialog"
+					icon="pi pi-pencil"
+					severity="primary"
+					rounded
+					class="!p-1"
+				/>
+				<Button
+					@click.prevent="delete_rubric($event)"
+					icon="pi pi-trash"
+					severity="danger"
+					rounded
+					class="delete-button--icon !p-1"
+				/>
 			</div>
 		</div>
 	</a>

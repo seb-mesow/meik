@@ -223,6 +223,25 @@ body {
 	}
 }
 
+body {
+	.delete-button--icon {
+		color: var(--button-danger-background);
+		background: none;
+	}
+	.delete-button--icon:not(:disabled):hover {
+		color: var(--button-danger-background);
+		background: color-mix(in srgb, var(--button-danger-background), rgba(0,0,0,0) 85%);
+	}
+	.p-dark & .delete-button--icon {
+		color: var(--button-danger-background-dark);
+		background: none;
+	}
+	.p-dark & .delete-button--icon:not(:disabled):hover {
+		color: var(--button-danger-background);
+		background: color-mix(in srgb, var(--button-danger-background), rgba(0,0,0,0) 85%);
+	}
+}
+
 .p-button.p-button-info {
 	background-color: var(--info-button-bg) !important;
 	color: var(--info-button-text-color) !important;
