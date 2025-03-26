@@ -23,10 +23,10 @@ const form = props.form;
 				severity="primary"
 				raised
 				class="w-28 is_public-button"
-				:class="{
-					'is_public-button--public': form.is_public.val,
-					'is_public-button--internal': !form.is_public.val
-				}"
+			:class="{
+				'is_public-button--public': form.is_public.val,
+				'is_public-button--internal': !form.is_public.val
+			}"
 			/>
 		</div>
 		<RichTextEditor v-model="form.html" class="mt-3"/>

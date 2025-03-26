@@ -5,6 +5,7 @@ import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
+import ToggleButton from 'primevue/togglebutton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from 'primevue/useconfirm';
@@ -70,6 +71,7 @@ function child_form(data: any, index: number): UILocationForm {
 				@page="form.on_page($event)" lazy v-model:editingRows="form.children_in_editing.value" editMode="row"
 				@row-edit-init="form.on_row_edit_init($event)" @row-edit-save="form.on_row_edit_save($event)"
 				@row-edit-cancel="form.on_row_edit_cancel($event)">
+				
 				<Column field="name" header="Name" style="width: 25%">
 					<template #body="{ data, index }">
 						<span v-if="child_form(data, index).id.value !== undefined"><a
@@ -91,34 +93,56 @@ function child_form(data: any, index: number): UILocationForm {
 							:invalid="child_form(data, index).name.ui_is_invalid.value" fluid />
 					</template>
 				</Column>
-				<Column field="is_public" header="öffentlich" style="width: 25%">
+				
+				<Column field="is_public" header="Zugänglichkeit" style="width: 25%">
 					<template #body="{ data, index }">
-						<i v-if="child_form(data, index).is_public.ui_value_in_editing.value" class="pi pi-check" />
+						<!-- <i v-if="child_form(data, index).is_public.ui_value_in_editing.value" class="pi pi-check" /> -->
+						<div v-if="child_form(data, index).is_public.ui_value_in_editing.value"
+							class="w-22 p-2 rounded-md font-bold text-meik-is-public-text-light dark:text-meik-is-public-text-dark bg-meik-is-public-bg-light dark:bg-meik-is-public-bg-dark"
+						>öffentlich</div>
+						<div v-else
+							class="w-22 text-center"
+						>intern</div>
 					</template>
 					<template #editor="{ data, index }">
 						<div>
 							<p v-for="error in child_form(data, index).is_public.ui_errs.value"
 								class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
 						</div>
-						<div
-							class="py-(--p-inputtext-padding-y) px-(--p-inputtext-padding-x) text-[1rem] border border-transparent">
-							<Checkbox :id="child_form(data, index).is_public.html_id"
+						<!-- <div
+							class="py-(--p-inputtext-padding-y) px-(--p-inputtext-padding-x) text-[1rem] border border-transparent"> -->
+							<!-- <Checkbox :id="child_form(data, index).is_public.html_id"
 								:name="child_form(data, index).is_public.html_id"
 								:modelValue="child_form(data, index).is_public.ui_value_in_editing.value"
 								@update:modelValue="(v: boolean) => child_form(data, index).is_public.on_change_ui_value_in_editing(v)"
 								@blur="child_form(data, index).is_public.on_blur($event)"
-								:invalid="child_form(data, index).is_public.ui_is_invalid.value" binary />
-						</div>
+								:invalid="child_form(data, index).is_public.ui_is_invalid.value"
+								binary
+							/> -->
+							<ToggleButton
+								:name="child_form(data, index).is_public.html_id"
+								:modelValue="child_form(data, index).is_public.ui_value_in_editing.value"
+								@update:modelValue="(v: boolean) => child_form(data, index).is_public.on_change_ui_value_in_editing(v)"
+								@blur="child_form(data, index).is_public.on_blur($event)"
+								:invalid="child_form(data, index).is_public.ui_is_invalid.value"
+								onLabel='öffentlich'
+								offLabel='intern'
+								class="is_public-button !p-2 w-22"
+							/>
+						<!-- </div> -->
 					</template>
 				</Column>
+				
 				<Column v-if="permissions.location.update" :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:end;" />
+				
 				<Column v-if="permissions.location.delete" style="width: 1%">
 					<template #body="{ data, index }">
 						<Button :disabled="!child_form(data, index).delete_button_enabled" class="border-none"
-							icon="pi pi-trash" outlined rounded severity="danger" raised
+							icon="pi pi-trash" rounded severity="danger" raised
 							@click="child_form(data, index).request_delete($event)" />
 					</template>
 				</Column>
+				
 				<template #empty>keine Standorte vorhanden</template>
 			</DataTable>
 		</div>
