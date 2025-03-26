@@ -335,3 +335,13 @@ body {
 		}
 	}
 }
+
+/* Freitexte */
+body {
+	.p-editor .p-editor-content .ql-editor {
+		font-size: 1rem;
+		.p-dark {
+			color: var(--color-gray-200);
+		}
+	}
+}

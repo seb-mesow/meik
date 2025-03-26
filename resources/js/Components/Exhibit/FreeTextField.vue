@@ -15,7 +15,7 @@ const form = props.form;
 <template>
 	<div>
 		<div class="flex justify-between">
-			<InputField label="Überschrift" :form="form.heading"/>
+			<InputField class="exhibit-free-text-field-heading grow me-3" label="Überschrift" :form="form.heading"/>
 			<ToggleButton
 				v-model="form.is_public.val"
 				onLabel='öffentlich'
@@ -39,5 +39,14 @@ const form = props.form;
 	</div>
 </template>
 
-<style lang="css" scoped>
+<style lang="css">
+.exhibit-free-text-field-heading input {
+	font-weight: bold;
+	font-size: 1.25rem;
+	padding-top: .25rem;
+	padding-bottom: .25rem;
+	padding-left: .5rem;
+	padding-right: .5rem;
+	width: 100%;
+}
 </style>

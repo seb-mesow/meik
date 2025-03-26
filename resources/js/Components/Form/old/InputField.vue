@@ -13,12 +13,12 @@ const form = props.form;
 <template>
 	<div>
 		<p><label :for="form.id">{{ props.label }}</label></p>
+		<div v-show="form.errs">
+			<p v-for="error in form.errs">{{ error }}</p>
+		</div>
 		<InputText
 			class="w-full"
 			type=text :id="form.id" :name="form.id" v-model="form.val"
 		/>
-		<div v-show="form.errs">
-			<p v-for="error in form.errs">{{ error }}</p>
-		</div>
 	</div>
 </template>
