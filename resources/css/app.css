@@ -205,10 +205,6 @@ body {
 	border-color: var(--info-button-border) !important;
 }
 
-.p-dark .p-row-even {
-	background-color: #f83600 !important;
-}
-
 body {
 	.logout-button {
 		background-color: #4F4F4F; /* Rotes Design */
