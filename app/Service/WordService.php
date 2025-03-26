@@ -39,15 +39,15 @@ final class WordService
 		$templateProcessor->setValue('Herstellungsjahr', $exhibit->get_name());
 		$templateProcessor->setValue('Standort', $location->get_name());
 		$templateProcessor->setValue('Platz', $place->get_name());
-		$templateProcessor->setValue('Anschaffungsdatum', $exhibit->get_acquisition_info()->get_date() ?? '-');
+		$templateProcessor->setValue('Anschaffungsdatum', $exhibit->get_acquisition_info()?->get_date() ?? '-');
 		$templateProcessor->setValue('Aktueller Wert', $exhibit->get_current_value() . ' €');
 		$templateProcessor->setValue('Ursprungswert', ($exhibit->get_original_price()?->get_amount() . ' ' . $exhibit->get_original_price()?->get_currency()?->get_id()) ?? '-');
 		$templateProcessor->setValue('Beschreibung', $exhibit->get_short_description());
-		$templateProcessor->setValue('Zustand', $exhibit->get_preservation_state()->get_name());
-		$templateProcessor->setValue('Anschaffungsdatum', $exhibit->get_acquisition_info()->get_date());
-		$templateProcessor->setValue('Ursprung', $exhibit->get_acquisition_info()->get_source());
-		$templateProcessor->setValue('Anschaffungsart', $exhibit->get_acquisition_info()->get_kind()->get_name());
-		$templateProcessor->setValue('Kaufpreis', $exhibit->get_acquisition_info()->get_purchasing_price());
+		$templateProcessor->setValue('Zustand', $exhibit->get_preservation_state()?->get_name());
+		$templateProcessor->setValue('Anschaffungsdatum', $exhibit->get_acquisition_info()?->get_date());
+		$templateProcessor->setValue('Ursprung', $exhibit->get_acquisition_info()?->get_source());
+		$templateProcessor->setValue('Anschaffungsart', $exhibit->get_acquisition_info()?->get_kind()?->get_name());
+		$templateProcessor->setValue('Kaufpreis', $exhibit->get_acquisition_info()?->get_purchasing_price());
 
 		$templateProcessor->saveAs($processedPath);
 
