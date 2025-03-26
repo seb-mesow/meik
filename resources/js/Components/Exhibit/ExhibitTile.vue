@@ -22,9 +22,18 @@ const exhibit_manufacture_date: PartialDate|null = props.exhibit.manufacture_dat
 			</div>
 			<div class="w-[19rem] pl-[1rem]">
 				<p class="truncate w-[18rem]" style="font-size: larger;">{{ props.exhibit.name }}</p>
-				<p class="truncate w-[18rem]"> {{ "Baujahr: " + ( exhibit_manufacture_date ? exhibit_manufacture_date.format_pretty() : '' ) }}</p>
-				<p class="truncate w-[18rem]"> {{ "Hersteller: " + props.exhibit.manufacturer }}</p>
-				<p class="truncate w-[18rem]"> {{ "Standort: " + props.exhibit.location_name + " - " + props.exhibit.place_name }}</p>
+				<p class="w-[18rem] truncate">
+					<span class="inline-block w-[4.5rem]">Baujahr:</span>
+					{{( exhibit_manufacture_date ? exhibit_manufacture_date.format_pretty() : '' ) }}
+				</p>
+				<p class="w-[18rem] truncate">
+					<span class="inline-block w-[4.5rem]">Hersteller:</span>
+					{{ props.exhibit.manufacturer }}
+				</p>
+				<p class="w-[18rem] truncate">
+					<span class="inline-block w-[4.5rem]">Standort:</span>
+					{{ props.exhibit.location_name + " - " + props.exhibit.place_name }}
+				</p>
 			</div>
 		</div>
 	</a>
