@@ -40,7 +40,7 @@ const props = defineProps<{
 				<div class="text-center">
 					<i class="drop-zone-icon pi pi-upload"/>
 					<p>Bild hierein ziehen</p>
-					<p>oder klicken</p>
+					<!-- <p>oder klicken</p> -->
 				</div>
 			</div>
 		</div>
@@ -78,9 +78,10 @@ const props = defineProps<{
 			<Button
 				@click="form.click_delete()"
 				:loading="form.is_delete_button_loading.value"
-				label="Löschen"
+				icon="pi pi-trash"
 				severity="danger"
-				raised
+				rounded
+				class="delete-button--icon"
 			/>
 		</div>
 		</div>
