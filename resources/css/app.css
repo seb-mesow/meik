@@ -91,6 +91,21 @@
 	--color-meik-tile-bg-dark: var(--color-gray-600);
 	--color-meik-tile-bg-dark-hover: var(--color-slate-600);
 	
+	--color-meik-user-role-reader-text-light: black;
+	--color-meik-user-role-reader-bg-light: rgba(0,0,0,0);
+	--color-meik-user-role-reader-text-dark: var(--color-gray-150);
+	--color-meik-user-role-reader-bg-dark: rgba(0,0,0,0);
+	
+	--color-meik-user-role-admin-text-light: var(--color-orange-950);
+	--color-meik-user-role-admin-bg-light: color-mix(in oklab, var(--color-orange-200), var(--color-orange-300));
+	--color-meik-user-role-admin-text-dark: var(--color-orange-100);
+	--color-meik-user-role-admin-bg-dark: var(--color-orange-800);
+	
+	--color-meik-user-role-editor-text-light: var(--color-cyan-900);
+	--color-meik-user-role-editor-bg-light: color-mix(in oklab, var(--color-cyan-200), var(--color-cyan-300));
+	--color-meik-user-role-editor-text-dark: var(--color-cyan-100);
+	--color-meik-user-role-editor-bg-dark: var(--color-cyan-800);
+	
 	--primary-color: #163366; /* Standard Primärfarbe (Blau) */
 	--primary-color-text: #ffffff; /* Standard Textfarbe für den Button */
 	--primary-color-hover: #4670A9; /* Hover-Farbe */

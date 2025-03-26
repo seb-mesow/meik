@@ -96,7 +96,23 @@ function child_form(data: any, index: number): UIUserForm {
 
 				<Column field="role" header="Rolle" style="width: 15%">
 					<template #body="{ data, index }">
-						<span>{{ child_form(data, index).role.ui_value_in_editing.value?.name }}</span>
+						<div
+							class="w-[4rem] min-w-fit text-center p-1 rounded-md text-center"
+							:class="{
+								'text-meik-user-role-reader-text-light': (child_form(data, index).role.ui_value_in_editing.value?.id === 'reader'),
+								'bg-meik-user-role-reader-bg-light': (child_form(data, index).role.ui_value_in_editing.value?.id === 'reader'),
+								'dark:text-meik-user-role-reader-text-dark': (child_form(data, index).role.ui_value_in_editing.value?.id === 'reader'),
+								'dark:bg-meik-user-role-reader-bg-dark': (child_form(data, index).role.ui_value_in_editing.value?.id === 'reader'),
+								'text-meik-user-role-editor-text-light': (child_form(data, index).role.ui_value_in_editing.value?.id === 'editor'),
+								'bg-meik-user-role-editor-bg-light': (child_form(data, index).role.ui_value_in_editing.value?.id === 'editor'),
+								'dark:text-meik-user-role-editor-text-dark': (child_form(data, index).role.ui_value_in_editing.value?.id === 'editor'),
+								'dark:bg-meik-user-role-editor-bg-dark': (child_form(data, index).role.ui_value_in_editing.value?.id === 'editor'),
+								'text-meik-user-role-admin-text-light': (child_form(data, index).role.ui_value_in_editing.value?.id === 'admin'),
+								'bg-meik-user-role-admin-bg-light': (child_form(data, index).role.ui_value_in_editing.value?.id === 'admin'),
+								'dark:text-meik-user-role-admin-text-dark': (child_form(data, index).role.ui_value_in_editing.value?.id === 'admin'),
+								'dark:bg-meik-user-role-admin-bg-dark': (child_form(data, index).role.ui_value_in_editing.value?.id === 'admin'),
+							}"
+						>{{ child_form(data, index).role.ui_value_in_editing.value?.name }}</div>
 					</template>
 					<template #editor="{ data, index }">
 						<div>
