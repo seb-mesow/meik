@@ -298,7 +298,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				</div>
 			</Fieldset>
 			
-			<div class="flex w-full justify-end py-4">
+			<div class="w-[14.1rem] text-right my-4">
 				<Button
 					:disabled="!exhibit_form.is_save_button_enabled.value || exhibit_form.is_save_button_loading.value"
 					:loading="exhibit_form.is_save_button_loading.value" type='button'

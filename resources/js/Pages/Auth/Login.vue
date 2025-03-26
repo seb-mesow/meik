@@ -87,15 +87,16 @@ const login_form: ILoginForm = new LoginForm({
 					/>
 				</div>
 				
-				<Button
-					severity="primary" raised
-					:disabled="!login_form.is_login_button_enabled.value || login_form.is_login_button_loading.value"
-					:loading="login_form.is_login_button_loading.value"
-					type='button'
-					label="Login"
-					@click="login_form.click_login()"
-					class="mt-3"
-				/>
+				<div class="mt-3 text-center">
+					<Button
+						severity="primary" raised
+						:disabled="!login_form.is_login_button_enabled.value || login_form.is_login_button_loading.value"
+						:loading="login_form.is_login_button_loading.value"
+						type='button'
+						label="Login"
+						@click="login_form.click_login()"
+					/>
+				</div>
 			</div>
 			
 			<!-- Form id="login" method="post" :action="route('login')" :form="form" @onFinish="form.reset('password')">
