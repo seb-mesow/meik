@@ -15,7 +15,7 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 		<nav>
 			<div class="navbar">
 				<a class="logo" :href="route('category.overview')">
-					<img :src="isc_logo_url">
+					<img class="py-2 px-1 bg-white" :src="isc_logo_url">
 				</a>
 				<div class="flex flex-col gap-4">
 					<a :href="route('category.overview')">
