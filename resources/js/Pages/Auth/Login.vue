@@ -65,7 +65,7 @@ const login_form: ILoginForm = new LoginForm({
 				{{ status }}
 			</div>
 			
-			<div class="p-3 rounded-xl bg-gray-200 dark:bg-gray-800 border-1 border-gray-300 dark:border-gray-600 mt-3">
+			<div class="p-3 rounded-xl bg-gray-150 dark:bg-gray-950 border-1 border-gray-300 dark:border-gray-600 mt-3">
 				
 				<InputErrors :errs="login_form.ui_errs.value" class="mb-3" />
 				
