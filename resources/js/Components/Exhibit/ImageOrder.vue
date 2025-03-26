@@ -20,7 +20,7 @@ onMounted(() => {
 			<ImageTile v-for="image in form.children_in_editing.value" :key="image.ui_id" :form="image" />
 		</div>
 		
-		<Button severity="primary" raised @click="form.click_add()" label="Hinzufügen" />
+		<Button severity="primary" raised @click="form.click_add()" icon="pi pi-plus" />
 		
 		<div class="mt-3 flex justify-between">
 			<Button
