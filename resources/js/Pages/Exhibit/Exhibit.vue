@@ -247,11 +247,17 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 			</div>
 
 
-			<Fieldset class="gap-3 !bg-gray-100 dark:!bg-gray-900 !border-gray-300 dark:!border-gray-800 !border-2" legend="Geräteinformationen">
+			<Fieldset class="exhibit-type-fieldset gap-3 !bg-gray-100 dark:!bg-gray-900 !border-gray-300 dark:!border-gray-800 !border-2" legend="Geräteinformationen">
 				<template #legend>
 					<SelectButton :modelValue="exhibit_form.type.ui_value_in_editing"
 						@update:modelValue="(v: IExhibitType) => exhibit_form.type.on_change_ui_value_in_editing(v)"
-						:options="exhibit_types" optionLabel="name" :allowEmpty="false" severity="primary" raised/>
+						:options="exhibit_types" optionLabel="name" :allowEmpty="false" severity="primary" raised
+						class="exhibit-type-selectbutton"
+					>
+						<template #option="{ option }">
+							<span class="w-[2.5rem]">{{ option.name }}</span>
+						</template>
+					</SelectButton>
 				</template>
 
 				<!-- Geräteinformationen -->
@@ -320,3 +326,28 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 	
 	<!-- <div class="bg-gray-50 hidden"></div> -->
 </template>
+
+<style lang="css">
+.exhibit-type-fieldset .p-fieldset-legend {
+	padding: 0;
+	border-width: 0;
+}
+.exhibit-type-selectbutton {
+	& .p-togglebutton {
+		color: oklch(0.439 0 0);
+		background-color: var(--color-gray-200); /* !bg-gray-100 dark:!bg-gray-900 */
+		.p-dark & {
+			color: var(--color-gray-300);
+			background-color: var(--color-gray-700); /* !bg-gray-100 dark:!bg-gray-900 */
+		}
+		&.p-togglebutton-checked {
+			font-weight: bold;
+			color: black;
+			background: rgba(0, 0, 0, 0); /* !bg-gray-100 dark:!bg-gray-900 */
+			.p-dark & {
+				color: white;
+			}
+		}
+	}
+}
+</style>
