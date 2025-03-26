@@ -22,10 +22,10 @@ const form = props.form;
 				offLabel="intern"
 				severity="primary"
 				raised
-				class="w-28 !text-black"
+				class="w-28 is_public-button"
 				:class="{
-					'!bg-meik-is-public-bg-light dark:!bg-meik-is-public-bg- hover:!bg-meik-is-public-bg-light-hover hover:dark:!bg-meik-is-public-bg-dark-hover': form.is_public.val,
-					'!bg-meik-is-internal-bg-light dark:!bg-meik-is-internal-bg-dark hover:!bg-meik-is-internal-bg-light-hover hover:dark:!bg-meik-is-internal-bg-dark-hover': !form.is_public.val
+					'is_public-button--public': form.is_public.val,
+					'is_public-button--internal': !form.is_public.val
 				}"
 			/>
 		</div>
