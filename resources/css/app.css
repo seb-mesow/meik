@@ -112,11 +112,9 @@ p.text-format span::first-letter {
 	color: #163366; /* Farbe nach Wunsch */
 }
 
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-	.highlight {
-		color: #ffcc00; /* Farbe für Dark Mode */
-	}
+.p-dark .highlight {
+	/* color: #ffcc00; /* Farbe für Dark Mode */
+	color: var(--color-blue-500);
 }
 
 /* Standard-Button */
