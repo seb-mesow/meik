@@ -72,6 +72,11 @@
 	--primary-color-text: #ffffff; /* Standard Textfarbe für den Button */
 	--primary-color-hover: #4670A9; /* Hover-Farbe */
 	
+	/**
+	 * Regel für Hover-Farben:
+	 * Beim Hovern verändert sich die Hintergrund-Farbe so, dass sich der Button stärker vom Hintergrund unterscheidet.
+	 */
+	
 	/* Standardfarben für Standard-Buttons */
 	--button-primary-background: var(--color-meik-blue-900);
 	--button-primary-background-hover: var(--color-meik-blue-800);
