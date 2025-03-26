@@ -20,16 +20,8 @@ onMounted(() => {
 			<ImageTile v-for="image in form.children_in_editing.value" :key="image.ui_id" :form="image" />
 		</div>
 		
-		<Button severity="primary" raised @click="form.click_add()" icon="pi pi-plus" />
-		
-		<div class="mt-3 flex justify-between">
-			<Button
-				@click="form.click_image_order_save()"
-				:disabled="!form.ui_has_changes.value"
-				label="Reihenfolge speichern"
-				severity="primary"
-				raised
-			/>
+		<div class="mt-6 flex justify-between">
+			<Button severity="primary" raised @click="form.click_add()" icon="pi pi-plus"/>
 			
 			<Button
 				@click="form.click_image_order_rollback()"
@@ -38,6 +30,16 @@ onMounted(() => {
 				label="Zurücksetzen"
 			/>
 		</div>
+		
+		<Button
+			@click="form.click_image_order_save()"
+			:disabled="!form.ui_has_changes.value"
+			label="Reihenfolge speichern"
+			severity="primary"
+			raised
+			class="mt-3"
+		/>
+			
 	</div>
 </template>
 
