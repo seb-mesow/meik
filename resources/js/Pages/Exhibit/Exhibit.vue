@@ -318,7 +318,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				/>
 			</div>
 			
-			<hr class="my-3">
+			<hr class="mt-6 mb-6">
 			
 			<FreeTextFields v-if="props.exhibit_props"
 				:init_props="props.exhibit_props.free_texts"
