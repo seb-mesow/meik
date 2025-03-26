@@ -12,6 +12,7 @@ const props = defineProps<{
 	grid_col: number,
 	grid_col_span?: number,
 	grid_row: number,
+	class_label?: string,
 }>();
 </script>
 
@@ -20,6 +21,7 @@ const props = defineProps<{
 		:form1="form_amount" label1="Originalpreis" flex1="1"
 		:form2="form_currency" label2="Währung" flex2="0 0 7.5rem"
 		:grid_col="grid_col" :grid_col_span="grid_col_span" :grid_row="grid_row"
+		:class_label="class_label"
 	>
 		<template #form1>
 			<!-- @vue-expect-error -->
