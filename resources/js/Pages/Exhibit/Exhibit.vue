@@ -176,9 +176,9 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 							:grid_row="1" />
 
 						<InputTextField2 :form="exhibit_form.short_description" label="Kurzbeschreibung" :grid_col="1"
-							:grid_col_span="3" :grid_row="2" />
+							:grid_col_span="3" :grid_row="2" class_label="mt-2" />
 
-						<GroupSelectField :form="exhibit_form.rubric" label="Rubrik" :grid_col="1" :grid_row="3">
+						<GroupSelectField :form="exhibit_form.rubric" label="Rubrik" :grid_col="1" :grid_row="3" class_label="mt-2">
 							<template #optiongroup="category">
 								<span class="font-bold">{{ category.name }}</span>
 							</template>
@@ -187,9 +187,9 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 							</template>
 						</GroupSelectField>
 
-						<SelectField :form="exhibit_form.location" label="Standort" :grid_col="2" :grid_row="3" />
+						<SelectField :form="exhibit_form.location" label="Standort" :grid_col="2" :grid_row="3" class_label="mt-2"/>
 
-						<SelectField :form="exhibit_form.place" label="Platz" :grid_col="3" :grid_row="3" />
+						<SelectField :form="exhibit_form.place" label="Platz" :grid_col="3" :grid_row="3" class_label="mt-2"/>
 					</div>
 				</div>
 				
@@ -206,7 +206,7 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 							:width="props.exhibit_props?.title_image?.image_width"
 						/>
 						<div v-else class="">
-							<Button severity="primary" raised label="Bilder hinzufügen" />
+							<Button severity="primary" raised label="Bilder hinzufügen"/>
 						</div>
 					</a>
 				</div>
@@ -218,13 +218,13 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				<Fieldset legend="Bestandsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-100 dark:!bg-gray-900 !border-gray-300 dark:!border-gray-800 !border-2" >
 					<div class="grid grid-cols-2 gap-x-3">
 						<SelectField :form="exhibit_form.preservation_state" label="Erhaltungszustand" :grid_col="1"
-							:grid_row="1" />
+							:grid_row="1"/>
 
 						<SelectField :form="exhibit_form.kind_of_property" label="Besitzart" :grid_col="1"
-							:grid_row="2" />
+							:grid_row="2" class_label="mt-2"/>
 
 						<InputNumberField :form="exhibit_form.current_value" price label="Zeitwert" currency="EUR"
-							:grid_col="2" :grid_row="2" />
+							:grid_col="2" :grid_row="2" class_label="mt-2"/>
 					</div>
 				</Fieldset>
 
@@ -232,16 +232,16 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				<Fieldset legend="Zulaufsdaten *" toggleable :collapsed="does_exist" class="basis-[30rem] flex-1 !bg-gray-100 dark:!bg-gray-900 !border-gray-300 dark:!border-gray-800 !border-2">
 					<div class="grid grid-cols-2 gap-x-3">
 						<DateField :form="exhibit_form.acquisition_info.date" label="Datum" :grid_col="1"
-							:grid_row="1" />
+							:grid_row="1"/>
 
 						<InputTextField2 :form="exhibit_form.acquisition_info.source" label="Herkunft" :grid_col="1"
-							:grid_col_span="2" :grid_row="2" />
+							:grid_col_span="2" :grid_row="2" class_label="mt-2"/>
 
 						<SelectField :form="exhibit_form.acquisition_info.kind" label="Zulaufsart" :grid_col="1"
-							:grid_row="3" />
+							:grid_row="3" class_label="mt-2"/>
 
 						<InputNumberField :form="exhibit_form.acquisition_info.purchasing_price" price label="Kaufpreis"
-							currency="EUR" :grid_col="2" :grid_row="3" />
+							currency="EUR" :grid_col="2" :grid_row="3" class_label="mt-2"/>
 					</div>
 				</Fieldset>
 			</div>
@@ -263,22 +263,22 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 				<!-- Geräteinformationen -->
 				<div v-show="exhibit_form.show_device_info.value" class="grid grid-cols-3 gap-x-3">
 					<InputTextField2 :form="exhibit_form.manufacturer" label="Hersteller" :grid_col="1"
-						:grid_col_span="3" :grid_row="1" />
+						:grid_col_span="3" :grid_row="1"/>
 
 					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip"
-						label="Baujahr" :grid_col="1" :grid_row="2" />
+						label="Baujahr" :grid_col="1" :grid_row="2" class_label="mt-2"/>
 
 					<InputTextField2 :form="exhibit_form.device_info.manufactured_from_date"
-						:tooltip="partial_date_tooltip" label="gebaut von" :grid_col="2" :grid_row="2" />
+						:tooltip="partial_date_tooltip" label="gebaut von" :grid_col="2" :grid_row="2" class_label="mt-2"/>
 
 					<InputTextField2 :form="exhibit_form.device_info.manufactured_to_date"
-						:tooltip="partial_date_tooltip" label="gebaut bis" :grid_col="3" :grid_row="2" />
+						:tooltip="partial_date_tooltip" label="gebaut bis" :grid_col="3" :grid_row="2" class_label="mt-2"/>
 
 					<OriginalPriceField :form_amount="exhibit_form.original_price.amount"
-						:form_currency="exhibit_form.original_price.currency" :grid_col="1" :grid_row="3" />
+						:form_currency="exhibit_form.original_price.currency" :grid_col="1" :grid_row="3" class_label="mt-2"/>
 
 					<MultipleSelectField :form="exhibit_form.connected_exhibits" label="Verknüpfte Exponate"
-						:grid_col="1" :grid_col_span="3" :grid_row="4" />
+						:grid_col="1" :grid_col_span="3" :grid_row="4" class_label="mt-2"/>
 				</div>
 
 				<!-- Buchinformationen -->
@@ -287,20 +287,20 @@ const partial_date_tooltip = 'gültige Formate sind\nTT.MM.JJJJ\nTT. MONAT JJJJ\
 						:grid_row="1" />
 
 					<InputTextField2 :form="exhibit_form.manufacture_date" :tooltip="partial_date_tooltip"
-						label="Erscheinungsjahr" :grid_col="1" :grid_row="2" />
+						label="Erscheinungsjahr" :grid_col="1" :grid_row="2" class_label="mt-2"/>
 
 					<InputTextField2 :form="exhibit_form.book_info.authors" label="Autoren" :grid_col="2"
-						:grid_col_span="2" :grid_row="2" />
+						:grid_col_span="2" :grid_row="2" class_label="mt-2"/>
 
 					<OriginalPriceField :form_amount="exhibit_form.original_price.amount"
-						:form_currency="exhibit_form.original_price.currency" :grid_col="1" :grid_row="3" />
+						:form_currency="exhibit_form.original_price.currency" :grid_col="1" :grid_row="3" class_label="mt-2"/>
 
-					<SelectField :form="exhibit_form.book_info.language" label="Sprache" :grid_col="2" :grid_row="3" />
+					<SelectField :form="exhibit_form.book_info.language" label="Sprache" :grid_col="2" :grid_row="3" class_label="mt-2"/>
 
-					<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" :grid_col="3" :grid_row="3" />
+					<InputTextField2 :form="exhibit_form.book_info.isbn" label="ISBN" :grid_col="3" :grid_row="3" class_label="mt-2"/>
 
 					<MultipleSelectField :form="exhibit_form.connected_exhibits" label="Verknüpfte Exponate"
-						:grid_col="1" :grid_col_span="3" :grid_row="4" />
+						:grid_col="1" :grid_col_span="3" :grid_row="4" class_label="mt-2" />
 				</div>
 			</Fieldset>
 			

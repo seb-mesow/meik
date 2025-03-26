@@ -10,11 +10,16 @@ const props = defineProps<{
 	grid_col: number,
 	grid_col_span?: number,
 	grid_row: number,
+	class_label?: string,
+	class_errors?: string,
+	class_text?: string,
 }>();
 </script>
 
 <template>
-	<BaseInputField :form="form" :label="label" :grid_col="grid_col" :grid_col_span="grid_col_span" :grid_row="grid_row">
+	<BaseInputField :form="form" :label="label" :grid_col="grid_col" :grid_col_span="grid_col_span" :grid_row="grid_row"
+		:class_label="class_label" :class_errors="class_errors" :class_slot="class_text"
+	>
 		<!-- @vue-expect-error -->
 		<AutoComplete
 			:id="form.html_id" :name="form.html_id"

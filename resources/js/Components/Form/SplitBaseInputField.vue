@@ -11,6 +11,7 @@ const props = defineProps<{
 	grid_col: number,
 	grid_col_span?: number,
 	grid_row: number,
+	class_label?: string,
 }>();
 const _grid_col_end: number = props.grid_col + (props.grid_col_span ?? 1);
 const _grid_row_start: number = (props.grid_row - 1) * 3 + 1;
@@ -23,9 +24,11 @@ const _grid_row_end: number = _grid_row_start + 1;
 	>
 		<label :for="form1.html_id"
 			:style="`flex: ${flex1};`"
-		>{{ props.label1 + (form1.is_required.value ? ' *': '' ) }}</label>
+			:class="class_label"
+			>{{ props.label1 + (form1.is_required.value ? ' *': '' ) }}</label>
 		<label :for="form2.html_id"
 			:style="`flex: ${flex2};`"
+			:class="class_label"
 		>{{ props.label2 + (form2.is_required.value ? ' *': '' ) }}</label>
 	</div>
 	<div :style="`grid-area: ${_grid_row_start+1} / ${grid_col} / ${_grid_row_end+1} / ${_grid_col_end};`"
