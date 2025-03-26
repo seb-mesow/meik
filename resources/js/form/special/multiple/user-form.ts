@@ -231,7 +231,7 @@ export class UserForm implements IUserForm, UIUserForm {
 				console.log(`UserForm::ajax_create(): response.data ===`)
 				console.log(response.data);
 				this.id.value = response.data;
-				this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Benutzer wurde erfolgreich angelegt.', life: 3000 });
+				this.toast_service.add({ severity: 'success', summary: 'Erfolgreich', detail: 'Der Benutzer wurde angelegt.', life: 3000 });
 			}, () => {
 				this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Benutzer konnte nicht angelegt werden.', life: 3000 });
 			},
@@ -254,7 +254,7 @@ export class UserForm implements IUserForm, UIUserForm {
 			}
 		};
 		return axios.request(request_config).then(() => {
-			this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Benutzer wurde erfolgreich geändert.', life: 3000 });
+			this.toast_service.add({ severity: 'success', summary: 'Erfolgreich', detail: 'Der Benutzer wurde geändert.', life: 3000 });
 		}, () => {
 			this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Benutzer konnte nicht geändert werden.', life: 3000 });
 		});
@@ -271,7 +271,7 @@ export class UserForm implements IUserForm, UIUserForm {
 		};
 		
 		return axios.request(request_config).then(() => {
-			this.toast_service.add({ severity: 'info', summary: 'Erfolgreich', detail: 'Der Benutzer wurde erfolgreich gelöscht.', life: 3000 });
+			this.toast_service.add({ severity: 'success', summary: 'Erfolgreich', detail: 'Der Benutzer wurde gelöscht.', life: 3000 });
 		}, () => {
 			this.toast_service.add({ severity: 'error', summary: 'Fehler', detail: 'Der Benutzer konnte nicht gelöscht werden.', life: 3000 });
 		})
