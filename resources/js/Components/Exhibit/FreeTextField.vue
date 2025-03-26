@@ -23,15 +23,17 @@ const form = props.form;
 				severity="primary"
 				raised
 				class="w-28 is_public-button"
-			:class="{
-				'is_public-button--public': form.is_public.val,
-				'is_public-button--internal': !form.is_public.val
-			}"
+				:class="{
+					'is_public-button--public': form.is_public.val,
+					'is_public-button--internal': !form.is_public.val
+				}"
 			/>
 		</div>
 		<RichTextEditor v-model="form.html" class="mt-3"/>
-		<div class="flex justify-end gap-2 mt-3">
-			<Button @click="form.click_save()" label="Speichern" :loading="form.is_save_button_loading" severity="primary" raised/>
+		<div class="flex justify-between gap-2 mt-3">
+			<div class="w-[8.1rem] text-right">
+				<Button @click="form.click_save()" label="Speichern" :loading="form.is_save_button_loading" severity="primary" raised/>
+			</div>
 			<Button @click="form.click_delete()" label="Löschen" :loading="form.is_delete_button_loading" severity="danger" raised/>
 		</div>
 	</div>
