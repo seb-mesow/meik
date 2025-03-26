@@ -18,7 +18,7 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 		<NavBar />
 
 		<!-- Page Content -->
-		<div class="grow-1 overflow-hidden">
+		<div class="meik-page-content grow-1 overflow-hidden">
 
 			<!-- Page Heading -->
 			<div class="h-20">
@@ -46,5 +46,11 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 }
 header {
 	width: calc(100% - var(--meik-navbar-width));
+}
+.meik-page-content {
+	min-height: 100dvh;
+}
+main {
+	min-height: calc(100% - calc(var(--spacing) * 20));
 }
 </style>

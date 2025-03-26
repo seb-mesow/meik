@@ -56,22 +56,22 @@ const form: UINewUserForm = new NewUserForm({
 			</Breadcrumb>
 		</template>
 		
-		<div class="mx-auto h-dvh w-90 max-w-dvh content-center">
+		<div class="mx-auto min-h-full w-90 max-w-dvh">
 			
-			<div class="p-3 rounded-xl bg-gray-200 dark:bg-gray-800 border-1 border-gray-300 dark:border-gray-600 mt-3">
+			<div class="p-3 rounded-xl bg-gray-200 dark:bg-gray-900 border-1 border-gray-300 dark:border-gray-600 mt-3">
 			
 				<div class="grid grid-cols-1 gap-x-3">
 					<InputTextField2 :form="form.forename" label="Vorname" :grid_col="1" :grid_row="1"/>
 				
-					<InputTextField2 :form="form.surname" label="Nachname" :grid_col="1" :grid_row="2"/>
+					<InputTextField2 :form="form.surname" label="Nachname" :grid_col="1" :grid_row="2" class_label="mt-2"/>
 					
 					<SimpleSelectField :form="form.role" label="Rolle" :grid_col="1" :grid_row="3" class_label="mt-5"/>
 					
 					<InputTextField2 :form="form.username" label="Benutzername" :grid_col="1" :grid_row="4" class_label="mt-5"/>
 					
-					<InputTextField2 :form="form.password" label="Passwort" type="password" :grid_col="1" :grid_row="5"/>
+					<InputTextField2 :form="form.password" label="Passwort" type="password" :grid_col="1" :grid_row="5" class_label="mt-2"/>
 					
-					<InputTextField2 :form="form.password_again" label="Passwort wiederholen" type="password" :grid_col="1" :grid_row="6"/>
+					<InputTextField2 :form="form.password_again" label="Passwort wiederholen" type="password" :grid_col="1" :grid_row="6" class_label="mt-2"/>
 				</div>
 			
 				<div class="mt-4 flex items-center justify-end">
