@@ -14,7 +14,7 @@ const toast = useToast();
 
 const items = [
 	{
-		label: 'Erstelle BASIC-Skript für QR-Code',
+		label: 'Erstelle GW-BASIC-Skript für QR-Code',
 		url: route('ajax.exhibit.get_qr_code_basic_script', { exhibit_id: props.exhibit_id }),
 	},
 	{
