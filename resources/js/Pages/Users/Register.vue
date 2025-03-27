@@ -67,11 +67,11 @@ const form: UINewUserForm = new NewUserForm({
 					
 					<SimpleSelectField :form="form.role" label="Rolle" :grid_col="1" :grid_row="3" class_label="mt-5"/>
 					
-					<InputTextField2 :form="form.username" label="Benutzername" :grid_col="1" :grid_row="4" class_label="mt-5"/>
+					<InputTextField2 :form="form.username" label="Benutzername" :grid_col="1" :grid_row="4" class_label="mt-5" :autocomplete="false"/>
 					
-					<InputTextField2 :form="form.password" label="Passwort" type="password" :grid_col="1" :grid_row="5" class_label="mt-2"/>
+					<InputTextField2 :form="form.password" label="Passwort" type="password" :grid_col="1" :grid_row="5" class_label="mt-2" :autocomplete="false"/>
 					
-					<InputTextField2 :form="form.password_again" label="Passwort wiederholen" type="password" :grid_col="1" :grid_row="6" class_label="mt-2"/>
+					<InputTextField2 :form="form.password_again" label="Passwort wiederholen" type="password" :grid_col="1" :grid_row="6" class_label="mt-2" :autocomplete="false"/>
 				</div>
 			
 				<div class="mt-4 flex items-center justify-end">

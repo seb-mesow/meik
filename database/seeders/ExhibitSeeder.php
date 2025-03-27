@@ -187,12 +187,14 @@ class ExhibitSeeder extends Seeder
 	public function run(): void {
 		$this->remove_all_documents_by_model_type_id(ExhibitRepository::MODEL_TYPE_ID);
 		
+		$computer_rubric = $this->rubric_repository->find_by_name('Computer');
+		assert($computer_rubric !== null);
 		$this->create_exhibit(
 			inventory_number: 'N-12345',
 			name: 'Nixdorf BA42',
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
 			manufacture_date: '1961',
-			rubric_id: 'sonstiges',
+			rubric_id: $computer_rubric->get_id(),
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -211,7 +213,7 @@ class ExhibitSeeder extends Seeder
 			name: 'Triumphator CRN1',
 			manufacturer: 'Triumphator Leipzig (Mölkau) DDR',
 			manufacture_date: '1962',
-			rubric_id: 'sonstiges',
+			rubric_id: $computer_rubric->get_id(),
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -230,7 +232,7 @@ class ExhibitSeeder extends Seeder
 			name: 'Nixdorf 8810 M55',
 			manufacturer: 'Nixdorf Computer AG Paderborn',
 			manufacture_date: '1963',
-			rubric_id: 'sonstiges',
+			rubric_id: $computer_rubric->get_id(),
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -249,7 +251,7 @@ class ExhibitSeeder extends Seeder
 			name: 'Nixdorf BA42',
 			manufacturer: 'Diebold Nixdorf GmbH Paderborn',
 			manufacture_date: '1964',
-			rubric_id: 'sonstiges',
+			rubric_id: $computer_rubric->get_id(),
 			free_texts: [
 				new FreeText(
 					heading: "Geschichte",
@@ -259,7 +261,7 @@ class ExhibitSeeder extends Seeder
 			],
 		);
 		
-		for ($i = 0; $i < 100; $i++) {
+		for ($i = 0; $i < 150; $i++) {
 			$this->create_exhibit();
 		}
 	}

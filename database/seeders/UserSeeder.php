@@ -47,7 +47,7 @@ class UserSeeder extends Seeder
 		$this->create_user(
 			username: 'pepe',
 			password: '_pEpE=123',
-			role: UserRole::ADMIN,
+			role: UserRole::EDITOR,
 			forename: "Pepe",
 			surname: "Sievert",
 		);
@@ -61,9 +61,23 @@ class UserSeeder extends Seeder
 		$this->create_user(
 			username: 'gruppe1',
 			password: '_gRuPpe1=234',
-			role: UserRole::EDITOR,
+			role: UserRole::READER,
 			forename: "Gruppe 1",
 			surname: "MEIK",
+		);
+		$this->create_user(
+			username: 'claudia',
+			password: 'claudia',
+			role: UserRole::READER,
+			forename: "Claudia",
+			surname: "Hagen",
+		);
+		$this->create_user(
+			username: 'Heinz',
+			password: 'heinz',
+			role: UserRole::READER,
+			forename: "Heinz",
+			surname: "Lerbs",
 		);
 		$this->create_user(
 			username: 'm'.'u'.'e'.'l'.'l'.'e'.'r',

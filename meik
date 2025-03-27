@@ -79,7 +79,7 @@ function deploy_prod() {
 	npm ci;
 	npm run prod-build;
 	
-	artisan db:seed --force; # TODO RAUS!
+	# artisan db:seed --force; # TODO RAUS!
 	
 	artisan optimize; #(Config, Event-Listener-Mapping, Routes cachen)
 	docker_compose up -d --wait --force-recreate --remove-orphans web app # mit php-fpm
