@@ -75,9 +75,9 @@ class ImageSeeder extends Seeder
 		
 		// 4th exhibit without images
 		
-		for ($i = 0; $i < 100; $i++) {
+		for ($i = 0; $i < 150; $i++) {
 			$image_order = $this->create_image_order();
-			$count = fake()->numberBetween(0, 3);
+			$count = fake()->numberBetween(2, 5);
 			for ($j = 0; $j < $count; $j++) {
 				$this->insert_next_stock_image($image_order);
 			}
@@ -127,7 +127,7 @@ class ImageSeeder extends Seeder
 	): void {
 		$image = new Image(description: $description, is_public: $is_public);
 		$this->image_repository->insert($image);
-		usleep(100);
+		usleep(25);
 		$image_data = file_get_contents($this->determinate_image_filepath($rel_filepath));
 		$this->image_service->set_file_and_thumbnail($image->get_id(), $image_data, $mime_type);
 		$index = count($image_order->get_image_ids());
