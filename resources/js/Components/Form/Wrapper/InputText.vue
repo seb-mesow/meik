@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import InputText from 'primevue/inputtext';
 import { UISingleValueForm2 } from '@/form/generic/single/single-value-form2';
-import Tooltip from 'primevue/tooltip';
 
-defineProps<{
+const props = withDefaults(defineProps<{
 	form: UISingleValueForm2<string|undefined>,
 	type?: string,
 	tooltip?: string,
-}>();
+	autocomplete?: boolean|undefined,
+}>(), {
+	autocomplete: undefined,
+});
 </script>
 
 <template>
@@ -21,5 +23,8 @@ defineProps<{
 		:invalid="form.ui_is_invalid.value"
 		v-tooltip.top="{ value: tooltip, showDelay: 1000 }"
 		fluid
+		:pt="{
+			root: { autocomplete: (props.autocomplete === true ? 'on' : (props.autocomplete === false ? 'off' : undefined)) }
+		}"
 	/>
 </template>
