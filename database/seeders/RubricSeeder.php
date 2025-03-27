@@ -30,37 +30,70 @@ class RubricSeeder extends Seeder
 		$this->remove_all_documents_by_model_type_id(RubricRepository::MODEL_TYPE_ID);
 		
 		$this->create_rubric(new Rubric(
-			name: 'PC',
+			name: 'Computer',
 			category: Category::HARDWARE
 		));
-
+		$this->create_rubric(new Rubric(
+			name: 'Monitore',
+			category: Category::HARDWARE
+		));
+		$this->create_rubric(new Rubric(
+			name: 'Speichermedien',
+			category: Category::HARDWARE
+		));
 		$this->create_rubric(new Rubric(
 			name: 'Taschenrechner',
 			category: Category::HARDWARE
 		));
+		$this->create_rubric(new Rubric(
+			name: 'Mechanische Rechner',
+			category: Category::HARDWARE
+		));
+		$this->create_rubric(new Rubric(
+			name: 'Einzelne Komponenten',
+			category: Category::HARDWARE
+		));
 
+		$this->create_rubric(new Rubric(
+			name: 'Betriebssysteme',
+			category: Category::SOFTWARE
+		));
+		$this->create_rubric(new Rubric(
+			name: 'Büroanwendungen',
+			category: Category::SOFTWARE
+		));
+		$this->create_rubric(new Rubric(
+			name: 'Branchenanwendungen',
+			category: Category::SOFTWARE
+		));
 		$this->create_rubric(new Rubric(
 			name: 'Spiele',
 			category: Category::SOFTWARE
 		));
 
 		$this->create_rubric(new Rubric(
-			name: 'Office',
-			category: Category::SOFTWARE
-		));
-
-		$this->create_rubric(new Rubric(
-			name: 'Bedienungsanleitungen',
+			name: 'Handbücher',
 			category: Category::BOOK
 		));
-
 		$this->create_rubric(new Rubric(
 			name: 'Fachbücher',
 			category: Category::BOOK
 		));
+		$this->create_rubric(new Rubric(
+			name: 'Bedienungsanleitungen',
+			category: Category::BOOK
+		));
+		$this->create_rubric(new Rubric(
+			name: 'Biografien',
+			category: Category::BOOK
+		));
+		$this->create_rubric(new Rubric(
+			name: 'Belletristik',
+			category: Category::BOOK
+		));
 		
 		// Einkommentieren wenn benötigt
-		for ($i = 1; $i < 100; $i++) {
+		for ($i = 1; $i < 0; $i++) {
 			$this->create_rubric(new Rubric(
 				name: "Rubrik $i",
 				category: Category::OTHER

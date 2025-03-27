@@ -55,23 +55,23 @@ class ImageSeeder extends Seeder
 		$this->remove_all_documents_by_model_type_id(ImageRepository::MODEL_TYPE_ID);
 		
 		$image_order = $this->create_image_order();
-		$this->insert_next_number_image($image_order);
-		$this->insert_next_number_image($image_order);
-		$this->insert_next_number_image($image_order);
-		$this->insert_next_number_image($image_order);
-		$this->insert_next_number_image($image_order);
+		# $this->insert_next_number_image($image_order);
+		# $this->insert_next_number_image($image_order);
+		# $this->insert_next_number_image($image_order);
+		# $this->insert_next_number_image($image_order);
+		# $this->insert_next_number_image($image_order);
 		$this->insert_image_order($image_order);
 		
 		$image_order = $this->create_image_order();
-		$this->insert_next_number_image($image_order);
-		$this->insert_next_number_image($image_order);
-		$this->insert_next_number_image($image_order);
+		# $this->insert_next_number_image($image_order);
+		# $this->insert_next_number_image($image_order);
+		# $this->insert_next_number_image($image_order);
 		$this->insert_image_order($image_order);
 		
 		$image_order = $this->create_image_order();
-		$this->insert_next_number_image($image_order);
-		$this->insert_next_number_image($image_order);
-		$this->insert_image_order($image_order);
+		# $this->insert_next_number_image($image_order);
+		# $this->insert_next_number_image($image_order);
+		# $this->insert_image_order($image_order);
 		
 		// 4th exhibit without images
 		
