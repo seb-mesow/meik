@@ -187,6 +187,7 @@ class ExhibitSeeder extends Seeder
 	public function run(): void {
 		$this->remove_all_documents_by_model_type_id(ExhibitRepository::MODEL_TYPE_ID);
 		
+		$computer_rubric_id = $this->rubric_repository->find_by_name('Computer');
 		$this->create_exhibit(
 			inventory_number: 'N-12345',
 			name: 'Nixdorf BA42',
@@ -259,7 +260,7 @@ class ExhibitSeeder extends Seeder
 			],
 		);
 		
-		for ($i = 0; $i < 100; $i++) {
+		for ($i = 0; $i < 0; $i++) {
 			$this->create_exhibit();
 		}
 	}

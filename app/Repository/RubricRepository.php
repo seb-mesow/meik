@@ -105,7 +105,24 @@ final class RubricRepository
 		$rubric_doc = $this->client->getDoc($doc_id);
 		return $this->create_rubric_from_doc($rubric_doc);
 	}
-
+	
+	public function find_by_name(string $name): ?Rubric {
+		$response = $this->client->find([
+			'_id' => [
+				'$beginsWith' => self::ID_PREFIX,
+			],
+			'name' => [
+				'$eq' => $name,
+			],
+		]);
+		
+		if ($cnt = count($response->rows) > 0) {
+			assert($cnt === 1);
+			return $this->create_rubric_from_doc($response->rows[0]->doc);
+		}
+		return null;
+	}
+	
 	public function insert(Rubric $rubric): void
 	{
 		assert(!$rubric->get_nullable_id());
