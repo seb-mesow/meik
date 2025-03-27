@@ -113,12 +113,12 @@ final class RubricRepository
 			],
 			'name' => [
 				'$eq' => $name,
-			],
+			]
 		]);
 		
-		if ($cnt = count($response->rows) > 0) {
+		if (($cnt = count($response->docs)) > 0) {
 			assert($cnt === 1);
-			return $this->create_rubric_from_doc($response->rows[0]->doc);
+			return $this->create_rubric_from_doc($response->docs[0]);
 		}
 		return null;
 	}
