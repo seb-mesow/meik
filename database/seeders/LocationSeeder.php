@@ -13,7 +13,7 @@ class LocationSeeder extends Seeder
 {
 	use SeederTrait;
 	
-	private const int COUNT = 100;
+	private const int COUNT = 0;
 	
 	public function __construct(
 		CouchClient $client,
@@ -30,11 +30,15 @@ class LocationSeeder extends Seeder
 		
 		$this->create_location(new Location(
 			name: "Keller 085",
-			is_public: true,
+			is_public: false,
 		));
 		$this->create_location(new Location(
 			name: "Raum 628",
-			is_public: false
+			is_public: true
+		));
+		$this->create_location(new Location(
+			name: "Flure 2. Etage",
+			is_public: true
 		));
 		$this->create_location(new Location(
 			name: "Standort mit vielen Plätzen",

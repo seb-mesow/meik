@@ -15,7 +15,7 @@ class PlaceSeeder extends Seeder
 {
 	use SeederTrait;
 	
-	private const int COUNT = 100;
+	private const int COUNT = 0;
 	
 	private array $places = [];
 	
@@ -72,6 +72,16 @@ class PlaceSeeder extends Seeder
 		$this->create_place(new Place(
 			name: "Regal 4 (rechter Gang, Wand)",
 			location_id: $keller_085_id,
+		));
+		
+		$flure_2_etage_id = $this->find_location("Flure 2. Etage")->get_id();
+		$this->create_place(new Place(
+			name: "Vitrine beim Lehrerzimmer",
+			location_id: $flure_2_etage_id,
+		));
+		$this->create_place(new Place(
+			name: "Vitrine im Foyer",
+			location_id: $flure_2_etage_id,
 		));
 		
 		$standort_mit_vielen_plaetzen_id = $this->find_location("Standort mit vielen Plätzen")->get_id();
