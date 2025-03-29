@@ -53,7 +53,7 @@ class ExhibitAJAXController extends Controller
 		$place_id = (string) $request->input('place_id');
 		$rubric_id = (string) $request->input('rubric_id');
 		$connected_exhibit_ids = (array) $request->input('conntected_exhibit_ids');
-		
+
 		// wandle Eingabewerte um
 		$preservation_state = PreservationState::from($preservation_state_id);
 		if (is_integer($original_price_arr['amount']) && (is_string($original_price_arr['currency_id']) && $original_price_arr['currency_id'] !== '')) {
@@ -88,7 +88,7 @@ class ExhibitAJAXController extends Controller
 		} else {
 			$book_info = null;
 		}
-		
+
 		if ($exhibit) {
 			// bestehendes Exhibit updaten
 			$exhibit->set_inventory_number($inventory_number);
@@ -130,17 +130,17 @@ class ExhibitAJAXController extends Controller
 				connected_exhibit_ids: $connected_exhibit_ids,
 			);
 		}
-		
+
 		return $exhibit;
 	}
-	
+
 	public function create(Request $request): JsonResponse
 	{
 		$exhibit = $this->create_or_update($request);
 		$this->exhibit_repository->insert($exhibit);
 		return response()->json($exhibit->get_id());
 	}
-	
+
 	public function update(Request $request, int $exhibit_id): void
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
@@ -216,7 +216,8 @@ class ExhibitAJAXController extends Controller
 		$rubric_id = $request->query('rubric_id');
 		$page_number = $request->query('page_number');
 		$count_per_page = $request->query('count_per_page');
-		
+		$query = $request->query('query');
+
 		$rubric_id = is_string($rubric_id) ? trim($rubric_id) : null;
 		$rubric_id = $rubric_id === '' ? null : $rubric_id;
 		$page_number = is_string($page_number) ? trim($page_number) : null;
@@ -225,33 +226,62 @@ class ExhibitAJAXController extends Controller
 		$count_per_page = is_string($count_per_page) ? trim($count_per_page) : null;
 		$count_per_page = $count_per_page === '' ? null : $count_per_page;
 		$count_per_page = is_numeric($count_per_page) ? (int) $count_per_page : null;
-		
+
 		assert(($page_number === null) == ($count_per_page === null));
-		
-		if ($rubric_id === null) {
-			$selectors = [];
-		} else {
-			$selectors = [
+
+		$selectors = [];
+
+		if ($rubric_id) {
+			$selectors = array_merge($selectors, [
 				'rubric_id' =>  [
 					'$eq' => $rubric_id
 				]
-			];
+			]);
 		};
-		
+
+		if ($query) {
+			$queryParts = explode(' ', $query);
+			foreach ($queryParts as $queryPart) {
+				$selectors = array_merge([
+					'$or' => [
+						[
+							'manufacturer' => [
+								'$regex' => '(?i)' . $queryPart // Regex für manufacturer
+							]
+						],
+						[
+							'name' => [
+								'$regex' => '(?i)' . $queryPart // Regex für name
+							]
+						],
+						[
+							'inventory_number' => [
+								'$eq' => $queryPart // Exakte Übereinstimmung für inventory_number
+							]
+						],
+						[
+							'manufacture_date' => [
+								'$eq' => $queryPart // Exakte Übereinstimmung für Herstellungsjahr
+							]
+						]
+					]
+				], $selectors);
+			}
+		}
 		$exhibits_json = $this->exhibit_service->determinate_tiles_props(
 			page_number: $page_number,
 			count_per_page: $count_per_page,
 			selectors: $selectors,
 		);
-		
-		return response()->json( $exhibits_json);
+
+		return response()->json($exhibits_json);
 	}
-	
+
 	public function get_qr_code(int $exhibit_id)
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$ret =  $this->qr_code_service->create_qr_code($exhibit);
-		
+
 		return response()->download(
 			file: $ret['tmp_file_path'],
 			name: $ret['user_file_name'],
@@ -261,12 +291,12 @@ class ExhibitAJAXController extends Controller
 		)->deleteFileAfterSend();
 		// return response($result->getString(), 200)->header('Content-Type', 'image/png');
 	}
-	
+
 	public function get_qr_code_basic_script(int $exhibit_id): BinaryFileResponse
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
 		$ret = $this->qr_code_service->create_qr_code_basic_script($exhibit);
-		
+
 		return response()->download(
 			file: $ret['tmp_file_path'],
 			name: $ret['user_file_name'],
@@ -275,7 +305,7 @@ class ExhibitAJAXController extends Controller
 			],
 		)->deleteFileAfterSend();
 	}
-	
+
 	public function get_data_sheet(int $exhibit_id)
 	{
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
@@ -287,26 +317,26 @@ class ExhibitAJAXController extends Controller
 		$criteria = $request->query('criteria');
 		assert(is_string($criteria));
 		$criteria = trim($criteria);
-		
+
 		// Ersetze allen Zwischen-Whitespace durch eine Regex für mehrere Whitespace-Zeichen.
 		$criteria = mb_ereg_replace('\s+', '\\s+', $criteria);
-		
+
 		// Exhibits, welche bereits in der Form enthalten sind, werden erst im Frontend weggefiltert.
 		// Dafür ist die DB-Abfrage einfacher und schneller.
-		
+
 		$selectors = [
 			'name' => [
 				'$regex' => '(?i)' . $criteria,
 			]
 		];
-		
+
 		$exhibits = $this->exhibit_repository->query($selectors);
-		
+
 		$exhibits_json = array_map(static fn(Exhibit $exhibit): array => [
 			'id' => $exhibit->get_id(),
 			'name' => $exhibit->get_name(),
 		], $exhibits);
-		
+
 		return $exhibits_json;
 	}
 }

@@ -4,6 +4,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Breadcrumb from 'primevue/breadcrumb';
 import ExhibitTiles from '@/Components/Exhibit/ExhibitTiles.vue';
 import { IExhibitTilesMainProps } from '@/types/page_props/exhibit_tiles';
+import { ref } from 'vue';
+import InputText from 'primevue/inputtext';
 
 const props = defineProps<IExhibitTilesMainProps>();
 
@@ -18,6 +20,8 @@ let items: { label: string, url?: string }[] = [
 		url: route('exhibit.overview'),
 	}
 ];
+
+const query = ref('')
 </script>
 
 <template>
@@ -33,8 +37,14 @@ let items: { label: string, url?: string }[] = [
 				</template>
 			</Breadcrumb>
 		</template>
+
+		<template #searchbar>
+			<div class="pr-8">
+				<InputText placeholder="Exponate durchsuchen" type="text" v-model="query" />
+			</div>
+		</template>
 		
-		<ExhibitTiles :main_props="props" />
+		<ExhibitTiles :main_props="props" :query="query" />
 		
 	</AuthenticatedLayout>
 </template>

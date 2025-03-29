@@ -25,7 +25,8 @@ const disable_overflow: boolean = props.disable_overflow ?? false;
 				<div class="h-full" />
 				<header	class="bg-white shadow z-10 !bg-gray-100 dark:!bg-gray-800 items-center fixed top-0 flex flex-no-wrap justify-between px-4">
 					<slot name="header" />
-					<div class="pl-4">
+					<div class="pl-4 flex justify-between items-center">
+						<slot name="searchbar"></slot>
 						<DarkModeToggle class="inline-block me-3" />
 						<LogoutButton class="inline-block" />
 					</div>
