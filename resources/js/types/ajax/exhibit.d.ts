@@ -6,6 +6,7 @@ namespace TilesQuery {
 		rubric_id?: string,
 		page_number?: number,
 		count_per_page?: number,
+		query?: string
 	};
 	export type IRequestDate = never;
 	export type I200ResponseData = IExhibitTileProps[]; // vielleicht ist irgendwann mal total_count nötig

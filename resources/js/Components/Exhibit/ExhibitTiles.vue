@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { route } from 'ziggy-js';
 import * as ExhibitAJAX from '@/types/ajax/exhibit';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios from 'axios';
 import { IExhibitTilesMainProps } from '@/types/page_props/exhibit_tiles';
@@ -11,10 +11,12 @@ import Button from 'primevue/button';
 const props = defineProps<{
 	rubric_id?: string,
 	main_props: IExhibitTilesMainProps,
+	query: string
 }>();
 
 const exhibits = ref(props.main_props.exhibit_tiles);
-
+let query = props.query
+let timeout: any = null;
 
 
 // ----- Infinite Scrolling -----------------------------------------------
@@ -45,6 +47,11 @@ async function ajax_get_paginated(): Promise<void> {
 	if (props.rubric_id) {
 		query_params.rubric_id = props.rubric_id;
 	}
+
+	if (query) {
+		query_params.query = query
+	}
+
 	const request_config: AxiosRequestConfig = {
 		method: "get",
 		url: route('ajax.exhibit.tiles.query'),
@@ -80,6 +87,20 @@ onBeforeUnmount(() => {
 	window.removeEventListener('scroll', handleScroll);
 	window.removeEventListener('resize', handleScroll);
 });
+
+watch(() => props.query, (newValue) => {
+	clearTimeout(timeout); // Vorheriges Timeout abbrechen
+	timeout = setTimeout(() => {
+		query = newValue
+		exhibits.value = []
+		page_number = 0
+		more_exhibits_exist = true;
+		load_exhibits();
+	}, 300); // 300ms Verzögerung
+
+});
+
+
 </script>
 
 <template>
@@ -87,16 +108,12 @@ onBeforeUnmount(() => {
 	<!-- Irgendwas mit overflow ist hier nicht nötig. -->
 	<div class="flex flex-col">
 		<span class="pb-4 pl-4 text-3xl">Exponate</span>
-	<div class="tile-container" @scroll="handleScroll($event)">
-		<ExhibitTile v-for="exhibit in exhibits" :key="exhibit.id" :exhibit="exhibit" />
-	</div>
+		<div class="tile-container" @scroll="handleScroll($event)">
+			<ExhibitTile v-for="exhibit in exhibits" :key="exhibit.id" :exhibit="exhibit" />
+		</div>
 	</div>
 	<div class="fixed bottom-4 right-4">
-		<Button
-			as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })"
-			severity="primary"
-			raised
-			icon="pi pi-plus"
-		/>
+		<Button as="a" :href="route('exhibit.new', { rubric_id: props.rubric_id })" severity="primary" raised
+			icon="pi pi-plus" />
 	</div>
 </template>

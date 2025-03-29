@@ -4,6 +4,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ExhibitTiles from '@/Components/Exhibit/ExhibitTiles.vue';
 import Breadcrumb from 'primevue/breadcrumb';
 import { IExhibitTilesMainProps } from '@/types/page_props/exhibit_tiles';
+import { ref } from 'vue';
+import { InputText } from 'primevue';
 
 const props = defineProps<{
 	category: {
@@ -14,8 +16,11 @@ const props = defineProps<{
 		id: string,
 		name: string,
 	},
-	exhibit_tiles_main_props: IExhibitTilesMainProps
+	exhibit_tiles_main_props: IExhibitTilesMainProps,
+	query: string
 }>();
+
+const query = ref('')
 
 const home = {
 	icon: 'pi pi-home',
@@ -36,7 +41,7 @@ let items: { label: string, url?: string }[] = [
 
 <template>
 	<AuthenticatedLayout :disable_overflow="true">
-		
+
 		<template #header>
 			<Breadcrumb class="!bg-gray-100 dark:!bg-gray-800" :home="home" :model="items">
 				<template #item="{ item }">
@@ -46,9 +51,15 @@ let items: { label: string, url?: string }[] = [
 					</a>
 				</template>
 			</Breadcrumb>
+
 		</template>
-		
-		<ExhibitTiles :main_props="props.exhibit_tiles_main_props" :rubric_id="props.rubric.id" />
-		
+		<template #searchbar>
+			<div class="pr-8">
+				<InputText placeholder="Exponate durchsuchen" type="text" v-model="query" />
+			</div>
+		</template>
+
+		<ExhibitTiles :main_props="props.exhibit_tiles_main_props" :rubric_id="props.rubric.id" :query="query" />
+
 	</AuthenticatedLayout>
 </template>

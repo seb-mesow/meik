@@ -46,7 +46,6 @@ final class ExhibitService {
 			page_number: $page_number,
 			count_per_page: $count_per_page,
 		);
-		
 		$_this = $this;
 		return array_map(static function(Exhibit $exhibit) use ($_this): array {
 			return $_this->determinate_tile_props($exhibit);

@@ -160,7 +160,6 @@ final class ExhibitRepository
 				]
 			])
 			->docs;
-		
 		$_this = $this;
 		$exhibits = array_map(static function (stdClass $doc) use ($_this): Exhibit {
 			return $_this->create_exhibit_from_doc($doc);
