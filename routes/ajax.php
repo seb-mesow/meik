@@ -5,6 +5,7 @@ use App\Http\Controllers\AJAX\ImageAJAXController;
 use App\Http\Controllers\AJAX\LoginAJAXController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AJAX\UserAJAXController;
+use App\Http\Controllers\AJAX\AccountAJAXController;
 use App\Http\Controllers\AJAX\LocationAJAXController;
 use App\Http\Controllers\AJAX\PlaceAJAXController;
 use App\Http\Controllers\AJAX\ExhibitAJAXController;
@@ -34,6 +35,10 @@ Route::prefix('ajax')->middleware('auth')->group(static function () {
 	
 	Route::delete('/user/{user_id}', [UserAJAXController::class, 'delete'])
 		->name('ajax.user.delete');
+	
+	# --- Account / Konto ---
+	Route::patch('/account/change_password', [AccountAJAXController::class, 'change_password'])
+		->name('ajax.account.change_password');
 	
 	# --- Locations / Standorte ---
 	Route::get('/locations', [LocationAJAXController::class, 'query'])
