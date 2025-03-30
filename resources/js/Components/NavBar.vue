@@ -17,7 +17,8 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 				<a class="logo" :href="route('category.overview')">
 					<img class="py-2 px-1 bg-white" :src="isc_logo_url">
 				</a>
-				<div class="flex flex-col gap-4">
+				
+				<div class="flex flex-col gap-y-1">
 					<a :href="route('category.overview')">
 						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
 							<div class="flex items-center justify-center">
@@ -74,7 +75,7 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 				</div>
 				<div>
 					<a :href="route('account.details')">
-						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
+						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60 mx-auto">
 							<div class="flex items-center justify-center">
 								<span class="icon material-symbols-outlined">
 									manage_accounts
@@ -85,7 +86,6 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 							</div>
 						</div>
 					</a>
-					
 					<img class="logo" :src="fv_logo_url">
 				</div>
 			</div>
