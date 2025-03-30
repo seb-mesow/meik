@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Http\Controllers\Web\AccountController;
 use App\Http\Controllers\Web\ImagesController;
 use App\Http\Controllers\Web\CategoryController;
 use App\Http\Controllers\Web\ProfileController;
@@ -33,9 +34,11 @@ Route::middleware('auth')->group(function () {
 	Route::get('/user/new', [UserController::class, 'new'])
 		->name('user.new');
 	
-	Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-	Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+	# --- Account ---
+	Route::get('/account', [AccountController::class, 'details'])->name('account.details');
+	Route::get('/account/change_password', [AccountController::class, 'change_password'])->name('account.change_password');
+	# Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+	# Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 	
 	# --- Categories ---
 	Route::get('/categories', [CategoryController::class, 'overview'])->name('category.overview');

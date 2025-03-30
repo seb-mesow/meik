@@ -61,7 +61,7 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
 							<div class="flex items-center justify-center">
 								<span class="icon material-symbols-outlined">
-									person
+									groups
 								</span>
 							</div>
 							<div class="label-box">
@@ -69,9 +69,25 @@ const can_access_user_administration: boolean = user_permissions.create || user_
 							</div>
 						</div>
 					</a>
+					
+					
 				</div>
-
-				<img class="logo" :src="fv_logo_url">
+				<div>
+					<a :href="route('account.details')">
+						<div class="link flex items-center justify-center rounded-sm hover:bg-meik-primary/60">
+							<div class="flex items-center justify-center">
+								<span class="icon material-symbols-outlined">
+									manage_accounts
+								</span>
+							</div>
+							<div class="label-box">
+								<span>Konto</span>
+							</div>
+						</div>
+					</a>
+					
+					<img class="logo" :src="fv_logo_url">
+				</div>
 			</div>
 		</nav>
 	</div>

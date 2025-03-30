@@ -123,6 +123,14 @@ class User implements Authenticatable, StringIdentifiable, Revisionable
 		$this->password_hash = $password_hash;
 	}
 	
+	public function set_password(string $password): void {
+		$this->password_hash = Hash::make($password);
+	}
+	
+	public function is_password(string $password): bool {
+		return Hash::check($password, $this->password_hash);
+	}
+	
 	public function get_forename(): string {
 		return $this->forename;
 	}

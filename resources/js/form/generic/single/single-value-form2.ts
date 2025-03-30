@@ -1,5 +1,6 @@
 import { ref, Ref } from "vue";
 import { Mutex, MutexInterface } from 'async-mutex';
+import deepEqual from "deep-eql";
 
 export interface UISingleValueForm2<U = string|undefined> {
 	readonly html_id: string;
@@ -61,9 +62,32 @@ interface Error {
  */
 export interface ISingleValueForm2ConstructorArgs<T, R extends boolean = false> {
 	required: R; // There is currently NO WAY to tell TypeScrípt to optionally require a property.
+	
+	/**
+	 * initial value
+	 */
 	val: R extends true ? T|undefined : (T|null|undefined);
 	// errs?: string[];
+	
+	/**
+	 * triggered only if the value_in_editing changes
+	 * 
+	 * Use the "fire-and-forget" idiom to call async functions inside.
+	 * Use `await form.is_valid()` to retrieve the latest validation result
+	*/
+	on_input_change?: (form: ISingleValueForm2<T>) => void;
+	
+	/**
+	 * triggered on EVERY state change: if the ui value changes, validate function changes, required changes, considered, ...
+	 * 
+	 * Use the "fire-and-forget" idiom to call async functions inside.
+	 * Use `await form.is_valid()` to retrieve the latest validation result
+	 */
 	on_change?: (form: ISingleValueForm2<T>) => void;
+	
+	/**
+	 * triggered on EVERY state change: if the ui value changes, validate function changes, required changes, considered, ...
+	 */
 	validate?: (value_in_editing: T|null|undefined) => Promise<string[]>;
 };
 
@@ -97,6 +121,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	public is_required: Ref<R>;
 	
 	private readonly _on_change: (form: ISingleValueForm2<T>) => void;
+	private readonly _on_input_change: (form: ISingleValueForm2<T>) => void;
 	private _validate: (value_in_editing: T|null|undefined) => Promise<string[]>;
 	private readonly parent: ISingleValueForm2Parent<T>;
 	
@@ -122,6 +147,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		this.ui_value_in_editing = ref(this.create_ui_value_from_value(this.value));
 		this.ui_is_invalid = ref(false);
 		this._on_change = args.on_change ?? (() => {});
+		this._on_input_change = args.on_input_change ?? (() => {});
 		this._validate = args.validate ?? (() => Promise.resolve<string[]>([]));
 		
 		this.parent = parent;
@@ -148,14 +174,14 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	public set_validate(validate: (value_in_editing: T|null|undefined) => Promise<string[]>): void {
 		this.refresh(() => {
 			this._validate = validate;
-		});
+		}, 'set_validate');
 	}
 	
 	public set_is_required(required: boolean): void {
 		this.refresh(() => {
 			// @ts-expect-error
 			this.is_required.value = required;
-		});
+		}, 'set_is_required');
 	}
 	
 	public consider(): void {
@@ -183,7 +209,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 	private set_value_in_editing_without_ui_value(setter: () => T|null|undefined): void {
 		this.refresh(() => {
 			this.value_in_editing = setter();
-		});
+		}, 'set_value_in_editing_without_ui_value');
 	}
 	
 	public async is_valid(): Promise<boolean> {
@@ -205,7 +231,7 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 						console.log(`Form ${this.html_id}: start validating ...`)
 						const further_errs: string[] = await this._validate(this.value_in_editing);
 						console.log(`Form ${this.html_id}: ended validating ...`)
-						this.errs = this.errs.concat(further_errs.map((str: string): Error => { return { key: '__NOT_PRESERVE__', message: str, preserve: false }; }));
+						this.errs = this.errs.concat(further_errs.map((str: string): Error => { return { key: '__NOT_PRESERVE__' + str, message: str, preserve: false }; }));
 					} catch (e) {
 						this.handle_exceptions(e);
 						// throw errors have priority over returned errors
@@ -296,15 +322,15 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		}
 	}
 	
-	private refresh(inner: () => void, only_if_errs_changed: boolean = false): void {
+	private refresh(inner: () => void, cause: string, only_if_errs_changed: boolean = false): void {
 		const errs_backup = [...this.errs];
+		const value_in_editing_backup = structuredClone(this.value_in_editing);
 		
-		console.log(`Form ${this.html_id} refreshing`);
 		// only clear not preseved errors
 		this.errs = this.errs.filter((err: Error): boolean => err.preserve);
 		
 		inner();
-		
+				
 		if (only_if_errs_changed) {
 			if (this.errs.length === errs_backup.length) {
 				let difference = false;
@@ -326,6 +352,9 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		// do NOT wait / fire and forget
 		this.is_valid(); // would regenerate not preserved errors
 		this._on_change(this);
+		if (!deepEqual(this.value_in_editing, value_in_editing_backup)) {
+			this._on_input_change(this);
+		}
 		this.parent.on_child_change(this);
 	}
 	
@@ -345,6 +374,9 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 		return this.errs.map((err: Error): string => err.message);
 	}
 	
+	/**
+	 * should not be used inside the `on_change` event callback
+	 */
 	public add_error(key: string, message: string, preserve: boolean = true): void {
 		const index = this.errs.findIndex((err: Error): boolean => err.key === key);
 		if (index >= 0) {
@@ -359,9 +391,12 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 				message: message,
 				preserve: preserve,
 			});
-		}, true);
+		}, 'add_error', true);
 	}
 	
+	/**
+	 * should not be used inside the `on_change` event callback
+	 */
 	public remove_error(key: string, only_preserved: boolean = true): void {
 		this.refresh(() => {
 			this.errs = this.errs.filter((err: Error): boolean => {
@@ -373,9 +408,12 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 				}
 				return true;
 			});
-		}, true);
+		}, 'remove_error', true);
 	}
 	
+	/**
+	 * should not be used inside the `on_change` event callback
+	 */
 	public clear_errors(only_preserved: boolean = true): void {
 		this.refresh(() => {
 			if (only_preserved) {
@@ -383,6 +421,6 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 			} else {
 				this.errs = [];
 			}
-		}, true);
+		}, 'clear_errors', true);
 	}
 }

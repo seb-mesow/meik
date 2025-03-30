@@ -23,6 +23,7 @@
         "@vue/server-renderer": "^3.5.13",
         "async-mutex": "^0.5.0",
         "axios": "^1.7",
+        "deep-eql": "^5.0.2",
         "laravel-vite-plugin": "^1.1",
         "material-design-icons-iconfont": "^6.7.0",
         "primeicons": "^7.0",
@@ -34,5 +35,8 @@
         "vite": "^6.0.8",
         "vue": "^3.5",
         "vue-tsc": "^2.2"
+    },
+    "devDependencies": {
+        "@types/deep-eql": "^4.0.2"
     }
 }
