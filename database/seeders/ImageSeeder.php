@@ -54,30 +54,9 @@ class ImageSeeder extends Seeder
 		$this->remove_all_documents_by_model_type_id(ImageOrderRepository::MODEL_TYPE_ID);
 		$this->remove_all_documents_by_model_type_id(ImageRepository::MODEL_TYPE_ID);
 		
-		$image_order = $this->create_image_order();
-		# $this->insert_next_number_image($image_order);
-		# $this->insert_next_number_image($image_order);
-		# $this->insert_next_number_image($image_order);
-		# $this->insert_next_number_image($image_order);
-		# $this->insert_next_number_image($image_order);
-		$this->insert_image_order($image_order);
-		
-		$image_order = $this->create_image_order();
-		# $this->insert_next_number_image($image_order);
-		# $this->insert_next_number_image($image_order);
-		# $this->insert_next_number_image($image_order);
-		$this->insert_image_order($image_order);
-		
-		$image_order = $this->create_image_order();
-		# $this->insert_next_number_image($image_order);
-		# $this->insert_next_number_image($image_order);
-		# $this->insert_image_order($image_order);
-		
-		// 4th exhibit without images
-		
-		for ($i = 0; $i < 150; $i++) {
-			$image_order = $this->create_image_order();
-			$count = fake()->numberBetween(2, 5);
+		foreach ($this->all_exhibit_ids as $exhibit_id) {
+			$image_order = $this->create_image_order($exhibit_id);
+			$count = fake()->numberBetween(1, 3);
 			for ($j = 0; $j < $count; $j++) {
 				$this->insert_next_stock_image($image_order);
 			}
@@ -85,11 +64,8 @@ class ImageSeeder extends Seeder
 		}
 	}
 	
-	private function create_image_order(): ImageOrder {
-		if ($this->all_exhibit_ids_index >= $this->all_exhibit_ids_length) {
-			$this->all_exhibit_ids_index = 0;
-		}
-		return new ImageOrder(id: $this->all_exhibit_ids[$this->all_exhibit_ids_index++]);
+	private function create_image_order(int $exhibit_id): ImageOrder {
+		return new ImageOrder(id: $exhibit_id);
 	}
 	
 	private function insert_image_order(ImageOrder $image_order): void {
