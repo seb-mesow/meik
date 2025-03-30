@@ -16,7 +16,8 @@ const props = withDefaults(defineProps<{
 	<!-- @vue-expect-error -->
 	<InputText
 		:type="type ?? 'text'"
-		:id="form.html_id" :name="form.html_id"
+		:id="form.html_id"
+		:pt:root:name="form.html_id"
 		:modelValue="form.ui_value_in_editing"
 		@update:modelValue="(v: string|undefined) => form.on_change_ui_value_in_editing(v)"
 		@blur="form.on_blur($event)"

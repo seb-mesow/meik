@@ -2,6 +2,7 @@
 import InputTextField2 from '@/Components/Form/InputTextField2.vue';
 import { ChangePasswordForm, UIChangePasswordForm } from '@/form/special/multiple/change-password-form';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PasswordStrength from '@/Components/PasswordStrength.vue';
 import { Head } from '@inertiajs/vue3';
 import { Breadcrumb, Button, Toast, useToast } from 'primevue';
 import { route } from 'ziggy-js';
@@ -62,13 +63,16 @@ const form: UIChangePasswordForm = new ChangePasswordForm({
 		<div class="mx-auto min-h-full w-90 max-w-dvh">
 			
 			<div class="p-3 rounded-xl bg-gray-200 dark:bg-gray-900 border-1 border-gray-300 dark:border-gray-600 mt-3">
-				
 				<div class="grid grid-cols-1 gap-x-3">
 					<InputTextField2 :form="form.old_password" label="Altes Password" type="password" :grid_col="1" :grid_row="1" :autocomplete="false"/>
+				</div>
 				
-					<InputTextField2 :form="form.new_password" label="Neues Passwort" type="password" :grid_col="1" :grid_row="2" class_label="mt-2" :autocomplete="false"/>
+				<PasswordStrength :validation_result="form.new_password_valiation_result.value" class="mt-6" />
+				
+				<div class="grid grid-cols-1 gap-x-3">
+					<InputTextField2 :form="form.new_password" label="Neues Passwort" type="password" :grid_col="1" :grid_row="1" class_label="mt-2" :autocomplete="false"/>
 					
-					<InputTextField2 :form="form.new_password_again" label="Neues Passwort wiederholen" type="password" :grid_col="1" :grid_row="3" class_label="mt-2" :autocomplete="false"/>
+					<InputTextField2 :form="form.new_password_again" label="Neues Passwort wiederholen" type="password" :grid_col="1" :grid_row="2" class_label="mt-2" :autocomplete="false"/>
 				</div>
 				
 				<div class="mt-4 flex items-center justify-end">
@@ -80,7 +84,6 @@ const form: UIChangePasswordForm = new ChangePasswordForm({
 						class="ms-4"
 					/>
 				</div>
-				
 			<!-- <div>
 				<InputLabel for="current_password" value="Current Password" />
 
