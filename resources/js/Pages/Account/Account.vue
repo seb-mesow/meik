@@ -37,9 +37,10 @@ const items = [
 
 		<div class="mx-auto min-h-full w-90 max-w-dvh">
 			
-			<div class="p-3 rounded-xl bg-gray-200 dark:bg-gray-900 border-1 border-gray-300 dark:border-gray-600 mt-3">
+			<div class="p-3 rounded-xl bg-gray-200 dark:bg-gray-900 border-1 border-gray-300 dark:border-gray-600 text-center mt-3">
 				
 				<Button
+					class="m-auto"
 					as="a"
 					:href="route('account.change_password')"
 					label="Passwort ändern"

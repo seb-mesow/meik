@@ -231,7 +231,9 @@ export class SingleValueForm2<T, U, R extends boolean = false> implements
 						console.log(`Form ${this.html_id}: start validating ...`)
 						const further_errs: string[] = await this._validate(this.value_in_editing);
 						console.log(`Form ${this.html_id}: ended validating ...`)
-						this.errs = this.errs.concat(further_errs.map((str: string): Error => { return { key: '__NOT_PRESERVE__' + str, message: str, preserve: false }; }));
+						this.errs = this.errs.concat(further_errs.map((str: string): Error => {
+							return { key: '__NOT_PRESERVE__' + str, message: str, preserve: false };
+						}));
 					} catch (e) {
 						this.handle_exceptions(e);
 						// throw errors have priority over returned errors
