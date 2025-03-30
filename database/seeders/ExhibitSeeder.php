@@ -161,6 +161,8 @@ class ExhibitSeeder extends Seeder
 	 */
 	private array $used_names = [];
 	
+	private const int COUNT = 100;
+	
 	public function __construct(
 		CouchClient $client,
 		private readonly ExhibitRepository $exhibit_repository,
@@ -261,7 +263,7 @@ class ExhibitSeeder extends Seeder
 			],
 		);
 		
-		for ($i = 0; $i < 150; $i++) {
+		for ($i = 0; $i < self::COUNT; $i++) {
 			$this->create_exhibit();
 		}
 	}
