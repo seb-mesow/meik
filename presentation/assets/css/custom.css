@@ -1,0 +1,61 @@
+.carousel-indicators [data-bs-target] {
+    background-color: #000 !important;
+}
+
+.main-banner .left-content .inner-content {
+    top: 100%;
+}
+
+.carousel-control-next-icon, .carousel-control-prev-icon {
+    width: 3rem;
+    height: 4rem;
+}
+
+.carousel-control-next, .carousel-control-prev {
+    width: 10%;
+}
+
+.carousel-indicators [data-bs-target] {
+    background-color: #ffffff !important;
+}
+
+.carousel-caption p {
+    color: #ffffff;
+}
+
+.exhibit-item .hover-content {
+    z-index: 99;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    left: 30px;
+    bottom: 15px;
+    text-align: center;
+    background-color: rgba(42, 42, 42, .97);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s;
+    width: 87%;
+}
+
+.carousel-indicators {
+    z-index: 999;
+}
+
+.hover-content-trigger:hover .hover-content {
+    opacity: 1;
+    visibility: visible;
+}
+
+.exhibit-item .hover-content .inner {
+    color: #ffffff;
+    margin-top: 35%;
+}
+
+.exhibit-item .hover-content .inner p {
+    color: #ffffff;
+}
+
+.page-heading {
+    background-image: url(assets/images/placeholder-dark.jpg);
+}
