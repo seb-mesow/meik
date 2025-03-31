@@ -74,6 +74,7 @@ FROM common AS dev
 RUN --mount=source=.,target=/build_context \
 	cp /build_context/nginx.dev.conf /etc/nginx/nginx.conf; \
 	cp /build_context/server.dev.conf /etc/nginx/conf.d; \
+	cp /build_context/presentation.dev.conf /etc/nginx/conf.d; \
 	chown -hR root:nginx /etc/nginx; \
 	find /etc/nginx -type d -exec chmod u=rx,g=rx,o= '{}' +; \
 	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +;
@@ -91,6 +92,10 @@ RUN --mount=source=.,target=/build_context \
 	envsubst '\$DOMAIN_NAME,\$PRIVATE_KEY_FILENAME,\$CERTIFICATE_FILENAME' \
 	< /build_context/server.prod.conf \
 	> /etc/nginx/conf.d/server.prod.conf; \
+	\
+	envsubst '\$DOMAIN_NAME,\$PRIVATE_KEY_FILENAME,\$CERTIFICATE_FILENAME' \
+	< /build_context/presentation.prod.conf \
+	> /etc/nginx/conf.d/presentation.prod.conf; \
 	\
 	apk --no-interactive --quiet del \
 		gettext \
