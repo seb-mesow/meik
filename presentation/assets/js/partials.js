@@ -217,7 +217,7 @@ async function renderExhibitSlider() {
 	`;
 }
 
-async function renderListTeaser(exhibit) {
+async function renderListTeaser() {
     const container = document.getElementById("renderListTeaser");
     container.innerHTML += `
         <div class="container">
@@ -244,44 +244,34 @@ async function renderListTeaser(exhibit) {
                     </div>
                 </div>
             </div>
-        </div>
-    `;
+        </div>`;
     
     // Dynamisch 4 Exponate rendern
     const exhibitRow = document.getElementById("exhibitRow");
     const numberOfExhibits = 4; // Anzahl der gewünschten Exponate
-    
-    for (let i = 0; i < numberOfExhibits; i++) {
-        fetchSpecificExhibit(exhibit[i]).then((exhibitData) => {
-            if (exhibitData) {
-                let imageId = exhibitData.images[0].id;
-
-                if(!imageId) {
-                    imageId = 0; // ID des ersten Bildes
-                } 
-
-                const thumbnailUrl = getThumbnailUrl(imageId); // URL zum Thumbnail-Bild
-    
-                exhibitRow.innerHTML += `
-                    <div class="col-lg-6">
-                        <div class="exhibit-item">
-                            <div class="thumb">
-                                <img src="${thumbnailUrl}" alt="">
-                                <div class="hover-content">
-                                    <h4>${exhibitData.name}</h4>
-                                    <p>${exhibitData.short_description}</p>
-                                    <div class="main-border-button">
-                                        <a href="./single-product.html?id=${exhibitData.returnID}">More Info</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                `;
-            }
-        });
-    }    
+	
+	const exhibits = await fetchExhibits(0, numberOfExhibits);
+	
+    for (const exhibit of exhibits) {
+        const exhibitData = await fetchSpecificExhibit(exhibit.id);
+		const thumbnailUrl = getThumbnailUrl(exhibitData);
+	
+		exhibitRow.innerHTML += `
+			<div class="col-lg-6">
+				<div class="exhibit-item">
+					<div class="thumb">
+						<img src="${thumbnailUrl}" alt="">
+						<div class="hover-content">
+							<h4>${exhibitData.name}</h4>
+							<p>${exhibitData.short_description}</p>
+							<div class="main-border-button">
+								<a href="./single-product.html?id=${exhibitData.returnID}">More Info</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>`;
+    }
 }
 
 async function renderList(exhibit) {
@@ -369,6 +359,10 @@ function selectRender() {
 	const _renderExhibitSlider = document.getElementById("renderExhibitSlider");
 	if (_renderExhibitSlider) {
 		renderExhibitSlider();
+	}
+	const _renderListTeaser = document.getElementById("renderListTeaser");
+	if (_renderListTeaser) {
+		renderListTeaser();
 	}
 }
 
