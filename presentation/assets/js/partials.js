@@ -110,7 +110,7 @@ async function renderMain() {
 
 	// Hole die restlichen drei Exponate (falls vorhanden)
 	const remainingExhibits = exhibits.slice(1, 4); // Die nächsten 3 Exponate (Index 1 bis 3)
-	for (exhibit of remainingExhibits) {
+	for (const exhibit of remainingExhibits) {
 		const exhibitData = await fetchSpecificExhibit(exhibit.id);
 		const thumbnailUrl = getThumbnailUrl(exhibitData);
 		const container = document.getElementById("mainRenderSubDiv");
@@ -142,93 +142,79 @@ async function renderMain() {
 async function renderExhibitSlider() {
 	const exhibits = await fetchExhibits(0, 9);
 	
-    if (exhibit && exhibit.length >= 9) { //[] hinzufügen, wenn keine ausgabe
-        const container = document.getElementById("renderExhibitSlider");
-        let slidesHTML = "";
+	if (exhibits.length < 9) {
+		throw new Error('Nicht genügend Exponate für den Slider vorhanden. Mindestens 9 Exponate erforderlich.');
+	}
+	
+	const container = document.getElementById("renderExhibitSlider");
+	let slidesHTML = "";
+	
+	// Iteriere durch die Exponate in Schritten von 3, um Slides zu erstellen
+	for (let i = 0; i < 9; i += 3) {
+		const currentExhibits = exhibits.slice(i, i + 3); // Hole 3 Exponate
+		let slideContent = "";
 
-        // Iteriere durch die Exponate in Schritten von 3, um Slides zu erstellen
-        for (let i = 0; i < 9; i += 3) {
-            const currentExhibits = exhibit.slice(i, i + 3); // Hole 3 Exponate
-            let slideContent = "";
+		for (const exhibit of currentExhibits) {
+			const exhibitData = await fetchSpecificExhibit(exhibit.id);
+			const thumbnailUrl = getThumbnailUrl(exhibitData); // URL zum Thumbnail-Bild
+			
+			slideContent += `
+				<div class="col-3 exhibit-item me-3">
+					<img src="${thumbnailUrl}" class="d-block w-100" alt="Exhibit Image">
+					<div class="mb-5 text-center d-none d-md-block">
+						<h5>${exhibitData.name}</h5>
+						<p>${exhibitData.short_description}</p>
+					</div>
+				</div>`;
+		}
 
-            for (const exhibitId of currentExhibits) {
-                fetchSpecificExhibit(exhibitId).then((exhibitData) => {
+		slidesHTML += `
+			<div class="carousel-item ${i === 0 ? 'active' : ''}">
+				<div class="row justify-content-center">
+					${slideContent}
+				</div>
+			</div>`;
+	}
 
-                    console.log('Test für Ausgabe Exhibit Slider', exhibitData);
-                    let imageId = exhibitData.images[0].id;
-                        console.log('Was auch immer hier rauskommt', imageId);
-
-                        if (!imageId) {
-                            imageId = 0; // ID des ersten Bildes
-                        }
-
-                    if (exhibitData) {
-                        const thumbnailUrl = getThumbnailUrl(imageId); // URL zum Thumbnail-Bild
-
-                        slideContent += `
-                            <div class="col-3 exhibit-item me-3">
-                                <img src="${thumbnailUrl}" class="d-block w-100" alt="Exhibit Image">
-                                <div class="mb-5 text-center d-none d-md-block">
-                                    <h5>${exhibitData.name}</h5>
-                                    <p>${exhibitData.short_description}</p>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-            }
-
-            slidesHTML += `
-                <div class="carousel-item ${i === 0 ? 'active' : ''}">
-                    <div class="row justify-content-center">
-                        ${slideContent}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Render den Slider mit den generierten Slides
-        container.innerHTML = `
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="section-heading">
-                            <h2>Unsere Exponate</h2>
-                            <span>Einige unserer Exponate im Überblick!</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div id="carouselExampleCaptions" class="carousel slide">
-                            <div class="carousel-indicators">
-                                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                            </div>
-                            <div class="carousel-inner">
-                                ${slidesHTML}
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="25" width="18.5" viewBox="0 0 320 512">
-                                    <path d="M34.5 239L228.9 44.7c9.4-9.4 24.6-9.4 33.9 0l22.7 22.7c9.4 9.4 9.4 24.5 0 33.9L131.5 256l154 154.8c9.3 9.4 9.3 24.5 0 33.9l-22.7 22.7c-9.4 9.4-24.6 9.4-33.9 0L34.5 273c-9.4-9.4-9.4-24.6 0-33.9z"/>
-                                </svg>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    } else {
-        console.error('Nicht genügend Exponate für den Slider vorhanden. Mindestens 9 Exponate erforderlich.');
-    }
+	// Render den Slider mit den generierten Slides
+	container.innerHTML = `
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="section-heading">
+						<h2>Unsere Exponate</h2>
+						<span>Einige unserer Exponate im Überblick!</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div id="carouselExampleCaptions" class="carousel slide">
+						<div class="carousel-indicators">
+							<button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+							<button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+							<button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+						</div>
+						<div class="carousel-inner">
+							${slidesHTML}
+						</div>
+						<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+							<svg xmlns="http://www.w3.org/2000/svg" height="25" width="18.5" viewBox="0 0 320 512">
+								<path d="M34.5 239L228.9 44.7c9.4-9.4 24.6-9.4 33.9 0l22.7 22.7c9.4 9.4 9.4 24.5 0 33.9L131.5 256l154 154.8c9.3 9.4 9.3 24.5 0 33.9l-22.7 22.7c-9.4 9.4-24.6 9.4-33.9 0L34.5 273c-9.4-9.4-9.4-24.6 0-33.9z"/>
+							</svg>
+							<span class="visually-hidden">Previous</span>
+						</button>
+						<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+							<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Next</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	`;
 }
 
 async function renderListTeaser(exhibit) {
