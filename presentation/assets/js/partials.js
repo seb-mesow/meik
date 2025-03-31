@@ -6,7 +6,7 @@ function isId(value) {
 }
 
 // Funktion zum Abrufen aller Exponate (wird verwendet, wenn kein Suchbegriff eingegeben wird)
-function fetchExhibits(page_number, count_per_page) {
+function fetchArbitraryExhibits(page_number, count_per_page) {
 	let url = api_endpoint + '/exhibits';
 	if (typeof page_number === 'number') {
 		url += '?page_number=' + page_number.toString();
@@ -48,22 +48,25 @@ function fetchExhibits(page_number, count_per_page) {
 }
 
 function fetchSpecificExhibit(exhibit_id) {
-    return fetch(api_endpoint + `/exhibit/${exhibit_id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Fehler beim Abrufen der API');
-            }
-            return response.json();
-        })
-        .then(data => {
-            data.returnID = exhibit_id;
+	if (!isId(exhibit_id)) {
+		throw new Error(`fetchSpecificExhibit(): invalid exhibit_id === ${exhibit_id}`);
+	}
+	return fetch(api_endpoint + `/exhibit/${exhibit_id}`)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Fehler beim Abrufen der API');
+			}
+			return response.json();
+		})
+		.then(data => {
+			data.id = exhibit_id; // praktisch
 			console.log(`fetchSpecificExhibit(): data ===`);
 			console.log(data);
-            return data;
-        })
-        .catch(error => {
-            console.error('Fehler:', error);
-        });
+			return data;
+		})
+		.catch(error => {
+			console.error('Fehler:', error);
+		});
 }
 
 function getThumbnailUrl(exhibitData) {
@@ -76,7 +79,7 @@ function getThumbnailUrl(exhibitData) {
 }
 
 async function renderMain() {
-	const exhibits = await fetchExhibits(0, 4);
+	const exhibits = await fetchArbitraryExhibits(0, 4);
 	
 	// Hole nur das erste Exponat aus dem Array
 	const firstExhibit = exhibits[0];
@@ -95,7 +98,7 @@ async function renderMain() {
 						<h4>${firstExhibitData.name}</h4>
 						<span>${firstExhibitData.short_description}</span>
 						<div class="main-border-button">
-							<a href="./single-product.html?id=${firstExhibitData.returnID}">Mehr Details zum Exponat!</a>
+							<a href="./single-product.html?id=${firstExhibitData.id}">Mehr Details zum Exponat!</a>
 						</div>
 					</div>
 					<img src="${firstThumbnailUrl}" alt="Main Image" class="img-fluid h-100">
@@ -127,7 +130,7 @@ async function renderMain() {
 								<h4>${exhibitData.name}</h4>
 								<p>${exhibitData.short_description}</p>
 								<div class="main-border-button">
-									<a href="./single-product.html?id=${exhibitData.returnID}">Exponat Info</a>
+									<a href="./single-product.html?id=${exhibitData.id}">Exponat Info</a>
 								</div>
 							</div>
 						</div>
@@ -140,7 +143,7 @@ async function renderMain() {
 }
 
 async function renderExhibitSlider() {
-	const exhibits = await fetchExhibits(0, 9);
+	const exhibits = await fetchArbitraryExhibits(0, 9);
 	
 	if (exhibits.length < 9) {
 		throw new Error('Nicht genügend Exponate für den Slider vorhanden. Mindestens 9 Exponate erforderlich.');
@@ -218,42 +221,42 @@ async function renderExhibitSlider() {
 }
 
 async function renderListTeaser() {
-    const container = document.getElementById("renderListTeaser");
-    container.innerHTML += `
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="left-content">
-                        <h2>Explore Our Products</h2>
-                        <span>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore .</span>
-                        <div class="quote">
-                            <i class="fa fa-quote-left"></i><p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed.</p>
-                        </div>
-                        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur.</p>
-                        <p>At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum.</p>
-                        <div class="main-border-button">
-                            <a href="products.html">Alle Exponate</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="right-content">
-                        <div class="row" id="exhibitRow">
-                            <!-- Exponate werden hier dynamisch eingefügt -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-    
-    // Dynamisch 4 Exponate rendern
-    const exhibitRow = document.getElementById("exhibitRow");
-    const numberOfExhibits = 4; // Anzahl der gewünschten Exponate
+	const container = document.getElementById("renderListTeaser");
+	container.innerHTML += `
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="left-content">
+						<h2>Explore Our Products</h2>
+						<span>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore .</span>
+						<div class="quote">
+							<i class="fa fa-quote-left"></i><p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed.</p>
+						</div>
+						<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur.</p>
+						<p>At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum.</p>
+						<div class="main-border-button">
+							<a href="products.html">Alle Exponate</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="right-content">
+						<div class="row" id="exhibitRow">
+							<!-- Exponate werden hier dynamisch eingefügt -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>`;
 	
-	const exhibits = await fetchExhibits(0, numberOfExhibits);
+	// Dynamisch 4 Exponate rendern
+	const exhibitRow = document.getElementById("exhibitRow");
+	const numberOfExhibits = 4; // Anzahl der gewünschten Exponate
 	
-    for (const exhibit of exhibits) {
-        const exhibitData = await fetchSpecificExhibit(exhibit.id);
+	const exhibits = await fetchArbitraryExhibits(0, numberOfExhibits);
+	
+	for (const exhibit of exhibits) {
+		const exhibitData = await fetchSpecificExhibit(exhibit.id);
 		const thumbnailUrl = getThumbnailUrl(exhibitData);
 	
 		exhibitRow.innerHTML += `
@@ -265,57 +268,46 @@ async function renderListTeaser() {
 							<h4>${exhibitData.name}</h4>
 							<p>${exhibitData.short_description}</p>
 							<div class="main-border-button">
-								<a href="./single-product.html?id=${exhibitData.returnID}">More Info</a>
+								<a href="./single-product.html?id=${exhibitData.id}">More Info</a>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>`;
-    }
+	}
 }
 
-async function renderList(exhibit) {
-    if (exhibit) { //[] hinzufügen, wenn keine ausgabe
-        const container = document.getElementById("renderList");
-
-        exhibit.forEach((singleExhibit) => {
-            fetchSpecificExhibit(singleExhibit).then((exhibitResponse) => {
-            if (exhibitResponse) {
-                let imageId = exhibitResponse.images[0].id;
-
-                if (!imageId) {
-                    imageId = 0; // ID des ersten Bildes
-                }
-                const thumbnailUrl = getThumbnailUrl(imageId); // URL zum Thumbnail-Bild
-
-                container.innerHTML += `
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="right-first-image">
-                            <div class="thumb">
-                                <div class="inner-content position-absolute text-center text-white" style="top: 35%; left: 10%;">
-                                    <h4>${exhibitResponse.name}</h4>
-                                    <span>${exhibitResponse.short_description}</span>
-                                </div>
-                                <div class="hover-content">
-                                    <div class="inner">
-                                        <h4>${exhibitResponse.name}</h4>
-                                        <p>${exhibitResponse.short_description}</p>
-                                        <div class="main-border-button">
-                                            <a href="./single-product.html?id=${exhibitResponse.returnID}">Exponat Info</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <img src="${thumbnailUrl}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
-                }
-            });
-        });
-    }
+async function renderList() {
+	const allExhibits = await fetchArbitraryExhibits(0, 99999);
+	const container = document.getElementById("renderList");
+	for (const exhibit of allExhibits) {
+		const exhibitData = await fetchSpecificExhibit(exhibit.id);
+		const thumbnailUrl = getThumbnailUrl(exhibitData);
+		
+		container.innerHTML += `
+		<div class="col-lg-4">
+			<div class="item">
+				<div class="right-first-image">
+					<div class="thumb">
+						<div class="inner-content position-absolute text-center text-white" style="top: 35%; left: 10%;">
+							<h4>${exhibitData.name}</h4>
+							<span>${exhibitData.short_description}</span>
+						</div>
+						<div class="hover-content">
+							<div class="inner">
+								<h4>${exhibitData.name}</h4>
+								<p>${exhibitData.short_description}</p>
+								<div class="main-border-button">
+									<a href="./single-product.html?id=${exhibitData.id}">Exponat Info</a>
+								</div>
+							</div>
+						</div>
+						<img src="${thumbnailUrl}">
+					</div>
+				</div>
+			</div>
+		</div>`;
+	}
 }
 
 async function renderDetail() {
@@ -325,9 +317,9 @@ async function renderDetail() {
 	
 	const container = document.getElementById("renderDetail");
 	// Hole nur das erste Exponat aus dem Array
-	exhibitData = await fetchSpecificExhibit(exhibit_id)
+	const exhibitData = await fetchSpecificExhibit(exhibit_id)
 	
-	thumbnailUrl = getThumbnailUrl(exhibitData);
+	const thumbnailUrl = getThumbnailUrl(exhibitData);
 	
 	// Left Content Exponat
 	container.innerHTML = `
@@ -363,6 +355,10 @@ function selectRender() {
 	const _renderListTeaser = document.getElementById("renderListTeaser");
 	if (_renderListTeaser) {
 		renderListTeaser();
+	}
+	const _renderList = document.getElementById("renderList");
+	if (_renderList) {
+		renderList();
 	}
 }
 
