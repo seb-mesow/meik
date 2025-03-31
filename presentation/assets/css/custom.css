@@ -3,7 +3,7 @@
 }
 
 .main-banner .left-content .inner-content {
-    top: 100%;
+    top: 50%;
 }
 
 .carousel-control-next-icon, .carousel-control-prev-icon {
@@ -58,4 +58,10 @@
 
 .page-heading {
     background-image: url(assets/images/placeholder-dark.jpg);
+}
+
+.carousel-item .exhibit-item img {
+	height: 390px;
+	width: 370px;
+	object-fit: cover;
 }
