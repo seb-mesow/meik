@@ -1,35 +1,41 @@
+const api_endpoint = 'http://meik.localhost:8080/api';
+
+function isId(value) {
+	const t = typeof value;
+	return t === 'string' || t === 'number';
+}
+
 // Funktion zum Abrufen aller Exponate (wird verwendet, wenn kein Suchbegriff eingegeben wird)
 function fetchExhibits() {
-    fetch('https://meik-gr3.industrieschule.de/api/exhibits')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Fehler beim Abrufen der API');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Hole die ID aus der URL
-        console.log('ABC', data)
-        renderMain(data); // Zeigt die Exponate an
-        renderExhibitSlider(data);
-        renderListTeaser(data);
-        renderList(data);
-        
+    fetch(api_endpoint + '/exhibits')
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Fehler beim Abrufen der API');
+			}
+			return response.json();
+		})
+		.then(data => {
+			// Hole die ID aus der URL
+			console.log('ABC', data)
+			renderMain(data); // Zeigt die Exponate an
+			renderExhibitSlider(data);
+			renderListTeaser(data);
+			renderList(data);
+			
+			const params = new URLSearchParams(window.location.search);
+			const exhibit_id = params.get('id');
+			console.log(`Auf Detailseite: exhibit_id === ${exhibit_id}`);
+			if (typeof exhibit_id === 'number' || typeof exhibit_id === 'string') {
+				renderDetail(exhibit_id); // Zeigt einzelne Exponate an
+			}
+		})
+		.catch(error => {
+			console.error('Fehler beim Abrufen der Daten:', error);
+		});
+}
 
-        const params = new URLSearchParams(window.location.search);
-        const urlID = params.get('id');
-        console.log(urlID);
-        if (urlID) {
-            renderDetail(urlID); // Zeigt einzelne Exponate an
-        }
-      })
-      .catch(error => {
-        console.error('Fehler beim Abrufen der Daten:', error);
-      });
-  }
-
-  function fetchSpecificExhibit(exhibit) {
-    return fetch(`https://meik-gr3.industrieschule.de/api/exhibit/${exhibit.id}`)
+function fetchSpecificExhibit(exhibit_id) {
+    return fetch(api_endpoint + `/exhibit/${exhibit_id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Fehler beim Abrufen der API');
@@ -37,7 +43,9 @@ function fetchExhibits() {
             return response.json();
         })
         .then(data => {
-            data.returnID = exhibit.id;
+            data.returnID = exhibit_id;
+			console.log(`fetchSpecificExhibit(): data ===`);
+			console.log(data);
             return data;
         })
         .catch(error => {
@@ -46,13 +54,10 @@ function fetchExhibits() {
 }
 
 function fetchExhibitImage(imageID) {
-    let thumbnailUrl = 'assets/images/placeholder.jpg'
-
-    if (!imageID === 0) {
-        thumbnailUrl = `https://meik-gr3.industrieschule.de/api/thumbnail/${imageID}`; // URL zum Thumbnail-Bild
-    }
-    
-    return thumbnailUrl;
+	if (isId(imageID)) {
+		return api_endpoint + `/thumbnail/${imageID}`; // URL zum Thumbnail-Bild
+	}
+	return 'assets/images/placeholder.jpg'
 }
 
 async function renderMain(exhibit)
@@ -313,8 +318,6 @@ async function renderList(exhibit) {
                 }
                 const thumbnailUrl = fetchExhibitImage(imageId); // URL zum Thumbnail-Bild
 
-            
-
                 container.innerHTML += `
                 <div class="col-lg-4">
                     <div class="item">
@@ -345,40 +348,56 @@ async function renderList(exhibit) {
     }
 }
 
-async function renderDetail(exhibit) {
-    if (exhibit) {
-        const container = document.getElementById("renderDetail");
-        // Hole nur das erste Exponat aus dem Array
-        exhibitdata = fetchSpecificExhibit(exhibit)
-        let imageId = 0;
+async function renderDetail() {
+	const params = new URLSearchParams(window.location.search);
+	const exhibit_id = params.get('id');
+	console.log(`Auf Detailseite: exhibit_id === ${exhibit_id}`);
+	
+	const container = document.getElementById("renderDetail");
+	// Hole nur das erste Exponat aus dem Array
+	exhibitData = await fetchSpecificExhibit(exhibit_id)
 
-        if (!imageId === 0) {
-            imageId = exhibitData.images[0].id; // ID des ersten Bildes
-        }
+	const exhibitImages = exhibitData.images; // ID des ersten Bildes
+	if (exhibitImages.length > 0) {
+		thumbnailUrl = fetchExhibitImage(exhibitImages[0].id);
+	} else {
+		thumbnailUrl = fetchExhibitImage(null);
+	}
+	
+	// Left Content Exponat
+	container.innerHTML = `
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="left-content h-100">
+				<div class="thumb h-100">
+					<div class="inner-content">
+						<h4>${exhibitData.name}</h4>
+						<span>${exhibitData.short_description}</span>
+					</div>
+					<img src="${thumbnailUrl}" alt="Main Image" class="img-fluid h-100">
+				</div>
+			</div>
+		</div>
+	</div>
+	`;
+}
 
-        // Überprüfe, ob das Exponat ein Titelbild hat
-        if (exhibitData) {
-            thumbnailUrl = fetchExhibitImage(imageId); // URL zum Thumbnail-Bild
-
-            // Left Content Exponat
-            container.innerHTML = `
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="left-content h-100">
-                        <div class="thumb h-100">
-                            <div class="inner-content">
-                                <h4>${exhibitData.name}</h4>
-                                <span>${exhibitData.short_description}</span>
-                            </div>
-                            <img src="${thumbnailUrl}" alt="Main Image" class="img-fluid h-100">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `;
-        }
-    }
+function selectRender() {
+	const _renderDetail = document.getElementById("renderDetail");
+	if (_renderDetail) {
+		return renderDetail();
+	}
+	const _renderMain = document.getElementById("renderMain");
+	if (_renderMain) {
+		return renderMain();
+	}
+	throw new Error(`selectRender(): No known mount point to select a render function`);
 }
 
 // Initiales Abrufen aller Exponate
-fetchExhibits();
+// fetchExhibits();
+
+addEventListener("DOMContentLoaded", (event) => {
+	selectRender();
+});
+
