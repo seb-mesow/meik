@@ -78,6 +78,15 @@ function getThumbnailUrl(exhibitData) {
 	return 'assets/images/placeholder.jpg';
 }
 
+function getImageUrl(exhibitData) {
+	const exhibitImages = exhibitData.images; // ID des ersten Bildes
+	if (exhibitImages.length > 0) {
+		const imageID = exhibitImages[0].id;
+		return api_endpoint + `/image/${imageID}`;
+	}
+	return 'assets/images/placeholder.jpg';
+}
+
 async function renderMain() {
 	const exhibits = await fetchArbitraryExhibits(0, 4);
 	
@@ -85,37 +94,36 @@ async function renderMain() {
 	const firstExhibit = exhibits[0];
 
 	const firstExhibitData = await fetchSpecificExhibit(firstExhibit.id);
-	const firstThumbnailUrl = getThumbnailUrl(firstExhibitData); // URL zum Thumbnail-Bild
+	const firstImageUrl = getImageUrl(firstExhibitData); // URL zum Thumbnail-Bild
 
 	const container = document.getElementById("renderMain");
 	// Left Content Exponat
 	container.innerHTML = `
-	<div class="row">
-		<div class="col-lg-6">
-			<div class="left-content h-100">
-				<div class="thumb h-100">
-					<div class="inner-content">
-						<h4>${firstExhibitData.name}</h4>
-						<span>${firstExhibitData.short_description}</span>
-						<div class="main-border-button">
-							<a href="./single-product.html?id=${firstExhibitData.id}">Mehr Details zum Exponat!</a>
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="left-content" style="">
+					<div class="thumb">
+						<img src="${firstImageUrl}" alt="Main Image" class="img-fluid" style="aspect-ratio: 3 / 2; object-fit: cover;">
+						<div class="inner-content">
+							<h4>${firstExhibitData.name}</h4>
+							<span>${firstExhibitData.short_description}</span>
+							<div class="main-border-button">
+								<a href="./single-product.html?id=${firstExhibitData.id}">Mehr Details zum Exponat!</a>
+							</div>
 						</div>
 					</div>
-					<img src="${firstThumbnailUrl}" alt="Main Image" class="img-fluid h-100">
 				</div>
 			</div>
-		</div>
-		<div class="col-lg-6">
-			<div id="mainRenderSubDiv" class="row"></div>
-		</div>
-	</div>
-	`;
+			<div class="col-lg-6">
+				<div id="mainRenderSubDiv" class="row"></div>
+			</div>
+		</div>`;
 
 	// Hole die restlichen drei Exponate (falls vorhanden)
 	const remainingExhibits = exhibits.slice(1, 4); // Die nächsten 3 Exponate (Index 1 bis 3)
 	for (const exhibit of remainingExhibits) {
 		const exhibitData = await fetchSpecificExhibit(exhibit.id);
-		const thumbnailUrl = getThumbnailUrl(exhibitData);
+		const imageUrl = getImageUrl(exhibitData);
 		const container = document.getElementById("mainRenderSubDiv");
 		container.innerHTML += `
 			<div class="right-content col-lg-6">
@@ -134,7 +142,7 @@ async function renderMain() {
 								</div>
 							</div>
 						</div>
-						<img src="${thumbnailUrl}" alt="Main Image" class="img-fluid">
+						<img src="${imageUrl}" alt="Main Image" class="img-fluid">
 					</div>
 				</div>
 			</div>
@@ -227,7 +235,7 @@ async function renderListTeaser() {
 			<div class="row">
 				<div class="col-lg-6">
 					<div class="left-content">
-						<h2>Explore Our Products</h2>
+						<h2>Erkunde unsere Exponate</h2>
 						<span>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore .</span>
 						<div class="quote">
 							<i class="fa fa-quote-left"></i><p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed.</p>
@@ -262,8 +270,8 @@ async function renderListTeaser() {
 		exhibitRow.innerHTML += `
 			<div class="col-lg-6">
 				<div class="exhibit-item">
-					<div class="thumb">
-						<img src="${thumbnailUrl}" alt="">
+					<div class="thumb" style>
+						<img src="${thumbnailUrl}" alt="" style="aspect-ratio: 1 / 1; object-fit: cover;">
 						<div class="hover-content">
 							<h4>${exhibitData.name}</h4>
 							<p>${exhibitData.short_description}</p>
@@ -319,24 +327,21 @@ async function renderDetail() {
 	// Hole nur das erste Exponat aus dem Array
 	const exhibitData = await fetchSpecificExhibit(exhibit_id)
 	
-	const thumbnailUrl = getThumbnailUrl(exhibitData);
+	const imageUrl = getImageUrl(exhibitData);
 	
 	// Left Content Exponat
 	container.innerHTML = `
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="left-content h-100">
-				<div class="thumb h-100">
-					<div class="inner-content">
-						<h4>${exhibitData.name}</h4>
-						<span>${exhibitData.short_description}</span>
-					</div>
-					<img src="${thumbnailUrl}" alt="Main Image" class="img-fluid h-100">
+		<div style="width: 80%; margin-inline-start: auto; margin-inline-end: auto; display: block;">
+			<div style="width: 49%; height: 40rem; display: inline-block;">
+				<img src="${imageUrl}" alt="Main Image" style="width: 100%; height: 100%; object-fit: contain;">
+			</div>
+			<div style="width: 49%; display: inline-block;">
+				<div class="inner-content">
+					<h4>${exhibitData.name}</h4>
+					<span>${exhibitData.short_description}</span>
 				</div>
 			</div>
-		</div>
-	</div>
-	`;
+		</div>`;
 }
 
 function selectRender() {
