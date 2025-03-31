@@ -6,8 +6,19 @@ function isId(value) {
 }
 
 // Funktion zum Abrufen aller Exponate (wird verwendet, wenn kein Suchbegriff eingegeben wird)
-function fetchExhibits() {
-    fetch(api_endpoint + '/exhibits')
+function fetchExhibits(page_number, count_per_page) {
+	let url = api_endpoint + '/exhibits';
+	if (typeof page_number === 'number') {
+		url += '?page_number=' + page_number.toString();
+		if (typeof count_per_page === 'number') {
+			url += '&count_per_page=' + count_per_page.toString();
+		}
+	} else if (typeof count_per_page === 'number') {
+		url += '?count_per_page=' + count_per_page.toString();
+	}
+	
+	console.log(`fetchExhibits(): url === ${url}`);
+	return fetch(url)
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Fehler beim Abrufen der API');
@@ -16,18 +27,20 @@ function fetchExhibits() {
 		})
 		.then(data => {
 			// Hole die ID aus der URL
-			console.log('ABC', data)
-			renderMain(data); // Zeigt die Exponate an
-			renderExhibitSlider(data);
-			renderListTeaser(data);
-			renderList(data);
+			console.log(`fetchExhibits(): data ===`);
+			console.log(data);
+			return data;
+			// renderMain(data); // Zeigt die Exponate an
+			// renderExhibitSlider(data);
+			// renderListTeaser(data);
+			// renderList(data);
 			
-			const params = new URLSearchParams(window.location.search);
-			const exhibit_id = params.get('id');
-			console.log(`Auf Detailseite: exhibit_id === ${exhibit_id}`);
-			if (typeof exhibit_id === 'number' || typeof exhibit_id === 'string') {
-				renderDetail(exhibit_id); // Zeigt einzelne Exponate an
-			}
+			// const params = new URLSearchParams(window.location.search);
+			// const exhibit_id = params.get('id');
+			// console.log(`Auf Detailseite: exhibit_id === ${exhibit_id}`);
+			// if (typeof exhibit_id === 'number' || typeof exhibit_id === 'string') {
+			// 	renderDetail(exhibit_id); // Zeigt einzelne Exponate an
+			// }
 		})
 		.catch(error => {
 			console.error('Fehler beim Abrufen der Daten:', error);
@@ -53,101 +66,82 @@ function fetchSpecificExhibit(exhibit_id) {
         });
 }
 
-function fetchExhibitImage(imageID) {
-	if (isId(imageID)) {
-		return api_endpoint + `/thumbnail/${imageID}`; // URL zum Thumbnail-Bild
+function getThumbnailUrl(exhibitData) {
+	const exhibitImages = exhibitData.images; // ID des ersten Bildes
+	if (exhibitImages.length > 0) {
+		const imageID = exhibitImages[0].id;
+		return api_endpoint + `/thumbnail/${imageID}`;
 	}
-	return 'assets/images/placeholder.jpg'
+	return 'assets/images/placeholder.jpg';
 }
 
-async function renderMain(exhibit)
-{
-    // Überprüfe, ob das Array überhaupt Elemente enthält
-    if (exhibit) {
-        // Hole nur das erste Exponat aus dem Array
-        const firstExhibit = exhibit[0];
+async function renderMain() {
+	const exhibits = await fetchExhibits(0, 4);
+	
+	// Hole nur das erste Exponat aus dem Array
+	const firstExhibit = exhibits[0];
 
-        fetchSpecificExhibit(firstExhibit).then((exhibitData) => {
-            let imageId = exhibitData.images[0].id;
+	const firstExhibitData = await fetchSpecificExhibit(firstExhibit.id);
+	const firstThumbnailUrl = getThumbnailUrl(firstExhibitData); // URL zum Thumbnail-Bild
 
-            if (!imageId) {
-                imageId = 0; // ID des ersten Bildes
-            }
+	const container = document.getElementById("renderMain");
+	// Left Content Exponat
+	container.innerHTML = `
+	<div class="row">
+		<div class="col-lg-6">
+			<div class="left-content h-100">
+				<div class="thumb h-100">
+					<div class="inner-content">
+						<h4>${firstExhibitData.name}</h4>
+						<span>${firstExhibitData.short_description}</span>
+						<div class="main-border-button">
+							<a href="./single-product.html?id=${firstExhibitData.returnID}">Mehr Details zum Exponat!</a>
+						</div>
+					</div>
+					<img src="${firstThumbnailUrl}" alt="Main Image" class="img-fluid h-100">
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-6">
+			<div id="mainRenderSubDiv" class="row"></div>
+		</div>
+	</div>
+	`;
 
-            // Überprüfe, ob das Exponat ein Titelbild hat
-            if (exhibitData) {
-                thumbnailUrl = fetchExhibitImage(imageId); // URL zum Thumbnail-Bild
-
-                const container = document.getElementById("renderMain");
-                // Left Content Exponat
-                container.innerHTML = `
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="left-content h-100">
-                            <div class="thumb h-100">
-                                <div class="inner-content">
-                                    <h4>${exhibitData.name}</h4>
-                                    <span>${exhibitData.short_description}</span>
-                                    <div class="main-border-button">
-                                        <a href="./single-product.html?id=${exhibitData.returnID}">Mehr Details zum Exponat!</a>
-                                    </div>
-                                </div>
-                                <img src="${thumbnailUrl}" alt="Main Image" class="img-fluid h-100">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div id="mainRenderSubDiv" class="row"></div>
-                    </div>
-                </div>
-                `;
-
-                 // Hole die restlichen drei Exponate (falls vorhanden)
-                const remainingExhibits = exhibit.slice(1, 5); // Die nächsten 3 Exponate (Index 1 bis 3)
-                remainingExhibits.forEach((singleExhibit) => {
-                    fetchSpecificExhibit(singleExhibit).then((exhibitResponse) => {
-                        let imageId = exhibitResponse.images[0].id; // ID des ersten Bildes
-
-                            if (!imageId) {
-                                imageId = 0; // ID des ersten Bildes
-                            }
-
-                        if (exhibitResponse) {
-
-                            thumbnailUrl = fetchExhibitImage(imageId); // URL zum Thumbnail-Bild
-
-                            const container = document.getElementById("mainRenderSubDiv");
-                            container.innerHTML += `
-                                <div class="right-content col-lg-6">
-                                    <div class="right-first-image">
-                                        <div class="thumb">
-                                            <div class="inner-content">
-                                                <h4>${exhibitResponse.name}</h4>
-                                                <span>${exhibitData.manufacturer}</span>
-                                            </div>
-                                            <div class="hover-content">
-                                                <div class="inner">
-                                                    <h4>${exhibitResponse.name}</h4>
-                                                    <p>${exhibitResponse.short_description}</p>
-                                                    <div class="main-border-button">
-                                                        <a href="./single-product.html?id=${exhibitResponse.returnID}">Exponat Info</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <img src="${thumbnailUrl}" alt="Main Image" class="img-fluid">
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    });
-                });
-            }
-        });
-    }
+	// Hole die restlichen drei Exponate (falls vorhanden)
+	const remainingExhibits = exhibits.slice(1, 4); // Die nächsten 3 Exponate (Index 1 bis 3)
+	for (exhibit of remainingExhibits) {
+		const exhibitData = await fetchSpecificExhibit(exhibit.id);
+		const thumbnailUrl = getThumbnailUrl(exhibitData);
+		const container = document.getElementById("mainRenderSubDiv");
+		container.innerHTML += `
+			<div class="right-content col-lg-6">
+				<div class="right-first-image">
+					<div class="thumb">
+						<div class="inner-content">
+							<h4>${exhibitData.name}</h4>
+							<span>${exhibitData.manufacturer}</span>
+						</div>
+						<div class="hover-content">
+							<div class="inner">
+								<h4>${exhibitData.name}</h4>
+								<p>${exhibitData.short_description}</p>
+								<div class="main-border-button">
+									<a href="./single-product.html?id=${exhibitData.returnID}">Exponat Info</a>
+								</div>
+							</div>
+						</div>
+						<img src="${thumbnailUrl}" alt="Main Image" class="img-fluid">
+					</div>
+				</div>
+			</div>
+		`;
+	}
 }
 
-async function renderExhibitSlider(exhibit) {
+async function renderExhibitSlider() {
+	const exhibits = await fetchExhibits(0, 9);
+	
     if (exhibit && exhibit.length >= 9) { //[] hinzufügen, wenn keine ausgabe
         const container = document.getElementById("renderExhibitSlider");
         let slidesHTML = "";
@@ -169,7 +163,7 @@ async function renderExhibitSlider(exhibit) {
                         }
 
                     if (exhibitData) {
-                        const thumbnailUrl = fetchExhibitImage(imageId); // URL zum Thumbnail-Bild
+                        const thumbnailUrl = getThumbnailUrl(imageId); // URL zum Thumbnail-Bild
 
                         slideContent += `
                             <div class="col-3 exhibit-item me-3">
@@ -280,7 +274,7 @@ async function renderListTeaser(exhibit) {
                     imageId = 0; // ID des ersten Bildes
                 } 
 
-                const thumbnailUrl = fetchExhibitImage(imageId); // URL zum Thumbnail-Bild
+                const thumbnailUrl = getThumbnailUrl(imageId); // URL zum Thumbnail-Bild
     
                 exhibitRow.innerHTML += `
                     <div class="col-lg-6">
@@ -316,7 +310,7 @@ async function renderList(exhibit) {
                 if (!imageId) {
                     imageId = 0; // ID des ersten Bildes
                 }
-                const thumbnailUrl = fetchExhibitImage(imageId); // URL zum Thumbnail-Bild
+                const thumbnailUrl = getThumbnailUrl(imageId); // URL zum Thumbnail-Bild
 
                 container.innerHTML += `
                 <div class="col-lg-4">
@@ -356,13 +350,8 @@ async function renderDetail() {
 	const container = document.getElementById("renderDetail");
 	// Hole nur das erste Exponat aus dem Array
 	exhibitData = await fetchSpecificExhibit(exhibit_id)
-
-	const exhibitImages = exhibitData.images; // ID des ersten Bildes
-	if (exhibitImages.length > 0) {
-		thumbnailUrl = fetchExhibitImage(exhibitImages[0].id);
-	} else {
-		thumbnailUrl = fetchExhibitImage(null);
-	}
+	
+	thumbnailUrl = getThumbnailUrl(exhibitData);
 	
 	// Left Content Exponat
 	container.innerHTML = `
@@ -385,13 +374,16 @@ async function renderDetail() {
 function selectRender() {
 	const _renderDetail = document.getElementById("renderDetail");
 	if (_renderDetail) {
-		return renderDetail();
+		renderDetail();
 	}
 	const _renderMain = document.getElementById("renderMain");
 	if (_renderMain) {
-		return renderMain();
+		renderMain();
 	}
-	throw new Error(`selectRender(): No known mount point to select a render function`);
+	const _renderExhibitSlider = document.getElementById("renderExhibitSlider");
+	if (_renderExhibitSlider) {
+		renderExhibitSlider();
+	}
 }
 
 // Initiales Abrufen aller Exponate
@@ -400,4 +392,3 @@ function selectRender() {
 addEventListener("DOMContentLoaded", (event) => {
 	selectRender();
 });
-
