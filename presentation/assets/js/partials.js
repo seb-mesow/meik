@@ -1,4 +1,6 @@
-const api_endpoint = 'http://meik.localhost:8080/api';
+import { api_endpoint } from "./api_endpoint.js";
+
+console.log(`API_ENDPOINT === ${api_endpoint}`);
 
 function isId(value) {
 	const t = typeof value;
