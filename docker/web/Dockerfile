@@ -102,6 +102,9 @@ RUN --mount=source=.,target=/build_context \
 	; \
 	\
 	cp /build_context/nginx.prod.conf /etc/nginx/nginx.conf; \
+	cp /build_context/fastcgi_pass.conf /etc/nginx/fastcgi_pass.conf; \
+	cp /build_context/fastcgi_params.conf /etc/nginx/fastcgi_params; \
+	\
 	chown -hR root:nginx /etc/nginx; \
 	find /etc/nginx -type d -exec chmod u=rx,g=rx,o= '{}' +; \
 	find /etc/nginx -type f -exec chmod u=r,g=r,o= '{}' +;

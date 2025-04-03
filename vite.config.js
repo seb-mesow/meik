@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
 
 export default defineConfig({
+	base: '/verwaltung/',
 	plugins: [
 		laravel({
 			input: 'resources/js/app.ts',
