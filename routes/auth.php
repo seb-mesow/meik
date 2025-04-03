@@ -8,11 +8,10 @@ use App\Http\Controllers\Web\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Web\Auth\NewPasswordController;
 use App\Http\Controllers\Web\Auth\PasswordController;
 use App\Http\Controllers\Web\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Web\Auth\RegisteredUserController;
 use App\Http\Controllers\Web\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('guest')->group(function () {
+Route::prefix('verwaltung')->middleware('guest')->group(function () {
 	Route::get('login', [LoginController::class, 'login_form'])
 		->name('login.form');
 	
@@ -32,7 +31,7 @@ Route::middleware('guest')->group(function () {
 		->name('password.store');
 });
 
-Route::middleware('auth')->group(function () {
+Route::prefix('verwaltung')->middleware('auth')->group(function () {
 	Route::get('verify-email', EmailVerificationPromptController::class)
 		->name('verification.notice');
 
