@@ -13,7 +13,7 @@ use App\Http\Controllers\Web\RubricController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
+Route::get('verwaltung', function () {
 	if (Auth::check()) {
 		// !!! Ändere auch in LoginController::login() !!!
 		return redirect()->route('category.overview');
@@ -22,11 +22,11 @@ Route::get('/', function () {
 	}
 })->name('root');
 
-Route::get('/dashboard', function () {
+Route::get('verwaltung/dashboard', function () {
 	return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::prefix('verwaltung')->middleware('auth')->group(function () {
 	# --- Users ---
 	Route::get('/users', [UserController::class, 'overview'])
 		->name('user.overview');
