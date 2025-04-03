@@ -20,6 +20,7 @@ class ImageAPIController extends Controller
 		['content_type' => $content_type, 'file' => $file] = $this->image_repository->get_public_file($image_id);
 		
 		return response($file)
+			->header('Cache-Control', 'max-age=7889238, public', true)
 			->header('Content-Type', $content_type);
 	}
 	
@@ -28,6 +29,7 @@ class ImageAPIController extends Controller
 		['content_type' => $content_type, 'file' => $file] = $this->image_repository->get_public_thumbnail($image_id);
 		
 		return response($file)
+			->header('Cache-Control', 'max-age=7889238, public', true)
 			->header('Content-Type', $content_type);
 	}
 }
