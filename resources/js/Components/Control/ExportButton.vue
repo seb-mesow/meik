@@ -14,12 +14,16 @@ const toast = useToast();
 
 const items = [
 	{
-		label: 'Erstelle GW-BASIC-Skript für QR-Code',
-		url: route('ajax.exhibit.get_qr_code_basic_script', { exhibit_id: props.exhibit_id }),
-	},
-	{
 		label: 'Erstelle Datenblatt',
 		url: route('ajax.exhibit.get_data_sheet', { exhibit_id: props.exhibit_id }),
+	},
+	{
+		label: 'Erstelle Q-BASIC-Skript für QR-Code',
+		url: route('ajax.exhibit.get_qr_code_basic_script', { exhibit_id: props.exhibit_id, type_basic: 'q' }),
+	},
+	{
+		label: 'Erstelle GW-BASIC-Skript für QR-Code',
+		url: route('ajax.exhibit.get_qr_code_basic_script', { exhibit_id: props.exhibit_id, type_basic: 'gw' }),
 	},
 	// {
 	// 	label: 'Erstelle Barcode',

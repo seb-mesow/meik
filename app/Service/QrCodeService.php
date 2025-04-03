@@ -10,11 +10,11 @@ use RuntimeException;
 
 final class QrCodeService {
 	
-	private function determinate_user_file_name(Exhibit $exhibit, string $ext): string {
+	private function determinate_user_file_name(Exhibit $exhibit, string $suffix): string {
 		$user_file_name = trim($exhibit->get_name());
 		$user_file_name = mb_ereg_replace('\s+', '_', $user_file_name);
 		$user_file_name = mb_ereg_replace('[/\\\\]', '', $user_file_name);
-		return 'qr_code_' . $user_file_name . '.' . $ext;
+		return 'qr_code_' . $user_file_name . $suffix;
 	}
 	
 	/**
@@ -41,7 +41,7 @@ final class QrCodeService {
 		
 		$result->saveToFile($tmp_file_path);
 		
-		$user_file_name = $this->determinate_user_file_name($exhibit, 'png');
+		$user_file_name = $this->determinate_user_file_name($exhibit, '.png');
 		
 		return [
 			'tmp_file_path' => $tmp_file_path,
@@ -52,6 +52,7 @@ final class QrCodeService {
 	
 	/**
 	 * @param \App\Models\Exhibit $exhibit
+	 * @param string $type_basic
 	 * @return array{
 	 *     tmp_file_path: string,
 	 *     user_file_name: string,
@@ -59,12 +60,18 @@ final class QrCodeService {
 	 *     charset: string,
 	 * }
 	 */
-	public function create_qr_code_basic_script(Exhibit $exhibit): array {
+	public function create_qr_code_basic_script(Exhibit $exhibit, string $type_basic): array {
+		if ($type_basic !== 'q' && $type_basic !== 'gw') {
+			return throw new RuntimeException("Parameter type_basic must be either 'q' or 'gw'");
+		}
+		$type_arg = $type_basic === 'q' ? 'Q' : 'G';
+		$type_suffix = $type_basic === 'q' ? 'Q' : 'GW';
+		
 		$result_code = 255;
 		
-		$cwd = '/var/python';
+		$cwd = '/var/python/src';
 		$arg = $exhibit->get_id();
-		$command = ['bin/python3', 'src/qrbas.py', $arg];
+		$command = ['/var/python/bin/python3', 'qrbasgen.py', $type_arg, $arg];
 		$file_descriptors = [
 			0 => ["pipe", "r"],
 			1 => ["pipe", "w"],
@@ -74,7 +81,7 @@ final class QrCodeService {
 		
 		$process = proc_open($command, $file_descriptors, $pipes, $cwd);
 		if (!is_resource($process)) {
-			throw new RuntimeException('Python script qrbas.py failed.');
+			throw new RuntimeException('Python script qrbasgen.py failed.');
 		}
 		$stdout = stream_get_contents($pipes[1]);
 		$stderr = stream_get_contents($pipes[2]);
@@ -83,17 +90,17 @@ final class QrCodeService {
 		$result_code = proc_close($process);
 		
 		if ($result_code !== 0 || !is_string($stdout) || $stdout === '' || $stderr !== '') {
-			throw new RuntimeException('Python script qrbas.py failed.');
+			throw new RuntimeException('Python script qrbasgen.py failed.');
 		}
 		
 		$tmp_file_path = trim($stdout);
-		$user_file_name = $this->determinate_user_file_name($exhibit, 'bas');
+		$user_file_name = mb_strtoupper($this->determinate_user_file_name($exhibit, '__' . $type_suffix . '.bas'));
 		
 		return [
 			'tmp_file_path' => $tmp_file_path,
 			'user_file_name' => $user_file_name,
 			'content_type' => 'text/x-basic',
-			'charset' => 'windows-1252',
+			'charset' => 'ISO-8859-1', # === latin-1 in Python
 		];
 	}
 }
