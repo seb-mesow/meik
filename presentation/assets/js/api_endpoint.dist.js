@@ -1,1 +1,1 @@
-module.exports.api_endpoint = 'https://meik.localhost:8080/api';
+export const api_endpoint = 'https:/meik-gr3.industrieschule.de/api';
