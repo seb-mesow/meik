@@ -70,14 +70,14 @@ function deploy_prod() {
 	cp --force .env.prod.dist .env;
 	docker_compose build --pull;
 	docker_compose_run_entrypoint app;
-	# composer install;
+	composer install;
 	docker_compose up -d --wait --force-recreate --remove-orphans db mariadb;
 	# artisan migrate --force;
 	artisan optimize:clear; # Cache u.a. für .env löschen, braucht mariadb-Container und SQL-DB meik
 	artisan key:generate --force;
 	artisan ziggy:generate --types resources/js/ziggy/ziggy.js;
-	# npm ci;
-	# npm run prod-build;
+	npm ci;
+	npm run prod-build;
 	
 	# artisan db:seed --force; # TODO RAUS!
 	
