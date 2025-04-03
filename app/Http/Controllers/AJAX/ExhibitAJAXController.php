@@ -23,6 +23,7 @@ use App\Service\WordService;
 use App\Util\DateTimeUtil;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ExhibitAJAXController extends Controller
@@ -292,10 +293,15 @@ class ExhibitAJAXController extends Controller
 		// return response($result->getString(), 200)->header('Content-Type', 'image/png');
 	}
 
-	public function get_qr_code_basic_script(int $exhibit_id): BinaryFileResponse
+	public function get_qr_code_basic_script(Request $request, int $exhibit_id): BinaryFileResponse
 	{
+		$type_basic = $request->query('type_basic');
+		
+		$type_basic = is_string($type_basic) ? trim($type_basic) : null;
+		$type_basic = $type_basic === '' ? null : $type_basic;
+		
 		$exhibit = $this->exhibit_repository->get($exhibit_id);
-		$ret = $this->qr_code_service->create_qr_code_basic_script($exhibit);
+		$ret = $this->qr_code_service->create_qr_code_basic_script($exhibit, $type_basic);
 
 		return response()->download(
 			file: $ret['tmp_file_path'],
